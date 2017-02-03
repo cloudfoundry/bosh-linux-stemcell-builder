@@ -19,13 +19,14 @@ var _ = Describe("Stemcell", func() {
 	BeforeEach(func() {
 		assertRequiredParams()
 		login()
-		uploadStemcell()
 		uploadRelease()
 
-		switch os.Getenv("IAAS") {
+		switch iaas := os.Getenv("IAAS"); iaas {
 		case "vbox":
+			uploadStemcell(iaas)
 			updateVboxCloudConfig()
 		default:
+			uploadStemcell(iaas)
 			updateVsphereCloudConfig()
 		}
 
@@ -86,30 +87,30 @@ func deploy() {
 }
 
 type VsphereEnvironmentResource struct {
-	DNS string `json:"DNS"`
+	DNS         string `json:"DNS"`
 	Description string `json:"_description"`
-	DirectorIP string `json:"directorIP"`
+	DirectorIP  string `json:"directorIP"`
 	Network1 struct {
-		VCenterVLAN string `json:"vCenterVLAN"`
-		VCenterCIDR string `json:"vCenterCIDR"`
+		VCenterVLAN    string `json:"vCenterVLAN"`
+		VCenterCIDR    string `json:"vCenterCIDR"`
 		VCenterGateway string `json:"vCenterGateway"`
-		StaticIP1 string `json:"staticIP-1"`
-		StaticIP2 string `json:"staticIP-2"`
-		ReservedRange string `json:"reservedRange"`
-		StaticRange string `json:"staticRange"`
-		DynamicRange string `json:"_dynamicRange"`
+		StaticIP1      string `json:"staticIP-1"`
+		StaticIP2      string `json:"staticIP-2"`
+		ReservedRange  string `json:"reservedRange"`
+		StaticRange    string `json:"staticRange"`
+		DynamicRange   string `json:"_dynamicRange"`
 		VCenterNetmask string `json:"vCenterNetmask"`
 	} `json:"network1"`
 	Network2 struct {
-		VCenterVLAN string `json:"vCenterVLAN"`
-		VCenterCIDR string `json:"vCenterCIDR"`
+		VCenterVLAN    string `json:"vCenterVLAN"`
+		VCenterCIDR    string `json:"vCenterCIDR"`
 		VCenterGateway string `json:"vCenterGateway"`
-		StaticIP1 string `json:"staticIP-1"`
-		ReservedRange string `json:"reservedRange"`
-		StaticRange string `json:"staticRange"`
-		DynamicRange string `json:"_dynamicRange"`
+		StaticIP1      string `json:"staticIP-1"`
+		ReservedRange  string `json:"reservedRange"`
+		StaticRange    string `json:"staticRange"`
+		DynamicRange   string `json:"_dynamicRange"`
 	} `json:"network2"`
-	BoshVsphereVcenterDc string
+	BoshVsphereVcenterDc      string
 	BoshVsphereVcenterCluster string
 }
 
@@ -142,7 +143,7 @@ func updateVsphereCloudConfig() {
 		"-v", "vcenter_dc="+environmentResource.BoshVsphereVcenterDc,
 		"-v", "vcenter_cluster="+environmentResource.BoshVsphereVcenterCluster,
 		"-v", "internal_cidr="+environmentResource.Network1.VCenterCIDR,
-		"-v", "internal_reserved=["+environmentResource.Network1.ReservedRange + "]",
+		"-v", "internal_reserved=["+environmentResource.Network1.ReservedRange+"]",
 		"-v", "internal_gw="+environmentResource.Network1.VCenterGateway,
 		"-v", "internal_vcenter_vlan="+environmentResource.Network1.VCenterVLAN,
 	)
@@ -174,8 +175,8 @@ func assertRequiredParams() {
 	Expect(ok).To(BeTrue(), "BOSH_VSPHERE_VCENTER_CLUSTER was not set")
 }
 
-func uploadStemcell() {
-	stemcellPaths, err := filepath.Glob(filepath.Join("..", "stemcell", "*.tgz"))
+func uploadStemcell(iaas string) {
+	stemcellPaths, err := filepath.Glob(filepath.Join("..", "stemcell", iaas, "*.tgz"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(stemcellPaths).To(HaveLen(1))
 	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelNone)).RunCommand(BOSH_BINARY, "upload-stemcell", stemcellPaths[0])
