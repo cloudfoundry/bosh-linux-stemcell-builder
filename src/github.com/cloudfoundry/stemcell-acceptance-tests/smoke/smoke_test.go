@@ -21,7 +21,14 @@ var _ = Describe("Stemcell", func() {
 		login()
 		uploadStemcell()
 		uploadRelease()
-		updateCloudConfig()
+
+		switch os.Getenv("IAAS") {
+		case "vbox":
+			updateVboxCloudConfig()
+		default:
+			updateVsphereCloudConfig()
+		}
+
 		deploy()
 	})
 
@@ -78,7 +85,7 @@ func deploy() {
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
 
-type EnvironmentResource struct {
+type VsphereEnvironmentResource struct {
 	DNS string `json:"DNS"`
 	Description string `json:"_description"`
 	DirectorIP string `json:"directorIP"`
@@ -106,24 +113,39 @@ type EnvironmentResource struct {
 	BoshVsphereVcenterCluster string
 }
 
-func updateCloudConfig() {
-	contents, err := ioutil.ReadFile("../assets/cloud-config.yml")
+func updateVboxCloudConfig() {
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelNone)).RunCommand(
+		BOSH_BINARY,
+		"-n",
+		"update-cloud-config",
+		"../assets/vbox/cloud-config.yml",
+	)
+
 	Expect(err).ToNot(HaveOccurred())
-	template, err := template.New("cloud-config").Parse(string(contents))
-	Expect(err).ToNot(HaveOccurred())
-	environmentResource := &EnvironmentResource{}
-	contents, err = ioutil.ReadFile("../environment/metadata")
-	err = json.Unmarshal(contents, environmentResource)
+	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
+}
+
+func updateVsphereCloudConfig() {
+	environmentResource := &VsphereEnvironmentResource{}
+	metadataContents, err := ioutil.ReadFile("../environment/metadata")
+
+	err = json.Unmarshal(metadataContents, environmentResource)
 	Expect(err).ToNot(HaveOccurred())
 	environmentResource.BoshVsphereVcenterDc = os.Getenv("BOSH_VSPHERE_VCENTER_DC")
 	environmentResource.BoshVsphereVcenterCluster = os.Getenv("BOSH_VSPHERE_VCENTER_CLUSTER")
-	tempFile, err := ioutil.TempFile(os.TempDir(), "cloud-config")
-	Expect(err).ToNot(HaveOccurred())
-	err = template.Execute(tempFile, environmentResource)
-	Expect(err).ToNot(HaveOccurred())
-	cloudConfigPath, err := filepath.Abs(tempFile.Name())
-	Expect(err).ToNot(HaveOccurred())
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelNone)).RunCommand(BOSH_BINARY, "-n", "update-cloud-config", cloudConfigPath)
+
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelNone)).RunCommand(
+		BOSH_BINARY,
+		"-n",
+		"update-cloud-config",
+		"../assets/vsphere/cloud-config.yml",
+		"-v", "vcenter_dc="+environmentResource.BoshVsphereVcenterDc,
+		"-v", "vcenter_cluster="+environmentResource.BoshVsphereVcenterCluster,
+		"-v", "internal_cidr="+environmentResource.Network1.VCenterCIDR,
+		"-v", "internal_reserved=["+environmentResource.Network1.ReservedRange + "]",
+		"-v", "internal_gw="+environmentResource.Network1.VCenterGateway,
+		"-v", "internal_vcenter_vlan="+environmentResource.Network1.VCenterVLAN,
+	)
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }

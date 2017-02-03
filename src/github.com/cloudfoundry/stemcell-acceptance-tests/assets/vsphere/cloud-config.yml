@@ -2,9 +2,9 @@ azs:
 - name: z1
   cloud_properties:
     datacenters:
-    - name: {{.BoshVsphereVcenterDc}}
+    - name: ((vcenter_dc))
       clusters:
-        - {{.BoshVsphereVcenterCluster}}: {}
+        - ((vcenter_cluster)): {}
 
 vm_types:
 - name: default
@@ -17,12 +17,12 @@ networks:
 - name: default
   type: manual
   subnets:
-  - range: {{.Network1.VCenterCIDR}}
-    reserved: [{{.Network1.ReservedRange}}]
-    gateway: {{.Network1.VCenterGateway}}
+  - range: ((internal_cidr))
+    reserved: ((internal_reserved))
+    gateway: ((internal_gw))
     az: z1
     cloud_properties:
-      name: {{.Network1.VCenterVLAN}}
+      name: ((internal_vcenter_vlan))}
 
 compilation:
   workers: 2
