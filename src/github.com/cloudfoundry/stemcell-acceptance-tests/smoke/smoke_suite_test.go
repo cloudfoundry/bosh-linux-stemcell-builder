@@ -20,7 +20,7 @@ func TestSmoke(t *testing.T) {
 	RunSpecs(t, "Smoke Suite")
 }
 
-const BOSH_BINARY string = "gobosh"
+const BOSH_BINARY string = "bosh"
 
 var _ = BeforeSuite(func() {
 	assertRequiredParams()
