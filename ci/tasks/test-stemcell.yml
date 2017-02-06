@@ -1,22 +1,21 @@
 platform: linux
 
 image_resource:
-type: docker-image
-source: {repository: bosh/main}
+  type: docker-image
+  source: {repository: bosh/main}
 
 inputs:
-- name: bosh-linux-stemcell-builder
+- name: bosh-src
 - name: stemcell
 - name: syslog-release
 - name: environment
 
 params:
-BOSH_ENVIRONMENT:
-BOSH_CLIENT:
-BOSH_CLIENT_SECRET:
-BOSH_VSPHERE_VCENTER_CLUSTER:
-BOSH_VSPHERE_VCENTER_DC:
+  BOSH_DIRECTOR_ADDRESS:
+  BOSH_DIRECTOR_USERNAME:
+  BOSH_DIRECTOR_PASSWORD:
+  BOSH_VSPHERE_VCENTER_CLUSTER:
+  BOSH_VSPHERE_VCENTER_DC:
 
 run:
-path: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.sh
-
+  path: bosh-src/src/bosh-stemcell/smoke/test-stemcell.sh
