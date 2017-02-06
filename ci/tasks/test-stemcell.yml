@@ -5,7 +5,7 @@ image_resource:
   source: {repository: bosh/main}
 
 inputs:
-- name: bosh-src
+- name: bosh-linux-stemcell-builder
 - name: stemcell
 - name: syslog-release
 - name: environment
