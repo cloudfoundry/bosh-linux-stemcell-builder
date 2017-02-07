@@ -20,8 +20,6 @@ func TestSmoke(t *testing.T) {
 	RunSpecs(t, "Smoke Suite")
 }
 
-const BOSH_BINARY string = "bosh"
-
 var _ = BeforeSuite(func() {
 	assertRequiredParams()
 	login()
@@ -39,11 +37,11 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(BOSH_BINARY, "-n",  "-d", "bosh-stemcell-smoke-tests", "delete-deployment")
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "-n",  "-d", "bosh-stemcell-smoke-tests", "delete-deployment")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-	stdOut, stdErr, exitStatus, err = system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(BOSH_BINARY, "-n", "clean-up", "--all")
+	stdOut, stdErr, exitStatus, err = system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "-n", "clean-up", "--all")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 })
@@ -79,7 +77,7 @@ type VsphereEnvironmentResource struct {
 }
 
 func login() {
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(BOSH_BINARY, "login")
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "login")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
@@ -106,14 +104,14 @@ func deploy() {
 	Expect(err).ToNot(HaveOccurred())
 	manifestPath, err := filepath.Abs(tempFile.Name())
 	Expect(err).ToNot(HaveOccurred())
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(BOSH_BINARY, "-n", "-d", "bosh-stemcell-smoke-tests", "deploy", manifestPath)
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "-n", "-d", "bosh-stemcell-smoke-tests", "deploy", manifestPath)
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
 
 func updateVboxCloudConfig() {
 	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(
-		BOSH_BINARY,
+		os.Getenv("BOSH_BINARY_PATH"),
 		"-n",
 		"update-cloud-config",
 		"../assets/vbox/cloud-config.yml",
@@ -133,7 +131,7 @@ func updateVsphereCloudConfig() {
 	environmentResource.BoshVsphereVcenterCluster = os.Getenv("BOSH_VSPHERE_VCENTER_CLUSTER")
 
 	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(
-		BOSH_BINARY,
+		os.Getenv("BOSH_BINARY_PATH"),
 		"-n",
 		"update-cloud-config",
 		"../assets/vsphere/cloud-config.yml",
@@ -152,7 +150,7 @@ func uploadRelease() {
 	releasePaths, err := filepath.Glob(filepath.Join("..", "syslog-release", "*.tgz"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(releasePaths).To(HaveLen(1), "could not find syslog-release at path ../syslog-release/")
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(BOSH_BINARY, "upload-release", releasePaths[0])
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-release", releasePaths[0])
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
@@ -164,19 +162,19 @@ func assertRequiredParams() {
 	Expect(ok).To(BeTrue(), "BOSH_CLIENT was not set")
 	_, ok = os.LookupEnv("BOSH_CLIENT_SECRET")
 	Expect(ok).To(BeTrue(), "BOSH_CLIENT_SECRET was not set")
-	_, ok = os.LookupEnv("BOSH_CA_CERT")
-	Expect(ok).To(BeTrue(), "BOSH_CA_CERT was not set")
 	_, ok = os.LookupEnv("BOSH_VSPHERE_VCENTER_DC")
 	Expect(ok).To(BeTrue(), "BOSH_VSPHERE_VCENTER_DC was not set")
 	_, ok = os.LookupEnv("BOSH_VSPHERE_VCENTER_CLUSTER")
 	Expect(ok).To(BeTrue(), "BOSH_VSPHERE_VCENTER_CLUSTER was not set")
+	_, ok = os.LookupEnv("BOSH_BINARY_PATH")
+	Expect(ok).To(BeTrue(), "BOSH_BINARY_PATH was not set")
 }
 
 func uploadStemcell() {
 	stemcellPaths, err := filepath.Glob(filepath.Join("..", "stemcell", "*.tgz"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(stemcellPaths).To(HaveLen(1), "could not find stemcell at path ../stemcell/")
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(BOSH_BINARY, "upload-stemcell", stemcellPaths[0])
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-stemcell", stemcellPaths[0])
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
