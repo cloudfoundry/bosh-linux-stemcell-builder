@@ -9,13 +9,7 @@ inputs:
 - name: bosh-cli
 - name: stemcell
 - name: syslog-release
-- name: environment
-
-params:
-  BOSH_CLIENT:
-  BOSH_CLIENT_SECRET:
-  BOSH_VSPHERE_VCENTER_CLUSTER:
-  BOSH_VSPHERE_VCENTER_DC:
+- name: director-state
 
 run:
   path: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.sh
