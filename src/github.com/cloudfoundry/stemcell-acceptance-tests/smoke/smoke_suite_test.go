@@ -147,10 +147,7 @@ func updateVsphereCloudConfig() {
 }
 
 func uploadRelease() {
-	releasePaths, err := filepath.Glob(filepath.Join("..", "syslog-release", "*.tgz"))
-	Expect(err).ToNot(HaveOccurred())
-	Expect(releasePaths).To(HaveLen(1), "could not find syslog-release at path ../syslog-release/")
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-release", releasePaths[0])
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-release", os.Getenv("SYSLOG_RELEASE_PATH"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
@@ -168,13 +165,14 @@ func assertRequiredParams() {
 	Expect(ok).To(BeTrue(), "BOSH_VSPHERE_VCENTER_CLUSTER was not set")
 	_, ok = os.LookupEnv("BOSH_BINARY_PATH")
 	Expect(ok).To(BeTrue(), "BOSH_BINARY_PATH was not set")
+	_, ok = os.LookupEnv("SYSLOG_RELEASE_PATH")
+	Expect(ok).To(BeTrue(), "SYSLOG_RELEASE_PATH was not set")
+	_, ok = os.LookupEnv("STEMCELL_PATH")
+	Expect(ok).To(BeTrue(), "STEMCELL_PATH was not set")
 }
 
 func uploadStemcell() {
-	stemcellPaths, err := filepath.Glob(filepath.Join("..", "stemcell", "*.tgz"))
-	Expect(err).ToNot(HaveOccurred())
-	Expect(stemcellPaths).To(HaveLen(1), "could not find stemcell at path ../stemcell/")
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-stemcell", stemcellPaths[0])
+	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-stemcell", os.Getenv("STEMCELL_PATH"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
