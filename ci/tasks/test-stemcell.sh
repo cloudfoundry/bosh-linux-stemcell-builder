@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
-set -e
+set -exu
 
-export PATH=usr/local/go/bin:$PATH
-export GOPATH=$(pwd)
-cd src/github.com/cloudfoundry/stemcell-acceptance-tests
-bin/test-smoke
+pushd bosh-linux-stemcell-builder
+  export PATH=/usr/local/go/bin:$PATH
+  export GOPATH=$(pwd)
+
+  pushd src/github.com/cloudfoundry/stemcell-acceptance-tests
+    ./bin/test-smoke
+  popd
+popd
