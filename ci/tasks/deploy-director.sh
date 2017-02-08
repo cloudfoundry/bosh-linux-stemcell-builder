@@ -2,6 +2,9 @@
 
 set -eu
 
+source /etc/profile.d/chruby.sh
+chruby 2.1.7
+
 cat > director-creds.yml <<EOF
 internal_ip: $BOSH_internal_ip
 EOF
