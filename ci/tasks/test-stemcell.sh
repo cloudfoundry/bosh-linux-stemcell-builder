@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -exu
+set -eu
 
 export BOSH_BINARY_PATH=$(realpath bosh-cli/bosh-cli-*)
 chmod +x $BOSH_BINARY_PATH

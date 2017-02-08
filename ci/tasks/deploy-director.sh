@@ -6,6 +6,7 @@ cat > director-creds.yml <<EOF
 internal_ip: $BOSH_internal_ip
 EOF
 
+chmod +x $(realpath bosh-cli/bosh-cli-*)
 alias bosh-cli=$(realpath bosh-cli/bosh-cli-*)
 
 bosh-cli interpolate bosh-deployment/bosh.yml \
