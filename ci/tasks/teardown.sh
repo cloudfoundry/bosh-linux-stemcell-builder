@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 mv director-state/* .
 mv director-state/.bosh $HOME/
-chmod +x $(realpath bosh-cli/bosh-cli-*)
-alias bosh-cli=$(realpath bosh-cli/bosh-cli-*)
 
-bosh-cli delete-env director.yml -l director-creds.yml
+export bosh_cli=$(realpath bosh-cli/bosh-cli-*)
+chmod +x $bosh_cli
+
+$bosh_cli delete-env director.yml -l director-creds.yml
