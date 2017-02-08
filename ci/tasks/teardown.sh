@@ -4,6 +4,6 @@ set -ex
 
 mv director-state/* .
 mv director-state/.bosh $HOME/
-mv bosh-cli/bosh-cli-* /usr/local/bin/bosh-cli
+alias bosh-cli=$(realpath bosh-cli/bosh-cli-*)
 
 bosh-cli delete-env director.yml -l director-creds.yml

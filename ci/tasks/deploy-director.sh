@@ -6,7 +6,7 @@ cat > director-creds.yml <<EOF
 internal_ip: $BOSH_internal_ip
 EOF
 
-mv bosh-cli/bosh-cli-* /usr/local/bin/bosh-cli
+alias bosh-cli=$(realpath bosh-cli/bosh-cli-*)
 
 bosh-cli interpolate bosh-deployment/bosh.yml \
   -o bosh-deployment/vsphere/cpi.yml \
