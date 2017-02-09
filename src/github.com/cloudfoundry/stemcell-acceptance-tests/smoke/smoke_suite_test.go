@@ -4,14 +4,13 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"testing"
-	"github.com/cloudfoundry/bosh-utils/system"
-	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-	"text/template"
+	"testing"
+
+	boshlog "github.com/cloudfoundry/bosh-utils/logger"
+	"github.com/cloudfoundry/bosh-utils/system"
 )
 
 func TestSmoke(t *testing.T) {
@@ -20,51 +19,36 @@ func TestSmoke(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
+	cmdRunner := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug))
+	boshBinaryPath := os.Getenv("BOSH_BINARY_PATH")
 	assertRequiredParams()
-	uploadRelease()
-	uploadStemcell()
-	deploy()
+	uploadRelease(cmdRunner, boshBinaryPath)
+	uploadStemcell(cmdRunner, boshBinaryPath)
+	deploy(cmdRunner, boshBinaryPath)
 })
 
 var _ = AfterSuite(func() {
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "-n",  "-d", "bosh-stemcell-smoke-tests", "delete-deployment")
+	cmdRunner := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug))
+	boshBinaryPath := os.Getenv("BOSH_BINARY_PATH")
+	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-n", "-d", "bosh-stemcell-smoke-tests", "delete-deployment")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-	stdOut, stdErr, exitStatus, err = system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "-n", "clean-up", "--all")
+	stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-n", "clean-up", "--all")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 })
 
-func deploy() {
-	syslogReleaseVersion, err := ioutil.ReadFile("../syslog-release/version")
+func deploy(cmdRunner system.CmdRunner, boshBinaryPath string) {
+	manifestPath, err := filepath.Abs("../assets/manifest.yml")
 	Expect(err).ToNot(HaveOccurred())
-	stemcellVersion, err := ioutil.ReadFile("../stemcell/version")
-	Expect(err).ToNot(HaveOccurred())
-	tempFile, err := ioutil.TempFile(os.TempDir(), "manifest")
-	Expect(err).ToNot(HaveOccurred())
-	contents, err := ioutil.ReadFile("../assets/manifest.yml")
-	Expect(err).ToNot(HaveOccurred())
-
-	template, err := template.New("syslog-release").Parse(string(contents))
-	Expect(err).ToNot(HaveOccurred())
-	err = template.Execute(tempFile, struct {
-		SyslogReleaseVersion string
-		StemcellVersion      string
-	}{
-		SyslogReleaseVersion: string(syslogReleaseVersion),
-		StemcellVersion:      string(stemcellVersion),
-	})
-	Expect(err).ToNot(HaveOccurred())
-	manifestPath, err := filepath.Abs(tempFile.Name())
-	Expect(err).ToNot(HaveOccurred())
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "-n", "-d", "bosh-stemcell-smoke-tests", "deploy", manifestPath)
+	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-n", "-d", "bosh-stemcell-smoke-tests", "deploy", "--vars-env=BOSH", manifestPath)
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
 
-func uploadRelease() {
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-release", os.Getenv("SYSLOG_RELEASE_PATH"))
+func uploadRelease(cmdRunner system.CmdRunner, boshBinaryPath string) {
+	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "upload-release", os.Getenv("SYSLOG_RELEASE_PATH"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
@@ -76,10 +60,12 @@ func assertRequiredParams() {
 	Expect(ok).To(BeTrue(), "SYSLOG_RELEASE_PATH was not set")
 	_, ok = os.LookupEnv("STEMCELL_PATH")
 	Expect(ok).To(BeTrue(), "STEMCELL_PATH was not set")
+	_, ok = os.LookupEnv("BOSH_stemcell_version")
+	Expect(ok).To(BeTrue(), "BOSH_stemcell_version was not set")
 }
 
-func uploadStemcell() {
-	stdOut, stdErr, exitStatus, err := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)).RunCommand(os.Getenv("BOSH_BINARY_PATH"), "upload-stemcell", os.Getenv("STEMCELL_PATH"))
+func uploadStemcell(cmdRunner system.CmdRunner, boshBinaryPath string) {
+	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "upload-stemcell", os.Getenv("STEMCELL_PATH"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }

@@ -3,12 +3,12 @@ name: bosh-stemcell-smoke-tests
 
 releases:
 - name: syslog
-  version: {{.SyslogReleaseVersion}}
+  version: latest
 
 stemcells:
 - alias: default
   os: ubuntu-trusty
-  version: {{.StemcellVersion}}
+  version: ((stemcell_version))
 
 update:
   canaries: 1
