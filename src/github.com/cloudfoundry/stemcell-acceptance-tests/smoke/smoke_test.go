@@ -1,15 +1,16 @@
 package smoke_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/bosh-utils/system"
-	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 	"fmt"
-	"time"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
+
+	boshlog "github.com/cloudfoundry/bosh-utils/logger"
+	"github.com/cloudfoundry/bosh-utils/system"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Stemcell", func() {
@@ -62,7 +63,7 @@ var _ = Describe("Stemcell", func() {
 				Expect(exitStatus).To(Equal(0))
 				Expect(stdOut).To(ContainSubstring("new syslog content"))
 
-				stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-smoke-tests", "ssh", "syslog_storer/0", `sudo cat /var/vcap/data/root_log/syslog`)
+				stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-smoke-tests", "ssh", "syslog_forwarder/0", `sudo cat /var/vcap/data/root_log/syslog`)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not read from syslog stdOut: %s \n stdErr: %s", stdOut, stdErr))
 				Expect(stdOut).NotTo(ContainSubstring("old syslog content"))
@@ -91,7 +92,7 @@ var _ = Describe("Stemcell", func() {
 		It("#133776519: forwards deeply nested logs", func() {
 			tempFile, err := ioutil.TempFile(os.TempDir(), "logfile")
 			Expect(err).ToNot(HaveOccurred())
-			_, err = tempFile.Write([]byte("test-blackbox-message \n test-blackbox-message-2"))
+			_, err = tempFile.Write([]byte(``))
 			Expect(err).ToNot(HaveOccurred())
 			logFilePath, err := filepath.Abs(tempFile.Name())
 			Expect(err).ToNot(HaveOccurred())
@@ -104,12 +105,16 @@ var _ = Describe("Stemcell", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 
+			_, _, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-smoke-tests",  "ssh", "syslog_forwarder/0", "echo 'test-blackbox-message' >> /var/vcap/sys/log/deep/path/deepfile.log")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+
 			time.Sleep(35 * time.Second)
 
 			stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-smoke-tests", "ssh", "syslog_storer/0", `cat /var/vcap/store/syslog_storer/syslog.log`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
-			Expect(stdOut).To(ContainSubstring("test-blackbox-message-2"))
+			Expect(stdOut).To(ContainSubstring("test-blackbox-message"))
 		})
 
 		It("#135979501: produces CEF logs for all incoming NATs and https requests", func() {
@@ -124,7 +129,7 @@ var _ = Describe("Stemcell", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("Unable to run 'chage -h' \n stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-			stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-smoke-tests", "ssh", "syslog_storer/0", `cat /var/vcap/store/syslog_storer/syslog.log`)
+			stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-smoke-tests", "ssh", "syslog_storer/0", `sudo cat /var/vcap/store/syslog_storer/syslog.log`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not read from syslog stdOut: %s \n stdErr: %s", stdOut, stdErr))
 			Expect(stdOut).To(ContainSubstring(`exe="/usr/bin/chage"`))
