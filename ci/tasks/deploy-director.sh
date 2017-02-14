@@ -5,6 +5,17 @@ set -e
 source /etc/profile.d/chruby.sh
 chruby 2.1.7
 
+function fromEnvironment() {
+  local key="$1"
+  local environment=environment/env-*yml
+  cat $environment | jq -r "$key"
+}
+
+export BOSH_internal_cidr=$(fromEnvironment '.network1.vCenterCIDR')
+export BOSH_internal_gw=$(fromEnvironment '.network1.vCenterGateway')
+export BOSH_internal_ip=$(fromEnvironment '.network1["staticIP-1"]')
+export BOSH_network_name=$(fromEnvironment '.network1.vCenterVLAN')
+
 cat > director-creds.yml <<EOF
 internal_ip: $BOSH_internal_ip
 EOF

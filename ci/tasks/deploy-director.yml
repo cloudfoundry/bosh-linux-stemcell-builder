@@ -10,6 +10,7 @@ inputs:
   - name: bosh-linux-stemcell-builder
   - name: stemcell
   - name: bosh-cli
+  - name: environment
 
 outputs:
   - name: director-state
