@@ -7,7 +7,7 @@ chruby 2.1.7
 
 function fromEnvironment() {
   local key="$1"
-  local environment=environment/env-*json
+  local environment=environment/metadata
   cat $environment | jq -r "$key"
 }
 
