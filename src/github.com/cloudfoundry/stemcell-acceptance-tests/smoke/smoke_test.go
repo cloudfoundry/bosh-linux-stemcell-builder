@@ -105,6 +105,8 @@ var _ = Describe("Stemcell", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 
+			time.Sleep(5 * time.Second)
+
 			_, _, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-smoke-tests",  "ssh", "syslog_forwarder/0", "echo 'test-blackbox-message' >> /var/vcap/sys/log/deep/path/deepfile.log")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
