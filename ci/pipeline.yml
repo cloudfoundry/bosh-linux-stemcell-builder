@@ -201,6 +201,10 @@ jobs:
             - bats-centos
             - bats-ubuntu
         - get: bosh-linux-stemcell-builder
+        - get: bosh-src
+          passed:
+            - bats-centos
+            - bats-ubuntu
       - task: copy-artifacts
         file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
         params:
@@ -581,6 +585,20 @@ jobs:
         - get: bosh-cli
         - get: bats
         - get: bosh-src
+          passed:
+            - build-warden-boshlite-centos-7
+            - build-warden-boshlite-ubuntu-trusty
+            - build-aws-xen-hvm-ubuntu-trusty
+            - build-azure-hyperv-ubuntu-trusty
+            - build-google-kvm-ubuntu-trusty
+            - build-google-kvm-centos-7
+            - build-openstack-kvm-ubuntu-trusty
+            - build-vsphere-esxi-ubuntu-trusty
+            - build-vcloud-esxi-ubuntu-trusty
+            - build-aws-xen-hvm-centos-7
+            - build-azure-hyperv-centos-7
+            - build-openstack-kvm-centos-7
+            - build-vsphere-esxi-centos-7
         - get: bosh-linux-stemcell-builder
           passed:
             - build-warden-boshlite-centos-7
@@ -651,6 +669,20 @@ jobs:
         - get: bosh-cli
         - get: bats
         - get: bosh-src
+          passed:
+            - build-warden-boshlite-centos-7
+            - build-warden-boshlite-ubuntu-trusty
+            - build-aws-xen-hvm-ubuntu-trusty
+            - build-azure-hyperv-ubuntu-trusty
+            - build-google-kvm-ubuntu-trusty
+            - build-google-kvm-centos-7
+            - build-openstack-kvm-ubuntu-trusty
+            - build-vsphere-esxi-ubuntu-trusty
+            - build-vcloud-esxi-ubuntu-trusty
+            - build-aws-xen-hvm-centos-7
+            - build-azure-hyperv-centos-7
+            - build-openstack-kvm-centos-7
+            - build-vsphere-esxi-centos-7
         - get: bosh-linux-stemcell-builder
           passed:
             - build-warden-boshlite-centos-7
