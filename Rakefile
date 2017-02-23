@@ -1,4 +1,5 @@
 require 'json'
+require 'logging'
 
 namespace :stemcell do
   desc 'Build a base OS image for use in stemcells'

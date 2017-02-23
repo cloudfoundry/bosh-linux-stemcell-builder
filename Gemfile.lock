@@ -2,12 +2,9 @@ PATH
   remote: bosh-dev
   specs:
     bosh-dev (0.0.0)
-      bosh-core
       bosh-stemcell
       bundler
       fog-aws (~> 0.7.6)
-      logging
-      peach
 
 PATH
   remote: bosh-stemcell
@@ -52,7 +49,6 @@ GEM
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
-    peach (0.5.1)
     pkg-config (1.1.7)
     rake (10.4.2)
     rspec (3.4.0)
@@ -88,6 +84,7 @@ DEPENDENCIES
   bosh-core
   bosh-dev!
   bosh-stemcell!
+  logging
   rake (~> 10.0)
   rspec
   rspec-instafail

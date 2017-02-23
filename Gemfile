@@ -13,4 +13,5 @@ group :development, :test do
   # so that it could be monkey patched in a deterministic way
   # in `bosh-stemcell/spec/support/serverspec_monkeypatch.rb`
   gem 'specinfra', '1.15.0', require: nil
+  gem 'logging'
 end
