@@ -2,7 +2,15 @@
 
 set -e
 
-source bosh-src/ci/tasks/utils.sh
+function check_param() {
+  local name=$1
+  local value=$(eval echo '$'$name)
+  if [ "$value" == 'replace-me' ]; then
+    echo "environment variable $name must be set"
+    exit 1
+  fi
+}
+
 check_param IAAS
 check_param HYPERVISOR
 check_param OS_NAME
@@ -53,12 +61,12 @@ for i in $(seq 0 64); do
   fi
 done
 
-chown -R ubuntu:ubuntu bosh-src
+chown -R ubuntu:ubuntu bosh-linux-stemcell-builder
 
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
   set -e
 
-  cd bosh-src/src
+  cd bosh-linux-stemcell-builder
 
   bundle install --local
   bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,go,bosh-os-images,bosh-$OS_NAME-$OS_VERSION-os-image.tgz]
@@ -67,10 +75,10 @@ SUDO
 
 stemcell_name="bosh-stemcell-$CANDIDATE_BUILD_NUMBER-$IAAS-$HYPERVISOR-$OS_NAME-$OS_VERSION-go_agent"
 
-if [ -e bosh-src/src/tmp/*-raw.tgz ] ; then
+if [ -e bosh-linux-stemcell-builder/tmp/*-raw.tgz ] ; then
   # openstack currently publishes raw files
   raw_stemcell_filename="${stemcell_name}-raw.tgz"
-  mv bosh-src/src/tmp/*-raw.tgz "${output_dir}/${raw_stemcell_filename}"
+  mv bosh-linux-stemcell-builder/tmp/*-raw.tgz "${output_dir}/${raw_stemcell_filename}"
 
   raw_checksum="$(sha1sum "${output_dir}/${raw_stemcell_filename}" | awk '{print $1}')"
   echo "$raw_stemcell_filename sha1=$raw_checksum"
@@ -84,7 +92,7 @@ if [ -e bosh-src/src/tmp/*-raw.tgz ] ; then
 fi
 
 stemcell_filename="${stemcell_name}.tgz"
-mv "bosh-src/src/tmp/${stemcell_filename}" "${output_dir}/${stemcell_filename}"
+mv "bosh-linux-stemcell-builder/tmp/${stemcell_filename}" "${output_dir}/${stemcell_filename}"
 
 checksum="$(sha1sum "${output_dir}/${stemcell_filename}" | awk '{print $1}')"
 echo "$stemcell_filename sha1=$checksum"

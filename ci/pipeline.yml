@@ -114,9 +114,8 @@ jobs:
   - name: build-stemcell
     serial: true
     plan:
-      - get: bosh-src
-        trigger: true
       - get: bosh-linux-stemcell-builder
+        trigger: true
       - get: version
         params:
           bump: {{stemcell_version_semver_bump}}
@@ -201,7 +200,6 @@ jobs:
             - bats-centos
             - bats-ubuntu
         - get: bosh-linux-stemcell-builder
-        - get: bosh-src
           passed:
             - bats-centos
             - bats-ubuntu
@@ -228,9 +226,9 @@ jobs:
             vcloud/bosh-stemcell-%s-vcloud-esxi-ubuntu-trusty-go_agent.tgz
             azure/bosh-stemcell-%s-azure-hyperv-centos-7-go_agent.tgz
             azure/bosh-stemcell-%s-azure-hyperv-ubuntu-trusty-go_agent.tgz
-      - put: bosh-src-push
+      - put: bosh-linux-stemcell-builder-push
         params:
-          repository: bosh-src
+          repository: bosh-linux-stemcell-builder
           tag: version-tag/tag
           only_tag: true
 
@@ -244,9 +242,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -267,9 +264,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -294,9 +290,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -317,9 +312,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -344,9 +338,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -367,9 +360,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -394,9 +386,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -417,9 +408,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -444,9 +434,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -470,9 +459,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -500,9 +488,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -523,9 +510,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -550,9 +536,8 @@ jobs:
           - get: version
             trigger: true
             passed: [build-stemcell]
-          - get: bosh-src
-            passed: [build-stemcell]
           - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
       - task: create-stemcell
         file: bosh-linux-stemcell-builder/ci/tasks/build.yml
         privileged: true
@@ -584,21 +569,6 @@ jobs:
         - get: pipelines
         - get: bosh-cli
         - get: bats
-        - get: bosh-src
-          passed:
-            - build-warden-boshlite-centos-7
-            - build-warden-boshlite-ubuntu-trusty
-            - build-aws-xen-hvm-ubuntu-trusty
-            - build-azure-hyperv-ubuntu-trusty
-            - build-google-kvm-ubuntu-trusty
-            - build-google-kvm-centos-7
-            - build-openstack-kvm-ubuntu-trusty
-            - build-vsphere-esxi-ubuntu-trusty
-            - build-vcloud-esxi-ubuntu-trusty
-            - build-aws-xen-hvm-centos-7
-            - build-azure-hyperv-centos-7
-            - build-openstack-kvm-centos-7
-            - build-vsphere-esxi-centos-7
         - get: bosh-linux-stemcell-builder
           passed:
             - build-warden-boshlite-centos-7
@@ -668,21 +638,6 @@ jobs:
         - get: pipelines
         - get: bosh-cli
         - get: bats
-        - get: bosh-src
-          passed:
-            - build-warden-boshlite-centos-7
-            - build-warden-boshlite-ubuntu-trusty
-            - build-aws-xen-hvm-ubuntu-trusty
-            - build-azure-hyperv-ubuntu-trusty
-            - build-google-kvm-ubuntu-trusty
-            - build-google-kvm-centos-7
-            - build-openstack-kvm-ubuntu-trusty
-            - build-vsphere-esxi-ubuntu-trusty
-            - build-vcloud-esxi-ubuntu-trusty
-            - build-aws-xen-hvm-centos-7
-            - build-azure-hyperv-centos-7
-            - build-openstack-kvm-centos-7
-            - build-vsphere-esxi-centos-7
         - get: bosh-linux-stemcell-builder
           passed:
             - build-warden-boshlite-centos-7
@@ -735,22 +690,18 @@ jobs:
         - {put: environment, params: {release: environment}}
 
 resources:
-  - name: bosh-src-push
+  - name: bosh-linux-stemcell-builder-push
     type: git
     source:
-      uri: {{bosh_src_push_url}}
+      uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
       branch: {{stemcell-branch}}
       private_key: {{bosh_src_key}}
 
-  - name: bosh-src
+  - name: bosh-linux-stemcell-builder
     type: git
     source:
-      uri: {{bosh_src_url}}
-      branch: {{stemcell-branch}}
-      paths:
-        - "src/bosh-stemcell"
-        - "src/stemcell_builder"
-        - "src/go/src/github.com/cloudfoundry/bosh-agent"
+      uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
+      branch: master
 
   - name: version
     type: semver
@@ -926,12 +877,6 @@ resources:
   #
   # Test Stemcells
   #
-
-  - name: bosh-linux-stemcell-builder
-    type: git
-    source:
-      uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
-      branch: master
 
   - name: bosh-deployment
     type: git
