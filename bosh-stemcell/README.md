@@ -14,9 +14,9 @@ EOF
 cd /tmp/version
 git init
 
-pushd /Users/pivotal/workspace/bosh
+pushd /Users/pivotal/workspace/bosh-linux-stemcell-builder
 fly -t production login
-IAAS=vsphere HYPERVISOR=esxi OS_NAME=ubuntu OS_VERSION=trusty time fly -t production execute -p -x -i version=/tmp/version -i bosh-linux-stemcell-builder=. -c /Users/pivotal/workspace/bosh/ci/pipelines/stemcells/tasks/build.yml -o stemcell=/tmp/vsphere/dev/
+IAAS=vsphere HYPERVISOR=esxi OS_NAME=ubuntu OS_VERSION=trusty time fly -t production execute -p -x -i version=/tmp/version -i bosh-linux-stemcell-builder=. -c /Users/pivotal/workspace/bosh-linux-stemcell-builder/ci/tasks/build.yml -o stemcell=/tmp/vsphere/dev/
 popd
 ```
 
@@ -94,7 +94,7 @@ The AWS_based environment files are located in this directory. The `Vagrantfile`
 
 Once you have prepared your environment and configuration, run `vagrant up`...
 
-    host$ cd src/bosh-stemcell
+    host$ cd bosh-stemcell
     host$ vagrant up remote --provider=aws
 
 You can then use `vagrant ssh` to connect...
@@ -103,9 +103,9 @@ You can then use `vagrant ssh` to connect...
 
 *You're now ready to continue from the **Build Steps** section.*
 
-Whenever you make changes to your local `bosh` directory, you'll need to manually sync them to your existing VM...
+Whenever you make changes to your local `bosh-linux-stemcell-builder` directory, you'll need to manually sync them to your existing VM...
 
-    host$ cd src/bosh-stemcell
+    host$ cd bosh-stemcell
     host$ vagrant provision remote
 
 Once the stemcell-building machine is up, you can run:
@@ -120,7 +120,7 @@ and you can copy files to and from it using `scp localfile remote:/path/to/desti
 
 ## Build Steps
 
-At this point, you should be ssh'd and running within your container or AWS instance in the `bosh` directory. Start by installing the latest dependencies before continuing to a specific build task...
+At this point, you should be ssh'd and running within your container or AWS instance in the `bosh-linux-stemcell-builder` directory. Start by installing the latest dependencies before continuing to a specific build task...
 
     $ echo $PWD
     /opt/bosh (unless you are running on an AWS instance, then it is /bosh)
@@ -203,7 +203,7 @@ By default, the stemcell build number will be `0000`. If you need to manually co
 
 If you want to use an OS Image that you just created, use the `stemcell:build_with_local_os_image` task, specifying the OS image tarball.
 
-    $ bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,trusty,go,$PWD/tmp/ubuntu_base_image.tgz]
+    $ CANDIDATE_BUILD_NUMBER=0000.dev1 bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,trusty,go,$PWD/tmp/ubuntu_base_image.tgz]
 
 You can also download OS Images from the public S3 bucket. Public OS images can be obtained here:
 
@@ -258,7 +258,7 @@ To run the `centos_7_spec.rb` tests for example you will need to:
 
 Then run the following:
 
-    cd /opt/bosh/src/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/centos_base_image.tgz bundle exec rspec -fd spec/os_image/centos_7_spec.rb
+    cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/centos_base_image.tgz bundle exec rspec -fd spec/os_image/centos_7_spec.rb
 
 ##### AWS
 
@@ -287,7 +287,7 @@ To run the stemcell tests when building against local OS image you will need to:
 
 Then run the following:
 ```sh
-    $ cd /opt/bosh/src/bosh-stemcell; \
+    $ cd /opt/bosh/bosh-stemcell; \
     STEMCELL_IMAGE=/mnt/stemcells/aws/xen/ubuntu/work/work/aws-xen-ubuntu.raw \ 
     STEMCELL_WORKDIR=/mnt/stemcells/aws/xen/ubuntu/work/work/chroot \ 
     OS_NAME=ubuntu \ 
