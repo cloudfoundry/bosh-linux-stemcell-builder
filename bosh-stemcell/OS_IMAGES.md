@@ -8,6 +8,12 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `ff_YrJAF76hBo2EVV4psTVHJLnIcrJiJ`
+  - USN-3209-1: SCSI operation restriction
+  - built from master (418178a706310bb8b6f363f8891bbe14990f0d49)
+
+# Images are built from bosh-linux-stemcell-builder repo going ahead
+
 * `ITQtbWQJP3w2b2SsGZ8dzHXaEupaiC.X`
   - USN-3209-1: SCSI operation restriction
   - built from master (523251dee4c4fae1713a3ec0e150f83900fa1efe)
@@ -556,6 +562,12 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+* `D6tswvus1yaj6jVVjcNflt4dowYBjRXw`
+  - Periodic bump
+  - built from master (418178a706310bb8b6f363f8891bbe14990f0d49)
+
+# Images are built from bosh-linux-stemcell-builder repo going ahead
+
 * `pgI5yVzJBSn1SfDD568nJW8gGopmivPP`
   - USN-3209-1: SCSI operation restriction
   - built from develop (523251dee4c4fae1713a3ec0e150f83900fa1efe)
