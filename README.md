@@ -1,4 +1,4 @@
-# bosh-stemcell
+# bosh-linux-stemcell-builder
 
 Tools for creating stemcells.
 
