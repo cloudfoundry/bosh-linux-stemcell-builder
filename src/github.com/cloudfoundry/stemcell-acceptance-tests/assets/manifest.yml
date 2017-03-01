@@ -41,8 +41,5 @@ instance_groups:
   jobs:
   - name: syslog_forwarder
     release: syslog
-    properties:
-      syslog:
-        forward_files: true
     consumes:
       syslog_storer: { from: syslog_storer }
