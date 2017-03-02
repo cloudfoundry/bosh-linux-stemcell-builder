@@ -281,7 +281,7 @@ HERE
     let(:dpkg_list_google_ubuntu) { File.read(spec_asset('dpkg-list-google-ubuntu.txt')) }
     let(:dpkg_list_openstack_ubuntu) { File.read(spec_asset('dpkg-list-openstack-ubuntu.txt')) }
 
-    describe command("dpkg --list | cut -f3 -d ' '"), {
+    describe command("dpkg --list | cut -f3 -d ' ' | sed -E 's/(linux.*4.4).*/\\1/'"), {
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -292,7 +292,7 @@ HERE
       its(:stdout) { should eq(dpkg_list_openstack_ubuntu) }
     end
 
-    describe command("dpkg --list | cut -f3 -d ' '"), {
+    describe command("dpkg --list | cut -f3 -d ' ' | sed -E 's/(linux.*4.4).*/\\1/'"), {
       exclude_on_aws: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
@@ -303,7 +303,7 @@ HERE
       its(:stdout) { should eq(dpkg_list_google_ubuntu) }
     end
 
-    describe command("dpkg --list | cut -f3 -d ' '"), {
+    describe command("dpkg --list | cut -f3 -d ' ' | sed -E 's/(linux.*4.4).*/\\1/'"), {
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -314,7 +314,7 @@ HERE
       its(:stdout) { should eq(dpkg_list_warden_ubuntu) }
     end
 
-    describe command("dpkg --list | cut -f3 -d ' '"), {
+    describe command("dpkg --list | cut -f3 -d ' ' | sed -E 's/(linux.*4.4).*/\\1/'"), {
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
@@ -325,7 +325,7 @@ HERE
       its(:stdout) { should eq(dpkg_list_vcloud_ubuntu) }
     end
 
-    describe command("dpkg --list | cut -f3 -d ' '"), {
+    describe command("dpkg --list | cut -f3 -d ' ' | sed -E 's/(linux.*4.4).*/\\1/'"), {
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -336,7 +336,7 @@ HERE
       its(:stdout) { should eq(dpkg_list_vsphere_ubuntu) }
     end
 
-    describe command("dpkg --list | cut -f3 -d ' '"), {
+    describe command("dpkg --list | cut -f3 -d ' ' | sed -E 's/(linux.*4.4).*/\\1/'"), {
       exclude_on_google: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
