@@ -36,6 +36,7 @@ module Bosh::Stemcell
         :aws_cli,
         :logrotate_config,
         :dev_tools_config,
+        :static_libraries_config,
       ]
     end
 

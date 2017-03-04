@@ -59,6 +59,13 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     describe file('/var/vcap/bosh/etc/dev_tools_file_list') do
       it { should contain('/usr/bin/gcc') }
     end
+    end
+
+  context 'static libraries to remove' do
+    describe file('/var/vcap/bosh/etc/static_libraries_list') do
+      it { should be_file }
+      its (:content) { should eq(backend.run_command('find / -iname "*.a" | sort | uniq')[:stdout]) }
+    end
   end
 
   context 'installed by bosh_harden' do
