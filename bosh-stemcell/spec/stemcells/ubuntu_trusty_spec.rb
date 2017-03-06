@@ -64,7 +64,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
   context 'static libraries to remove' do
     describe file('/var/vcap/bosh/etc/static_libraries_list') do
       it { should be_file }
-      its (:content) { should eq(backend.run_command('find / -iname "*.a" | sort | uniq')[:stdout]) }
+      its (:content) { should contain(backend.run_command('find / -iname "*.a" | sort | uniq')[:stdout]) }
     end
   end
 
