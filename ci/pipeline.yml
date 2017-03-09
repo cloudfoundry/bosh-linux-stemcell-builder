@@ -2,6 +2,7 @@
 groups:
   - name: all
     jobs:
+      - test-unit
       - build-stemcell
       - publish-stemcells
       - test-stemcells
@@ -111,11 +112,21 @@ shared:
       DEPLOYMENT_NAME: certification
 
 jobs:
+  - name: test-unit
+    serial: true
+    plan:
+      - get: bosh-linux-stemcell-builder
+        trigger: true
+      - task: test-unit
+        file: bosh-linux-stemcell-builder/ci/tasks/test-unit.yml
+
   - name: build-stemcell
     serial: true
     plan:
       - get: bosh-linux-stemcell-builder
         trigger: true
+        passed:
+          - test-unit
       - get: version
         params:
           bump: {{stemcell_version_semver_bump}}

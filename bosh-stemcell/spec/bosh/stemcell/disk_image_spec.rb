@@ -27,7 +27,7 @@ module Bosh::Stemcell
     describe '#initialize' do
       it 'requires an image_file_path' do
         options.delete(:image_file_path)
-        expect { DiskImage.new(options) }.to raise_error /key not found: :image_file_path/
+        expect { DiskImage.new(options) }.to raise_error(/key not found: :image_file_path/)
       end
 
       it 'requires an mount_point' do
@@ -171,7 +171,7 @@ module Bosh::Stemcell
         expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
         expect(shell).to receive(:run).with('sudo losetup -dv /dev/loop0', output_command: false).ordered
 
-        expect { disk_image.unmount }.to raise_error
+        expect { disk_image.unmount }.to raise_error RuntimeError
       end
     end
 
@@ -218,7 +218,7 @@ module Bosh::Stemcell
           expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
           expect(shell).to receive(:run).with('sudo losetup -dv /dev/loop0', output_command: false).ordered
 
-          expect { disk_image.while_mounted { |_| raise } }.to raise_error
+          expect { disk_image.while_mounted { |_| raise } }.to raise_error RuntimeError
         end
       end
     end

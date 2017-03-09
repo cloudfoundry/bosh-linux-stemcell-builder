@@ -1,0 +1,13 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: bosh/main-ruby-go
+
+inputs:
+  - name: bosh-linux-stemcell-builder
+
+run:
+  path: bosh-linux-stemcell-builder/ci/tasks/test-unit.sh
