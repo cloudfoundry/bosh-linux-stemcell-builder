@@ -103,6 +103,7 @@ describe Bosh::Stemcell::StemcellPackager do
         'bosh_protocol' => 1,
         'sha1' => 'c1ebdefc3f8282a9d7d47803fb5030b61ffc793d', # SHA-1 of image above
         'operating_system' => 'centos-7',
+        'stemcell_formats'=>['fake_infra-raw'],
         'cloud_properties' => {
           'name' => 'bosh-fake_infra-fake_hypervisor-centos-7-go_agent-raw',
           'version' => '1234',
