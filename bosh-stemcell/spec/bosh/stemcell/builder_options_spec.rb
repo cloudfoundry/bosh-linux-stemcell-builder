@@ -74,9 +74,6 @@ module Bosh::Stemcell
             expect(result['UBUNTU_ISO']).to eq('fake_ubuntu_iso')
             expect(result['UBUNTU_MIRROR']).to eq('fake_ubuntu_mirror')
             expect(result['ruby_bin']).to eq('fake_ruby_bin')
-            expect(result['agent_src_dir']).to eq(
-              File.join(expected_source_root, 'src/github.com/cloudfoundry/bosh-agent')
-            )
             expect(result['image_create_disk_size']).to eq(default_disk_size)
             expect(result['os_image_tgz']).to eq('fake/os_image.tgz')
           end

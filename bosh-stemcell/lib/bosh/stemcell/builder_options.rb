@@ -24,7 +24,6 @@ module Bosh::Stemcell
         'stemcell_operating_system' => operating_system.name,
         'stemcell_operating_system_version' => operating_system.version,
         'ruby_bin' => ruby_bin,
-        'agent_src_dir' => File.join(source_root, 'src/github.com/cloudfoundry/bosh-agent'),
         'image_create_disk_size' => image_create_disk_size,
         'os_image_tgz' => os_image_tgz_path,
       }.merge(environment_variables).merge(ovf_options)

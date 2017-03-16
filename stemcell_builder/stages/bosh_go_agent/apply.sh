@@ -6,8 +6,8 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
 mkdir -p $chroot/etc/sv
-cp -a $dir/assets/runit/agent $chroot/etc/sv/agent
-cp -a $dir/assets/runit/monit $chroot/etc/sv/monit
+cp -a $assets_dir/runit/agent $chroot/etc/sv/agent
+cp -a $assets_dir/runit/monit $chroot/etc/sv/monit
 mkdir -p $chroot/var/vcap/monit/svlog
 
 # Set up agent and monit with runit
@@ -22,16 +22,20 @@ ln -s /etc/sv/monit /etc/service/monit
 "
 
 # Alerts for monit config
-cp -a $dir/assets/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
+cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
 
-agent_dir=$assets_dir/src/github.com/cloudfoundry/bosh-agent
+cd $assets_dir
+if is_ppc64le; then
+  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-0.0.9-linux-ppc64le?versionId=nsp4Mhgp.4D8RRrKa1xvRD.alPh1eboL"
+  echo "416fe9bb129027d1f2bbe0ec3333021f2733decf912e13fee6ec9dff895473f0  bosh-agent" | shasum -a 256 -c -
+else
+  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-0.0.8-linux-amd64?versionId=cnd7fl_5s85XxeTJjkfezDit1PDCiHKV"
+  echo "92a48eba8857c4ee732ced856a16654468bb96a7a1192b056d2175e8f7109334  bosh-agent" | shasum -a 256 -c -
+fi
+mv bosh-agent $chroot/var/vcap/bosh/bin/
 
-cd $agent_dir
-bin/build
-mv out/bosh-agent $chroot/var/vcap/bosh/bin/
-cp Tools/bosh-agent-rc $chroot/var/vcap/bosh/bin/
-chmod 600 mbus/agent.key
-cp mbus/agent.{cert,key} $chroot/var/vcap/bosh/
+cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
+cp $assets_dir/mbus/agent.{cert,key} $chroot/var/vcap/bosh/
 
 # Download CLI source or release from github into assets directory
 cd $assets_dir
@@ -40,14 +44,14 @@ mkdir davcli
 current_version=0.0.6
 curl -L -o davcli/davcli https://s3.amazonaws.com/davcli/davcli-${current_version}-linux-amd64
 echo "6b42b9833ad8f4945ce2d7f995f4dbb0e3503b08 davcli/davcli" | sha1sum -c -
-cd $assets_dir/davcli
-mv davcli $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
+mv davcli/davcli $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 
 
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent-rc
 chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
+chmod 600 $chroot/var/vcap/bosh/agent.key
 
 # Setup additional permissions
 run_in_chroot $chroot "
@@ -81,7 +85,7 @@ chown root:root /var/vcap/monit/alerts.monitrc
 echo '{}' > $chroot/var/vcap/bosh/agent.json
 
 # We need to capture ssh events
-cp $dir/assets/rsyslog.d/10-auth_agent_forwarder.conf $chroot/etc/rsyslog.d/10-auth_agent_forwarder.conf
+cp $assets_dir/rsyslog.d/10-auth_agent_forwarder.conf $chroot/etc/rsyslog.d/10-auth_agent_forwarder.conf
 
 # this directory is utilized by the agent/init/create-env
 # https://github.com/cloudfoundry/bosh-agent/blob/1a6b1e11acd941e65c4f4155c22ff9a8f76098f9/micro/https_handler.go#L119
