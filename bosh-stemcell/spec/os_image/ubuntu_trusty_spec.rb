@@ -124,6 +124,8 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
     %w(
       anacron
       apparmor-utils
+      autoconf
+      automake
       bind9-host
       bison
       cloud-guest-utils
@@ -147,11 +149,13 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       libpam-cracklib
       libreadline6-dev
       libssl-dev
+      libtool
       libxml2
       libxml2-dev
       libxslt1-dev
       libxslt1.1
       lsof
+      m4
       mg
       module-assistant
       nfs-common
