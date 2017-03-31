@@ -23,6 +23,26 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
+  context 'installed by base_centos_umask' do
+    describe file('/etc/profile') do
+      it { should be_file }
+      it { should contain 'umask 077'}
+      it { should_not contain 'umask 022'}
+    end
+
+    describe file('/etc/bashrc') do
+      it { should be_file }
+      it { should contain 'umask 077' }
+      it { should_not contain 'umask 022' }
+    end
+
+    describe file('/etc/csh.cshrc') do
+      it { should be_file }
+      it { should contain 'umask 077'}
+      it { should_not contain 'umask 022'}
+    end
+  end
+
   context 'installed by base_centos_packages' do
     %w(
       bison
