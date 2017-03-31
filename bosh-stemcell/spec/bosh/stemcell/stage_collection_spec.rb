@@ -79,6 +79,7 @@ module Bosh::Stemcell
               :bosh_sudoers,
               :password_policies,
               :restrict_su_command,
+              :base_centos_umask,
               :tty_config,
               :rsyslog_config,
               :delay_monit_start,
