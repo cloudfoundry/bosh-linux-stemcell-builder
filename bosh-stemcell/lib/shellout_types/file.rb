@@ -1,91 +1,146 @@
 module ShelloutTypes
   class File
-    @@chroot_dir=''
-
-    def self.chroot_dir=(dir)
-      @@chroot_dir = dir
-    end
-
-    def initialize(path)
+    def initialize(path, chroot)
       @path = path
+      @chroot = chroot
     end
 
+    #TODO better handling of errors beside 'file not exist'
     def file?
-      ::File.file?(filepath)
+      begin
+        stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
+
+        !(stdout.strip.match(/\Aregular (empty )?file\Z/).nil?)
+      rescue RuntimeError
+        return false
+      end
     end
 
     def owned_by?(username)
-      cmd = ['-c', "getent passwd #{::File.stat(filepath).uid}"]
-      stdout, _, status = Open3.capture3('sudo', 'chroot', @@chroot_dir, '/bin/bash', *cmd)
-      raise RuntimeError, "user #{username} does not exist" if status.exitstatus == 2
+      stdout, stderr, status = @chroot.run('stat', '-c', '%u', @path)
+      stdout.strip!
 
-      stdout.split(':').first == username
+      raise RuntimeError, stderr if status != 0
+
+      stdout, stderr, status = @chroot.run("getent passwd #{stdout}")
+      raise RuntimeError, "user for file #{filepath} does not exist" if status == 2
+      raise RuntimeError, stderr if status != 0
+
+      passwd_split = stdout.split(':', -1)
+      raise RuntimeError, "passwd has an invalid format: #{stdout}" if passwd_split.size != 7
+
+      passwd_split.first == username
     end
 
     def content
-      ::File.read(filepath)
+      stdout, stderr, status = @chroot.run("cat", @path)
+      raise RuntimeError, stderr if status != 0
+
+      return stdout
     end
 
     def mode?(expected_mode)
-      expected_mode == (::File.stat(filepath).mode & 0777)
+      expected_mode == mode
+    end
+
+    def mode
+      stdout, stderr, status = @chroot.run('stat', '-c', '%a', @path)
+      raise RuntimeError, stderr if status != 0
+
+      stdout.strip.to_i(8) & 0777
     end
 
     def group
-      fileGid = ::File.stat(filepath).gid
-      cmd = ["-c", "getent group #{fileGid}"]
-      stdout, _, status = Open3.capture3('sudo', 'chroot', @@chroot_dir, '/bin/bash', *cmd)
-      raise RuntimeError, "group #{fileGid} does not exist" if status.exitstatus == 2
-
-      stdout.split(':').first
+      group_entry.first
     end
 
-    def executable?
-      (::File.stat(filepath).mode & 0111) != 0
+    def executable_?
+      stdout, stderr, status = @chroot.run('stat', '-c', '%a', @path)
+      raise RuntimeError, stderr if status != 0
+
+      (stdout.strip.to_i(8) & 0111) != 0
     end
 
     def directory?
+      #TODO stop this
       ::File.directory?(filepath)
     end
 
     def readable_by_user?(username)
-      file_stat = ::File.stat(filepath)
-
+      this_mode = mode
       if owned_by?(username)
-        return (file_stat.mode & 0400) != 0
+        return (this_mode & 0400) != 0
       end
 
-      fileGid = file_stat.gid
-      cmd = ["-c", "getent group #{fileGid}"]
-      stdout, _, _ = Open3.capture3('sudo', 'chroot', @@chroot_dir, '/bin/bash', *cmd)
-      members = stdout.strip.split(':').last.split(',')
-      gid = stdout.strip.split(':')[2]
+      members = group_entry.last.split(',')
 
-      cmd = ["-c", "getent passwd #{username}"]
-      stdout, _, _ = Open3.capture3('sudo', 'chroot', @@chroot_dir, '/bin/bash', *cmd)
-      gid_username = stdout.strip.split(':')[3]
+      stdout, stderr, status = @chroot.run("getent passwd #{username}")
+      raise RuntimeError, "user #{username} does not exist" if status == 2
+      raise RuntimeError, stderr if status != 0
 
-      if members.include?(username) || (gid == gid_username)
-        return (file_stat.mode & 0040) != 0
+      passwd_split = stdout.strip.split(':', -1)
+      raise RuntimeError, "passwd has an invalid format: #{stdout}" if passwd_split.size != 7
+
+      gid_for_username = passwd_split[3]
+
+      members.map!(&:strip)
+
+      if members.include?(username) || (gid == gid_for_username)
+        return (this_mode & 0040) != 0
       end
-
+      # TODO STOP
       ::File.world_readable?(filepath) != nil
     end
 
     def writable_by?(by_whom)
       case by_whom
         when 'group'
+          # TODO STOP
           return (::File.stat(filepath).mode & 0020) != 0
         when 'other'
+          # TODO STOP
           return (::File.stat(filepath).mode & 0002) != 0
         else
           raise "#{by_whom} is an invalid input to writable_by?, please specify one of: ['group', 'other']"
       end
     end
 
+    def linked_to?(target)
+      true_path_in_chroot == target
+    end
+
     private
 
+    def true_path_in_chroot
+      stdout, stderr, status = @chroot.run('readlink', '-m', @path)
+      raise RuntimeError, stderr if status != 0
+
+      stdout.strip
+    end
+
     def filepath
-      ::File.join(@@chroot_dir, @path)
+      @chroot.join(@path)
+    end
+
+    def gid
+      stdout, stderr, status = @chroot.run('stat', '-c', '%g', @path)
+      raise RuntimeError, stderr if status != 0
+
+      stdout.strip
+    end
+
+    def group_entry
+      fetch_and_validate_group_entry_for_gid(gid)
+    end
+
+    def fetch_and_validate_group_entry_for_gid(group_id)
+      stdout, stderr, status = @chroot.run("getent group #{group_id}")
+      raise RuntimeError, "group #{group_id} does not exist" if status == 2
+      raise RuntimeError, stderr if status != 0
+
+      group_split = stdout.split(':', -1)
+      raise RuntimeError, "group entry is an invalid format: #{stdout}" if group_split.size != 4
+      return group_split
     end
   end
 end

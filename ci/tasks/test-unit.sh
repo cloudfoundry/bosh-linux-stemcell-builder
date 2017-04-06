@@ -5,7 +5,7 @@ chruby 2.3.1
 
 set +e
 #create user for ShelloutTypes::File tests
-useradd -G nogroup shellout
+chroot /tmp/ubuntu-chroot /bin/bash -c 'useradd -G nogroup shellout'
 set -e
 
 pushd bosh-linux-stemcell-builder
