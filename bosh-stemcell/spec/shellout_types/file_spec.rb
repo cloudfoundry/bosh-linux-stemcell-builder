@@ -27,8 +27,9 @@ module ShelloutTypes
       fail("unable to add user to group") if status.exitstatus != 0
     end
 
-#    let(:chroot_dir) { Dir.mktmpdir('chroot') }
-    let(:chroot_dir) { '/tmp/ubuntu-chroot' }
+    let(:chroot_dir) {
+      ENV['SHELLOUT_CHROOT_DIR']
+    }
     let(:regular_file) { described_class.new(::File.basename(Tempfile.new('a-file', chroot_dir))) }
     let(:directory_file) { described_class.new(::File.basename(Dir.mktmpdir('a-dir', chroot_dir))) }
     let(:nobody_uid) { 65534 }
