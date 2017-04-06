@@ -4,12 +4,57 @@ require 'shellout_types/file'
 
 module ShelloutTypes
   describe File, shellout_types: true do
-    let(:chroot_dir) { Dir.mktmpdir('chroot') }
+    def create_user
+      random_uid = rand(100) + 1 * 65535
+      cmd = ["-c", "useradd -u #{random_uid} user-#{random_uid}"]
+      _, _, status = Open3.capture3('sudo', 'chroot', chroot_dir, '/bin/bash', *cmd)
+      fail("unable to create ephemeral user") if status.exitstatus != 0
+
+      random_uid
+    end
+
+    def create_group
+      random_gid = rand(100) + 1 * 65535
+      cmd = ["-c", "groupadd -g #{random_gid} group-#{random_gid}"]
+      _, _, status = Open3.capture3('sudo', 'chroot', chroot_dir, '/bin/bash', *cmd)
+      fail("unable to create ephemeral group") if status.exitstatus != 0
+      random_gid
+    end
+
+    def add_user_to_group(random_gid, user_name)
+      cmd = ["-c", "usermod -a -G group-#{random_gid} #{user_name}"]
+      _, _, status = Open3.capture3('sudo', 'chroot', chroot_dir, '/bin/bash', *cmd)
+      fail("unable to add user to group") if status.exitstatus != 0
+    end
+
+#    let(:chroot_dir) { Dir.mktmpdir('chroot') }
+    let(:chroot_dir) { '/tmp/ubuntu-chroot' }
     let(:regular_file) { described_class.new(::File.basename(Tempfile.new('a-file', chroot_dir))) }
     let(:directory_file) { described_class.new(::File.basename(Dir.mktmpdir('a-dir', chroot_dir))) }
+    let(:nobody_uid) { 65534 }
+    let(:nogroup_gid) { 65534 }
+    let(:ephemeral_user_name) { "user-#{ephemeral_uid}" }
+    let(:ephemeral_group_name) { "group-#{ephemeral_gid}" }
+    let(:ephemeral_uid) { create_user }
+    let(:ephemeral_gid) {
+      gid = create_group
+      add_user_to_group(gid, ephemeral_user_name)
+      gid
+    }
 
     before do
+      srand RSpec.configuration.seed
       ShelloutTypes::File.chroot_dir = chroot_dir
+    end
+
+    after do
+      cmd = ["-c", "groupdel #{ephemeral_group_name}"]
+      _, _, status = Open3.capture3('sudo', 'chroot', chroot_dir, '/bin/bash', *cmd)
+      fail("unable to remove ephemeral group") if status.exitstatus != 0
+
+      cmd = ["-c", "userdel #{ephemeral_user_name}"]
+      _, _, status = Open3.capture3('sudo', 'chroot', chroot_dir, '/bin/bash', *cmd)
+      fail("unable to remove ephemeral user") if status.exitstatus != 0
     end
 
     describe '#file?' do
@@ -35,18 +80,41 @@ module ShelloutTypes
     end
 
     describe '#owned_by?' do
-      let(:current_user) { Etc.getpwuid(Process.uid).name }
+      let(:owned_file) {
+        owned_file = Tempfile.new('a-file', chroot_dir).path
+        ::File.chown(ephemeral_uid, nil, owned_file)
+
+        described_class.new(::File.basename(owned_file))
+      }
 
       context 'when the provided user owns the file' do
         it 'returns true' do
-          expect(regular_file.owned_by?(current_user)).to eq(true)
+          expect(owned_file.owned_by?(ephemeral_user_name)).to eq(true)
         end
       end
 
       context 'when the provided user does not own the file' do
-        it 'returns true' do
-          expect(regular_file.owned_by?('fake-user')).to eq(false)
+        it 'returns false' do
+          expect(owned_file.owned_by?('fake-user')).to eq(false)
         end
+      end
+
+      context 'when the underlying file belongs to a user that does not exist' do
+        let(:file_with_unknown_owner) {
+          random_uid = rand(100) + 1 * 65535
+          file_with_unknown_owner = Tempfile.new('a-file', chroot_dir).path
+          ::File.chown(random_uid, nil, file_with_unknown_owner)
+
+          described_class.new(::File.basename(file_with_unknown_owner))
+        }
+
+        it('should raise an error') do
+          expect { file_with_unknown_owner.owned_by?(ephemeral_user_name) }.to raise_error(RuntimeError, "user #{ephemeral_user_name} does not exist")
+        end
+      end
+
+      context 'when an unexpected error occurs' do
+
       end
     end
 
@@ -78,19 +146,43 @@ module ShelloutTypes
     end
 
     describe '#group' do
-      let(:current_group) { Etc.getgrgid(Process.gid).name }
+      let(:group_file) {
+        group_file = Tempfile.new('a-file', chroot_dir).path
+        ::File.chown(nil, ephemeral_gid, group_file)
+
+        described_class.new(::File.basename(group_file))
+      }
 
       it 'returns the group of the file' do
-        expect(regular_file.group).to eq(current_group)
+        expect(group_file.group).to eq(ephemeral_group_name)
+      end
+
+      context('when the group belonging to the file does not exist') do
+        let(:current_group) { rand(100) + 1 * 65535 }
+
+        let(:testgroup_file) {
+          testgroup_file = Tempfile.new('a-file', chroot_dir).path
+          ::File.chown(nil, current_group, testgroup_file)
+
+          described_class.new(::File.basename(testgroup_file))
+        }
+
+        it 'should raise' do
+          expect { testgroup_file.group }.to raise_error(RuntimeError, "group #{current_group} does not exist")
+        end
+      end
+
+      context 'when an unexpected error occurs' do
+
       end
     end
 
     describe '#readable_by_user?' do
-      let(:current_user) { Etc.getpwuid(Process.uid).name }
-
       context 'when the file is owned by the specific user' do
         let(:user_file) do
-          Tempfile.new('a-file', chroot_dir).path
+          user_file = Tempfile.new('a-file', chroot_dir).path
+          ::File.chown(ephemeral_uid, nil, user_file)
+          user_file
         end
 
         context 'and readable' do
@@ -100,7 +192,7 @@ module ShelloutTypes
           end
 
           it 'returns true' do
-            expect(user_readable_file.readable_by_user?(current_user)).to eq(true)
+            expect(user_readable_file.readable_by_user?(ephemeral_user_name)).to eq(true)
           end
         end
 
@@ -111,7 +203,7 @@ module ShelloutTypes
           end
 
           it 'returns false' do
-            expect(user_unreadable_file.readable_by_user?(current_user)).to eq(false)
+            expect(user_unreadable_file.readable_by_user?(ephemeral_user_name)).to eq(false)
           end
         end
       end
@@ -120,7 +212,7 @@ module ShelloutTypes
         context 'and the user gid matches the gid of the file' do
           let(:group_file) do
             group_file = Tempfile.new('a-file', chroot_dir).path
-            ::File.chown(Etc.getpwnam('nobody').uid, Etc.getgrnam(current_user).gid, group_file)
+            ::File.chown(nobody_uid, ephemeral_gid, group_file)
             group_file
           end
 
@@ -131,17 +223,32 @@ module ShelloutTypes
             end
 
             it 'returns true' do
-              expect(group_readable_file.readable_by_user?(current_user)).to eq(true)
+              expect(group_readable_file.readable_by_user?(ephemeral_user_name)).to eq(true)
             end
           end
 
         end
 
         context 'and the user belongs to the file group members' do
+          let(:group_name_with_members) { "group-#{group_with_members}" }
+
+          let(:group_with_members) {
+            random_gid = create_group
+            add_user_to_group(random_gid, ephemeral_user_name)
+            random_gid
+          }
+
+
           let(:group_file) do
             group_file = Tempfile.new('a-file', chroot_dir).path
-            ::File.chown(Etc.getpwnam('nobody').uid, Etc.getgrnam('nogroup').gid, group_file)
+            ::File.chown(nobody_uid, group_with_members, group_file)
             group_file
+          end
+
+          after do
+            cmd = ["-c", "groupdel #{group_name_with_members}"]
+            _, _, status = Open3.capture3('sudo', 'chroot', chroot_dir, '/bin/bash', *cmd)
+            fail("unable to remove ephemeral group") if status.exitstatus != 0
           end
 
           context 'and the file is group readable' do
@@ -151,7 +258,7 @@ module ShelloutTypes
             end
 
             it 'returns true' do
-              expect(group_readable_file.readable_by_user?('shellout')).to eq(true)
+              expect(group_readable_file.readable_by_user?(ephemeral_user_name)).to eq(true)
             end
           end
 
@@ -162,7 +269,7 @@ module ShelloutTypes
             end
 
             it 'returns false' do
-              expect(group_unreadable_file.readable_by_user?(current_user)).to eq(false)
+              expect(group_unreadable_file.readable_by_user?(ephemeral_user_name)).to eq(false)
             end
           end
         end
@@ -171,7 +278,7 @@ module ShelloutTypes
       context 'when the user is not the owner or file group member' do
         let(:world_file) do
           world_file = Tempfile.new('a-file', chroot_dir).path
-          ::File.chown(Etc.getpwnam('nobody').uid, Etc.getgrnam('nogroup').gid, world_file)
+          ::File.chown(nobody_uid, nogroup_gid, world_file)
           world_file
         end
 
@@ -182,7 +289,7 @@ module ShelloutTypes
           end
 
           it 'returns true' do
-            expect(world_readable_file.readable_by_user?(current_user)).to eq(true)
+            expect(world_readable_file.readable_by_user?(ephemeral_user_name)).to eq(true)
           end
         end
 
@@ -193,7 +300,7 @@ module ShelloutTypes
           end
 
           it 'returns false' do
-            expect(world_unreadable_file.readable_by_user?(current_user)).to eq(false)
+            expect(world_unreadable_file.readable_by_user?(ephemeral_user_name)).to eq(false)
           end
         end
       end
