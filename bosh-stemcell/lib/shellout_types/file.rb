@@ -54,7 +54,7 @@ module ShelloutTypes
       group_entry.first
     end
 
-    def executable_?
+    def executable?
       stdout, stderr, status = @chroot.run('stat', '-c', '%a', @path)
       raise RuntimeError, stderr if status != 0
 

@@ -7,7 +7,7 @@ shared_examples_for 'All Stemcells' do
       let(:expected_version) { ENV['CANDIDATE_BUILD_NUMBER'] || '0000' }
 
       it { should be_file }
-      it { should contain expected_version }
+      its(:content) { should eq expected_version }
     end
 
     describe file '/var/vcap/bosh/etc/stemcell_git_sha1' do
@@ -15,7 +15,7 @@ shared_examples_for 'All Stemcells' do
       its(:content) { should match '^[0-9a-f]{40}\+?$' }
     end
 
-    describe command 'ls -l /etc/ssh/*_key*' do
+    describe command('ls -l /etc/ssh/*_key*') do
       its(:stderr) { should match /No such file or directory/ }
     end
   end
@@ -66,11 +66,11 @@ shared_examples_for 'All Stemcells' do
 
   context 'libyaml should be installed' do
     describe command('test -L /usr/lib64/libyaml.so') do
-      it { should return_exit_status(0) }
+      it('exits 0') { expect(subject.exit_status).to eq(0) }
     end
 
     describe command('readlink -e /usr/lib64/libyaml.so') do
-      it { should return_exit_status(0) }
+      it('exits 0') { expect(subject.exit_status).to eq(0) }
     end
   end
 
@@ -101,13 +101,17 @@ shared_examples_for 'All Stemcells' do
   describe 'logrotate' do
     describe 'should rotate every 15 minutes' do
       describe file('/etc/cron.d/logrotate') do
-        it { should contain '0,15,30,45 * * * * root /usr/bin/logrotate-cron' }
+        it 'lists the schedule precisely' do
+          expect(subject.content).to match /\A0,15,30,45 \* \* \* \* root \/usr\/bin\/logrotate-cron\Z/
+        end
       end
     end
 
     describe 'default su directive' do
       describe file('/etc/logrotate.d/default_su_directive') do
-        it { should contain 'su root root' }
+        it 'does `su root root` after any leading comments' do
+          expect(subject.content).to match /\A(#.*\n)*su root root\Z/
+        end
       end
     end
   end

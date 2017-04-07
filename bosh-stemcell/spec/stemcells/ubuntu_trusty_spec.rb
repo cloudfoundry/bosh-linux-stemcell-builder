@@ -6,22 +6,22 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
   context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
     describe file('/boot/grub/grub.conf') do
       it { should be_file }
-      it { should contain 'default=0' }
-      it { should contain 'timeout=1' }
+      its(:content) { should match 'default=0' }
+      its(:content) { should match 'timeout=1' }
       its(:content) { should match %r{^title Ubuntu 14\.04.* LTS \(.*\)$} }
-      it { should contain '  root (hd0,0)' }
+      its(:content) { should match /^  root \(hd0,0\)$/ }
       its(:content) { should match %r{kernel /boot/vmlinuz-\S+-generic ro root=UUID=} }
-      it { should contain ' selinux=0' }
-      it { should contain ' cgroup_enable=memory swapaccount=1' }
-      it { should contain ' console=tty0 console=ttyS0,115200n8' }
-      it { should contain ' earlyprintk=ttyS0 rootdelay=300' }
+      its(:content) { should match ' selinux=0' }
+      its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
+      its(:content) { should match ' console=tty0 console=ttyS0,115200n8' }
+      its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
       its(:content) { should match %r{initrd /boot/initrd.img-\S+-generic} }
 
-      it('should set the grub menu password (stig: V-38585)') { should contain /^password --md5 \*/ }
-      it('should be of mode 600 (stig: V-38583)') { should be_mode('600') }
-      it('should be owned by root (stig: V-38579)') { should be_owned_by('root') }
-      it('should be grouped into root (stig: V-38581)') { should be_grouped_into('root') }
-      it('audits processes that start prior to auditd (CIS-8.1.3)') { should contain ' audit=1' }
+      it('should set the grub menu password (stig: V-38585)') { expect(subject.content).to match /^password --md5 \*/ }
+      it('should be of mode 600 (stig: V-38583)') { expect(subject).to be_mode(0600) }
+      it('should be owned by root (stig: V-38579)') { expect(subject).to be_owned_by('root') }
+      it('should be grouped into root (stig: V-38581)') { expect(subject.group).to eq('root') }
+      it('audits processes that start prior to auditd (CIS-8.1.3)') { expect(subject.content).to match ' audit=1' }
     end
 
     describe file('/boot/grub/menu.lst') do
@@ -44,35 +44,43 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
         it { should be_file }
         it { should be_executable }
         it { should be_owned_by('root') }
-        it { should be_grouped_into('root') }
+        its(:group) { should match /\Aroot\Z/ }
       end
     end
   end
 
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/operating_system') do
-      it { should contain('ubuntu') }
+      its(:content) { should match('ubuntu') }
     end
   end
 
   context 'installed by dev_tools_config' do
     describe file('/var/vcap/bosh/etc/dev_tools_file_list') do
-      it { should contain('/usr/bin/gcc') }
+      its(:content) { should match('/usr/bin/gcc') }
     end
     end
 
   context 'static libraries to remove' do
     describe file('/var/vcap/bosh/etc/static_libraries_list') do
       it { should be_file }
-      it { should contain(backend.run_command('find / -iname "*.a" | sort | uniq')[:stdout]) }
+
+      it 'should be a proper superset of the installed static libraries' do
+        libraries_to_remove = subject.content.split("\n")
+        found_libraries = command('find / -iname "*.a" | sort | uniq').stdout.split("\n")
+
+        found_libraries.each do |library|
+          expect(libraries_to_remove.include?(library)).to eq(true)
+        end
+      end
     end
   end
 
   context 'installed by bosh_harden' do
     describe 'disallow unsafe setuid binaries' do
-      subject { backend.run_command('find -L / -xdev -perm +6000 -a -type f')[:stdout].split }
+      subject { command('find -L / -xdev -perm +6000 -a -type f') }
 
-      it { should match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit)) }
+      it('includes the correct binaries') { expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit)) }
     end
   end
 
@@ -94,8 +102,8 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
   } do
     describe file('/etc/network/interfaces') do
       it { should be_file }
-      it { should contain 'auto lo' }
-      it { should contain 'iface lo inet loopback' }
+      its(:content) { should match 'auto lo' }
+      its(:content) { should match 'iface lo inet loopback' }
     end
   end
 
@@ -110,8 +118,8 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
   } do
     describe file('/etc/network/interfaces') do
       it { should be_file }
-      it { should contain 'auto eth0' }
-      it { should contain 'iface eth0 inet dhcp' }
+      its(:content) { should match 'auto eth0' }
+      its(:content) { should match 'iface eth0 inet dhcp' }
     end
   end
 
@@ -205,7 +213,7 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should contain('"Type": "HTTP"') }
+      its(:content) { should match('"Type": "HTTP"') }
     end
   end
 
@@ -220,7 +228,7 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should contain('"Type": "InstanceMetadata"') }
+      its(:content) { should match('"Type": "InstanceMetadata"') }
     end
   end
 
@@ -235,9 +243,9 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should contain('"CreatePartitionIfNoEphemeralDisk": true') }
-      it { should contain('"Type": "ConfigDrive"') }
-      it { should contain('"Type": "HTTP"') }
+      its(:content) { should match('"CreatePartitionIfNoEphemeralDisk": true') }
+      its(:content) { should match('"Type": "ConfigDrive"') }
+      its(:content) { should match('"Type": "HTTP"') }
     end
   end
 
@@ -252,7 +260,7 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should contain('"Type": "CDROM"') }
+      its(:content) { should match('"Type": "CDROM"') }
     end
   end
 
@@ -267,9 +275,9 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should contain('"Type": "File"') }
-      it { should contain('"SettingsPath": "/var/vcap/bosh/user_data.json"') }
-      it { should contain('"UseRegistry": true') }
+      its(:content) { should match('"Type": "File"') }
+      its(:content) { should match('"SettingsPath": "/var/vcap/bosh/user_data.json"') }
+      its(:content) { should match('"UseRegistry": true') }
     end
   end
 
@@ -360,15 +368,15 @@ end
 
 describe 'Ubuntu 14.04 stemcell tarball', stemcell_tarball: true do
   context 'installed by bosh_dpkg_list stage' do
-    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/stemcell_dpkg_l.txt") do
+    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/stemcell_dpkg_l.txt", ShelloutTypes::Chroot.new('/')) do
       it { should be_file }
-      it { should contain 'Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend' }
-      it { should contain 'ubuntu-minimal' }
+      its(:content) { should match 'Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend' }
+      its(:content) { should match 'ubuntu-minimal' }
     end
   end
 
   context 'installed by dev_tools_config stage' do
-    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/dev_tools_file_list.txt") do
+    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/dev_tools_file_list.txt", ShelloutTypes::Chroot.new('/')) do
       it { should be_file }
     end
   end

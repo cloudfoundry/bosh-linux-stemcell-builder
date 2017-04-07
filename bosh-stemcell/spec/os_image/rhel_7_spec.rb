@@ -92,7 +92,7 @@ describe 'RHEL 7 OS image', os_image: true do
 
   context 'ensure sendmail is removed (stig: V-38671)' do
     describe command('rpm -q sendmail') do
-      its (:stdout) { should include ('package sendmail is not installed')}
+      its (:stdout) { should match ('package sendmail is not installed')}
     end
   end
 end

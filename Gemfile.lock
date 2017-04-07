@@ -38,7 +38,6 @@ GEM
       nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
     gibberish (1.4.0)
-    highline (1.7.8)
     ipaddress (0.8.3)
     little-plugger (1.1.4)
     logging (1.8.2)
@@ -46,7 +45,6 @@ GEM
       multi_json (>= 1.8.4)
     mini_portile2 (2.1.0)
     multi_json (1.12.1)
-    net-ssh (3.1.1)
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
@@ -70,12 +68,6 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
-    serverspec (0.15.4)
-      highline
-      net-ssh
-      rspec (>= 2.13.0)
-      specinfra (>= 0.7.1)
-    specinfra (1.15.0)
     timecop (0.7.3)
     yajl-ruby (1.2.1)
 
@@ -92,8 +84,6 @@ DEPENDENCIES
   rspec
   rspec-instafail
   rspec-its
-  serverspec (= 0.15.4)
-  specinfra (= 1.15.0)
   timecop
 
 BUNDLED WITH

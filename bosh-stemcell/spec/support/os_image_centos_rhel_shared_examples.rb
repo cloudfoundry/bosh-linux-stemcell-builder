@@ -1,7 +1,7 @@
 shared_examples_for 'a CentOS or RHEL based OS image' do
 
   describe command('ls -1 /lib/modules | wc -l') do
-    its(:stdout) {should eq "1\n"}
+    its(:stdout) { should eq "1\n" }
   end
 
   describe package('apt') do
@@ -22,13 +22,13 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
 
     describe file('/etc/localtime') do
-      it { should contain 'UTC' }
+      its(:content) { should match 'UTC' }
     end
 
     describe file('/usr/lib/systemd/system/runit.service') do
       it { should be_file }
-      it { should contain 'Restart=always' }
-      it { should contain 'KillMode=process' }
+      its(:content) { should match 'Restart=always' }
+      its(:content) { should match 'KillMode=process' }
     end
   end
 
@@ -58,7 +58,7 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
         aes192-ctr
         aes128-ctr
       ).join(',')
-      expect(sshd_config).to contain(/^Ciphers #{ciphers}$/)
+      expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
     it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
@@ -68,7 +68,7 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
         hmac-ripemd160
         hmac-sha1
       ).join(',')
-      expect(sshd_config).to contain(/^MACs #{macs}$/)
+      expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
   end
 
@@ -86,8 +86,8 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
   context 'readahead-collector should be disabled' do
     describe file('/etc/sysconfig/readahead') do
       it { should be_file }
-      it { should contain 'READAHEAD_COLLECT="no"' }
-      it { should contain 'READAHEAD_COLLECT_ON_RPM="no"' }
+      its(:content) { should match 'READAHEAD_COLLECT="no"' }
+      its(:content) { should match 'READAHEAD_COLLECT_ON_RPM="no"' }
     end
   end
 
@@ -112,23 +112,21 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
   context 'login and password restrictions' do
     describe file('/etc/pam.d/system-auth') do
       it 'must prohibit the reuse of passwords within twenty-four iterations (stig: V-38658)' do
-        should contain /password.*pam_unix\.so.*remember=24/
+        expect(subject.content).to match /password.*pam_unix\.so.*remember=24/
       end
 
       it 'must prohibit new passwords shorter than 14 characters (stig: V-38475)' do
-        should contain /password.*pam_unix\.so.*minlen=14/
+        expect(subject.content).to match /password.*pam_unix\.so.*minlen=14/
       end
 
       it 'must restrict a user account after 5 failed login attempts (stig: V-38573 V-38501)' do
-        should contain(/auth.*pam_faillock\.so.*authfail.*deny=5.*fail_interval=900/).from(/auth.*pam_unix.so/).to(/auth.*pam_faillock.so.*authsucc/)
-        should contain(/auth.*pam_faillock\.so.*authsucc.*deny=5.*fail_interval=900/).from(/auth.*pam_faillock\.so.*authfail/).to(/auth.*pam_deny\.so/)
+        expect(subject.content).to match /auth.*pam_unix.so.*\nauth.*default=die.*pam_faillock\.so.*authfail.*deny=5.*fail_interval=900\nauth\s*sufficient\s*pam_faillock\.so.*authsucc.*deny=5.*fail_interval=900/
       end
     end
 
     describe file('/etc/pam.d/password-auth') do
       it 'must restrict a user account after 5 failed login attempts (stig: V-38573 V-38501)' do
-        should contain(/auth.*pam_faillock\.so.*authfail.*deny=5.*fail_interval=900/).from(/auth.*pam_unix.so/).to(/auth.*pam_faillock.so.*authsucc/)
-        should contain(/auth.*pam_faillock\.so.*authsucc.*deny=5.*fail_interval=900/).from(/auth.*pam_faillock\.so.*authfail/).to(/auth.*pam_deny\.so/)
+        expect(subject.content).to match /auth.*pam_unix.so.*\nauth.*default=die.*pam_faillock\.so.*authfail.*deny=5.*fail_interval=900\nauth\s*sufficient\s*pam_faillock\.so.*authsucc.*deny=5.*fail_interval=900/
       end
     end
   end

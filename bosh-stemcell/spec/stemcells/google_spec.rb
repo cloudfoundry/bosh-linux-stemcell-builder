@@ -18,15 +18,12 @@ describe 'Google Stemcell', stemcell_image: true do
   end
 
   context 'installed by system_google_packages' do
-    let(:owner) { 'root' }
-    let(:group) { 'root' }
-
     describe 'Google agent has configuration file' do
       subject { file('/etc/default/instance_configs.cfg.template') }
 
       it { should be_file }
-      it { should be_owned_by(owner) }
-      it { should be_grouped_into(group) }
+      it { should be_owned_by('root') }
+      its(:group) { should match /\Aroot\Z/ }
     end
 
     case ENV['OS_NAME']
@@ -47,8 +44,8 @@ describe 'Google Stemcell', stemcell_image: true do
         ].each do |conf_file|
           describe file(conf_file) do
             it { should be_file }
-            it { should be_owned_by(owner) }
-            it { should be_grouped_into(group) }
+            it { should be_owned_by('root') }
+            its(:group) { should match /\Aroot\Z/ }
           end
         end
       when 'centos', 'rhel'
@@ -68,8 +65,8 @@ describe 'Google Stemcell', stemcell_image: true do
         ].each do |conf_file|
           describe file(conf_file) do
             it { should be_file }
-            it { should be_owned_by(owner) }
-            it { should be_grouped_into(group) }
+            it { should be_owned_by('root') }
+            its(:group) { should match /\Aroot\Z/ }
           end
         end
     end

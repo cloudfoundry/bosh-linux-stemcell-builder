@@ -3,19 +3,19 @@ shared_examples_for 'every OS image' do
 
   context 'installed by base_<os>' do
     describe command('dig -v') do # required by agent
-      it { should return_exit_status(0) }
+      it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
     end
 
     describe command('which crontab') do
-      it { should return_exit_status(0) }
+      it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
     end
   end
 
   context 'installed by bosh_sudoers' do
     describe file('/etc/sudoers') do
       it { should be_file }
-      it { should contain '%bosh_sudoers ALL=(ALL) NOPASSWD: ALL' }
-      it { should contain '#includedir /etc/sudoers.d' }
+      its(:content) { should match /%bosh_sudoers ALL=\(ALL\) NOPASSWD: ALL/m }
+      its(:content) { should match '#includedir /etc/sudoers.d' }
     end
   end
 
@@ -27,26 +27,26 @@ shared_examples_for 'every OS image' do
 
   context 'installed by bosh_users' do
     describe command("grep -q 'export PATH=/var/vcap/bosh/bin:$PATH\n' /root/.bashrc") do
-      it { should return_exit_status(0) }
+      it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
     end
 
     describe command("grep -q 'export PATH=/var/vcap/bosh/bin:$PATH\n' /home/vcap/.bashrc") do
-      it { should return_exit_status(0) }
+      it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
     end
 
     describe file('/root/.bashrc') do
       it { should be_file }
-      it { should contain 'source /etc/profile.d/00-bosh-ps1' }
+      its(:content) { should match 'source /etc/profile.d/00-bosh-ps1' }
     end
 
     describe file('/home/vcap/.bashrc') do
       it { should be_file }
-      it { should contain 'source /etc/profile.d/00-bosh-ps1' }
+      its(:content) { should match 'source /etc/profile.d/00-bosh-ps1' }
     end
 
     describe file('/etc/skel/.bashrc') do
       it { should be_file }
-      it { should contain 'source /etc/profile.d/00-bosh-ps1' }
+      its(:content) { should match 'source /etc/profile.d/00-bosh-ps1' }
     end
 
     describe file('/etc/profile.d/00-bosh-ps1') do
@@ -54,29 +54,29 @@ shared_examples_for 'every OS image' do
     end
 
     describe command('grep -q .bashrc /root/.profile') do
-      it { should return_exit_status(0) }
+      it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
     end
 
     describe command('stat -c %a ~vcap') do
-      it { should return_stdout('700') }
+      it('includes restrictive permissions') { expect(subject.stdout).to match /\A700\Z/}
     end
 
     describe user('vcap') do
-      it { should belong_to_group 'admin' }
-      it { should belong_to_group 'adm' }
-      it { should belong_to_group 'audio' }
-      it { should belong_to_group 'cdrom' }
-      it { should belong_to_group 'dialout' }
-      it { should belong_to_group 'floppy' }
-      it { should belong_to_group 'video' }
-      it { should belong_to_group 'dip' }
-      it { should belong_to_group 'bosh_sshers' }
+      it { should be_in_group 'admin' }
+      it { should be_in_group 'adm' }
+      it { should be_in_group 'audio' }
+      it { should be_in_group 'cdrom' }
+      it { should be_in_group 'dialout' }
+      it { should be_in_group 'floppy' }
+      it { should be_in_group 'video' }
+      it { should be_in_group 'dip' }
+      it { should be_in_group 'bosh_sshers' }
     end
   end
 
-  describe cron do
-    describe 'keeping the system clock up to date (stig: V-38620 V-38621)' do
-      it { should have_entry '0,15,30,45 * * * * /var/vcap/bosh/bin/ntpdate' }
+  describe command('crontab -l') do
+    it 'keeps the system clock up to date (stig: V-38620 V-38621)' do
+      expect(subject.stdout).to include '0,15,30,45 * * * * /var/vcap/bosh/bin/ntpdate'
     end
   end
 
@@ -106,26 +106,25 @@ shared_examples_for 'every OS image' do
   # logs (which is the original intention of the STIG).
   context 'all rsyslog-generated log files must be owned by syslog. (stig: V-38519 V-38518 V-38623)' do
     it 'secures rsyslog.conf-referenced files correctly' do
-      rsyslog_log_file_list = [
-        # get all logfile directives
-        "grep --no-filename --recursive '/var/log/' #{backend.chroot_dir}/etc/rsyslog*",
-        # filter commented directives
-        "grep -v '^#'",
-        # remove leading characters
-        "sed 's%^[ \t]*%%' | awk '{ print $2 }' | tr -d '-'",
-        # unique tests
-        'sort | uniq',
-      ].join('|')
-
-      `#{rsyslog_log_file_list}`.split("\n").each do |logfile|
+      command(
+        [
+          # get all logfile directives
+          "grep --no-filename --recursive '/var/log/' /etc/rsyslog*",
+          # filter commented directives
+          "grep -v '^#'",
+          # remove leading characters
+          "sed 's%^[ \t]*%%' | awk '{ print $2 }' | tr -d '-'",
+          # unique tests
+          'sort | uniq',
+        ].join('|')
+      ).stdout.split("\n").each do |logfile|
         f = file(logfile)
 
         expect(f).to be_owned_by('syslog') # stig: V-38518
-        expect(f).to be_grouped_into('syslog') # stig: V-38519
-        expect(f).to be_mode(600) # stig: V-38623
+        expect(f.group).to eq('syslog') # stig: V-38519
+        expect(f).to be_mode(0600) # stig: V-38623
 
-        expect(f).to_not be_readable.by_user('vcap')
-        expect(f).to_not be_readable.by('vcap')
+        expect(f).to_not be_readable_by_user('vcap')
       end
     end
   end
@@ -135,41 +134,41 @@ shared_examples_for 'every OS image' do
       it { should be_file }
 
       it 'should reload rsyslog on rotate' do
-        should contain 'sudo kill -SIGHUP $(cat /var/run/rsyslogd.pid)'
+        expect(subject.content).to match /sudo kill -SIGHUP \$\(cat \/var\/run\/rsyslogd\.pid\)/
       end
 
       it 'should not restart rsyslog on rotate so that logs are not lost' do
-        should_not contain 'restart rsyslog'
+        expect(subject.content).not_to match 'restart rsyslog'
       end
 
       it 'should configure the news services' do
-        should contain '/var/log/news/news.crit'
-        should contain '/var/log/news/news.err'
-        should contain '/var/log/news/news.notice'
+        expect(subject.content).to match '/var/log/news/news.crit'
+        expect(subject.content).to match '/var/log/news/news.err'
+        expect(subject.content).to match '/var/log/news/news.notice'
       end
     end
   end
 
   context 'installed by rsyslog_config' do
     before do
-      system("sudo mount --bind /dev #{backend.chroot_dir}/dev")
+      system("sudo mount --bind /dev #{ @os_image_dir }/dev")
     end
 
     after do
-      system("sudo umount #{backend.chroot_dir}/dev")
+      system("sudo umount #{ @os_image_dir }/dev")
     end
 
     describe file('/etc/rsyslog.conf') do
       it { should be_file }
-      it { should contain '\$ModLoad omrelp' }
-      it { should contain '\$FileGroup syslog' } # stig: V-38519
-      it { should contain '\$FileUser syslog' } # stig: V-38518
-      it { should contain '\$FileCreateMode 0600' } # stig: V-38623
+      its(:content) { should match '\$ModLoad omrelp' }
+      its(:content) { should match '\$FileGroup syslog' } # stig: V-38519
+      its(:content) { should match '\$FileOwner syslog' } # stig: V-38518
+      its(:content) { should match '\$FileCreateMode 0600' } # stig: V-38623
     end
 
     describe user('syslog') do
       it { should exist }
-      it { should belong_to_group 'vcap' }
+      it { should be_in_group 'vcap' }
     end
 
     describe group('adm') do
@@ -185,13 +184,13 @@ shared_examples_for 'every OS image' do
     end
 
     describe command('rsyslogd -N 1'), exclude_on_ppc64le: true do
-      it { should return_stdout /version 8/ }
-      it { should return_exit_status(0) }
+      it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
+      it('reports its version number as 8') { expect(subject.stderr).to match /version 8/ }
     end
 
     describe file('/etc/rsyslog.d/enable-kernel-logging.conf') do
       it { should be_file }
-      it { should contain('ModLoad imklog') }
+      its(:content) { should match('ModLoad imklog') }
     end
   end
 
@@ -204,19 +203,19 @@ shared_examples_for 'every OS image' do
 
   context 'configured by base_ssh' do
     it 'is secure' do
-      expect(sshd_config).to be_mode('600')
+      expect(sshd_config).to be_mode(0600)
     end
 
     it 'disallows root login (stig: V-38613)' do
-      expect(sshd_config).to contain(/^PermitRootLogin no$/)
+      expect(sshd_config.content).to match(/^PermitRootLogin no$/)
     end
 
     it 'allows PrintLastLog (stig: V-38484)' do
-      expect(sshd_config).to contain(/^PrintLastLog yes$/)
+      expect(sshd_config.content).to match(/^PrintLastLog yes$/)
     end
 
     it 'disables insecure DSA host keys' do
-      expect(sshd_config).to_not contain(/HostKey \/etc\/ssh\/ssh_host_dsa_key$/)
+      expect(sshd_config.content).to_not match(/HostKey \/etc\/ssh\/ssh_host_dsa_key$/)
     end
 
     it 'enables RSA, ECDSA, ED25519 host keys' do
@@ -226,94 +225,94 @@ shared_examples_for 'every OS image' do
     end
 
     it 'disallows X11 forwarding' do
-      expect(sshd_config).to contain(/^X11Forwarding no$/)
-      expect(sshd_config).to_not contain(/^X11DisplayOffset/)
+      expect(sshd_config.content).to match(/^X11Forwarding no$/)
+      expect(sshd_config.content).to_not match(/^X11DisplayOffset/)
     end
 
     it 'sets MaxAuthTries to 3' do
-      expect(sshd_config).to contain(/^MaxAuthTries 3$/)
+      expect(sshd_config.content).to match(/^MaxAuthTries 3$/)
     end
 
     it 'sets PermitEmptyPasswords to no (stig: V-38614)' do
-      expect(sshd_config).to contain(/^PermitEmptyPasswords no$/)
+      expect(sshd_config.content).to match(/^PermitEmptyPasswords no$/)
     end
 
     it 'sets HostbasedAuthentication to no (stig: V-38612)' do
-      expect(sshd_config).to contain(/^HostbasedAuthentication no$/)
+      expect(sshd_config.content).to match(/^HostbasedAuthentication no$/)
     end
 
     it 'sets Banner to /etc/issue.net (stig: V-38615 V-38593) (CIS-11.1)' do
-      expect(sshd_config).to contain(/^Banner \/etc\/issue.net$/)
+      expect(sshd_config.content).to match(/^Banner \/etc\/issue.net$/)
 
       banner = file('/etc/issue.net')
 
       # multiline message
-      expect(banner).to contain('Unauthorized use is strictly prohibited. All access and activity')
-      expect(banner).to contain('is subject to logging and monitoring.')
-      expect(banner).to be_mode('644')
+      expect(banner.content).to match('Unauthorized use is strictly prohibited. All access and activity')
+      expect(banner.content).to match('is subject to logging and monitoring.')
+      expect(banner).to be_mode(0644)
       expect(banner).to be_owned_by('root')
-      expect(banner).to be_grouped_into('root')
+      expect(banner.group).to eq('root')
     end
 
     it 'sets /etc/issue (CIS-11.1)' do
       banner = file('/etc/issue')
 
       # multiline message
-      expect(banner).to contain('Unauthorized use is strictly prohibited. All access and activity')
-      expect(banner).to contain('is subject to logging and monitoring.')
-      expect(banner).to be_mode('644')
+      expect(banner.content).to match('Unauthorized use is strictly prohibited. All access and activity')
+      expect(banner.content).to match('is subject to logging and monitoring.')
+      expect(banner).to be_mode(0644)
       expect(banner).to be_owned_by('root')
-      expect(banner).to be_grouped_into('root')
+      expect(banner.group).to eq('root')
     end
 
     it 'has an empty /etc/motd (CIS-11.1)' do
       banner = file('/etc/motd')
-      expect(banner).to match_md5checksum('d41d8cd98f00b204e9800998ecf8427e') # md5 of zero-byte file
-      expect(banner).to be_mode('644')
+      expect(banner.content).to be_empty
+      expect(banner).to be_mode(0644)
       expect(banner).to be_owned_by('root')
-      expect(banner).to be_grouped_into('root')
+      expect(banner.group).to eq('root')
     end
 
     it 'sets IgnoreRhosts to yes (stig: V-38611)' do
-      expect(sshd_config).to contain(/^IgnoreRhosts yes$/)
+      expect(sshd_config.content).to match(/^IgnoreRhosts yes$/)
     end
 
     it 'sets ClientAliveInterval to 900 seconds (stig: V-38608)' do
-      expect(sshd_config).to contain(/^ClientAliveInterval 900$/)
+      expect(sshd_config.content).to match(/^ClientAliveInterval 900$/)
     end
 
     it 'sets PermitUserEnvironment to no (stig: V-38616)' do
-      expect(sshd_config).to contain(/^PermitUserEnvironment no$/)
+      expect(sshd_config.content).to match(/^PermitUserEnvironment no$/)
     end
 
     it 'sets ClientAliveCountMax to 0 (stig: V-38610)' do
-      expect(sshd_config).to contain(/^ClientAliveCountMax 0$/)
+      expect(sshd_config.content).to match(/^ClientAliveCountMax 0$/)
     end
 
     it 'sets Protocol to 2 (stig: V-38607)' do
-      expect(sshd_config).to contain(/^Protocol 2$/)
+      expect(sshd_config.content).to match(/^Protocol 2$/)
       end
 
     it 'sets AllowGroups to bosh_sshers (CIS 9.3.13)' do
-      expect(sshd_config).to contain(/^AllowGroups bosh_sshers$/)
+      expect(sshd_config.content).to match(/^AllowGroups bosh_sshers$/)
     end
 
     it 'sets DenyUsers to root' do
-      expect(sshd_config).to contain(/^DenyUsers root$/)
+      expect(sshd_config.content).to match(/^DenyUsers root$/)
     end
   end
 
   describe 'PAM configuration' do
     context 'blank password logins are disabled (stig: V-38497)' do
       describe command('grep -R nullok /etc/pam.d') do
-        it { should return_exit_status(1) }
+        it('exits 1') { expect(subject.exit_status).to eq 1 }
         its (:stdout) { should eq('') }
       end
     end
 
     context 'a stronger hashing algorithm should be used (stig: V-38574)' do
       describe command('egrep -h -r "^password" /etc/pam.d | grep pam_unix.so | grep -v sha512') do
-        it { should return_exit_status(1) }
+        it('exits 1') { expect(subject.exit_status).to eq 1 }
         its (:stdout) { should eq('') }
       end
     end
@@ -322,8 +321,8 @@ shared_examples_for 'every OS image' do
   context 'anacron is configured' do
     describe file('/etc/anacrontab') do
       it { should be_file }
-      it { should contain /^RANDOM_DELAY=60$/ }
-      it { should_not contain /^RANDOM_DELAY=[0-57-9][0-9]*$/ }
+      its(:content) { should match /^RANDOM_DELAY=60$/ }
+      its(:content) { should_not match /^RANDOM_DELAY=[0-57-9][0-9]*$/ }
     end
   end
 
@@ -379,8 +378,8 @@ shared_examples_for 'every OS image' do
   context '/etc/passwd file' do
     describe file('/etc/passwd') do
       it('should be owned by root user (stig: V-38450)') { should be_owned_by('root') }
-      it('should be group-owned by root group (stig: V-38451)') { should be_grouped_into('root') }
-      it('should have mode 0644 (stig: V-38457)') { should be_mode('644') }
+      it('should be group-owned by root group (stig: V-38451)') { expect(subject.group).to eq('root') }
+      it('should have mode 0644 (stig: V-38457)') { should be_mode(0644) }
     end
 
     context 'should not contain password hash (stig: V-38499)' do
@@ -399,16 +398,16 @@ shared_examples_for 'every OS image' do
   context '/etc/group file' do
     describe file('/etc/group') do
       it('should be owned by root user (stig: V-38458)') { should be_owned_by('root') }
-      it('should be owned by root group (stig: V-38459)') { should be_grouped_into('root') }
-      it('should have mode 0644 (stig: V-38461)') { should be_mode('644') }
+      it('should be owned by root group (stig: V-38459)') { expect(subject.group).to eq('root') }
+      it('should have mode 0644 (stig: V-38461)') { should be_mode(0644) }
     end
   end
 
   context '/etc/gshadow file' do
     describe file('/etc/gshadow') do
       it('should be owned by root user (stig: V-38443)') { should be_owned_by('root') }
-      it('should be owned by root group (stig: V-38448)') { should be_grouped_into('root') }
-      it('should have mode 0 (stig: V-38449)') { should be_mode('0') }
+      it('should be owned by root group (stig: V-38448)') { expect(subject.group).to eq('root')}
+      it('should have mode 0 (stig: V-38449)') { should be_mode(0000) }
     end
   end
 
@@ -420,11 +419,11 @@ shared_examples_for 'every OS image' do
 
   describe file('/etc/login.defs') do
     it('should not allow users to cycle passwords quickly (stig: V-38477)') do
-      should contain /^PASS_MIN_DAYS[[:space:]]\+1/
+      expect(subject.content).to match /^PASS_MIN_DAYS 1/
     end
 
     it('should use an approved hashing algorithm to save the password (stig: V-38576)') do
-      should contain /^ENCRYPT_METHOD[[:space:]]\+SHA512/
+      expect(subject.content).to match /^ENCRYPT_METHOD SHA512/
     end
   end
 
@@ -441,7 +440,7 @@ shared_examples_for 'every OS image' do
       exclude_on_softlayer: true,
     } do
       it 'disallows password authentication' do
-        expect(sshd_config).to contain(/^PasswordAuthentication no$/)
+        expect(sshd_config.content).to match(/^PasswordAuthentication no$/)
       end
     end
 
@@ -449,7 +448,7 @@ shared_examples_for 'every OS image' do
         exclude_on_softlayer: true,
     } do
       it 'disallows root login (stig: V-38613)' do
-        expect(sshd_config).to contain(/^PermitRootLogin no$/)
+        expect(sshd_config.content).to match(/^PermitRootLogin no$/)
       end
     end
   end
@@ -465,27 +464,27 @@ shared_examples_for 'every OS image' do
   end
 
   describe file('/etc/shadow') do
-    it('should be owned by root user (stig: V-38502)') { should be_owned_by('root') }
-    it('should be owned by root group (stig: V-38503)') { should be_grouped_into('root') }
-    it('should have mode 0 (stig: V-38504)') { should be_mode('0') }
+    it('should be owned by root user (stig: V-38502)') { expect(subject.group).to eq('root') }
+    it('should be owned by root group (stig: V-38503)') { expect(subject.group).to eq('root') }
+    it('should have mode 0 (stig: V-38504)') { should be_mode(0000) }
 
     context 'contains no system users with passwords (stig: V-38496)' do
       describe command("awk -F: '$1 !~ /^root$/ && $1 !~ /^vcap$/ && $2 !~ /^[!*]/ {print $1 \":\" $2}' /etc/shadow") do
-        it { should return_exit_status(0) }
+        it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
         its (:stdout) { should eq('') }
       end
     end
 
     context 'contains no users with that can update their password frequently (stig: V-38477)' do
       describe command("awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ && $4 != \"1\" {print $1 \":\" $4}' /etc/shadow") do
-        it { should return_exit_status(0) }
+        it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
         its (:stdout) { should eq('') }
       end
     end
 
     context 'contains no users with that can update their password frequently (stig: V-38477)' do
       describe command("awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ && $4 != \"1\" {print $1 \":\" $4}' /etc/shadow") do
-        it { should return_exit_status(0) }
+        it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
         its (:stdout) { should eq('') }
       end
     end
@@ -542,8 +541,8 @@ shared_examples_for 'every OS image' do
       it { should be_directory }
 
       describe 'Audit log directories must have mode 0755 or less permissive (750 by default) (stig: V-38493)' do
-        it { should_not be_writable.by('group') }
-        it { should_not be_writable.by('others') }
+        it { should_not be_writable_by('group') }
+        it { should_not be_writable_by('other') }
       end
     end
 
@@ -715,7 +714,7 @@ shared_examples_for 'every OS image' do
 
   describe 'record use of privileged programs (CIS-8.1.12)' do
     let(:privileged_binaries) {
-      backend.run_command("find /bin /sbin /usr/bin /usr/sbin /boot -xdev \\( -perm -4000 -o -perm -2000 \\) -type f")
+      command("find /bin /sbin /usr/bin /usr/sbin /boot -xdev \\( -perm -4000 -o -perm -2000 \\) -type f")
         .stdout
         .split
     }

@@ -5,16 +5,16 @@ shared_examples_for 'a systemd-based OS image' do
   end
 
   context 'systemd services' do
-    describe command('systemctl is-enabled NetworkManager') do
-      it { should return_stdout /enabled/ }
+    describe service('NetworkManager') do
+      it { should be_enabled }
     end
 
-    describe command('systemctl is-enabled runit') do
-      it { should return_stdout /enabled/ }
+    describe service('runit') do
+      it { should be_enabled }
     end
 
-    describe command('systemctl is-enabled rsyslog') do
-      it { should return_stdout /enabled/ }
+    describe service('rsyslog') do
+      it { should be_enabled }
     end
 
     describe file('/etc/systemd/system/rsyslog.service.d/rsyslog_override.conf') do

@@ -21,7 +21,7 @@ describe 'OpenStack Stemcell', stemcell_image: true do
 
       it {
         compat = Bosh::Stemcell::Arch.ppc64le? ? '1.1' : '0.10'
-        should include("compat: #{compat}") 
+        should include("compat: #{compat}")
       }
     end
   end

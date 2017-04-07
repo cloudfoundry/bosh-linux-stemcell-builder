@@ -553,7 +553,7 @@ module ShelloutTypes
       end
     end
 
-    describe '#executable_?' do
+    describe '#executable?' do
       context 'when the file is executable' do
         let(:executable_file) do
           file_path = Tempfile.new('a-file', chroot_dir).path
@@ -562,13 +562,13 @@ module ShelloutTypes
         end
 
         it 'returns true' do
-          expect(executable_file.executable_?).to eq(true)
+          expect(executable_file.executable?).to eq(true)
         end
       end
 
       context 'when the file is not executable' do
         it 'returns false' do
-          expect(regular_file.executable_?).to eq(false)
+          expect(regular_file.executable?).to eq(false)
         end
       end
     end

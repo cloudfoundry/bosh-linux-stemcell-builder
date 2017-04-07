@@ -6,7 +6,7 @@ describe 'CentOS 7 stemcell', stemcell_image: true do
 
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/operating_system') do
-      it { should contain('centos') }
+      it('identifies its OS as centos') { expect(subject.content).to match /centos/ }
     end
   end
 
@@ -56,15 +56,17 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should contain('"CreatePartitionIfNoEphemeralDisk": true') }
-      it { should contain('"Type": "ConfigDrive"') }
-      it { should contain('"Type": "HTTP"') }
+      it('enables CreatePartitionIfNoEphemeralDisk') do
+        expect(subject.content).to match /"CreatePartitionIfNoEphemeralDisk": true/
+      end
+      it('has ConfigDrive') { expect(subject.content).to match /"Type": "ConfigDrive"/ }
+      it('has HTTP') { expect(subject.content).to match /"Type": "HTTP"/ }
     end
   end
 
   context 'installed by dev_tools_config' do
     describe file('/var/vcap/bosh/etc/dev_tools_file_list') do
-      it { should contain('/usr/bin/gcc') }
+      it('has GCC installed') { expect(subject.content).to match '/usr/bin/gcc' }
     end
   end
 
@@ -78,13 +80,13 @@ end
 
 describe 'CentOS 7 stemcell tarball', stemcell_tarball: true do
   context 'installed by bosh_rpm_list stage' do
-    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/stemcell_rpm_qa.txt") do
+    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/stemcell_rpm_qa.txt", no_chroot) do
       it { should be_file }
     end
   end
 
   context 'installed by dev_tools_config stage' do
-    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/dev_tools_file_list.txt") do
+    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/dev_tools_file_list.txt", no_chroot) do
       it { should be_file }
     end
   end

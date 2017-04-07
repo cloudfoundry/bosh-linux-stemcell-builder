@@ -10,7 +10,7 @@ describe 'CentOS 7 OS image', os_image: true do
   context 'installed by base_centos' do
     describe file('/etc/locale.conf') do
       it { should be_file }
-      it { should contain 'en_US.UTF-8' }
+      it('uses US english, UTF8 charset') { expect(subject.content).to match /en_US\.UTF-8/}
     end
 
     %w(
@@ -167,7 +167,7 @@ describe 'CentOS 7 OS image', os_image: true do
   context 'overriding control alt delete (stig: V-38668)' do
     describe file('/etc/systemd/system/ctrl-alt-del.target') do
       it { should be_file }
-      it { should contain '# escaping ctrl alt del' }
+      it('remarks on the escaping') { expect(subject.content).to match '# escaping ctrl alt del' }
     end
   end
 
@@ -204,21 +204,11 @@ describe 'CentOS 7 OS image', os_image: true do
     describe package('audit') do
       it { should be_installed }
     end
-
-    describe file('/etc/systemd/system/default.target') do
-      it { should be_file }
-      its(:content) { should match /^Requires=multi-user\.target/ }
-    end
   end
 
   context 'ensure xinetd is not installed nor enabled (stig: V-38582)' do
     describe package('xinetd') do
       it('should not be installed') { should_not be_installed }
-    end
-
-    describe file('/etc/systemd/system/default.target') do
-      it { should be_file }
-      its(:content) { should match /^Requires=multi-user\.target/ }
     end
 
     describe file('/etc/systemd/system/multi-user.target.wants/xinetd.service') do
@@ -229,11 +219,6 @@ describe 'CentOS 7 OS image', os_image: true do
   context 'ensure ypbind is not installed nor enabled (stig: V-38604)' do
     describe package('ypbind') do
       it('should not be installed') { should_not be_installed }
-    end
-
-    describe file('/etc/systemd/system/default.target') do
-      it { should be_file }
-      its(:content) { should match /^Requires=multi-user\.target/ }
     end
 
     describe file('/etc/systemd/system/multi-user.target.wants/ypbind.service') do
@@ -280,15 +265,15 @@ describe 'CentOS 7 OS image', os_image: true do
 
     describe file('/etc/pam.d/system-auth') do
       it 'must prohibit the reuse of passwords within twenty-four iterations (stig: V-38658)' do
-        should contain /password.*pam_unix\.so.*remember=24/
+        expect(subject.content).to match /password.*pam_unix\.so.*remember=24/
       end
 
       it 'must prohibit new passwords shorter than 14 characters (stig: V-38475)' do
-        should contain /password.*pam_unix\.so.*minlen=14/
+        expect(subject.content).to match /password.*pam_unix\.so.*minlen=14/
       end
 
       it 'must use the cracklib library to set correct password requirements (CIS-9.2.1)' do
-        should contain /password.*pam_cracklib\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/
+        expect(subject.content).to match /password.*pam_cracklib\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/
       end
     end
   end
@@ -310,7 +295,7 @@ describe 'CentOS 7 OS image', os_image: true do
       it { should be_file }
 
       it 'must limit the ability of processes to have simultaneous write and execute access to memory. (only centos) (stig: V-38597)' do
-        should contain /^kernel.exec-shield=1$/
+        expect(subject.content).to match /^kernel.exec-shield=1$/
       end
     end
   end
@@ -339,11 +324,11 @@ describe 'CentOS 7 OS image', os_image: true do
 
   context 'restrict access to the su command CIS-9.5' do
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
-      it { should return_exit_status(0)}
+      it('exits 0') { expect(subject.exit_status).to eq(0) }
     end
     describe user('vcap') do
       it { should exist }
-      it { should belong_to_group 'wheel' }
+      it { should be_in_group 'wheel' }
     end
   end
 
@@ -351,7 +336,7 @@ describe 'CentOS 7 OS image', os_image: true do
     describe file('/var/vcap/bosh/bin/bosh-start-logging-and-auditing') do
       it { should be_file }
       it { should be_executable }
-      it { should contain('service auditd start') }
+      it('starts auditd') { expect(subject.content).to match('service auditd start') }
     end
   end
 

@@ -1,5 +1,6 @@
 require 'bosh/stemcell/arch'
 require 'spec_helper'
+require 'shellout_types/file'
 
 describe 'Ubuntu 14.04 OS image', os_image: true do
   it_behaves_like 'every OS image'
@@ -67,8 +68,8 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
 
     describe file('/etc/lsb-release') do
       it { should be_file }
-      it { should contain 'DISTRIB_RELEASE=14.04' }
-      it { should contain 'DISTRIB_CODENAME=trusty' }
+      its(:content) { should match 'DISTRIB_RELEASE=14.04' }
+      its(:content) { should match 'DISTRIB_CODENAME=trusty' }
     end
 
     describe command('locale -a') do
@@ -90,21 +91,21 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
       if Bosh::Stemcell::Arch.ppc64le?
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty main restricted' }
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates main restricted' }
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty universe' }
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates universe' }
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty multiverse' }
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates multiverse' }
 
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security main restricted' }
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security universe' }
-        it { should contain 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security multiverse' }
 
       else
-        it { should contain 'deb http://archive.ubuntu.com/ubuntu trusty main universe multiverse' }
-        it { should contain 'deb http://archive.ubuntu.com/ubuntu trusty-updates main universe multiverse' }
-        it { should contain 'deb http://security.ubuntu.com/ubuntu trusty-security main universe multiverse' }
+        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu trusty main universe multiverse' }
+        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu trusty-updates main universe multiverse' }
+        its(:content) { should match 'deb http://security.ubuntu.com/ubuntu trusty-security main universe multiverse' }
       end
     end
 
@@ -197,7 +198,7 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
         aes192-ctr
         aes128-ctr
       ).join(',')
-      expect(sshd_config).to contain(/^Ciphers #{ciphers}$/)
+      expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
     it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
@@ -211,7 +212,7 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
         hmac-ripemd160
         hmac-sha1
       ).join(',')
-      expect(sshd_config).to contain(/^MACs #{macs}$/)
+      expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
   end
 
@@ -248,7 +249,7 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
   context 'installed by bosh_user' do
     describe file('/etc/passwd') do
       it { should be_file }
-      it { should contain '/home/vcap:/bin/bash' }
+      its(:content) { should match '/home/vcap:/bin/bash' }
     end
   end
 
@@ -274,7 +275,7 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
     end
 
     describe file '/etc/apt/apt.conf.d/02periodic' do
-      it { should contain <<EOF }
+      its(:content) { should match <<EOF }
 APT::Periodic {
   Enable "0";
 }
@@ -285,7 +286,7 @@ EOF
   context 'overriding control alt delete (stig: V-38668)' do
     describe file('/etc/init/control-alt-delete.override') do
       it { should be_file }
-      it { should contain 'exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"' }
+      its(:content) { should match 'exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"' }
     end
   end
 
@@ -308,28 +309,28 @@ EOF
     end
 
     describe file('/etc/pam.d/common-password') do
-      it 'must prohibit the reuse of passwords within twenty-four iterations (stig: V-38658)' do
-        should contain /password.*pam_unix\.so.*remember=24/
+      it'must prohibit the reuse of passwords within twenty-four iterations (stig: V-38658)' do
+        expect(subject.content).to match /password.*pam_unix\.so.*remember=24/
       end
 
-      it 'must prohibit new passwords shorter than 14 characters (stig: V-38475)' do
-        should contain /password.*pam_unix\.so.*minlen=14/
+      it'must prohibit new passwords shorter than 14 characters (stig: V-38475)' do
+        expect(subject.content).to match /password.*pam_unix\.so.*minlen=14/
       end
 
-      it 'must use the cracklib library to set correct password requirements (CIS-9.2.1)' do
-        should contain /password.*pam_cracklib\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/
+      it'must use the cracklib library to set correct password requirements (CIS-9.2.1)' do
+        expect(subject.content).to match /password.*pam_cracklib\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/
       end
     end
 
     describe file('/etc/pam.d/common-account') do
       it 'must reset the tally of a user after successful login, esp. `sudo` (stig: V-38573)' do
-        should contain(/account.*required.*pam_tally2\.so/)
+        expect(subject.content).to match /account.*required.*pam_tally2\.so/
       end
     end
 
     describe file('/etc/pam.d/common-auth') do
-      it 'must restrict a user account after 5 failed login attempts (stig: V-38573)' do
-        should contain(/auth.*pam_tally2\.so.*deny=5/)
+      it'must restrict a user account after 5 failed login attempts (stig: V-38573)' do
+        expect(subject.content).to match /auth.*pam_tally2\.so.*deny=5/
       end
     end
   end
@@ -342,36 +343,38 @@ EOF
   end
 
   context 'ensure auditd file permissions and ownership (stig: V-38663) (stig: V-38664) (stig: V-38665)' do
-    [[644, '/usr/share/lintian/overrides/auditd'],
-    [755, '/usr/bin/auvirt'],
-    [755, '/usr/bin/ausyscall'],
-    [755, '/usr/bin/aulastlog'],
-    [755, '/usr/bin/aulast'],
-    [750, '/var/log/audit'],
-    [755, '/sbin/aureport'],
-    [755, '/sbin/auditd'],
-    [755, '/sbin/autrace'],
-    [755, '/sbin/ausearch'],
-    [755, '/sbin/augenrules'],
-    [755, '/sbin/auditctl'],
-    [755, '/sbin/audispd'],
-    [750, '/etc/audisp'],
-    [750, '/etc/audisp/plugins.d'],
-    [640, '/etc/audisp/plugins.d/af_unix.conf'],
-    [640, '/etc/audisp/plugins.d/syslog.conf'],
-    [640, '/etc/audisp/audispd.conf'],
-    [755, '/etc/init.d/auditd'],
-    [750, '/etc/audit'],
-    [750, '/etc/audit/rules.d'],
-    [640, '/etc/audit/rules.d/audit.rules'],
-    [640, '/etc/audit/audit.rules'],
-    [640, '/etc/audit/auditd.conf'],
-    [644, '/etc/default/auditd'],
-    [644, '/lib/systemd/system/auditd.service']].each do |tuple|
+    [[0644, '/usr/share/lintian/overrides/auditd'],
+    [0755, '/usr/bin/auvirt'],
+    [0755, '/usr/bin/ausyscall'],
+    [0755, '/usr/bin/aulastlog'],
+    [0755, '/usr/bin/aulast'],
+    [0750, '/var/log/audit'],
+    [0755, '/sbin/aureport'],
+    [0755, '/sbin/auditd'],
+    [0755, '/sbin/autrace'],
+    [0755, '/sbin/ausearch'],
+    [0755, '/sbin/augenrules'],
+    [0755, '/sbin/auditctl'],
+    [0755, '/sbin/audispd'],
+    [0750, '/etc/audisp'],
+    [0750, '/etc/audisp/plugins.d'],
+    [0640, '/etc/audisp/plugins.d/af_unix.conf'],
+    [0640, '/etc/audisp/plugins.d/syslog.conf'],
+    [0640, '/etc/audisp/audispd.conf'],
+    [0755, '/etc/init.d/auditd'],
+    [0750, '/etc/audit'],
+    [0750, '/etc/audit/rules.d'],
+    [0640, '/etc/audit/rules.d/audit.rules'],
+    [0640, '/etc/audit/audit.rules'],
+    [0640, '/etc/audit/auditd.conf'],
+    [0644, '/etc/default/auditd'],
+    [0644, '/lib/systemd/system/auditd.service']].each do |tuple|
       describe file(tuple[1]) do
         it ('should be owned by root') { should be_owned_by('root')}
-        it ('should be owned by root group') { should be_grouped_into('root')}
         it ("should have mode #{tuple[0]}") { should be_mode(tuple[0])}
+        context 'should be owned by root group' do
+          its(:group) { should match /\Aroot\Z/ }
+        end
       end
     end
   end
@@ -386,7 +389,9 @@ EOF
 
   context 'ensure sendmail is removed (stig: V-38671)' do
     describe command('dpkg -s sendmail') do
-      its (:stdout) { should include ('dpkg-query: package \'sendmail\' is not installed and no information is available')}
+      it 'complains about non-installed sendmail' do
+        expect(subject.stderr).to include 'dpkg-query: package \'sendmail\' is not installed and no information is available'
+      end
     end
   end
 
@@ -442,11 +447,11 @@ EOF
 
   context 'restrict access to the su command CIS-9.5' do
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
-      it { should return_exit_status(0)}
+      it('exits 0') { expect(subject.exit_status).to eq(0) }
     end
     describe user('vcap') do
       it { should exist }
-      it { should belong_to_group 'sudo' }
+      it { should be_in_group 'sudo' }
     end
   end
 
@@ -454,7 +459,7 @@ EOF
     describe file('/var/vcap/bosh/bin/bosh-start-logging-and-auditing') do
       it { should be_file }
       it { should be_executable }
-      it { should contain('service auditd start') }
+      its(:content) { should match('service auditd start') }
     end
   end
 
