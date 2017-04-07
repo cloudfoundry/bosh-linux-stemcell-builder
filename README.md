@@ -178,6 +178,27 @@ Then run the following:
     spec/stemcells/cis_spec.rb
 ```
 
+## ShelloutTypes
+
+In pursuit of more robustly testing, we wrote our testing library for stemcell contents, called ShelloutTypes.
+
+The ShelloutTypes code has its own unit tests, but require root privileges and an ubuntu chroot environment to run. For this reason, we use the `bosh/main-ubuntu-chroot` docker imagefor unit tests. To run these unit tests locally, run:
+
+```
+$ docker run bosh/main-ubuntu-chroot    # now in /opt/bosh
+$ source /etc/profile.d/chruby.sh
+$ chruby 2.3.1
+
+$ #create user for ShelloutTypes::File tests
+$ chroot /tmp/ubuntu-chroot /bin/bash -c 'useradd -G nogroup shellout'
+
+$ bundle install --local
+$ cd bosh-stemcell
+$ bundle exec rspec spec/ --tag shellout_types
+
+```
+
+The above strategy is derived from our CI unit testing job's script.
 
 ## Troubleshooting
 
