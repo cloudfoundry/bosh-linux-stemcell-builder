@@ -20,9 +20,6 @@ module ShelloutTypes
     private
 
     def check_service_enabled(runlevel)
-      # TODO: Check for etc/init.d/.legacy-bootordering; if present do ls -al /etc/rc*.d/
-      # else check default runlevel in /etc/init/rc-sysinit.conf and runlevels in Default-Start/Default-Stop in INIT INFO block of
-      # init.d script
       stdout, stderr, status = @chroot.run('cat', '/etc/*release')
       raise RuntimeError, stderr if status != 0
 

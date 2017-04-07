@@ -5,7 +5,6 @@ module ShelloutTypes
       @chroot = chroot
     end
 
-    #TODO better handling of errors beside 'file not exist'
     def file?
       begin
         stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
