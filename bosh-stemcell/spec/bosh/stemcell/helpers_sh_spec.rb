@@ -3,7 +3,13 @@ require 'spec_helper'
 context 'helpers.sh' do
 
   context 'add_on_exit runs cleanup commands in LIFO order' do
-    describe command(File.expand_path('../../../assets/on_exit_with_normal_completion.sh', __FILE__)) do
+    describe ShelloutTypes::Command.new(
+      File.expand_path(
+        '../../../assets/on_exit_with_normal_completion.sh',
+        __FILE__
+      ),
+      ShelloutTypes::Chroot.new('/')
+    ) do
       it('describes the on_exit actions in that order') { expect(subject.stdout).to match <<EOF }
 end of script
 Running 4 on_exit items...
@@ -18,7 +24,13 @@ first on_exit action
 EOF
     end
 
-    describe command(File.expand_path('../../../assets/on_exit_with_error_exit.sh', __FILE__)) do
+    describe ShelloutTypes::Command.new(
+      File.expand_path(
+        '../../../assets/on_exit_with_error_exit.sh',
+        __FILE__
+      ),
+      ShelloutTypes::Chroot.new('/')
+    ) do
       it('describes the on_exit actions in that order') { expect(subject.stdout).to match <<EOF }
 Running 2 on_exit items...
 Running cleanup command echo second on_exit action (try: 0)
@@ -29,7 +41,13 @@ EOF
     end
   end
 
-  describe command(File.expand_path('../../../assets/on_exit_with_failing_cleanup_command.sh', __FILE__)) do
+  describe ShelloutTypes::Command.new(
+    File.expand_path(
+      '../../../assets/on_exit_with_failing_cleanup_command.sh',
+      __FILE__
+    ),
+    ShelloutTypes::Chroot.new('/')
+  ) do
     it('includes a retry count in its output') { expect(subject.stdout).to match <<EOF }
 end of script
 Running 1 on_exit items...
