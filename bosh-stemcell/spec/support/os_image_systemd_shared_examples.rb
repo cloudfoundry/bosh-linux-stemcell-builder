@@ -5,10 +5,6 @@ shared_examples_for 'a systemd-based OS image' do
   end
 
   context 'systemd services' do
-    describe service('NetworkManager') do
-      it { should be_enabled }
-    end
-
     describe service('runit') do
       it { should be_enabled }
     end
