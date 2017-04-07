@@ -37,8 +37,8 @@ shared_examples_for 'All Stemcells' do
       its (:stdout) { should eq('') }
     end
 
-    describe file('/etc/hosts.equiv') do
-      it { should_not be_file }
+    describe command('[ ! -e /etc/hosts.equiv ] || egrep \^[^#].+ /etc/hosts.equiv') do
+      its (:stdout) { should eq('') }
     end
   end
 
