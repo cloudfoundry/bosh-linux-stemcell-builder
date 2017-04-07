@@ -44,7 +44,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
         it { should be_file }
         it { should be_executable }
         it { should be_owned_by('root') }
-        its(:group) { should match /\Aroot\Z/ }
+        its(:group) { should eq('root') }
       end
     end
   end

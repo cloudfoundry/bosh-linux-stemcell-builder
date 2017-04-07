@@ -373,7 +373,7 @@ EOF
         it ('should be owned by root') { should be_owned_by('root')}
         it ("should have mode #{tuple[0]}") { should be_mode(tuple[0])}
         context 'should be owned by root group' do
-          its(:group) { should match /\Aroot\Z/ }
+          its(:group) { should eq('root') }
         end
       end
     end

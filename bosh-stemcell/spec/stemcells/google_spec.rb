@@ -23,7 +23,7 @@ describe 'Google Stemcell', stemcell_image: true do
 
       it { should be_file }
       it { should be_owned_by('root') }
-      its(:group) { should match /\Aroot\Z/ }
+      its(:group) { should eq('root') }
     end
 
     case ENV['OS_NAME']
@@ -45,7 +45,7 @@ describe 'Google Stemcell', stemcell_image: true do
           describe file(conf_file) do
             it { should be_file }
             it { should be_owned_by('root') }
-            its(:group) { should match /\Aroot\Z/ }
+            its(:group) { should eq('root') }
           end
         end
       when 'centos', 'rhel'
@@ -66,7 +66,7 @@ describe 'Google Stemcell', stemcell_image: true do
           describe file(conf_file) do
             it { should be_file }
             it { should be_owned_by('root') }
-            its(:group) { should match /\Aroot\Z/ }
+            its(:group) { should eq('root') }
           end
         end
     end

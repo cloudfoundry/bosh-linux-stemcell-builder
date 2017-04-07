@@ -10,7 +10,7 @@ module ShelloutTypes
       begin
         stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
 
-        !(stdout.strip.match(/\Aregular (empty )?file\Z/).nil?)
+        !(stdout.strip.match(/\Aregular (empty )?file\z/).nil?)
       rescue RuntimeError
         return false
       end

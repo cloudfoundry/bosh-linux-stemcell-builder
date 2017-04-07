@@ -58,7 +58,7 @@ shared_examples_for 'every OS image' do
     end
 
     describe command('stat -c %a ~vcap') do
-      it('includes restrictive permissions') { expect(subject.stdout).to match /\A700\Z/}
+      it('includes restrictive permissions') { expect(subject.stdout.strip).to eq('700') }
     end
 
     describe user('vcap') do
