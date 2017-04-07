@@ -161,7 +161,7 @@ module Bosh::Stemcell
       it 'unmounts the loop device and then unmaps the file' do
         expect(shell).to receive(:run).with('sudo umount /fake/mnt', output_command: false).ordered
         expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
-        expect(shell).to receive(:run).with('sudo losetup -dv /dev/loop0', output_command: false).ordered
+        expect(shell).to receive(:run).with('sudo losetup -v -d /dev/loop0', output_command: false).ordered
 
         disk_image.unmount
       end
@@ -169,7 +169,7 @@ module Bosh::Stemcell
       it 'unmaps the file even if unmounting the device fails' do
         expect(shell).to receive(:run).with('sudo umount /fake/mnt', output_command: false).and_raise
         expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
-        expect(shell).to receive(:run).with('sudo losetup -dv /dev/loop0', output_command: false).ordered
+        expect(shell).to receive(:run).with('sudo losetup -v -d /dev/loop0', output_command: false).ordered
 
         expect { disk_image.unmount }.to raise_error RuntimeError
       end
@@ -193,7 +193,7 @@ module Bosh::Stemcell
         allow(fake_thing).to receive(:fake_call).with(disk_image).ordered
         expect(shell).to receive(:run).with('sudo umount /fake/mnt', output_command: false).ordered
         expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
-        expect(shell).to receive(:run).with('sudo losetup -dv /dev/loop0', output_command: false).ordered
+        expect(shell).to receive(:run).with('sudo losetup -v -d /dev/loop0', output_command: false).ordered
 
         disk_image.while_mounted do |image|
           fake_thing.fake_call(image)
@@ -216,7 +216,7 @@ module Bosh::Stemcell
           end
           expect(shell).to receive(:run).with('sudo umount /fake/mnt', output_command: false).ordered
           expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
-          expect(shell).to receive(:run).with('sudo losetup -dv /dev/loop0', output_command: false).ordered
+          expect(shell).to receive(:run).with('sudo losetup -v -d /dev/loop0', output_command: false).ordered
 
           expect { disk_image.while_mounted { |_| raise } }.to raise_error RuntimeError
         end

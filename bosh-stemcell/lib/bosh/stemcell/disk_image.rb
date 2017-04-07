@@ -61,7 +61,7 @@ module Bosh::Stemcell
 
     def unmap_image
       shell.run("sudo kpartx -dv #{device}", output_command: verbose)
-      shell.run("sudo losetup -dv #{device}", output_command: verbose)
+      shell.run("sudo losetup -v -d #{device}", output_command: verbose)
     end
   end
 end
