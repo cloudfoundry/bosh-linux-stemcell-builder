@@ -30,6 +30,22 @@ if [ "$(get_os_type)" == "centos" ]; then
 
   strip_trailing_whitespace_from $chroot/etc/pam.d/system-auth
   patch $chroot/etc/pam.d/system-auth < $assets_dir/centos/system-auth.patch
+elif [ "$(get_os_type)" == "opensuse" ]; then
+  rm $chroot/etc/pam.d/common-password.pam-config-backup
+
+  mv $chroot/etc/pam.d/common-account-pc $chroot/etc/pam.d/common-account
+  mv $chroot/etc/pam.d/common-auth-pc $chroot/etc/pam.d/common-auth
+  mv $chroot/etc/pam.d/common-password-pc $chroot/etc/pam.d/common-password
+  mv $chroot/etc/pam.d/common-session-pc $chroot/etc/pam.d/common-session
+
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-account
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-auth
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-session
+
+  patch $chroot/etc/pam.d/common-account < $assets_dir/opensuse/common-account.patch
+  patch $chroot/etc/pam.d/common-auth < $assets_dir/opensuse/common-auth.patch
+  patch $chroot/etc/pam.d/common-password < $assets_dir/opensuse/common-password.patch
 elif [ "$(get_os_type)" == "ubuntu" ]; then
   strip_trailing_whitespace_from $chroot/etc/pam.d/common-account
   patch $chroot/etc/pam.d/common-account < $assets_dir/ubuntu/common-account.patch

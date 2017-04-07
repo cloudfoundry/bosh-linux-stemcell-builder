@@ -13,7 +13,7 @@ module Bosh::Stemcell
     end
 
     def check_correct_uid
-      if Process.euid != REQUIRED_UID
+      if Process.euid != REQUIRED_UID && !ENV['SKIP_UID_CHECK']
         raise "You must build stemcells as a user with UID #{REQUIRED_UID}. Your effective UID now is #{Process.euid}."
       end
     end

@@ -20,6 +20,8 @@ module Bosh::Stemcell
           ubuntu_os_stages
         when OperatingSystem::Photonos then
           photonos_os_stages
+        when OperatingSystem::Opensuse then
+          opensuse_os_stages
       end
     end
 
@@ -85,7 +87,7 @@ module Bosh::Stemcell
     def_delegators :@definition, :infrastructure, :operating_system, :agent
 
     def openstack_stages
-      stages = if is_centos? || is_rhel?
+      stages = if is_centos? || is_rhel? || is_opensuse?
         [
           :system_network,
         ]
@@ -286,6 +288,28 @@ module Bosh::Stemcell
       ].flatten
     end
 
+    def opensuse_os_stages
+      [
+        :base_opensuse,
+        :base_runsvdir,
+        :base_file_permission,
+        :base_ssh,
+        :system_kernel_modules,
+        :system_ixgbevf,
+        bosh_steps,
+        :password_policies,
+        :restrict_su_command,
+        :tty_config,
+        :rsyslog_config,
+        :delay_monit_start,
+        :system_grub,
+        :cron_config,
+        :system_users,
+        :bosh_audit_opensuse,
+        :bosh_log_audit_start,
+      ].flatten
+    end
+
     def bosh_steps
       [
         :bosh_sysctl,
@@ -341,6 +365,10 @@ module Bosh::Stemcell
 
     def is_rhel?
       operating_system.instance_of?(OperatingSystem::Rhel)
+    end
+
+    def is_opensuse?
+      operating_system.instance_of?(OperatingSystem::Opensuse)
     end
   end
 end
