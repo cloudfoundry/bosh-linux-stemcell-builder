@@ -25,7 +25,7 @@ shared_examples_for 'a systemd-based OS image' do
       # The mountchecker service waits for /var/log to be bind mounted
       # to /var/vcap/data/root_log, which is done in agent bootstrap.
       it { should be_file }
-      its(:content) { should match /^ExecStart=\/usr\/bin\/bash -c 'until mountpoint -q \/var\/log; do sleep \.1; done'/}
+      its(:content) { should match /^ExecStart=\/(usr\/)?bin\/bash -c 'until mountpoint -q \/var\/log; do sleep \.1; done'/}
     end
   end
 end
