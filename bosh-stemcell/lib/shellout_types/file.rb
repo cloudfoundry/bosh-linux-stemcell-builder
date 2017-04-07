@@ -62,8 +62,8 @@ module ShelloutTypes
     end
 
     def directory?
-      #TODO stop this
-      ::File.directory?(filepath)
+      stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
+      stdout.strip == 'directory'
     end
 
     def readable_by_user?(username)
@@ -88,18 +88,15 @@ module ShelloutTypes
       if members.include?(username) || (gid == gid_for_username)
         return (this_mode & 0040) != 0
       end
-      # TODO STOP
-      ::File.world_readable?(filepath) != nil
+      (mode & 0004) != 0
     end
 
     def writable_by?(by_whom)
       case by_whom
         when 'group'
-          # TODO STOP
-          return (::File.stat(filepath).mode & 0020) != 0
+          (mode & 0020) != 0
         when 'other'
-          # TODO STOP
-          return (::File.stat(filepath).mode & 0002) != 0
+          (mode & 0002) != 0
         else
           raise "#{by_whom} is an invalid input to writable_by?, please specify one of: ['group', 'other']"
       end
