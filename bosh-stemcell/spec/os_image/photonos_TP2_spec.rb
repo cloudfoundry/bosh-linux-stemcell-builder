@@ -4,6 +4,12 @@ describe 'Photonos 1 OS image', os_image: true do
   it_behaves_like 'every OS image'
   it_behaves_like 'a systemd-based OS image'
 
+  context 'gdisk' do
+    it 'should be installed' do
+      expect(package('gdisk')).to be_installed
+    end
+  end
+
   context 'installed by base_rhel' do
         describe file('/etc/photon-release') do
       it { should be_file }
