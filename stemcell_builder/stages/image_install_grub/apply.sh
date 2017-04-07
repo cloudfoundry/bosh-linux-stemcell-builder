@@ -26,7 +26,7 @@ add_on_exit "losetup --verbose --detach ${device}"
 
 if ! is_ppc64le; then
 
-  device_partition=$(kpartx -av ${device} | grep "^add" | cut -d" " -f3)
+  device_partition=$(kpartx -sav ${device} | grep "^add" | cut -d" " -f3)
   add_on_exit "kpartx -dv ${device}"
 
   loopback_dev="/dev/mapper/${device_partition}"
@@ -127,8 +127,8 @@ EOF
 else
   # ppc64le guest images have a PReP partition followed by the file system
   # This and following changes in this file made with the help of Paulo Flabio Smorigo @ IBM
-  boot_device_partition=$(kpartx -av ${device} | grep "^add" | grep "p1 " | grep -v "p2 " | cut -d" " -f3)
-  device_partition=$(kpartx -av ${device} | grep "^add" | grep "p2 " | cut -d" " -f3)
+  boot_device_partition=$(kpartx -sav ${device} | grep "^add" | grep "p1 " | grep -v "p2 " | cut -d" " -f3)
+  device_partition=$(kpartx -sav ${device} | grep "^add" | grep "p2 " | cut -d" " -f3)
   loopback_boot_dev="/dev/mapper/${boot_device_partition}"
   loopback_dev="/dev/mapper/${device_partition}"
 

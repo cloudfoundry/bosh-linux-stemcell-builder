@@ -14,7 +14,7 @@ kpartx -dv ${disk_image}
 
 # Map partition in image to loopback
 device=$(losetup --show --find ${disk_image})
-device_partition=$(kpartx -av ${device} | grep "^add" | cut -d" " -f3)
+device_partition=$(kpartx -sav ${device} | grep "^add" | cut -d" " -f3)
 loopback_dev="/dev/mapper/${device_partition}"
 
 # Mount partition
