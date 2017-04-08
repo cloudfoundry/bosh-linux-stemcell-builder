@@ -5,7 +5,7 @@ describe 'vCloud Stemcell', stemcell_image: true do
 
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/infrastructure') do
-      it { should contain('vsphere') }
+      its(:content) { should include('vsphere') }
     end
   end
 
@@ -13,8 +13,8 @@ describe 'vCloud Stemcell', stemcell_image: true do
     describe 'allows password authentication' do
       subject { file('/etc/ssh/sshd_config') }
 
-      it { should_not contain /^PasswordAuthentication no$/ }
-      it { should contain /^PasswordAuthentication yes$/ }
+      its(:content) { should_not match /^PasswordAuthentication no$/ }
+      its(:content) { should match /^PasswordAuthentication yes$/ }
     end
   end
 end

@@ -3,20 +3,20 @@ require 'spec_helper'
 describe 'Azure Stemcell', stemcell_image: true do
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/infrastructure') do
-      it { should contain('azure') }
+      its(:content) { should include('azure') }
     end
   end
 
   context 'installed by bosh_disable_password_authentication' do
     describe 'disallows password authentication' do
       subject { file('/etc/ssh/sshd_config') }
-      it { should contain /^PasswordAuthentication no$/ }
+      its(:content) { should match /^PasswordAuthentication no$/ }
     end
   end
 
   context 'udf module should be enabled' do
     describe file('/etc/modprobe.d/blacklist.conf') do
-      it { should_not contain 'install udf /bin/true' }
+      its(:content) { should_not match 'install udf /bin/true' }
     end
   end
 
@@ -31,15 +31,15 @@ describe 'Azure Stemcell', stemcell_image: true do
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should contain('"Type": "File"') }
-      it { should contain('"MetaDataPath": ""') }
-      it { should contain('"UserDataPath": "/var/lib/waagent/CustomData"') }
-      it { should contain('"SettingsPath": "/var/lib/waagent/CustomData"') }
-      it { should contain('"UseServerName": true') }
-      it { should contain('"UseRegistry": true') }
-      it { should contain('"DevicePathResolutionType": "scsi"') }
-      it { should contain('"CreatePartitionIfNoEphemeralDisk": true') }
-      it { should contain('"PartitionerType": "parted"') }
+      its(:content) { should include('"Type": "File"') }
+      its(:content) { should include('"MetaDataPath": ""') }
+      its(:content) { should include('"UserDataPath": "/var/lib/waagent/CustomData"') }
+      its(:content) { should include('"SettingsPath": "/var/lib/waagent/CustomData"') }
+      its(:content) { should include('"UseServerName": true') }
+      its(:content) { should include('"UseRegistry": true') }
+      its(:content) { should include('"DevicePathResolutionType": "scsi"') }
+      its(:content) { should include('"CreatePartitionIfNoEphemeralDisk": true') }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
   end
 end

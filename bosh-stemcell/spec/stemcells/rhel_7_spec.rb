@@ -8,7 +8,7 @@ describe 'RHEL 7 stemcell', stemcell_image: true do
 
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/operating_system') do
-      it { should contain('centos') }
+      its(:content) { should include('centos') }
     end
   end
 
@@ -22,9 +22,9 @@ describe 'RHEL 7 stemcell', stemcell_image: true do
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      it { should_not contain('"CreatePartitionIfNoEphemeralDisk": true') }
-      it { should contain('"Type": "ConfigDrive"') }
-      it { should contain('"Type": "HTTP"') }
+      its(:content) { should_not include('"CreatePartitionIfNoEphemeralDisk": true') }
+      its(:content) { should include('"Type": "ConfigDrive"') }
+      its(:content) { should include('"Type": "HTTP"') }
     end
   end
 end
