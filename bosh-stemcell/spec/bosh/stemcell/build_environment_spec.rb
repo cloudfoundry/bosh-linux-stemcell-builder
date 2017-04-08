@@ -156,6 +156,10 @@ module Bosh::Stemcell
           FileUtils.mkdir_p(build_path)
         end
 
+        after do
+          ENV['resume_from'] = nil
+        end
+
         it 'does not run sanitize' do
           expect(shell).to_not receive(:run)
 

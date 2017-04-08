@@ -8,4 +8,6 @@ end
 
 RSpec.configure do |config|
   config.include(Bosh::Stemcell::SpecAssets)
+  config.extend(ShelloutTypes::Assertions)
+  config.include(ShelloutTypes::Assertions)
 end

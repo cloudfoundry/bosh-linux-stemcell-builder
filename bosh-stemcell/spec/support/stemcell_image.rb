@@ -11,8 +11,6 @@ RSpec.configure do |config|
   end
 
   if ENV['STEMCELL_IMAGE']
-    config.extend(ShelloutTypes::Assertions)
-    config.include(ShelloutTypes::Assertions)
     config.around(stemcell_image: true) { |example| change_root_dir example }
     config.around(os_image: true) { |example| change_root_dir example }
   else

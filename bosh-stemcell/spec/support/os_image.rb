@@ -4,8 +4,6 @@ require_relative 'shellout_type_assertions'
 
 RSpec.configure do |config|
   if ENV['OS_IMAGE']
-    config.extend(ShelloutTypes::Assertions)
-    config.include(ShelloutTypes::Assertions)
     @os_image_dir = Dir.mktmpdir('os-image-rspec')
     ShelloutTypes::Chroot.chroot_dir = @os_image_dir
     config.add_setting(:os_image_dir, default: @os_image_dir)
