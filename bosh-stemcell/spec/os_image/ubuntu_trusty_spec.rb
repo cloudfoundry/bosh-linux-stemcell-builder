@@ -81,9 +81,11 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
     # Ubuntu relies on the system's hardware NX capabilities, or emulates NX if the hardware does not support it.
     # Ubuntu has had this capability since v 11.04
     # https://wiki.ubuntu.com/Security/Features#nx
-    it 'should run an os that emulates or uses things' do
-      major_version = os[:release].split('.')[0].to_i
-      expect(major_version).to be > 11
+    describe command('lsb_release -r') do
+      it 'should run an os that emulates or uses things' do
+        major_version = subject.stdout.match(/Release:\s+(\d+)(\.\d+)?/)[1].to_i
+        expect(major_version).to be > 11
+      end
     end
   end
 
