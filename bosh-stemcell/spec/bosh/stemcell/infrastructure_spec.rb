@@ -4,7 +4,7 @@ require 'bosh/stemcell/infrastructure'
 module Bosh::Stemcell
   describe Infrastructure do
     describe '.for' do
-      it 'returns the correct infrastrcture' do
+      it 'returns the correct infrastructure' do
         expect(Infrastructure.for('openstack')).to be_an(Infrastructure::OpenStack)
         expect(Infrastructure.for('aws')).to be_an(Infrastructure::Aws)
         expect(Infrastructure.for('google')).to be_an(Infrastructure::Google)
@@ -16,7 +16,7 @@ module Bosh::Stemcell
         expect(Infrastructure.for('null')).to be_an(Infrastructure::NullInfrastructure)
       end
 
-      it 'raises for unknown instructures' do
+      it 'raises for unknown infrastructures' do
         expect {
           Infrastructure.for('BAD_INFRASTRUCTURE')
         }.to raise_error(ArgumentError, /invalid infrastructure: BAD_INFRASTRUCTURE/)
@@ -25,22 +25,10 @@ module Bosh::Stemcell
   end
 
   describe Infrastructure::Base do
-    it 'requires a name to be specified' do
+    it 'requires a name, hypervisor, disk_formats, default_disk_size' do
       expect {
         Infrastructure::Base.new
-      }.to raise_error /key not found: :name/
-    end
-
-    it 'requires a hypervisor' do
-      expect {
-        Infrastructure::Base.new(name: 'foo', default_disk_size: 1024)
-      }.to raise_error /key not found: :hypervisor/
-    end
-
-    it 'requires a default_disk_size' do
-      expect {
-        Infrastructure::Base.new(name: 'foo', hypervisor: 'xen')
-      }.to raise_error /key not found: :default_disk_size/
+      }.to raise_error ArgumentError, 'missing keywords: name, hypervisor, disk_formats, default_disk_size, stemcell_formats'
     end
 
     it 'defaults to no additional cloud properties' do
@@ -48,7 +36,8 @@ module Bosh::Stemcell
         name: 'foo',
         hypervisor: 'xen',
         default_disk_size: 1024,
-        disk_formats: []
+        disk_formats: [],
+        stemcell_formats: []
       )
       expect(infrastructure.additional_cloud_properties).to eq({})
     end
@@ -67,6 +56,14 @@ module Bosh::Stemcell
       expect(subject.default_disk_size).to eq(-1)
     end
 
+    it 'has empty disk formats' do
+      expect(subject.disk_formats).to eq([])
+    end
+
+    it 'has empty stemcell formats' do
+      expect(subject.stemcell_formats).to eq([])
+    end
+
     it 'is comparable to other infrastructures' do
       expect(subject).to eq(Infrastructure.for('null'))
 
@@ -78,13 +75,7 @@ module Bosh::Stemcell
     end
 
     it 'defaults to no additional cloud properties' do
-      infrastructure = Infrastructure::Base.new(
-        name: 'foo',
-        hypervisor: 'xen',
-        default_disk_size: 1024,
-        disk_formats: []
-      )
-      expect(infrastructure.additional_cloud_properties).to eq({})
+      expect(subject.additional_cloud_properties).to eq({})
     end
   end
 
@@ -93,6 +84,7 @@ module Bosh::Stemcell
     its(:hypervisor)        { should eq('xen') }
     its(:default_disk_size) { should eq(3072) }
     its(:disk_formats)      { should eq(['raw']) }
+    its(:stemcell_formats)  { should eq(['aws-raw']) }
 
     it { should eq Infrastructure.for('aws') }
     it { should_not eq Infrastructure.for('openstack') }
@@ -107,6 +99,7 @@ module Bosh::Stemcell
     its(:hypervisor)        { should eq('kvm') }
     its(:default_disk_size) { should eq(3072) }
     its(:disk_formats)      { should eq(['rawdisk']) }
+    its(:stemcell_formats)  { should eq(['google-rawdisk']) }
 
     it { should eq Infrastructure.for('google') }
     it { should_not eq Infrastructure.for('openstack') }
@@ -120,7 +113,8 @@ module Bosh::Stemcell
     its(:name)              { should eq('openstack') }
     its(:hypervisor)        { should eq('kvm') }
     its(:default_disk_size) { should eq(3072) }
-    its(:disk_formats) {should eq(['qcow2', 'raw'])}
+    its(:disk_formats)      { should eq(['qcow2', 'raw']) }
+    its(:stemcell_formats)  { should eq(['openstack-qcow2', 'openstack-raw']) }
 
     it { should eq Infrastructure.for('openstack') }
     it { should_not eq Infrastructure.for('vsphere') }
@@ -135,6 +129,7 @@ module Bosh::Stemcell
     its(:hypervisor)        { should eq('esxi') }
     its(:default_disk_size) { should eq(3072) }
     its(:disk_formats)      { should eq(['ovf']) }
+    its(:stemcell_formats)  { should eq(['vsphere-ova', 'vsphere-ovf']) }
 
     it { should eq Infrastructure.for('vsphere') }
     it { should_not eq Infrastructure.for('aws') }
@@ -149,6 +144,7 @@ module Bosh::Stemcell
     its(:hypervisor)        { should eq('esxi') }
     its(:default_disk_size) { should eq(3072) }
     its(:disk_formats)      { should eq(['ovf']) }
+    its(:stemcell_formats)  { should eq(['vcloud-ova', 'vcloud-ovf']) }
 
     it { should eq Infrastructure.for('vcloud') }
     it { should_not eq Infrastructure.for('vsphere') }
@@ -163,6 +159,7 @@ module Bosh::Stemcell
     its(:hypervisor)        { should eq('hyperv') }
     its(:default_disk_size) { should eq(3072) }
     its(:disk_formats)      { should eq(['vhd']) }
+    its(:stemcell_formats)  { should eq(['azure-vhd']) }
 
     it { should eq Infrastructure.for('azure') }
     it { should_not eq Infrastructure.for('vcloud') }
@@ -177,6 +174,7 @@ module Bosh::Stemcell
     its(:hypervisor)        { should eq('esxi') }
     its(:default_disk_size) { should eq(3072) }
     its(:disk_formats)      { should eq(['ovf']) }
+    its(:stemcell_formats)  { should eq(['softlayer-ovf']) }
 
     it { should eq Infrastructure.for('softlayer') }
     it { should_not eq Infrastructure.for('vsphere') }

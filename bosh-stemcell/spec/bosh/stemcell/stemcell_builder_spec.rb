@@ -24,6 +24,7 @@ describe Bosh::Stemcell::StemcellBuilder do
       hypervisor: 'fake_hypervisor',
       default_disk_size: -1,
       disk_formats: ['qcow2', 'raw'],
+      stemcell_formats: ['stemcell-format-a', 'stemcell-format-b'],
     )
   end
   let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('centos') }

@@ -26,14 +26,14 @@ module Bosh::Stemcell
     end
 
     class Base
-      attr_reader :name, :hypervisor, :default_disk_size, :disk_formats
+      attr_reader :name, :hypervisor, :default_disk_size, :disk_formats, :stemcell_formats
 
-      def initialize(options = {})
-        @name = options.fetch(:name)
-        @supports_light_stemcell = options.fetch(:supports_light_stemcell, false)
-        @hypervisor = options.fetch(:hypervisor)
-        @default_disk_size = options.fetch(:default_disk_size)
-        @disk_formats = options.fetch(:disk_formats)
+      def initialize(name:, hypervisor:, disk_formats:, default_disk_size:, stemcell_formats:)
+        @name = name
+        @hypervisor = hypervisor
+        @default_disk_size = default_disk_size
+        @disk_formats = disk_formats
+        @stemcell_formats = stemcell_formats
       end
 
       def default_disk_format
@@ -53,13 +53,25 @@ module Bosh::Stemcell
 
     class NullInfrastructure < Base
       def initialize
-        super(name: 'null', hypervisor: 'null', default_disk_size: -1, disk_formats: [])
+        super(
+          name: 'null',
+          hypervisor: 'null',
+          default_disk_size: -1,
+          disk_formats: [],
+          stemcell_formats: []
+        )
       end
     end
 
     class OpenStack < Base
       def initialize
-        super(name: 'openstack', hypervisor: 'kvm', default_disk_size: 3072, disk_formats: ['qcow2', 'raw'])
+        super(
+          name: 'openstack',
+          hypervisor: 'kvm',
+          default_disk_size: 3072,
+          disk_formats: ['qcow2', 'raw'],
+          stemcell_formats: ['openstack-qcow2', 'openstack-raw']
+        )
       end
 
       def additional_cloud_properties
@@ -69,7 +81,12 @@ module Bosh::Stemcell
 
     class Vsphere < Base
       def initialize
-        super(name: 'vsphere', hypervisor: 'esxi', default_disk_size: 3072, disk_formats: ['ovf'])
+        super(name: 'vsphere',
+          hypervisor: 'esxi',
+          default_disk_size: 3072,
+          disk_formats: ['ovf'],
+          stemcell_formats: ['vsphere-ova', 'vsphere-ovf']
+        )
       end
 
       def additional_cloud_properties
@@ -79,7 +96,13 @@ module Bosh::Stemcell
 
     class Vcloud < Base
       def initialize
-        super(name: 'vcloud', hypervisor: 'esxi', default_disk_size: 3072, disk_formats: ['ovf'])
+        super(
+          name: 'vcloud',
+          hypervisor: 'esxi',
+          default_disk_size: 3072,
+          disk_formats: ['ovf'],
+          stemcell_formats: ['vcloud-ova', 'vcloud-ovf']
+        )
       end
 
       def additional_cloud_properties
@@ -92,9 +115,9 @@ module Bosh::Stemcell
         super(
           name: 'aws',
           hypervisor: 'xen',
-          supports_light_stemcell: true,
           default_disk_size: 3072,
-          disk_formats: ['raw']
+          disk_formats: ['raw'],
+          stemcell_formats: ['aws-raw']
         )
       end
 
@@ -105,7 +128,7 @@ module Bosh::Stemcell
 
     class Google < Base
       def initialize
-        super(name: 'google', hypervisor: 'kvm', default_disk_size: 3072, disk_formats: ['rawdisk'])
+        super(name: 'google', hypervisor: 'kvm', default_disk_size: 3072, disk_formats: ['rawdisk'], stemcell_formats: ['google-rawdisk'])
       end
 
       def additional_cloud_properties
@@ -115,7 +138,7 @@ module Bosh::Stemcell
 
     class Warden < Base
       def initialize
-        super(name: 'warden', hypervisor: 'boshlite', default_disk_size: 2048, disk_formats: ['files'])
+        super(name: 'warden', hypervisor: 'boshlite', default_disk_size: 2048, disk_formats: ['files'], stemcell_formats: ['warden-tar'])
       end
 
       def additional_cloud_properties
@@ -125,7 +148,13 @@ module Bosh::Stemcell
 
     class Azure < Base
       def initialize
-        super(name: 'azure', hypervisor: 'hyperv', default_disk_size: 3072, disk_formats: ['vhd'])
+        super(
+          name: 'azure',
+          hypervisor: 'hyperv',
+          default_disk_size: 3072,
+          disk_formats: ['vhd'],
+          stemcell_formats: ['azure-vhd']
+        )
       end
 
       def additional_cloud_properties
@@ -135,7 +164,13 @@ module Bosh::Stemcell
 
     class Softlayer < Base
       def initialize
-        super(name: 'softlayer', hypervisor: 'esxi', default_disk_size: 3072, disk_formats: ['ovf'])
+        super(
+          name: 'softlayer',
+          hypervisor: 'esxi',
+          default_disk_size: 3072,
+          disk_formats: ['ovf'],
+          stemcell_formats: ['softlayer-ovf']
+        )
       end
 
       def additional_cloud_properties

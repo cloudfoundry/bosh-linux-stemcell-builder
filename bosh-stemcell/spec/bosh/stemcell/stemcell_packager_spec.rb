@@ -34,6 +34,7 @@ describe Bosh::Stemcell::StemcellPackager do
       hypervisor: 'fake_hypervisor',
       default_disk_size: -1,
       disk_formats: ['qcow2', 'raw'],
+      stemcell_formats: ['stemcell-format-a', 'stemcell-format-b']
     )
   end
   let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('centos','7') }
@@ -103,7 +104,7 @@ describe Bosh::Stemcell::StemcellPackager do
         'bosh_protocol' => 1,
         'sha1' => 'c1ebdefc3f8282a9d7d47803fb5030b61ffc793d', # SHA-1 of image above
         'operating_system' => 'centos-7',
-        'stemcell_formats'=>['fake_infra-raw'],
+        'stemcell_formats' => ['stemcell-format-a', 'stemcell-format-b'],
         'cloud_properties' => {
           'name' => 'bosh-fake_infra-fake_hypervisor-centos-7-go_agent-raw',
           'version' => '1234',
