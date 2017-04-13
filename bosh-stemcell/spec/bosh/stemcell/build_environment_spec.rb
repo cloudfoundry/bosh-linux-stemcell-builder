@@ -3,7 +3,6 @@ require 'bosh/stemcell/build_environment'
 require 'bosh/stemcell/infrastructure'
 require 'bosh/stemcell/operating_system'
 require 'bosh/stemcell/definition'
-require 'bosh/stemcell/agent'
 
 module Bosh::Stemcell
   describe BuildEnvironment do
@@ -18,7 +17,6 @@ module Bosh::Stemcell
         'Bosh::Stemcell::Definition',
         infrastructure: infrastructure,
         operating_system: operating_system,
-        agent: agent,
       )
     end
 
@@ -27,12 +25,6 @@ module Bosh::Stemcell
 
     let(:stemcell_builder_source_dir) { '/fake/path/to/stemcell_builder' }
     let(:stemcell_specs_dir) { '/fake/path/to/stemcell/specs/dir' }
-
-    let(:agent) do
-      instance_double('Bosh::Stemcell::Agent::NullAgent',
-                      name: 'fake-agent-name',
-      )
-    end
 
     let(:version) { '007' }
 
@@ -216,7 +208,7 @@ module Bosh::Stemcell
           "bundle exec rspec -fd#{tag}",
           "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/#{operating_system.name}_#{operating_system.version}_spec.rb",
-          "spec/stemcells/#{agent.name}_agent_spec.rb",
+          "spec/stemcells/go_agent_spec.rb",
           "spec/stemcells/#{infrastructure.name}_spec.rb",
           "spec/stemcells/stig_spec.rb",
           "spec/stemcells/cis_spec.rb",

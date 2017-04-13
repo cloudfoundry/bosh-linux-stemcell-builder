@@ -26,7 +26,6 @@ module Bosh::Stemcell
 
     let(:infrastructure) { Infrastructure.for('aws') }
     let(:operating_system) { OperatingSystem.for('ubuntu', 'penguin') }
-    let(:agent) { Agent.for('go') }
     let(:expected_source_root) { File.expand_path('../../../../..', __FILE__) }
     let(:archive_filename) { instance_double('Bosh::Stemcell::ArchiveFilename', to_s: 'FAKE_STEMCELL.tgz') }
 

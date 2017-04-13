@@ -10,7 +10,6 @@ module Bosh::Stemcell
         'Bosh::Stemcell::Definition',
         infrastructure: infrastructure,
         operating_system: operating_system,
-        agent: agent,
       )
     end
     let(:agent) { double }
@@ -123,8 +122,6 @@ module Bosh::Stemcell
     end
 
     describe '#agent_stages' do
-      let(:agent) { Agent.for('go') }
-
       let(:agent_stages) do
         [
           :bosh_libyaml,

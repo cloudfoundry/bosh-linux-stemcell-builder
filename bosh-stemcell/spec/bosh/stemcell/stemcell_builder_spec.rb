@@ -33,8 +33,7 @@ describe Bosh::Stemcell::StemcellBuilder do
     Bosh::Stemcell::Definition.new(
       infrastructure,
       'fake_hypervisor',
-      operating_system,
-      Bosh::Stemcell::Agent.for('go')
+      operating_system
     )
   end
 

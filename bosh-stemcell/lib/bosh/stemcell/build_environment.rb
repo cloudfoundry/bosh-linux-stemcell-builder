@@ -55,7 +55,7 @@ module Bosh::Stemcell
         "bundle exec rspec -fd#{exclude_exclusions}",
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
         "spec/stemcells/#{operating_system_spec_name}_spec.rb",
-        "spec/stemcells/#{agent.name}_agent_spec.rb",
+        'spec/stemcells/go_agent_spec.rb',
         "spec/stemcells/#{infrastructure.name}_spec.rb",
         'spec/stemcells/stig_spec.rb',
         'spec/stemcells/cis_spec.rb'

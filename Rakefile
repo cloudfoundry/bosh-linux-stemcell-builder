@@ -84,7 +84,7 @@ namespace :stemcell do
   end
 
   desc 'Build a stemcell with a remote pre-built base OS image'
-  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :agent_name, :os_image_s3_bucket_name, :os_image_key] do |_, args|
+  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_s3_bucket_name, :os_image_key] do |_, args|
     begin
       require 'bosh/dev/download_adapter'
       require 'bosh/dev/stemcell_dependency_fetcher'
@@ -101,7 +101,7 @@ namespace :stemcell do
         output_path: os_image_path,
       )
 
-      Rake::Task['stemcell:build_with_local_os_image'].invoke(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, args.agent_name, os_image_path)
+      Rake::Task['stemcell:build_with_local_os_image'].invoke(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, os_image_path)
     rescue RuntimeError => e
       print_help
       raise e
@@ -109,7 +109,7 @@ namespace :stemcell do
   end
 
   desc 'Build a stemcell using a local pre-built base OS image'
-  task :build_with_local_os_image, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :agent_name, :os_image_path, :build_number] do |_, args|
+  task :build_with_local_os_image, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_path, :build_number] do |_, args|
     begin
       require 'bosh/stemcell/build_environment'
       require 'bosh/stemcell/definition'
@@ -120,7 +120,7 @@ namespace :stemcell do
 
       args.with_defaults(build_number: (ENV['CANDIDATE_BUILD_NUMBER'] || '0000'))
 
-      definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, args.agent_name)
+      definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version)
       environment = Bosh::Stemcell::BuildEnvironment.new(
         ENV.to_hash,
         definition,
