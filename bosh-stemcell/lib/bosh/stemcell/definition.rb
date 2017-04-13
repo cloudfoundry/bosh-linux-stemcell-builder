@@ -6,29 +6,20 @@ module Bosh::Stemcell
   class Definition
     attr_reader :infrastructure, :hypervisor_name, :operating_system, :agent
 
-    def self.for(
-      infrastructure_name,
-      hypervisor_name,
-      operating_system_name,
-      operating_system_version,
-      agent_name,
-      light
-    )
+    def self.for(infrastructure_name, hypervisor_name, operating_system_name, operating_system_version, agent_name)
       new(
         Bosh::Stemcell::Infrastructure.for(infrastructure_name),
         hypervisor_name,
         Bosh::Stemcell::OperatingSystem.for(operating_system_name, operating_system_version),
-        Bosh::Stemcell::Agent.for(agent_name),
-        light,
+        Bosh::Stemcell::Agent.for(agent_name)
       )
     end
 
-    def initialize(infrastructure, hypervisor_name, operating_system, agent, light)
+    def initialize(infrastructure, hypervisor_name, operating_system, agent)
       @infrastructure = infrastructure
       @hypervisor_name = hypervisor_name
       @operating_system = operating_system
       @agent = agent
-      @light = light
     end
 
     def stemcell_name(disk_format)
@@ -51,12 +42,7 @@ module Bosh::Stemcell
     def ==(other)
       infrastructure == other.infrastructure &&
         operating_system == other.operating_system &&
-        agent == other.agent &&
-        light? == other.light?
-    end
-
-    def light?
-      @light == true
+        agent == other.agent
     end
   end
 end

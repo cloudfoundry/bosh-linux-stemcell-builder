@@ -25,11 +25,10 @@ module Bosh::Stemcell
     private
 
     def name
-      mod_name = definition.light? ? "light-#{base_name}" : base_name
       if Bosh::Stemcell::Arch.ppc64le?
-        "#{mod_name}-ppc64le"
+        "#{base_name}-ppc64le"
       else
-        mod_name
+        base_name
       end
     end
 

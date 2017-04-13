@@ -12,7 +12,7 @@ namespace :stemcell do
       require 'bosh/stemcell/stage_collection'
       require 'bosh/stemcell/stage_runner'
 
-      definition = Bosh::Stemcell::Definition.for('null', 'null', args.operating_system_name, args.operating_system_version, 'null', false)
+      definition = Bosh::Stemcell::Definition.for('null', 'null', args.operating_system_name, args.operating_system_version, 'null')
       environment = Bosh::Stemcell::BuildEnvironment.new(
         ENV.to_hash,
         definition,
@@ -120,7 +120,7 @@ namespace :stemcell do
 
       args.with_defaults(build_number: (ENV['CANDIDATE_BUILD_NUMBER'] || '0000'))
 
-      definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, args.agent_name, false)
+      definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, args.agent_name)
       environment = Bosh::Stemcell::BuildEnvironment.new(
         ENV.to_hash,
         definition,

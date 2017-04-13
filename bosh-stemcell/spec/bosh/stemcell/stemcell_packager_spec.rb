@@ -44,8 +44,7 @@ describe Bosh::Stemcell::StemcellPackager do
       infrastructure,
       'fake_hypervisor',
       operating_system,
-      Bosh::Stemcell::Agent.for('go'),
-      false
+      Bosh::Stemcell::Agent.for('go')
     )
   end
 
