@@ -94,13 +94,15 @@ describe 'CentOS 7 OS image', os_image: true do
         #ata
         	'ata_generic', 'pata_acpi',
         #block
-          'floppy', 'loop', 'brd', 'xen-blkfront',
+          'floppy', 'loop', 'brd',
+        #xen
+          'xen-blkfront',
         #hv
-          'hv_vmbus',
+          'hv_vmbus','hv_storvsc', 'hv_vmbus',
         #virtio
           'virtio_blk', 'virtio_net', 'virtio_pci', 'virtio_scsi',
-        #fusion
-          'mptspi', 'mptbase', 'mptscsih',
+        #vmware fusion
+          'mptspi', 'mptbase', 'mptscsih','mpt2sas', 'mpt3sas',
         #scsci
           '3w-9xxx',
         	'3w-sas',
@@ -110,15 +112,11 @@ describe 'CentOS 7 OS image', os_image: true do
         	'fnic',
         	'hpsa',
         	'hptiop',
-        	'hv_storvsc',
-          'hv_vmbus',
         	'initio',
         	'isci',
         	'libsas',
         	'lpfc',
         	'megaraid_sas',
-        	'mpt2sas',
-        	'mpt3sas',
         	'mtip32xx',
         	'mvsas',
         	'mvumi',
