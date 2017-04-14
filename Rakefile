@@ -12,7 +12,7 @@ namespace :stemcell do
       require 'bosh/stemcell/stage_collection'
       require 'bosh/stemcell/stage_runner'
 
-      definition = Bosh::Stemcell::Definition.for('null', 'null', args.operating_system_name, args.operating_system_version, 'null')
+      definition = Bosh::Stemcell::Definition.for('null', 'null', args.operating_system_name, args.operating_system_version)
       environment = Bosh::Stemcell::BuildEnvironment.new(
         ENV.to_hash,
         definition,
