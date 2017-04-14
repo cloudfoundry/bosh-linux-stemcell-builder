@@ -87,7 +87,7 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'installed by system_initramfs' do
+  context 'required initramfs modules' do
     describe command("/usr/lib/dracut/skipcpio /boot/initramfs-3.10.*.el7.x86_64.img | zcat | cpio -t | grep '/lib/modules/3.10.*.el7.x86_64'") do
 
       modules = [
