@@ -567,6 +567,7 @@ jobs:
           - build-vsphere-esxi-centos-7
         - get: bosh-cli
         - get: bats
+        - get: bosh-deployment
         - get: bosh-linux-stemcell-builder
           passed:
             - build-warden-boshlite-centos-7
@@ -632,6 +633,7 @@ jobs:
             - build-vsphere-esxi-ubuntu-trusty
         - get: bosh-cli
         - get: bats
+        - get: bosh-deployment
         - get: bosh-linux-stemcell-builder
           passed:
             - build-warden-boshlite-centos-7
