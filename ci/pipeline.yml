@@ -552,7 +552,7 @@ jobs:
             file: stemcell/*.tgz
 
   - name: bats-centos
-    serial: false
+    serial: true
     plan:
     - do:
       - aggregate:
@@ -618,7 +618,7 @@ jobs:
 
 
   - name: bats-ubuntu
-    serial: false
+    serial: true
     plan:
     - do:
       - aggregate:
