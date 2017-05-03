@@ -304,6 +304,7 @@ module Bosh::Stemcell
         :delay_monit_start,
         :system_grub,
         :cron_config,
+        :escape_ctrl_alt_del,
         :system_users,
         :bosh_audit_opensuse,
         :bosh_log_audit_start,
