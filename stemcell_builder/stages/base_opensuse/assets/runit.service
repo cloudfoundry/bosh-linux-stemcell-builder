@@ -4,6 +4,7 @@ Description=Runit Process Supervisor
 [Service]
 ExecStart=/sbin/runsvdir-start
 Restart=always
+TasksMax=infinity
 
 [Install]
 WantedBy=multi-user.target
