@@ -7,8 +7,7 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
 grep -v RANDOM_DELAY $chroot/etc/anacrontab > $chroot/etc/anacrontab.new
-echo "" >> $chroot/etc/anacrontab.new
-echo RANDOM_DELAY=60 >> $chroot/etc/anacrontab.new
+sed -i -e '1 a RANDOM_DELAY=60' $chroot/etc/anacrontab.new
 mv $chroot/etc/anacrontab.new $chroot/etc/anacrontab
 
 
