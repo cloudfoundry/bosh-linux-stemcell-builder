@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `r_WNtzobxc0nnQ8eGDlzholta243M8hq`
+  - Periodic bump
+  - built from master (68b92ffd4007625b994c12c21847c39b400b55f4)
+
 * `v9zIu3GyTfQQaev5hhm6P8duLyg_PDqt`
   - cron should respect RANDOM_DELAY
   - built from master (70c5e98f42123eb763e1481458f65e5a7be1e161)
@@ -578,6 +582,10 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `rvM9hTPYTmIErAmhyzaMRcfgD4xcMzxR`
+  - Periodic bump
+  - built from master (68b92ffd4007625b994c12c21847c39b400b55f4)
 
 * `MlY9FjlIzqd3xTlLk2qf8SlI0LjcGE8e`
   - cron should respect RANDOM_DELAY
