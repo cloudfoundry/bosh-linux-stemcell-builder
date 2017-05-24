@@ -70,10 +70,14 @@ sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
 
   bundle install --local
 <<<<<<< HEAD
+<<<<<<< HEAD
   bundle exec rake stemcell:build[$IAAS,esxi,$OS_NAME,$OS_VERSION,bosh-os-images,bosh-$OS_NAME-$OS_VERSION-os-image.tgz]
 =======
   bundle exec rake stemcell:build[$IAAS,esxi,$OS_NAME,$OS_VERSION,go,bosh-os-images,bosh-$OS_NAME-$OS_VERSION-os-image.tgz]
 >>>>>>> new softlayer stemcell builder stuff
+=======
+  bundle exec rake stemcell:build[$IAAS,esxi,$OS_NAME,$OS_VERSION,bosh-os-images,bosh-$OS_NAME-$OS_VERSION-os-image.tgz]
+>>>>>>> remove redundant parameter
   rm -f ./tmp/base_os_image.tgz
 SUDO
 
