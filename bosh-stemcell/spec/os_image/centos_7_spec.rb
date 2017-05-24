@@ -406,7 +406,7 @@ vcap:(.+):\\d{5}:1:99999:7:::
 syslog:!!:\\d{5}::::::
 HERE
 
-      shadow_match_lines = shadow_match_raw.split(/\n+/).map { |l| Regexp.new(l) }
+      shadow_match_lines = shadow_match_raw.split(/\n+/).map { |l| Regexp.new("^#{l}$") }
       its(:content_as_lines) { should match_array(shadow_match_lines) }
     end
 
