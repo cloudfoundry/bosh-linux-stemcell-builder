@@ -29,6 +29,10 @@ groupadd adm
 groupadd dip
 systemctl enable runit || true # TODO figure out why enable always returns non-zero exit code
 
+# Losen pam_limits limits for the vcap user
+# That is necessary for properly running the mysql server, for example
+echo 'vcap  soft  nproc  4096' >> /etc/security/limits.conf
+
 rpm -Uhv /tmp/dkms-2.2.0.3-16.1.noarch.rpm
 rm /tmp/dkms-2.2.0.3-16.1.noarch.rpm
 
