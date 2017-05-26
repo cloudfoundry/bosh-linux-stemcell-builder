@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -x
 
 state_path() { bosh-cli int director-state/director.yml --path="$1" ; }
 creds_path() { bosh-cli int director-state/director-creds.yml --path="$1" ; }

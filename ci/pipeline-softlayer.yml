@@ -45,7 +45,7 @@ shared:
 
   - &prepare-bats-config
     task: prepare-bats
-    file: bosh-linux-stemcell-builder/ci/bats/iaas/vsphere/prepare-bats-config.yml
+    file: bosh-linux-stemcell-builder/ci/bats/iaas/softlayer/prepare-bats-config.yml
     params: &prepare-bats-params
       BAT_VCAP_PASSWORD:      {{bat-vcap-password}}
       SL_DATACENTER:          {{softlayer-datacenter}}
