@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
 
 exec jq '{
-  "internal_cidr": .network1.vCenterCIDR,
-  "internal_gw": .network1.vCenterGateway,
-  "internal_ip": .directorIP,
-  "network_name": env.BOSH_VSPHERE_VCENTER_VLAN,
-  "external_ip": .directorIP,
-  "vcenter_ip": env.BOSH_VSPHERE_VCENTER,
-  "vcenter_user": env.BOSH_VSPHERE_VCENTER_USER,
-  "vcenter_password": env.BOSH_VSPHERE_VCENTER_PASSWORD,
-  "vcenter_dc": env.BOSH_VSPHERE_VCENTER_DC,
-  "vcenter_vms": env.BOSH_VSPHERE_VCENTER_VM_FOLDER,
-  "vcenter_templates": env.BOSH_VSPHERE_VCENTER_TEMPLATE_FOLDER,
-  "vcenter_ds": env.BOSH_VSPHERE_VCENTER_DATASTORE,
-  "vcenter_disks": env.BOSH_VSPHERE_VCENTER_DISK_PATH,
-  "vcenter_cluster": env.BOSH_VSPHERE_VCENTER_CLUSTER,
+  "sl_datacenter": .network1.softlayerDatacenter,
+  "internal_cidr": .network1.softlayerCIDR,
+  "internal_gw": .network1.softlayerGateway,
+  "internal_ip": .network1.softlayerDirector,
+  "sl_vlan_public": .network1.softlayerPublicVLAN,
+  "sl_vlan_private": .network1.softlayerPrivateVLAN,
+  "sl_vm_name_prefix": env.BOSH_SL_VM_NAME_PREFIX,
+  "sl_vm_domain": env.BOSH_SL_VM_DOMAIN,
+  "sl_username": env.BOSH_SL_USERNAME,
+  "sl_api_key": env.BOSH_SL_API_KEY,
 }' \
   < environment/metadata

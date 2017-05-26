@@ -6,14 +6,11 @@ image_resource:
 
 inputs:
   - name: bosh-linux-stemcell-builder
-  - name: environment
   - name: director-state
 
 params:
   STEMCELL_NAME: null
   BAT_VCAP_PASSWORD:      ""
-  BOSH_CLIENT:            ""
-  BOSH_CLIENT_SECRET:     ""
 
 outputs:
   - name: bats-config

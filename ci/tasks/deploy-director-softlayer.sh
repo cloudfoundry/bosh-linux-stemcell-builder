@@ -58,3 +58,6 @@ $bosh_cli -n update-cloud-config bosh-deployment/softlayer/cloud-config.yml \
           -v sl_vm_name_prefix=$SL_VM_NAME_PREFIX_2 \
           -v sl_vm_domain=$SL_VM_DOMAIN \
           --vars-env "BOSH"
+
+mv $HOME/.bosh director-state/
+mv director.yml director-creds.yml director-state.json director-state/

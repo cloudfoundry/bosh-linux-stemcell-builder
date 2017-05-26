@@ -30,26 +30,24 @@ groups:
 shared:
   - &deploy-director
     task: deploy-director
-    file: bosh-linux-stemcell-builder/ci/bats/tasks/deploy-director.yml
+    file: bosh-linux-stemcell-builder/ci/bats/tasks/deploy-director-softlayer.yml
     params:
       BAT_INFRASTRUCTURE: softlayer
       BOSH_CLIENT:                          {{stemcell-test-director-username}}
       BOSH_CLIENT_SECRET:                   {{stemcell-test-director-password}}
-      SL_USERNAME:                          {{softlayer-username}}
-      SL_API_KEY:                           {{softlayer-api-key}}
-      SL_DATACENTER:                        {{softlayer-datacenter}}
-      SL_VLAN_PUBLIC:                       {{softlayer-vlan-public}}
-      SL_VLAN_PRIVATE:                      {{softlayer-vlan-private}}
-      SL_VM_DOMAIN:                         {{softlayer-vm-domain}}
-      SL_VM_NAME_PREFIX:                    {{softlayer-director-name-prefix}}
+      BOSH_SL_USERNAME:                          {{softlayer-username}}
+      BOSH_SL_API_KEY:                           {{softlayer-api-key}}
+      BOSH_SL_DATACENTER:                        {{softlayer-datacenter}}
+      BOSH_SL_VLAN_PUBLIC:                       {{softlayer-vlan-public}}
+      BOSH_SL_VLAN_PRIVATE:                      {{softlayer-vlan-private}}
+      BOSH_SL_VM_DOMAIN:                         {{softlayer-vm-domain}}
+      BOSH_SL_VM_NAME_PREFIX:                    {{softlayer-director-name-prefix}}
 
   - &prepare-bats-config
     task: prepare-bats
     file: bosh-linux-stemcell-builder/ci/bats/iaas/vsphere/prepare-bats-config.yml
     params: &prepare-bats-params
       BAT_VCAP_PASSWORD:      {{bat-vcap-password}}
-      BOSH_CLIENT:            {{stemcell-test-director-username}}
-      BOSH_CLIENT_SECRET:     {{stemcell-test-director-password}}
       SL_DATACENTER:          {{softlayer-datacenter}}
       SL_VLAN_PRIVATE:        {{softlayer-vlan-private}}
       SL_VLAN_PUBLIC:         {{softlayer-vlan-public}}
@@ -306,7 +304,7 @@ resources:
     type: git
     source:
       uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
-      branch: master
+      branch: 3421.x
 
   - name: version
     type: semver
@@ -350,10 +348,14 @@ resources:
     source:
       repository: cloudfoundry/bosh
 
+
   - name: cpi-release
-    type: bosh-io-release
+    type: s3
     source:
-      repository: cloudfoundry/bosh-softlayer-cpi-release
+      regexp: bosh-softlayer-cpi-(\d+\.\d+\.\d+)\.tgz
+      bucket: {{s3_pipeline_bucket_lite}}
+      access_key_id: {{stemcell-aws-access-key}}
+      secret_access_key: {{stemcell-aws-secret-key}}
 
   #
   # SoftLayer
@@ -371,7 +373,7 @@ resources:
     type: git
     source:
       uri: https://github.com/bluebosh/bosh-deployment
-      branch: softlayer
+      branch: new_softlayer_cpi
 
   - name: bosh-cli
     type: s3
@@ -383,7 +385,7 @@ resources:
   - name: bats
     type: git
     source:
-      uri: https://github.com/cloudfoundry/bosh-acceptance-tests.git
+      uri: https://github.com/bluebosh/bosh-acceptance-tests.git
       branch: gocli-bats
 
   - name: environment

@@ -275,8 +275,8 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      its(:content) { should match('"Type": "File"') }
-      its(:content) { should match('"SettingsPath": "/var/vcap/bosh/user_data.json"') }
+      its(:content) { should match('"Type": "HTTP"') }
+      its(:content) { should match('"UserDataPath": "/rest/v3.1/SoftLayer_Resource_Metadata/getUserMetadata.json"') }
       its(:content) { should match('"UseRegistry": true') }
     end
   end
@@ -297,6 +297,7 @@ HERE
     let(:dpkg_list_warden_ubuntu) { File.read(spec_asset('dpkg-list-warden-ubuntu.txt')) }
     let(:dpkg_list_google_ubuntu) { File.read(spec_asset('dpkg-list-google-ubuntu.txt')) }
     let(:dpkg_list_openstack_ubuntu) { File.read(spec_asset('dpkg-list-openstack-ubuntu.txt')) }
+    let(:dpkg_list_softlayer_ubuntu) { File.read(spec_asset('dpkg-list-softlayer-ubuntu.txt')) }
 
     describe command(dpkg_list_packages), {
       exclude_on_aws: true,
@@ -305,6 +306,7 @@ HERE
       exclude_on_vsphere: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
+      exclude_on_softlayer: true,
     } do
       its(:stdout) { should eq(dpkg_list_openstack_ubuntu) }
     end
@@ -316,6 +318,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       its(:stdout) { should eq(dpkg_list_google_ubuntu) }
     end
@@ -327,6 +330,7 @@ HERE
       exclude_on_vsphere: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       its(:stdout) { should eq(dpkg_list_warden_ubuntu) }
     end
@@ -338,6 +342,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       its(:stdout) { should eq(dpkg_list_vcloud_ubuntu) }
     end
@@ -349,6 +354,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       its(:stdout) { should eq(dpkg_list_vsphere_ubuntu) }
     end
@@ -360,8 +366,20 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       its(:stdout) { should eq(dpkg_list_aws_ubuntu) }
+    end
+
+    describe command(dpkg_list_packages), {
+      exclude_on_google: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+    } do
+      its(:stdout) { should eq(dpkg_list_softlayer_ubuntu) }
     end
   end
 end
