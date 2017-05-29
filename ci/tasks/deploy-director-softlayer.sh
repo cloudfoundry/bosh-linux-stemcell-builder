@@ -24,10 +24,7 @@ export BOSH_internal_ip=$(fromEnvironment '.network1.softlayerDirector')
 export BOSH_sl_vlan_public=$(fromEnvironment '.network1.softlayerPublicVLAN')
 export BOSH_sl_vlan_private=$(fromEnvironment '.network1.softlayerPrivateVLAN')
 export BOSH_reserved_range="[$(fromEnvironment '.network1.reservedRange')]"
-
-cat > director-creds.yml <<EOF
-internal_ip: $BOSH_internal_ip
-EOF
+export BOSH_internal_static_ips="[$(fromEnvironment '.network1.softlayerStaticIPs')]"
 
 export bosh_cli=$(realpath bosh-cli/bosh-cli-*)
 chmod +x $bosh_cli
