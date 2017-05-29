@@ -13,7 +13,7 @@ function fromEnvironment() {
 
 function cp_artifacts {
    mv $HOME/.bosh director-state/
-   mv director.yml director-creds.yml director-state.json director-state/
+   cp director.yml director-creds.yml director-state.json director-state/
 }
 trap cp_artifacts EXIT
 
@@ -46,7 +46,7 @@ $bosh_cli create-env director.yml -l director-creds.yml
 # before nginx is reachable causing "Cannot talk to director..." messages.
 sleep 10
 
-export BOSH_ENVIRONMENT=`$bosh_cli int director-creds.yml --path /internal_ip`
+export BOSH_ENVIRONMENT=$BOSH_internal_ip
 export BOSH_CA_CERT=`$bosh_cli int director-creds.yml --path /director_ssl/ca`
 export BOSH_CLIENT="admin"
 export BOSH_CLIENT_SECRET=`$bosh_cli int director-creds.yml --path /admin_password`
