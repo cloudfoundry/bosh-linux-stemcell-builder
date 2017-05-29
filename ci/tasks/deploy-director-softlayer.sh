@@ -38,6 +38,7 @@ $bosh_cli interpolate bosh-deployment/bosh.yml \
   -v director_name=stemcell-smoke-tests-director \
   -v sl_vm_name_prefix=$SL_VM_NAME_PREFIX \
   -v sl_vm_domain=$SL_VM_DOMAIN \
+  -v sl_director_fqn=$SL_VM_NAME_PREFIX.$SL_VM_DOMAIN \
   -v sl_username=$SL_USERNAME \
   -v sl_api_key=$SL_API_KEY \
   --vars-env "BOSH" > director.yml

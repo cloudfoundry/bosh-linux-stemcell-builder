@@ -5,9 +5,6 @@ set -e -x
 state_path() { bosh-cli int director-state/director.yml --path="$1" ; }
 creds_path() { bosh-cli int director-state/director-creds.yml --path="$1" ; }
 
-director_state_dir=$(realpath director-state)
-director_ip=`cat "${director_state_dir}/director-info"`
-
 cat > bats-config/bats.env <<EOF
 export BOSH_ENVIRONMENT="$( state_path /instance_groups/name=bosh/networks/name=default/static_ips/0 2>/dev/null )"
 export BOSH_CLIENT="admin"
