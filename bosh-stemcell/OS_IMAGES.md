@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `k26h9ILhXuXFPICAsgQ1rpVLBkjVRtjJ`
+  - USN-3304-1: Sudo vulnerability
+  - built from 3421.x (e47eedee6177c6f5f6ba631aafa1acf9e4c56d2e)
+
 * `ucvD5sewvM447sC5w9X7IRXHOa8QtAkI`
   - Periodic bump
   - built from 3421.x (7ee87952c73cbf511f483d11141769d23964d066)
