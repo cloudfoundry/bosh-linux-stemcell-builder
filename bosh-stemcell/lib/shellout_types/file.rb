@@ -38,6 +38,10 @@ module ShelloutTypes
       return stdout
     end
 
+    def content_as_lines
+      content.split(/\n+/)
+    end
+
     def mode?(expected_mode)
       expected_mode == mode
     end

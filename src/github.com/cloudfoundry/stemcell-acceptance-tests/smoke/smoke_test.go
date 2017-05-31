@@ -5,13 +5,13 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 	"github.com/cloudfoundry/bosh-utils/system"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"strings"
 )
 
 var _ = Describe("Stemcell", func() {
@@ -133,5 +133,28 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 		Expect(strings.Split(strings.TrimSpace(stdOut), "\n")).To(Equal([]string{"0.0.0.0:22"}))
+	})
+
+	It("#140456537: enables sysstat", func() {
+		_, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath,
+			"-d", "bosh-stemcell-smoke-tests",
+			"--column=stdout",
+			"ssh", "syslog_forwarder/0", "-r", "-c",
+			// sleep to ensure we have multiple samples so average can be verified
+			`sudo /usr/lib/sysstat/debian-sa1 && sudo /usr/lib/sysstat/debian-sa1 1 1 && sleep 2 && sudo /usr/lib/sysstat/debian-sa1 1 1`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+
+		stdOut, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath,
+			"-d", "bosh-stemcell-smoke-tests",
+			"--column=stdout",
+			"ssh", "syslog_forwarder/0", "-r", "-c",
+			`sudo sar`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+		Expect(stdOut).To(MatchRegexp(`^Linux`))
+		Expect(stdOut).To(MatchRegexp(`\nAverage:\s+`))
 	})
 })

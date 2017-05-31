@@ -209,6 +209,19 @@ module ShelloutTypes
       end
     end
 
+    describe '#content_as_lines' do
+      let(:file_with_content) do
+        a_file = Tempfile.new('a-file', chroot_dir)
+        a_file.write("here is\nmy content")
+        a_file.flush
+        described_class.new(::File.basename(a_file), chroot)
+      end
+
+      it 'returns the file content as an array of lines' do
+        expect(file_with_content.content_as_lines).to eq(["here is","my content"])
+      end
+    end
+
     describe '#mode?' do
       context 'when the file mode has matching u/g/o bits' do
         it 'returns true' do

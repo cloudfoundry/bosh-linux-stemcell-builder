@@ -327,8 +327,16 @@ shared_examples_for 'every OS image' do
   context 'anacron is configured' do
     describe file('/etc/anacrontab') do
       it { should be_file }
-      its(:content) { should match /^RANDOM_DELAY=60$/ }
-      its(:content) { should_not match /^RANDOM_DELAY=[0-57-9][0-9]*$/ }
+
+      it 'declares RANDOM_DELAY early on' do
+        lines = subject.content.lines.map(&:strip)
+        random_delay_index = lines.index('RANDOM_DELAY=60')
+        expect(random_delay_index).not_to be_nil
+
+        (0..random_delay_index).each do |idx|
+          expect(lines[idx]).not_to(match /(\S+\s+){2}cron\./)
+        end
+      end
     end
   end
 
