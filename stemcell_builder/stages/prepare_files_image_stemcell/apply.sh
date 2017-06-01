@@ -11,5 +11,5 @@ source $base_dir/lib/prelude_apply.bash
 chmod 1777 $chroot/tmp
 
 pushd $chroot
-tar zcvf $work/stemcell/image .
+tar zcf $work/stemcell/image .
 popd
