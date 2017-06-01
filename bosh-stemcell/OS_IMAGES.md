@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `8zApY4ctWhWag.8ewavNINnJli5NmLeH`
+  - updated rsyslog configuration for precision times
+  - built from master (56863c7b780dda14b85f246f0e2f585fb839ff79)
+
 * `r_WNtzobxc0nnQ8eGDlzholta243M8hq`
   - Periodic bump
   - built from master (68b92ffd4007625b994c12c21847c39b400b55f4)
@@ -582,6 +586,10 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `qWEsvsL_cKNsR_P4Ou9lY1bUngcUbX2j`
+  - updated rsyslog configuration for precision times
+  - built from master (56863c7b780dda14b85f246f0e2f585fb839ff79)
 
 * `rvM9hTPYTmIErAmhyzaMRcfgD4xcMzxR`
   - Periodic bump
