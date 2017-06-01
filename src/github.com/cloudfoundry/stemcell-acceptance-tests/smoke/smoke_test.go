@@ -157,4 +157,17 @@ var _ = Describe("Stemcell", func() {
 		Expect(stdOut).To(MatchRegexp(`^Linux`))
 		Expect(stdOut).To(MatchRegexp(`\nAverage:\s+`))
 	})
+
+	It("#146390925: rsyslog logs with precision timestamps", func() {
+		stdout, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath,
+			"-d", "bosh-stemcell-smoke-tests",
+			"--column=stdout",
+			"ssh", "syslog_forwarder/0", "-r",
+			"-c", `logger story146390925 && sleep 1 && sudo grep story146390925 /var/log/messages`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+
+		Expect(stdout).To(MatchRegexp(`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,6}\+00:00 localhost bosh_[^ ]+: story146390925`))
+	})
 })
