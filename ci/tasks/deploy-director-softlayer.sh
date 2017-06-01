@@ -58,6 +58,10 @@ $bosh_cli -n update-cloud-config bosh-deployment/softlayer/cloud-config.yml \
           --ops-file bosh-linux-stemcell-builder/ci/assets/reserve-ips.yml \
           -v sl_vm_name_prefix=$SL_VM_NAME_PREFIX_2 \
           -v sl_vm_domain=$SL_VM_DOMAIN \
+          -v sl_public_ssh_key=$SL_PUBLIC_SSH_KEY \
+          -v powerdns_ip=$BOSH_ENVIRONMENT \
+          -v sl_vlan_public_id=$SL_VLAN_PUBLIC \
+          -v sl_vlan_private_id=$SL_VLAN_PRIVATE \
           --vars-env "BOSH"
 
 mv $HOME/.bosh director-state/

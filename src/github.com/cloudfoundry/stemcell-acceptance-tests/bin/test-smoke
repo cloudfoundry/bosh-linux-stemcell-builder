@@ -8,6 +8,6 @@ echo -e "\n Installing ginkgo..."
 $bin/go install ./vendor/github.com/onsi/ginkgo/ginkgo
 
 echo -e "\n Testing packages..."
-$bin/env ginkgo --skipPackage ./vendor -r .
+$bin/env ginkgo --skipPackage ./vendor,./ipv6basic -r .
 
 echo -e "\n\033[0;32mSUCCESS\033[0m"

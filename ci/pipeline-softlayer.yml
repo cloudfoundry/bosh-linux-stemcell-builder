@@ -117,11 +117,12 @@ jobs:
           params:
             SL_API_KEY: {{softlayer-api-key}}
             SL_USERNAME:  {{softlayer-username}}
-            SL_VLAN_PRIVATE: {{softlayer-vlan-private-old}}
-            SL_VLAN_PUBLIC: {{softlayer-vlan-public-old}}
+            SL_VLAN_PRIVATE: {{softlayer-vlan-private}}
+            SL_VLAN_PUBLIC: {{softlayer-vlan-public}}
             SL_VM_DOMAIN: softlayer.com
             SL_VM_NAME_PREFIX: {{softlayer-director-name-prefix}}
             SL_VM_NAME_PREFIX_2: {{softlayer-vm-name-prefix}}
+            SL_PUBLIC_SSH_KEY: {{softlayer-public-ssh-key}}
 
         - task: test-stemcell
           file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
@@ -282,7 +283,7 @@ jobs:
 
         - <<: *prepare-bats-config
           params:
-            STEMCELL_NAME: bosh-softlayer-xen-ubuntu-trusty-go_agent
+            <<: *prepare-bats-params
 
         - <<: *run-bats
         ensure:
@@ -304,7 +305,7 @@ resources:
     type: git
     source:
       uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
-      branch: 3421.x
+      branch: master
 
   - name: version
     type: semver
