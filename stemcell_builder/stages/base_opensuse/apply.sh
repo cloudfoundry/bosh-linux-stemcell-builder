@@ -38,6 +38,9 @@ rm -rf /lib/modules/4.1.12-1-xen/
 # Make sure that SSH host keys are generated. By default they are only generated if there is no
 # specific HostKey configuration in /etc/ssh/sshd_config
 sed -i 's@if .*;@if true;@' /usr/sbin/sshd-gen-keys-start
+
+# Delete the hosts.equiv trust file (STIG V-38491)
+rm /etc/hosts.equiv
 "
 
 touch ${chroot}/etc/gshadow
