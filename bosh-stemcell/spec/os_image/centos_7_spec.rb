@@ -25,6 +25,7 @@ describe 'CentOS 7 OS image', os_image: true do
 
   context 'installed by base_centos_packages' do
     %w(
+      automake
       bison
       bzip2-devel
       cloud-utils-growpart
@@ -38,12 +39,14 @@ describe 'CentOS 7 OS image', os_image: true do
       glibc-static
       iptables
       libcap-devel
+      libtool
       libuuid-devel
       libxml2
       libxml2-devel
       libxslt
       libxslt-devel
       lsof
+      m4
       NetworkManager
       net-tools
       nmap-ncat

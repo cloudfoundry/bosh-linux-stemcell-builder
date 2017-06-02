@@ -2,6 +2,7 @@
 
 for package_name in \
   autoconf \
+  automake \
   bison \
   cmake \
   cpp \
@@ -14,6 +15,8 @@ for package_name in \
   libmpc \
   libquadmath-devel \
   libstdc++-devel \
+  libtool \
+  m4 \
   make \
   patch \
 ; do

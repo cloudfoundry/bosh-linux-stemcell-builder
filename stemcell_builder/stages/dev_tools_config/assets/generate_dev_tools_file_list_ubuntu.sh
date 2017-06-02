@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 for package_name in \
+  autoconf \
+  automake \
   binutils \
   bison \
   build-essential \
@@ -18,6 +20,8 @@ for package_name in \
   gettext \
   intltool-debian \
   libmpc3 \
+  libtool \
+  m4 \
   make \
   patch \
   po-debconf \
