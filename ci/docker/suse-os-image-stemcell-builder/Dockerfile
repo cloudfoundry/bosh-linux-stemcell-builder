@@ -10,6 +10,9 @@ RUN zypper -n in -t pattern devel_C_C++
 RUN zypper -n in ruby-devel libmysqld-devel sqlite3-devel postgresql-devel libxslt-devel libxml2-devel libxml2 python3-kiwi wget sudo gcc-c++ curl git
 RUN zypper -n in --force-resolution libopenssl-devel # RVM requirement
 
+# Temporarily downgrade kpartx until http://bugzilla.suse.com/show_bug.cgi?id=1037533 was resolved
+RUN zypper -n in --oldpackage kpartx=0.6.2+suse20161025.b80f406-1.1
+
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN curl -sSL https://get.rvm.io | bash -s stable --ruby=2.3.1
 
