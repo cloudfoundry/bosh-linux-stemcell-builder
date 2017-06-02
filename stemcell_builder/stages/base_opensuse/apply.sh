@@ -41,6 +41,9 @@ sed -i 's@if .*;@if true;@' /usr/sbin/sshd-gen-keys-start
 
 # Delete the hosts.equiv trust file (STIG V-38491)
 rm /etc/hosts.equiv
+
+# Explicitly enable zypper's gpgcheck
+echo 'gpgcheck = on' >> /etc/zypp/zypp.conf
 "
 
 touch ${chroot}/etc/gshadow
