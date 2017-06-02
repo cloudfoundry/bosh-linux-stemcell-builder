@@ -38,7 +38,7 @@ describe 'openSUSE leap OS image', os_image: true do
 
   context 'gpgcheck must be enabled (stig: V-38483)' do
     describe file('/etc/zypp/zypp.conf') do
-      its(:content) { should_not match /.*gpgcheck.*=.*(false|off)/ }
+      its(:content) { should match /^gpgcheck.*=.*on$/ }
     end
   end
 
