@@ -358,8 +358,8 @@ systemd-bus-proxy:x:999:998:systemd Bus Proxy:/:/sbin/nologin
 systemd-network:x:192:192:systemd Network Management:/:/sbin/nologin
 dbus:x:81:81:System message bus:/:/sbin/nologin
 polkitd:x:998:997:User for polkitd:/:/sbin/nologin
-rpc:x:32:32:Rpcbind Daemon:/var/lib/rpcbind:/sbin/nologin
 abrt:x:173:173::/etc/abrt:/sbin/nologin
+rpc:x:32:32:Rpcbind Daemon:/var/lib/rpcbind:/sbin/nologin
 libstoragemgmt:x:997:996:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
 tcpdump:x:72:72::/:/sbin/nologin
 chrony:x:996:995::/var/lib/chrony:/sbin/nologin
@@ -390,8 +390,8 @@ systemd-bus-proxy:!!:\d{5}::::::
 systemd-network:!!:\d{5}::::::
 dbus:!!:\d{5}::::::
 polkitd:!!:\d{5}::::::
-rpc:!!:\d{5}:0:99999:7:::
 abrt:!!:\d{5}::::::
+rpc:!!:\d{5}:0:99999:7:::
 libstoragemgmt:!!:\d{5}::::::
 tcpdump:!!:\d{5}::::::
 chrony:!!:\d{5}::::::
@@ -439,8 +439,8 @@ systemd-bus-proxy:x:998:
 systemd-network:x:192:
 dbus:x:81:
 polkitd:x:997:
-rpc:x:32:
 abrt:x:173:
+rpc:x:32:
 libstoragemgmt:x:996:
 tcpdump:x:72:
 stapusr:x:156:
@@ -495,8 +495,8 @@ systemd-bus-proxy:!::
 systemd-network:!::
 dbus:!::
 polkitd:!::
-rpc:!::
 abrt:!::
+rpc:!::
 libstoragemgmt:!::
 tcpdump:!::
 stapusr:!::
