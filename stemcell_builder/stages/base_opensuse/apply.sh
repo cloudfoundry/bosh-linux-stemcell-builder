@@ -12,6 +12,7 @@ kiwicompat --prepare $base_dir/stages/base_opensuse --root $chroot
 cp /etc/resolv.conf $chroot/etc/resolv.conf
 cp $assets_dir/runit.service $chroot/usr/lib/systemd/system/
 cp $assets_dir/dkms-2.2.0.3-16.1.noarch.rpm $chroot/tmp
+cp $assets_dir/runit-2.1.2.tar.gz $chroot/tmp
 cp $assets_dir/ubuntu-certificates.run $chroot/usr/lib/ca-certificates/update.d/99x_ubuntu_certs.run
 
 dd if=/dev/urandom of=$chroot/var/lib/random-seed bs=512 count=1
@@ -62,10 +63,8 @@ run_in_chroot $chroot "
   chmod 1755 /package
   cd /package
 
-  wget http://smarden.org/runit/runit-2.1.2.tar.gz
-  gunzip runit-2.1.2.tar
-  tar -xpf runit-2.1.2.tar
-  rm runit-2.1.2.tar
+  tar -xpf /tmp/runit-2.1.2.tar.gz
+  rm /tmp/runit-2.1.2.tar.gz
 
   cd admin/runit-2.1.2
   package/install
