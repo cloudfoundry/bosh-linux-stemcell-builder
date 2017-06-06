@@ -61,6 +61,8 @@ for i in $(seq 0 64); do
   fi
 done
 
+chmod u+s /usr/bin/sudo
+
 chown -R ubuntu:ubuntu bosh-linux-stemcell-builder
 
 sudo chmod u+s $(which sudo)
