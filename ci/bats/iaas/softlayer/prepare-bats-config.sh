@@ -48,16 +48,9 @@ properties:
     - 10.0.80.11
     - 10.0.80.12
     cloud_properties:
-      vlan_id: ((SL_VLAN_PUBLIC))
-  - name: second
-    type: dynamic
-    dns:
-    - ((BOSH_ENVIRONMENT))
-    - 8.8.8.8
-    - 10.0.80.11
-    - 10.0.80.12
-    cloud_properties:
-      vlan_id: ((SL_VLAN_PRIVATE))
+      vlanIds:
+      - ((SL_VLAN_PUBLIC))
+      - ((SL_VLAN_PRIVATE))
   password: "\$6\$3n/Y5RP0\$Jr1nLxatojY9Wlqduzwh66w8KmYxjoj9vzI62n3Mmstd5mNVnm0SS1N0YizKOTlJCY5R/DFmeWgbkrqHIMGd51"
 EOF
 
