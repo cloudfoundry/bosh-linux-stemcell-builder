@@ -12,7 +12,6 @@ inputs:
 params:
   STEMCELL_NAME: null
   BAT_VCAP_PASSWORD:      ""
-  BAT_SECOND_STATIC_IP: ""
 
 outputs:
   - name: bats-config

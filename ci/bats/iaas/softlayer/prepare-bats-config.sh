@@ -32,7 +32,6 @@ properties:
   use_vip: false
   pool_size: 1
   instances: 1
-  second_static_ip: ((BAT_SECOND_STATIC_IP))
   stemcell:
     name: ((STEMCELL_NAME))
     version: latest
@@ -41,36 +40,35 @@ properties:
     data_center: ((SL_DATACENTER))
     domain: ((SL_VM_DOMAIN))
   networks:
-    - name: default
-      type: dynamic
-      dns:
-      - ((BOSH_ENVIRONMENT))
-      - 8.8.8.8
-      - 10.0.80.11
-      - 10.0.80.12
-      cloud_properties:
-        vlan_id: ((SL_VLAN_PUBLIC))
-    - name: second
-      type: dynamic
-      dns:
-      - ((BOSH_ENVIRONMENT))
-      - 8.8.8.8
-      - 10.0.80.11
-      - 10.0.80.12
-      cloud_properties:
-        vlan_id: ((SL_VLAN_PRIVATE))
+  - name: default
+    type: dynamic
+    dns:
+    - ((BOSH_ENVIRONMENT))
+    - 8.8.8.8
+    - 10.0.80.11
+    - 10.0.80.12
+    cloud_properties:
+      vlan_id: ((SL_VLAN_PUBLIC))
+  - name: second
+    type: dynamic
+    dns:
+    - ((BOSH_ENVIRONMENT))
+    - 8.8.8.8
+    - 10.0.80.11
+    - 10.0.80.12
+    cloud_properties:
+      vlan_id: ((SL_VLAN_PRIVATE))
   password: "\$6\$3n/Y5RP0\$Jr1nLxatojY9Wlqduzwh66w8KmYxjoj9vzI62n3Mmstd5mNVnm0SS1N0YizKOTlJCY5R/DFmeWgbkrqHIMGd51"
 EOF
 
 bosh-cli interpolate \
  --vars-file environment/metadata \
- -v STEMCELL_NAME=$STEMCELL_NAME \
- -v BAT_SECOND_STATIC_IP=$BAT_SECOND_STATIC_IP \
- -v SL_VM_NAME_PREFIX=$SL_VM_NAME_PREFIX \
- -v SL_DATACENTER=$SL_DATACENTER \
- -v SL_VM_DOMAIN=$SL_VM_DOMAIN \
+ -v STEMCELL_NAME=${STEMCELL_NAME} \
+ -v SL_VM_NAME_PREFIX=${SL_VM_NAME_PREFIX} \
+ -v SL_DATACENTER=${SL_DATACENTER} \
+ -v SL_VM_DOMAIN=${SL_VM_DOMAIN} \
  -v BOSH_ENVIRONMENT="$( state_path /instance_groups/name=bosh/networks/name=default/static_ips/0 2>/dev/null )" \
- -v SL_VLAN_PUBLIC=$SL_VLAN_PUBLIC \
- -v SL_VLAN_PRIVATE=$SL_VLAN_PRIVATE \
+ -v SL_VLAN_PUBLIC=${SL_VLAN_PUBLIC} \
+ -v SL_VLAN_PRIVATE=${SL_VLAN_PRIVATE} \
  interpolate.yml \
  > bats-config/bats-config.yml
