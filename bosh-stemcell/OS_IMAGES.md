@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `4nnsK9Q0ayy7tEw01skvZ5onAdUz1Jk4`
+  - USN-3312-2: Linux kernel vulnerabilities
+  - built from 3421.x (119389f8327c4595ea99a354876f5992b22e8005)
+
 * `k26h9ILhXuXFPICAsgQ1rpVLBkjVRtjJ`
   - USN-3304-1: Sudo vulnerability
   - built from 3421.x (e47eedee6177c6f5f6ba631aafa1acf9e4c56d2e)
@@ -537,6 +541,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `eRj_JZQ809ZCjTrRE.8kHMpESlFIBdGR`
+  - Periodic bump
+  - built from 3421.x (119389f8327c4595ea99a354876f5992b22e8005)
 
 * `h1JRyxA8NQob9yshnOasR7j8S47X8Yz6`
   - CESA-2017:1382: Sudo vulnerability
