@@ -3,8 +3,8 @@
 set -eux
 
 GOPATH=/home/opensuse/go
-GO_ARCHIVE_URL=https://storage.googleapis.com/golang/go1.6.1.linux-amd64.tar.gz
-GO_ARCHIVE_SHA256=6d894da8b4ad3f7f6c295db0d73ccc3646bce630e1c43e662a0120681d47e988
+GO_ARCHIVE_URL=https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
+GO_ARCHIVE_SHA256=1862f4c3d3907e59b04a757cfda0ea7aa9ef39274af99a784f5be843c80c6772
 GO_ARCHIVE=/tmp/$(basename $GO_ARCHIVE_URL)
 
 echo "Downloading go..."
