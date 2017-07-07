@@ -9,7 +9,7 @@ for file in $COPY_KEYS ; do
   file="${file/\%s/$VERSION}"
 
   echo "$file"
-  filename=$(${file} | grep -E -o 'bosh-stemcell.*.tgz' )
+  filename=$(basename "$file")
 
   # occasionally this fails for unexpected reasons; retry a few times
   for i in {1..4}; do
