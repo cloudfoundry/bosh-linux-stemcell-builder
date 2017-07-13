@@ -27,6 +27,7 @@ run_in_chroot $chroot "
   cd WALinuxAgent-${wala_release}
   sudo python setup.py install --skip-data-files
   cp bin/waagent /usr/sbin/waagent
+  cp bin/waagent2.0 /usr/sbin/waagent2.0
   chmod 0755 /usr/sbin/waagent
   cd /tmp/
   sudo rm -fr WALinuxAgent-${wala_release}
