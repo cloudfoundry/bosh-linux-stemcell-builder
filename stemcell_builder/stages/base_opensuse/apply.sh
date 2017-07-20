@@ -12,7 +12,6 @@ kiwicompat --prepare $base_dir/stages/base_opensuse --root $chroot
 cp /etc/resolv.conf $chroot/etc/resolv.conf
 cp $assets_dir/runit.service $chroot/usr/lib/systemd/system/
 cp $assets_dir/dkms-2.2.0.3-16.1.noarch.rpm $chroot/tmp
-cp $assets_dir/runit-2.1.2.tar.gz $chroot/tmp
 cp $assets_dir/ubuntu-certificates.run $chroot/usr/lib/ca-certificates/update.d/99x_ubuntu_certs.run
 
 dd if=/dev/urandom of=$chroot/var/lib/random-seed bs=512 count=1
@@ -53,31 +52,7 @@ touch ${chroot}/etc/gshadow
 mkdir -p $chroot/etc/service/
 
 run_in_chroot $chroot "
-  # Install runit from sources
-  mkdir -p /package
-  chmod 1755 /package
-  cd /package
-
-  tar -xpf /tmp/runit-2.1.2.tar.gz
-  rm /tmp/runit-2.1.2.tar.gz
-
-  cd admin/runit-2.1.2
-  package/install
-
-  install -m0750 /package/admin/runit/etc/2 /sbin/runsvdir-start
   ln -s /etc/sv /service
-
-  # Setup links for runit to /usr/bin so that monit can start it (it only sets up a very basic
-  # PATH env variable which doesn't include /usr/local/bin
-  ln -s /usr/local/bin/chpst /usr/bin
-  ln -s /usr/local/bin/runit /usr/bin
-  ln -s /usr/local/bin/runit-init /usr/bin
-  ln -s /usr/local/bin/runsv /usr/bin
-  ln -s /usr/local/bin/runsvchdir /usr/bin
-  ln -s /usr/local/bin/runsvdir /usr/bin
-  ln -s /usr/local/bin/sv /usr/bin
-  ln -s /usr/local/bin/svlogd /usr/bin
-  ln -s /usr/local/bin/utmpset /usr/bin
 
   # Enable nf_conntrack module
   echo "nf_conntrack" > /etc/modules-load.d/conntrack.conf
