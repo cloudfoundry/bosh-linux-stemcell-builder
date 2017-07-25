@@ -9,6 +9,6 @@ source $base_dir/lib/prelude_config.bash
 cd $assets_dir
 rm -rf s3cli
 mkdir s3cli
-current_version=0.0.60
+current_version=0.0.63
 curl -L -o s3cli/s3cli https://s3.amazonaws.com/s3cli-artifacts/s3cli-${current_version}-linux-amd64
-echo "893a38e24b6eef035e68dac88483e1c8a86e1bed s3cli/s3cli" | sha1sum -c -
+echo "86dc952cef0cc4549e3e6724c516e93773f457d0 s3cli/s3cli" | sha1sum -c -
