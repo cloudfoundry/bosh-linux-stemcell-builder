@@ -339,8 +339,9 @@ describe 'CentOS 7 OS image', os_image: true do
   end
 
   describe 'allowed user accounts' do
+
     describe file('/etc/passwd') do
-      its(:content) { should eql(<<HERE) }
+      passwd_match_raw = <<HERE
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/sbin/nologin
 daemon:x:2:2:daemon:/sbin:/sbin/nologin
@@ -369,44 +370,49 @@ sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 syslog:x:995:992::/home/syslog:/sbin/nologin
 HERE
+      passwd_match_lines = passwd_match_raw.split(/\n+/)
+
+      its(:content_as_lines) { should match_array(passwd_match_lines)}
     end
 
     describe file('/etc/shadow') do
-      shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
-\Aroot:(.+):\d{5}:0:99999:7:::
-bin:\*:\d{5}:0:99999:7:::
-daemon:\*:\d{5}:0:99999:7:::
-adm:\*:\d{5}:0:99999:7:::
-lp:\*:\d{5}:0:99999:7:::
-sync:\*:\d{5}:0:99999:7:::
-shutdown:\*:\d{5}:0:99999:7:::
-halt:\*:\d{5}:0:99999:7:::
-mail:\*:\d{5}:0:99999:7:::
-operator:\*:\d{5}:0:99999:7:::
-games:\*:\d{5}:0:99999:7:::
-ftp:\*:\d{5}:0:99999:7:::
-nobody:\*:\d{5}:0:99999:7:::
-systemd-bus-proxy:!!:\d{5}::::::
-systemd-network:!!:\d{5}::::::
-dbus:!!:\d{5}::::::
-polkitd:!!:\d{5}::::::
-abrt:!!:\d{5}::::::
-rpc:!!:\d{5}:0:99999:7:::
-libstoragemgmt:!!:\d{5}::::::
-tcpdump:!!:\d{5}::::::
-chrony:!!:\d{5}::::::
-ntp:!!:\d{5}::::::
-tss:!!:\d{5}::::::
-sshd:!!:\d{5}::::::
-vcap:(.+):\d{5}:1:99999:7:::
-syslog:!!:\d{5}::::::\Z
-END_SHADOW
+      shadow_match_raw = <<HERE
+root:(.+):\\d{5}:0:99999:7:::
+bin:\\*:\\d{5}:0:99999:7:::
+daemon:\\*:\\d{5}:0:99999:7:::
+adm:\\*:\\d{5}:0:99999:7:::
+lp:\\*:\\d{5}:0:99999:7:::
+sync:\\*:\\d{5}:0:99999:7:::
+shutdown:\\*:\\d{5}:0:99999:7:::
+halt:\\*:\\d{5}:0:99999:7:::
+mail:\\*:\\d{5}:0:99999:7:::
+operator:\\*:\\d{5}:0:99999:7:::
+games:\\*:\\d{5}:0:99999:7:::
+ftp:\\*:\\d{5}:0:99999:7:::
+nobody:\\*:\\d{5}:0:99999:7:::
+systemd-bus-proxy:!!:\\d{5}::::::
+systemd-network:!!:\\d{5}::::::
+dbus:!!:\\d{5}::::::
+polkitd:!!:\\d{5}::::::
+rpc:!!:\\d{5}:0:99999:7:::
+abrt:!!:\\d{5}::::::
+libstoragemgmt:!!:\\d{5}::::::
+tcpdump:!!:\\d{5}::::::
+chrony:!!:\\d{5}::::::
+ntp:!!:\\d{5}::::::
+tss:!!:\\d{5}::::::
+sshd:!!:\\d{5}::::::
+vcap:(.+):\\d{5}:1:99999:7:::
+syslog:!!:\\d{5}::::::
+HERE
 
-      its(:content) { should match(shadow_match) }
+      shadow_match_lines = shadow_match_raw.split(/\n+/).map { |l| Regexp.new(l) }
+      its(:content_as_lines) { should match_array(shadow_match_lines) }
     end
 
     describe file('/etc/group') do
-      its(:content) { should eq(<<HERE) }
+
+      group_raw = <<HERE
 root:x:0:
 bin:x:1:
 daemon:x:2:
@@ -459,10 +465,14 @@ bosh_sshers:x:1001:vcap
 bosh_sudoers:x:1002:
 syslog:x:992:
 HERE
+      group_lines = group_raw.split(/\n+/)
+      its(:content_as_lines) { should match_array(group_lines)}
+
     end
 
     describe file('/etc/gshadow') do
-      its(:content) { should eq(<<HERE) }
+
+      gshadow_raw = <<HERE
 root:*::
 bin:*::
 daemon:*::
@@ -515,6 +525,10 @@ bosh_sshers:!::vcap
 bosh_sudoers:!::
 syslog:!::
 HERE
+
+      gshadow_lines = gshadow_raw.split(/\n+/)
+      its(:content_as_lines) { should match_array(gshadow_lines)}
+
     end
   end
 
