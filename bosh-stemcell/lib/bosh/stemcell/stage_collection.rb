@@ -34,6 +34,7 @@ module Bosh::Stemcell
         :bosh_libyaml,
         :bosh_go_agent,
         :aws_cli,
+        :google_gcscli,
         :logrotate_config,
         :dev_tools_config,
         :static_libraries_config,
@@ -141,7 +142,6 @@ module Bosh::Stemcell
 
     def google_stages
       [
-        :google_gcscli,
         :system_network,
         :system_google_modules,
         :system_google_packages,
