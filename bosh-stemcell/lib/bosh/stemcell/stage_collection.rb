@@ -141,6 +141,7 @@ module Bosh::Stemcell
 
     def google_stages
       [
+        :google_gcscli,
         :system_network,
         :system_google_modules,
         :system_google_packages,
