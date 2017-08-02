@@ -192,6 +192,11 @@ shared_examples_for 'every OS image' do
       it { should be_file }
       its(:content) { should match('ModLoad imklog') }
     end
+
+    describe file('/etc/rsyslog.d/avoid-startup-deadlock.conf') do
+      it { should be_file }
+      its(:content) { should match(/global\(processInternalMessages="on"\)/) }
+    end
   end
 
   context 'auditd should be installed but not enabled (stig: V-38628) (stig: V-38631) (stig: V-38632)' do
