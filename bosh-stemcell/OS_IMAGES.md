@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `OM11wAMZHMicV0Qrm7hgINDZVf_R7by9`
+  - Fix for occasional rsyslog hang on startup
+  - built from 3421.x (a7fffa982829f5c5d6e6b34bfa64e19e18fa4d6c)
+
 * `J_Kq_x6enkOS2E48RhZkxNo4fHcjk4Mv`
   - Periodic bump
   - built from 3421.x (5d992060b761fb6f6be03d4ce06453b458866e76)
@@ -557,6 +561,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `yW3PXG_8DRzUGv.zWirm.QQ13e9tLVel`
+  - Fix for occasional rsyslog hang on startup
+  - built from 3421.x (a7fffa982829f5c5d6e6b34bfa64e19e18fa4d6c)
 
 * `xWfKG1XmYyWe_z6DTJ0wwiBXWpMFsNYU`
   - Periodic bump
