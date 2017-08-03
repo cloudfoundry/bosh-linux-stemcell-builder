@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `aO4C0Kg5IALLa5QA_6ed9yVl.KgTaUOK`
+  - USN-3378-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from 3421.x (454d68e5b2a5410f49dd8eb2741ba6c81b48ee33)
+
 * `OM11wAMZHMicV0Qrm7hgINDZVf_R7by9`
   - Fix for occasional rsyslog hang on startup
   - built from 3421.x (a7fffa982829f5c5d6e6b34bfa64e19e18fa4d6c)
@@ -561,6 +565,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `jEp4AAx.jHxaN_O5bWRyUMrYTWQqOSOF`
+  - USN-3378-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from 3421.x (454d68e5b2a5410f49dd8eb2741ba6c81b48ee33)
 
 * `yW3PXG_8DRzUGv.zWirm.QQ13e9tLVel`
   - Fix for occasional rsyslog hang on startup
