@@ -699,6 +699,7 @@ resources:
   - name: version
     type: semver
     source:
+      initial_version: 3431.10.0
       driver: s3
       key: {{stemcell_version_key}}
       bucket: {{candidate_stemcell_bucket}}
