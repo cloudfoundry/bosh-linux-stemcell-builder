@@ -1,0 +1,16 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: bluebosh/slcli_py
+
+inputs:
+  - name: stemcell-info
+  - name: version
+  - name: bosh-linux-stemcell-builder
+outputs:
+  - name: light-stemcell
+
+run:
+  path: bosh-linux-stemcell-builder/ci/tasks/generate-light-stemcell.sh

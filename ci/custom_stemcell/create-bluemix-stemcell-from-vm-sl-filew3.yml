@@ -1,0 +1,326 @@
+---
+groups:
+  - name: all
+    jobs:
+      - customize-stemcell-version
+      - capture-stemcell
+      - generate-light-stemcell
+      - bats-ubuntu
+      - test-stemcells
+      - promote-stemcell
+      - upload-stemcell-filew3
+  - name: bluemix
+    jobs:
+      - capture-stemcell
+      - generate-light-stemcell
+  - name: test
+    jobs:
+      - bats-ubuntu
+      - test-stemcells
+
+shared:
+  - &prepare-director
+    task: prepare-director
+    file: pipelines/softlayer/tasks/prepare-director.yml
+    params: &prepare-director-params
+      BOSH_CLIENT:                          {{stemcell-test-director-username}}
+      BOSH_CLIENT_SECRET:                   {{stemcell-test-director-password}}
+      SL_USERNAME:                          {{softlayer-username}}
+      SL_API_KEY:                           {{softlayer-api-key}}
+      SL_DATACENTER:                        {{softlayer-datacenter}}
+      SL_VLAN_PUBLIC:                       {{softlayer-vlan-public}}
+      SL_VLAN_PRIVATE:                      {{softlayer-vlan-private}}
+      SL_VM_DOMAIN:                         {{softlayer-vm-domain}}
+      SL_VM_NAME_PREFIX:                    {{softlayer-director-name-prefix}}
+
+  - &deploy-director
+    task: deploy-director
+    file: pipelines/shared/tasks/deploy-director.yml
+    params: *prepare-director-params
+
+  - &prepare-bats
+    task: prepare-bats
+    file: pipelines/softlayer/tasks/prepare-bats.yml
+    params: &prepare-bats-params
+      BAT_VCAP_PASSWORD:      {{bat-vcap-password}}
+      BOSH_CLIENT:            {{stemcell-test-director-username}}
+      BOSH_CLIENT_SECRET:     {{stemcell-test-director-password}}
+      SL_DATACENTER:          {{softlayer-datacenter}}
+      SL_VLAN_PRIVATE:        {{softlayer-vlan-private}}
+      SL_VLAN_PUBLIC:         {{softlayer-vlan-public}}
+      SL_VM_DOMAIN:           {{softlayer-vm-domain}}
+      SL_VM_NAME_PREFIX:      bats-experimental-
+      STEMCELL_NAME:          bosh-softlayer-xen-ubuntu-trusty-go_agent
+
+  - &run-bats
+    task: run-bats
+    file: pipelines/shared/tasks/run-bats.yml
+
+  - &teardown
+    task: teardown
+    file: pipelines/shared/tasks/teardown.yml
+    params:
+      DEPLOYMENT_NAME: certification
+
+jobs:
+  - name: customize-stemcell-version
+    plan:
+      - get: bosh-linux-stemcell-builder
+      - task: customize-stemcell-version
+        file: bosh-linux-stemcell-builder/ci/tasks/customize-stemcell-version.yml
+        params:
+          custom_stemcell_version: {{custom_stemcell_version}}
+      - put: version
+        params: {file: version/number}
+
+  - name: capture-stemcell
+    plan:
+      - get: bosh-linux-stemcell-builder
+      - get: version
+        trigger: true
+        passed: [customize-stemcell-version]
+      - task: capture-stemcell
+        file: bosh-linux-stemcell-builder/ci/tasks/capture-stemcell.yml
+        params:
+          stemcell_vm_id: {{stemcell_vm_id}}
+          SL_USERNAME: {{softlayer-username}}
+          SL_API_KEY: {{softlayer-api-key}}
+      - put: stemcell-info
+        params: {file: stemcell-image/stemcell-info-*.json}
+
+  - name: generate-light-stemcell
+    plan:
+      - aggregate:
+        - get: bosh-linux-stemcell-builder
+        - get: stemcell-info
+          trigger: true
+          passed: [capture-stemcell]
+        - get: version
+          trigger: true
+          passed: [capture-stemcell]
+      - task: generate-light-stemcell
+        file: bosh-linux-stemcell-builder/ci/tasks/generate-light-stemcell.yml
+        params:
+          HYPERVISOR: xen
+          IAAS: bluemix
+          OS_NAME: ubuntu
+          OS_VERSION: trusty
+          SL_USERNAME: {{softlayer-username}}
+          SL_API_KEY: {{softlayer-api-key}}
+      - put: light-bluemix-stemcell
+        params: {file: light-stemcell/*.tgz}
+
+  - name: bats-ubuntu
+    serial: false
+    plan:
+    - do:
+      - aggregate:
+        - get: bosh-release
+        - get: cpi-release
+        - get: stemcell
+          trigger: true
+          resource: light-bluemix-stemcell
+          passed:
+            - generate-light-stemcell
+        - get: pipelines
+        - get: bosh-cli
+        - get: bats
+        - get: bosh-linux-stemcell-builder
+        - get: version
+          passed:
+            - generate-light-stemcell
+
+      - <<: *prepare-director
+
+      - do:
+        - <<: *deploy-director
+
+        - <<: *prepare-bats
+          params:
+            <<: *prepare-bats-params
+            STEMCELL_NAME: bosh-bluemix-xen-ubuntu-trusty-go_agent
+
+        - <<: *run-bats
+        ensure:
+          do:
+          - <<: *teardown
+
+  - name: test-stemcells
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          passed:
+            - generate-light-stemcell
+        - get: bosh-linux-stemcell-builder
+        - get: bosh-deployment
+        - get: bosh-cli
+        - get: syslog-release
+        - get: light-bluemix-stemcell
+          passed: [generate-light-stemcell]
+        - put: environment
+          params:
+            acquire: true
+
+      - do:
+        - task: deploy-director
+          file: bosh-linux-stemcell-builder/ci/tasks/deploy-director-softlayer.yml
+          input_mapping:
+            stemcell: light-bluemix-stemcell
+          params:
+            SL_API_KEY: {{softlayer-api-key}}
+            SL_USERNAME:  {{softlayer-username}}
+            SL_VLAN_PRIVATE: {{softlayer-vlan-private}}
+            SL_VLAN_PUBLIC: {{softlayer-vlan-public}}
+            SL_VM_DOMAIN: softlayer.com
+            SL_VM_NAME_PREFIX: {{softlayer-director-name-prefix}}
+            SL_VM_NAME_PREFIX_2: {{softlayer-vm-name-prefix}}
+
+        - task: test-stemcell
+          file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
+          input_mapping:
+            stemcell: light-bluemix-stemcell
+        ensure:
+          do:
+          - task: teardown
+            file: bosh-linux-stemcell-builder/ci/tasks/teardown.yml
+          - put: environment
+            params:
+              release: environment
+
+  - name: promote-stemcell
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          passed:
+            - bats-ubuntu
+        - get: bosh-linux-stemcell-builder
+          passed:
+            - bats-ubuntu
+        - get: stemcell
+          trigger: true
+          resource: light-bluemix-stemcell
+      - task: copy-artifacts
+        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
+        params:
+          AWS_ACCESS_KEY_ID: {{stemcell-sl-os-access-key}}
+          AWS_SECRET_ACCESS_KEY: {{stemcell-sl-os-secret-key}}
+          AWS_ENDPOINT: {{stemcell-sl-os-endpoint}}
+          CANDIDATE_BUCKET_NAME: {{candidate-custom-bluemix-stemcell-bucket}}
+          PUBLISHED_BUCKET_NAME: {{custom-bluemix-stemcell-bucket}}
+          COPY_KEYS: |
+            light-bosh-stemcell-%s-bluemix-xen-ubuntu-trusty-go_agent.tgz
+
+  - name: upload-stemcell-filew3
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          passed:
+            - promote-stemcell
+        - get: bosh-linux-stemcell-builder
+          passed:
+            - promote-stemcell
+        - get: stemcell
+          resource: light-bluemix-stemcell-prod
+      - task: upload-filew3
+        file: bosh-linux-stemcell-builder/ci/tasks/upload-filew3.yml
+        params:
+          AWS_ACCESS_KEY_ID: {{stemcell-sl-os-access-key}}
+          AWS_SECRET_ACCESS_KEY: {{stemcell-sl-os-secret-key}}
+          AWS_ENDPOINT: {{stemcell-sl-os-endpoint}}
+          PUBLISHED_BUCKET_NAME: {{custom-bluemix-stemcell-bucket}}
+          FILE_W3_STEMCELL_PEM: {{light-bosh-stemcell_filew3_key}}
+
+resources:
+  - name: bosh-linux-stemcell-builder
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
+      branch: {{bluemix-stemcell-branch}}
+
+  - name: stemcell-info
+    type: s3
+    source:
+      bucket: {{candidate-custom-bluemix-stemcell-bucket}}
+      access_key_id: {{stemcell-sl-os-access-key}}
+      secret_access_key: {{stemcell-sl-os-secret-key}}
+      endpoint: {{stemcell-sl-os-endpoint}}
+      regexp: stemcell-info-(.*).json
+
+  - name: light-bluemix-stemcell
+    type: s3
+    source:
+      bucket: {{candidate-custom-bluemix-stemcell-bucket}}
+      regexp: light-bosh-stemcell-(.*)-bluemix-(.*).tgz
+      access_key_id: {{stemcell-sl-os-access-key}}
+      secret_access_key: {{stemcell-sl-os-secret-key}}
+      endpoint: {{stemcell-sl-os-endpoint}}
+
+  - name: light-bluemix-stemcell-prod
+    type: s3
+    source:
+      bucket: {{custom-bluemix-stemcell-bucket}}
+      regexp: light-bosh-stemcell-(.*)-bluemix-(.*).tgz
+      access_key_id: {{stemcell-sl-os-access-key}}
+      secret_access_key: {{stemcell-sl-os-secret-key}}
+      endpoint: {{stemcell-sl-os-endpoint}}
+
+  - name: syslog-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/syslog-release
+
+  - name: bosh-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/bosh
+
+  - name: cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/bosh-softlayer-cpi-release
+
+  - name: bosh-deployment
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-deployment
+      branch: softlayer
+
+  - name: bosh-cli
+    type: s3
+    source:
+      regexp: bosh-cli-([0-9.]+)-linux-amd64
+      bucket: bosh-cli-artifacts
+      region_name: us-east-1
+
+  - name: pipelines
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-cpi-certification
+      branch: master
+
+  - name: bats
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-acceptance-tests.git
+      branch: master
+
+  - name: environment
+    type: pool
+    source:
+      pool: softlayer
+      uri: git@github.com:bluebosh/bats-concourse-pool.git
+      branch: master
+      private_key: {{bosh-src-key}}
+
+  - name: version
+    type: semver
+    source:
+      driver: s3
+      key: {{bluemix_stemcell_version_key}}
+      bucket: {{candidate-custom-bluemix-stemcell-bucket}}
+      access_key_id: {{stemcell-sl-os-access-key}}
+      secret_access_key: {{stemcell-sl-os-secret-key}}
+      endpoint: {{stemcell-sl-os-endpoint}}

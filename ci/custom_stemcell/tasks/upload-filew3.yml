@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: bluebosh/slcli_py
+
+inputs:
+  - name: bosh-linux-stemcell-builder
+  - name: stemcell
+  - name: version
+
+run:
+  path: bosh-linux-stemcell-builder/ci/tasks/upload-filew3.sh
+
+params:
+  AWS_ACCESS_KEY_ID:     required
+  AWS_SECRET_ACCESS_KEY: required
+  AWS_DEFAULT_REGION:    us-east-1
+  PUBLISHED_BUCKET_NAME: required
+  AWS_ENDPOINT:          required
+  FILE_W3_STEMCELL_PEM:  required
