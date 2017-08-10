@@ -113,11 +113,15 @@ There are a few extra steps you need to do before building a PhotonOS image:
 See below [Building the stemcell with local OS image](#building-the-stemcell-with-local-os-image) on how to build stemcell with the new OS image.
 
 
+#### Special requirements for building an openSUSE image
+
+The openSUSE image is built using [Kiwi](http://opensuse.github.io/kiwi/) which is not available in the normal builder container. For that reason a special container has to be used. All required steps are described in the [documentation](./ci/docker/suse-os-image-stemcell-builder/README.md).
+
 #### How to run tests for OS Images
 
-The OS tests are meant to be run agains the OS environment to which they belong. When you run the `stemcell:build_os_image` rake task, it will create a .raw OS image that it runs the OS specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests. 
+The OS tests are meant to be run agains the OS environment to which they belong. When you run the `stemcell:build_os_image` rake task, it will create a .raw OS image that it runs the OS specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests.
 
-To run the `centos_7_spec.rb` tests for example you will need to: 
+To run the `centos_7_spec.rb` tests for example you will need to:
 
 * `bundle exec rake stemcell:build_os_image[centos,7,$PWD/tmp/centos_base_image.tgz]`
 * -make changes-
@@ -154,11 +158,11 @@ You can also download OS Images from the public S3 bucket. Public OS images can 
 * latest CentOS - https://s3.amazonaws.com/bosh-os-images/bosh-centos-7-os-image.tgz
 
 *Note*: you may need to append `?versionId=value` to those tarballs. You can find the expected `versionId` by looking at [`os_image_versions.json`](./os_image_versions.json).
- 
-#### How to run tests for Stemcell
-When you run the `stemcell:build_with_local_os_image` or `stemcell:build` rake task, it will create a stemcell that it runs the stemcell specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests. 
 
-To run the stemcell tests when building against local OS image you will need to: 
+#### How to run tests for Stemcell
+When you run the `stemcell:build_with_local_os_image` or `stemcell:build` rake task, it will create a stemcell that it runs the stemcell specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests.
+
+To run the stemcell tests when building against local OS image you will need to:
 
 * `bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,trusty,$PWD/tmp/ubuntu_base_image.tgz]`
 * -make test changes-
@@ -166,15 +170,15 @@ To run the stemcell tests when building against local OS image you will need to:
 Then run the following:
 ```sh
     $ cd /opt/bosh/bosh-stemcell; \
-    STEMCELL_IMAGE=/mnt/stemcells/aws/xen/ubuntu/work/work/aws-xen-ubuntu.raw \ 
-    STEMCELL_WORKDIR=/mnt/stemcells/aws/xen/ubuntu/work/work/chroot \ 
-    OS_NAME=ubuntu \ 
-    bundle exec rspec -fd --tag ~exclude_on_aws \ 
-    spec/os_image/ubuntu_trusty_spec.rb \ 
-    spec/stemcells/ubuntu_trusty_spec.rb \ 
-    spec/stemcells/go_agent_spec.rb \ 
-    spec/stemcells/aws_spec.rb \ 
-    spec/stemcells/stig_spec.rb \ 
+    STEMCELL_IMAGE=/mnt/stemcells/aws/xen/ubuntu/work/work/aws-xen-ubuntu.raw \
+    STEMCELL_WORKDIR=/mnt/stemcells/aws/xen/ubuntu/work/work/chroot \
+    OS_NAME=ubuntu \
+    bundle exec rspec -fd --tag ~exclude_on_aws \
+    spec/os_image/ubuntu_trusty_spec.rb \
+    spec/stemcells/ubuntu_trusty_spec.rb \
+    spec/stemcells/go_agent_spec.rb \
+    spec/stemcells/aws_spec.rb \
+    spec/stemcells/stig_spec.rb \
     spec/stemcells/cis_spec.rb
 ```
 
@@ -212,7 +216,7 @@ For example:
 
     $ bundle exec rake stemcell:build_os_image[ubuntu,trusty,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
 
-    
+
 ## Pro Tips
 
 * If the OS image has been built and so long as you only make test case modifications you can just rerun the tests (without rebuilding OS image). Details in section `How to run tests for OS Images`

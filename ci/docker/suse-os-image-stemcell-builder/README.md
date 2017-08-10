@@ -49,4 +49,3 @@ bundle exec rake stemcell:build_with_local_os_image[openstack,kvm,opensuse,leap,
 ```
 
 At the end of the process the stemcell builder will run some tests. If they all pass a stemcell should exist in the `tmp` folder under your current directory.
-
