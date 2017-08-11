@@ -294,9 +294,9 @@ jobs:
             <<: *prepare-bats-params
 
         - <<: *run-bats
-#        ensure:
-#          do:
-#          - <<: *teardown
+        ensure:
+          do:
+          - <<: *teardown
       ensure:
         do:
         - {put: environment, params: {release: environment}}
