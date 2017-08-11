@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: boshcpi/cpi-certification
+
+inputs:
+  - name: stemcell-prod
+    path: stemcell
+  - name: bosh-linux-stemcell-builder-master
+    path: bosh-linux-stemcell-builder
+
+outputs:
+  - name: replaced
+
+run:
+  path: bosh-linux-stemcell-builder/ci/bluemix/tasks/amend-stemcell.sh
+
+params:
+  BOSHIO_TOKEN: required

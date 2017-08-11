@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: boshcpi/cpi-certification
+
+inputs:
+  - name: version
+  - name: bosh-linux-stemcell-builder-master
+    path: bosh-linux-stemcell-builder
+
+run:
+  path: bosh-linux-stemcell-builder/bluemix/ci/tasks/post-stemcell-checksum.sh
+
+params:
+  BOSHIO_TOKEN: required
+  PUBLISHED_BUCKET_NAME: required
