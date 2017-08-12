@@ -151,9 +151,6 @@ jobs:
           resource: light-softlayer-stemcell
           passed:
             - bats-ubuntu
-        - get: stemcell-prod
-          trigger: true
-          resource: light-softlayer-stemcell-prod
       - do:
         - task: copy-artifacts
           file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/copy-artifacts.yml
@@ -161,54 +158,21 @@ jobs:
             AWS_ACCESS_KEY_ID: {{stemcell-aws-access-key}}
             AWS_SECRET_ACCESS_KEY: {{stemcell-aws-secret-key}}
             CANDIDATE_BUCKET_NAME: {{candidate-bluemix-stemcell-bucket}}
+        - put: light-bluemix-stemcell-prod
+          params: {file: light-bluemix-stemcell-prod/*.tgz}
+        - get: light-bluemix-stemcell-prod
+          passed: [copy-artifacts]
+          resource: light-bluemix-stemcell-prod
         - task: replace-stemcell
           file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/replace-stemcell-artifacts.yml
           params:
             PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
+        - put: light-softlayer-stemcell-prod
+          params: {file: replaced/*.tgz}
         - task: post-stemcell
           file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/post-stemcell-checksum.yml
           params:
             BOSHIO_TOKEN: {{boshio_token}}
-      - put: light-softlayer-stemcell-prod
-        params: {file: light-softlayer-stemcell-prod/*.tgz}
-      - put: replaced-softlayer-stemcell-bucket
-        params: {file: replaced/*.tgz}
-
-#  - name: replace-stemcell-artifacts
-#    serial: true
-#    plan:
-#      - aggregate:
-#        - get: stemcell
-#          trigger: true
-#          resource: light-softlayer-stemcell-prod
-#          passed:
-#            - publish-stemcells
-#        - get: bosh-linux-stemcell-builder-master
-#      - task: replace-stemcell
-#        file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/replace-stemcell-artifacts.yml
-#        params:
-#          PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
-#      - put: replaced-softlayer-stemcell-bucket
-#        params: {file: replaced/*.tgz}
-#
-#  - name: post-light-softlayer-stemcell
-#    serial: true
-#    plan:
-#      - aggregate:
-#        - get: version
-#          passed:
-#            - publish-stemcells
-#        - get: stemcell
-#          trigger: true
-#          resource: light-softlayer-stemcell-prod
-#          passed:
-#            - replace-stemcell-artifacts
-#        - get: bosh-linux-stemcell-builder-master
-#      - task: post-stemcell
-#        file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/post-stemcell-checksum.yml
-#        params:
-#          BOSHIO_TOKEN: {{boshio_token}}
-
 
   #
   # SoftLayer
@@ -466,7 +430,7 @@ resources:
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}
 
-  - name: light-softlayer-stemcell-prod
+  - name: light-bluemix-stemcell-prod
     type: s3
     source:
       bucket: {{published-bluemix-stemcell-bucket}}
@@ -474,7 +438,7 @@ resources:
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}
 
-  - name: replaced-softlayer-stemcell-bucket
+  - name: light-softlayer-stemcell-prod
     type: s3
     source:
       bucket: {{published-stemcell-bucket}}

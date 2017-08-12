@@ -12,7 +12,7 @@ inputs:
   - name: stemcell
   - name: version
 outputs:
-  - name: light-softlayer-stemcell-prod
+  - name: light-bluemix-stemcell-prod
   - name: version-tag
 
 run:

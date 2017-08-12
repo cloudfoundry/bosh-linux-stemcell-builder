@@ -7,7 +7,7 @@ image_resource:
     repository: boshcpi/cpi-certification
 
 inputs:
-  - name: stemcell-prod
+  - name: light-bluemix-stemcell-prod
     path: stemcell
   - name: bosh-linux-stemcell-builder-master
     path: bosh-linux-stemcell-builder
@@ -16,7 +16,7 @@ outputs:
   - name: replaced
 
 run:
-  path: bosh-linux-stemcell-builder/ci/bluemix/tasks/amend-stemcell.sh
+  path: bosh-linux-stemcell-builder/ci/bluemix/tasks/replace-stemcell-artifacts.sh
 
 params:
   BOSHIO_TOKEN: required
