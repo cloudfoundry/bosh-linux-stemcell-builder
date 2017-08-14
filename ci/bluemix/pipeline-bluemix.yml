@@ -9,6 +9,7 @@ groups:
       - import-softlayer-stemcell
       - create-softlayer-light-stemcell
       - publish-stemcells
+      - replace-and-post-stemcells
       - test-stemcells
       - build-softlayer-xen-ubuntu-trusty
       - bats-ubuntu
@@ -151,29 +152,37 @@ jobs:
           resource: light-softlayer-stemcell
           passed:
             - bats-ubuntu
-      - do:
-        - task: copy-artifacts
-          file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/copy-artifacts.yml
-          params:
-            AWS_ACCESS_KEY_ID: {{stemcell-aws-access-key}}
-            AWS_SECRET_ACCESS_KEY: {{stemcell-aws-secret-key}}
-            CANDIDATE_BUCKET_NAME: {{candidate-bluemix-stemcell-bucket}}
-        - put: light-bluemix-stemcell-prod
-          params: {file: light-bluemix-stemcell-prod/*.tgz}
+      - task: copy-artifacts
+        file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/copy-artifacts.yml
+        params:
+          AWS_ACCESS_KEY_ID: {{stemcell-aws-access-key}}
+          AWS_SECRET_ACCESS_KEY: {{stemcell-aws-secret-key}}
+          CANDIDATE_BUCKET_NAME: {{candidate-bluemix-stemcell-bucket}}
+      - put: light-bluemix-stemcell-prod
+        params: {file: light-bluemix-stemcell-prod/*.tgz}
+
+  - name: replace-and-post-stemcells
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          passed:
+            - publish-stemcells
+        - get: bosh-linux-stemcell-builder-master
         - get: light-bluemix-stemcell-prod
-          passed: [copy-artifacts]
           resource: light-bluemix-stemcell-prod
+          passed:
+            - publish-stemcells
+      - do:
         - task: replace-stemcell
           file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/replace-stemcell-artifacts.yml
-          params:
-            PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
         - put: light-softlayer-stemcell-prod
           params: {file: replaced/*.tgz}
         - task: post-stemcell
           file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/post-stemcell-checksum.yml
           params:
-            BOSHIO_TOKEN: {{boshio_token}}
-
+            BOSHIO_TOKEN:          {{boshio_token}}
+            PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
   #
   # SoftLayer
   #

@@ -17,6 +17,3 @@ outputs:
 
 run:
   path: bosh-linux-stemcell-builder/ci/bluemix/tasks/replace-stemcell-artifacts.sh
-
-params:
-  BOSHIO_TOKEN: required
