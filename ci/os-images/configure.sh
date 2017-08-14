@@ -2,6 +2,8 @@
 
 set -eu
 
-fly -t production set-pipeline -p bosh:os-image \
+STEMCELL_VERSION=3445.x
+
+fly -t production set-pipeline -p bosh:os-image:$STEMCELL_VERSION \
     -c ci/os-images/pipeline.yml \
-    --load-vars-from <(lpass show -G "concourse:production pipeline:os-images" --notes)
+    --load-vars-from <(lpass show -G "concourse:production pipeline:os-images:$STEMCELL_VERSION" --notes)
