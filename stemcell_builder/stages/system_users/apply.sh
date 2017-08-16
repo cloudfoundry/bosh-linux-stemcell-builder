@@ -7,7 +7,7 @@ source $base_dir/lib/prelude_apply.bash
 
 if [ $(get_os_type) == "opensuse" ] ; then
   run_in_chroot $chroot "
-    for i in bin daemon lp news uucp games man ftp syslog; do
+    for i in bin daemon lp news uucp games man ftp syslog nobody; do
       usermod -s /bin/false \\\$i
     done
   "

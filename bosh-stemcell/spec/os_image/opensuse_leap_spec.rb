@@ -148,4 +148,135 @@ describe 'openSUSE leap OS image', os_image: true do
     end
   end
 
+  describe 'allowed user accounts' do
+    describe file('/etc/passwd') do
+      it "only has login shells for root and vcap" do
+        expected = <<HERE.lines
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/bin/false
+daemon:x:2:2:Daemon:/sbin:/bin/false
+lp:x:4:7:Printing daemon:/var/spool/lpd:/bin/false
+mail:x:8:12:Mailer daemon:/var/spool/clientmqueue:/bin/false
+news:x:9:13:News system:/etc/news:/bin/false
+uucp:x:10:14:Unix-to-Unix CoPy system:/etc/uucp:/bin/false
+games:x:12:100:Games account:/var/games:/bin/false
+man:x:13:62:Manual pages viewer:/var/cache/man:/bin/false
+wwwrun:x:30:8:WWW daemon apache:/var/lib/wwwrun:/bin/false
+ftp:x:40:49:FTP account:/srv/ftp:/bin/false
+nobody:x:65534:65533:nobody:/var/lib/nobody:/bin/false
+messagebus:x:499:499:User for D-Bus:/run/dbus:/bin/false
+systemd-bus-proxy:x:496:496:systemd Bus Proxy:/:/sbin/nologin
+systemd-timesync:x:497:497:systemd Time Synchronization:/:/sbin/nologin
+pesign:x:495:493:PE-COFF signing daemon:/var/lib/pesign:/bin/false
+ntp:x:74:492:NTP daemon:/var/lib/ntp:/bin/false
+sshd:x:494:491:SSH daemon:/var/lib/sshd:/bin/false
+rpc:x:493:65534:user for rpcbind:/var/lib/empty:/sbin/nologin
+polkitd:x:492:490:User for polkitd:/var/lib/polkit:/sbin/nologin
+vcap:x:1000:1002:BOSH System User:/home/vcap:/bin/bash
+syslog:x:491:488::/home/syslog:/bin/false
+HERE
+        expect(subject.content.lines).to match_array(expected)
+      end
+    end
+
+    describe file('/etc/shadow') do
+      shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
+\Abin:\*:\d{5}::::::
+daemon:\*:\d{5}::::::
+ftp:\*:\d{5}::::::
+games:\*:\d{5}::::::
+lp:\*:\d{5}::::::
+mail:\*:\d{5}::::::
+man:\*:\d{5}::::::
+messagebus:!:\d{5}::::::
+news:\*:\d{5}::::::
+nobody:\*:\d{5}::::::
+ntp:!:\d{5}::::::
+pesign:!:\d{5}::::::
+polkitd:!:\d{5}::::::
+root:.+:\d{5}::::::
+rpc:!:\d{5}::::::
+sshd:!:\d{5}::::::
+syslog:!:\d{5}::::::
+systemd-bus-proxy:!!:\d{5}::::::
+systemd-timesync:!!:\d{5}::::::
+uucp:\*:\d{5}::::::
+vcap:.+:\d{5}:1:99999:7:::
+wwwrun:\*:\d{5}::::::\Z
+END_SHADOW
+
+      it "does not contain any password" do 
+        expect(subject.content.lines.sort.join).to match(shadow_match) 
+      end
+    end
+
+    describe file('/etc/group') do
+      it "does not contain any passwords" do
+        expected = <<HERE.lines
+root:x:0:
+bin:x:1:daemon
+daemon:x:2:
+sys:x:3:
+tty:x:5:
+disk:x:6:
+lp:x:7:
+www:x:8:
+kmem:x:9:
+wheel:x:10:vcap
+mail:x:12:
+news:x:13:
+uucp:x:14:
+shadow:x:15:
+dialout:x:16:vcap
+audio:x:17:vcap
+floppy:x:19:vcap
+cdrom:x:20:vcap
+console:x:21:
+utmp:x:22:
+public:x:32:
+video:x:33:vcap
+games:x:40:
+xok:x:41:
+trusted:x:42:
+modem:x:43:
+ftp:x:49:
+lock:x:54:
+man:x:62:
+users:x:100:
+nobody:x:65533:
+nogroup:x:65534:nobody
+messagebus:x:499:
+systemd-timesync:x:497:
+systemd-bus-proxy:x:496:
+systemd-journal:x:498:
+tape:x:495:
+input:x:494:
+pesign:x:493:
+ntp:x:492:
+sshd:x:491:
+polkitd:x:490:
+adm:x:1000:vcap
+dip:x:1001:vcap
+admin:x:489:vcap
+vcap:x:1002:syslog
+bosh_sshers:x:1003:vcap
+bosh_sudoers:x:1004:
+syslog:!:488:
+HERE
+        expect(subject.content.lines).to match_array(expected)
+      end
+    end
+
+    describe file('/etc/gshadow') do
+      it "does not contain any passwords" do
+         expected = <<HERE.lines
+systemd-timesync:!!::
+systemd-bus-proxy:!!::
+systemd-journal:!!::
+HERE
+        expect(subject.content.lines).to match_array(expected)
+      end
+    end
+  end
 end
+
