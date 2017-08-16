@@ -13,6 +13,12 @@ RUN zypper -n in --force-resolution libopenssl-devel # RVM requirement
 # Temporarily downgrade kpartx until http://bugzilla.suse.com/show_bug.cgi?id=1037533 was resolved
 RUN zypper -n in --oldpackage kpartx=0.6.2+suse20161025.b80f406-1.1
 
+ENV OVF_TOOL_INSTALLER VMware-ovftool-4.1.0-2459827-lin.x86_64.bundle
+ENV OVF_TOOL_INSTALLER_SHA1 b907275c8d744bb54717d24bb8d414b19684fed4
+ADD ${OVF_TOOL_INSTALLER} /tmp/ovftool_installer.bundle
+ADD scripts/install-ovf.sh /tmp/install-ovf.sh
+RUN /tmp/install-ovf.sh && rm /tmp/install-ovf.sh
+
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN curl -sSL https://get.rvm.io | bash -s stable --ruby=2.3.1
 

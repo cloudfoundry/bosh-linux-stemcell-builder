@@ -5,7 +5,10 @@ Docker installed
 ## Building the docker image
 
 To build the image with kiwi we use a docker container that brings all required dependencies.
-To build that docker image run from the repository root.
+
+To build that docker image first download the ovftool installer from VMWare as described in the main README.
+
+Then run from the repository root
 
 ```bash
 pushd ci/docker/suse-os-image-stemcell-builder
