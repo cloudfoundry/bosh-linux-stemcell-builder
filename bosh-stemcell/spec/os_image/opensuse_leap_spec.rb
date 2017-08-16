@@ -151,31 +151,31 @@ describe 'openSUSE leap OS image', os_image: true do
   describe 'allowed user accounts' do
     describe file('/etc/passwd') do
       it "only has login shells for root and vcap" do
-        expected = <<HERE.lines
+        passwd_match = Regexp.new <<'END_PASSWD', [Regexp::MULTILINE]
+bin:x:[1-9][0-9]*:[1-9][0-9]*+:bin:/bin:/bin/false
+daemon:x:[1-9][0-9]*:[1-9][0-9]*+:Daemon:/sbin:/bin/false
+ftp:x:[1-9][0-9]*:[1-9][0-9]*+:FTP account:/srv/ftp:/bin/false
+games:x:[1-9][0-9]*:[1-9][0-9]*+:Games account:/var/games:/bin/false
+lp:x:[1-9][0-9]*:[1-9][0-9]*+:Printing daemon:/var/spool/lpd:/bin/false
+mail:x:[1-9][0-9]*:[1-9][0-9]*+:Mailer daemon:/var/spool/clientmqueue:/bin/false
+man:x:[1-9][0-9]*:[1-9][0-9]*+:Manual pages viewer:/var/cache/man:/bin/false
+messagebus:x:[1-9][0-9]*:[1-9][0-9]*+:User for D-Bus:/run/dbus:/bin/false
+news:x:[1-9][0-9]*:[1-9][0-9]*+:News system:/etc/news:/bin/false
+nobody:x:[1-9][0-9]*:[1-9][0-9]*+:nobody:/var/lib/nobody:/bin/false
+ntp:x:[1-9][0-9]*:[1-9][0-9]*+:NTP daemon:/var/lib/ntp:/bin/false
+pesign:x:[1-9][0-9]*:[1-9][0-9]*+:PE-COFF signing daemon:/var/lib/pesign:/bin/false
+polkitd:x:[1-9][0-9]*:[1-9][0-9]*+:User for polkitd:/var/lib/polkit:/sbin/nologin
 root:x:0:0:root:/root:/bin/bash
-bin:x:1:1:bin:/bin:/bin/false
-daemon:x:2:2:Daemon:/sbin:/bin/false
-lp:x:4:7:Printing daemon:/var/spool/lpd:/bin/false
-mail:x:8:12:Mailer daemon:/var/spool/clientmqueue:/bin/false
-news:x:9:13:News system:/etc/news:/bin/false
-uucp:x:10:14:Unix-to-Unix CoPy system:/etc/uucp:/bin/false
-games:x:12:100:Games account:/var/games:/bin/false
-man:x:13:62:Manual pages viewer:/var/cache/man:/bin/false
-wwwrun:x:30:8:WWW daemon apache:/var/lib/wwwrun:/bin/false
-ftp:x:40:49:FTP account:/srv/ftp:/bin/false
-nobody:x:65534:65533:nobody:/var/lib/nobody:/bin/false
-messagebus:x:499:499:User for D-Bus:/run/dbus:/bin/false
-systemd-bus-proxy:x:496:496:systemd Bus Proxy:/:/sbin/nologin
-systemd-timesync:x:497:497:systemd Time Synchronization:/:/sbin/nologin
-pesign:x:495:493:PE-COFF signing daemon:/var/lib/pesign:/bin/false
-ntp:x:74:492:NTP daemon:/var/lib/ntp:/bin/false
-sshd:x:494:491:SSH daemon:/var/lib/sshd:/bin/false
-rpc:x:493:65534:user for rpcbind:/var/lib/empty:/sbin/nologin
-polkitd:x:492:490:User for polkitd:/var/lib/polkit:/sbin/nologin
-vcap:x:1000:1002:BOSH System User:/home/vcap:/bin/bash
-syslog:x:491:488::/home/syslog:/bin/false
-HERE
-        expect(subject.content.lines).to match_array(expected)
+rpc:x:[1-9][0-9]*:[1-9][0-9]*+:user for rpcbind:/var/lib/empty:/sbin/nologin
+sshd:x:[1-9][0-9]*:[1-9][0-9]*+:SSH daemon:/var/lib/sshd:/bin/false
+syslog:x:[1-9][0-9]*:[1-9][0-9]*+::/home/syslog:/bin/false
+systemd-bus-proxy:x:[1-9][0-9]*:[1-9][0-9]*+:systemd Bus Proxy:/:/sbin/nologin
+systemd-timesync:x:[1-9][0-9]*:[1-9][0-9]*+:systemd Time Synchronization:/:/sbin/nologin
+uucp:x:[1-9][0-9]*:[1-9][0-9]*+:Unix-to-Unix CoPy system:/etc/uucp:/bin/false
+vcap:x:[1-9][0-9]*:[1-9][0-9]*+:BOSH System User:/home/vcap:/bin/bash
+wwwrun:x:[1-9][0-9]*:[1-9][0-9]*+:WWW daemon apache:/var/lib/wwwrun:/bin/false
+END_PASSWD
+        expect(subject.content.lines.sort.join).to match(passwd_match)
       end
     end
 
@@ -212,58 +212,58 @@ END_SHADOW
 
     describe file('/etc/group') do
       it "does not contain any passwords" do
-        expected = <<HERE.lines
+        group_match = Regexp.new <<'END_GROUP', [Regexp::MULTILINE]
+adm:x:[1-9][0-9]*:vcap
+admin:x:[1-9][0-9]*:vcap
+audio:x:[1-9][0-9]*:vcap
+bin:x:[1-9][0-9]*:daemon
+bosh_sshers:x:[1-9][0-9]*:vcap
+bosh_sudoers:x:[1-9][0-9]*:
+cdrom:x:[1-9][0-9]*:vcap
+console:x:[1-9][0-9]*:
+daemon:x:[1-9][0-9]*:
+dialout:x:[1-9][0-9]*:vcap
+dip:x:[1-9][0-9]*:vcap
+disk:x:[1-9][0-9]*:
+floppy:x:[1-9][0-9]*:vcap
+ftp:x:[1-9][0-9]*:
+games:x:[1-9][0-9]*:
+input:x:[1-9][0-9]*:
+kmem:x:[1-9][0-9]*:
+lock:x:[1-9][0-9]*:
+lp:x:[1-9][0-9]*:
+mail:x:[1-9][0-9]*:
+man:x:[1-9][0-9]*:
+messagebus:x:[1-9][0-9]*:
+modem:x:[1-9][0-9]*:
+news:x:[1-9][0-9]*:
+nobody:x:[1-9][0-9]*:
+nogroup:x:[1-9][0-9]*:nobody
+ntp:x:[1-9][0-9]*:
+pesign:x:[1-9][0-9]*:
+polkitd:x:[1-9][0-9]*:
+public:x:[1-9][0-9]*:
 root:x:0:
-bin:x:1:daemon
-daemon:x:2:
-sys:x:3:
-tty:x:5:
-disk:x:6:
-lp:x:7:
-www:x:8:
-kmem:x:9:
-wheel:x:10:vcap
-mail:x:12:
-news:x:13:
-uucp:x:14:
-shadow:x:15:
-dialout:x:16:vcap
-audio:x:17:vcap
-floppy:x:19:vcap
-cdrom:x:20:vcap
-console:x:21:
-utmp:x:22:
-public:x:32:
-video:x:33:vcap
-games:x:40:
-xok:x:41:
-trusted:x:42:
-modem:x:43:
-ftp:x:49:
-lock:x:54:
-man:x:62:
-users:x:100:
-nobody:x:65533:
-nogroup:x:65534:nobody
-messagebus:x:499:
-systemd-timesync:x:497:
-systemd-bus-proxy:x:496:
-systemd-journal:x:498:
-tape:x:495:
-input:x:494:
-pesign:x:493:
-ntp:x:492:
-sshd:x:491:
-polkitd:x:490:
-adm:x:1000:vcap
-dip:x:1001:vcap
-admin:x:489:vcap
-vcap:x:1002:syslog
-bosh_sshers:x:1003:vcap
-bosh_sudoers:x:1004:
-syslog:!:488:
-HERE
-        expect(subject.content.lines).to match_array(expected)
+shadow:x:[1-9][0-9]*:
+sshd:x:[1-9][0-9]*:
+sys:x:[1-9][0-9]*:
+syslog:!:[1-9][0-9]*:
+systemd-bus-proxy:x:[1-9][0-9]*:
+systemd-journal:x:[1-9][0-9]*:
+systemd-timesync:x:[1-9][0-9]*:
+tape:x:[1-9][0-9]*:
+trusted:x:[1-9][0-9]*:
+tty:x:[1-9][0-9]*:
+users:x:[1-9][0-9]*:
+utmp:x:[1-9][0-9]*:
+uucp:x:[1-9][0-9]*:
+vcap:x:[1-9][0-9]*:syslog
+video:x:[1-9][0-9]*:vcap
+wheel:x:[1-9][0-9]*:vcap
+www:x:[1-9][0-9]*:
+xok:x:[1-9][0-9]*:
+END_GROUP
+        expect(subject.content.lines.sort.join).to match(group_match)
       end
     end
 
