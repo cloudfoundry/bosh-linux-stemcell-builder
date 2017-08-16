@@ -4,7 +4,7 @@ shared_examples_for 'a openSUSE stemcell' do
     its(:stdout) {should eq "1\n"}
   end
 
-  context 'installed by image_install_grub', exclude_on_warden: true do
+  context 'installed by image_install_grub' do
     describe file('/etc/fstab') do
       it { should be_file }
       its(:content) { should match 'UUID=' }
