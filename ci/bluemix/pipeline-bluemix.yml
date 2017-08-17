@@ -414,7 +414,7 @@ resources:
       pool: softlayer
       uri: git@github.com:bluebosh/bats-concourse-pool.git
       branch: master
-      private_key: {{bosh-src-key}}
+      private_key: {{github_private_key}}
 
   - name: published-stemcell
     type: bosh-io-stemcell

@@ -15,5 +15,5 @@ run:
   path: bosh-linux-stemcell-builder/ci/bluemix/tasks/post-stemcell-checksum.sh
 
 params:
-  BOSHIO_TOKEN: required
-  PUBLISHED_BUCKET_NAME: required
+  BOSHIO_TOKEN:           replace-me
+  PUBLISHED_BUCKET_NAME:  replace-me
