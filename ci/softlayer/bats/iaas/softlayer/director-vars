@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+exec jq '{
+  "sl_datacenter": .network1.softlayerDatacenter,
+  "internal_cidr": .network1.softlayerCIDR,
+  "internal_gw": .network1.softlayerGateway,
+  "internal_ip": .network1.softlayerDirector,
+  "sl_vlan_public": .network1.softlayerPublicVLAN,
+  "sl_vlan_private": .network1.softlayerPrivateVLAN,
+  "sl_vm_name_prefix": env.BOSH_SL_VM_NAME_PREFIX,
+  "sl_vm_domain": env.BOSH_SL_VM_DOMAIN,
+  "sl_username": env.BOSH_SL_USERNAME,
+  "sl_api_key": env.BOSH_SL_API_KEY,
+}' \
+  < environment/metadata

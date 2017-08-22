@@ -6,11 +6,11 @@ image_resource:
 
 inputs:
 - name: bosh-linux-stemcell-builder-master
-- name: bosh-linux-stemcell-builder
+- name: bosh-linux-stemcell-builder-test
 - name: bosh-cli
 - name: stemcell
 - name: syslog-release
 - name: director-state
 
 run:
-  path: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/test-stemcell.sh
+  path: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/test-stemcell.sh

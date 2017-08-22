@@ -31,7 +31,7 @@ groups:
 shared:
   - &deploy-director
     task: deploy-director
-    file: bosh-linux-stemcell-builder-master/ci/bluemix/bats/tasks/deploy-director-softlayer.yml
+    file: bosh-linux-stemcell-builder-master/ci/softlayer/bats/tasks/deploy-director-softlayer.yml
     params:
       BAT_INFRASTRUCTURE:                   softlayer
       BOSH_CLIENT:                          {{stemcell-test-director-username}}
@@ -46,7 +46,7 @@ shared:
 
   - &prepare-bats-config
     task: prepare-bats
-    file: bosh-linux-stemcell-builder-master/ci/bluemix/bats/iaas/softlayer/prepare-bats-config.yml
+    file: bosh-linux-stemcell-builder-master/ci/softlayer/bats/iaas/softlayer/prepare-bats-config.yml
     params: &prepare-bats-params
       BAT_VCAP_PASSWORD:      {{bat-vcap-password}}
       SL_DATACENTER:          {{softlayer-datacenter}}
@@ -54,7 +54,7 @@ shared:
       SL_VLAN_PUBLIC:         {{softlayer-vlan-public}}
       SL_VM_DOMAIN:           {{softlayer-vm-domain}}
       SL_VM_NAME_PREFIX:      {{softlayer-vm-name-prefix}}
-      STEMCELL_NAME:          bosh-bluemix-xen-ubuntu-trusty-go_agent
+      STEMCELL_NAME:          bosh-softlayer-xen-ubuntu-trusty-go_agent
 
   - &run-bats
     task: run-bats
@@ -62,7 +62,7 @@ shared:
 
   - &teardown
     task: teardown
-    file: bosh-linux-stemcell-builder-master/ci/bluemix/bats/tasks/destroy-director.yml
+    file: bosh-linux-stemcell-builder-master/ci/softlayer/bats/tasks/destroy-director.yml
 
 jobs:
   - name: test-unit
@@ -72,14 +72,14 @@ jobs:
         trigger: true
       - get: bosh-linux-stemcell-builder-master
       - task: test-unit
-        file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/test-unit.yml
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/test-unit.yml
 
   - name: new-stemcell-version
     plan:
       - get: published-stemcell
       - get: bosh-linux-stemcell-builder-master
       - task: make-version
-        file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/make-stemcell-version.yml
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/make-stemcell-version.yml
       - put: version
         params: {file: version/number}
 
@@ -102,6 +102,7 @@ jobs:
           passed:
             - create-softlayer-light-stemcell
         - get: bosh-linux-stemcell-builder-master
+        - get: bosh-linux-stemcell-builder-test
         - get: bosh-linux-stemcell-builder
         - get: bosh-deployment
         - get: bosh-cli
@@ -114,7 +115,7 @@ jobs:
 
       - do:
         - task: deploy-director
-          file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/deploy-director-softlayer.yml
+          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/deploy-director-softlayer.yml
           input_mapping:
             stemcell: light-softlayer-stemcell
           params:
@@ -126,15 +127,15 @@ jobs:
             SL_VM_NAME_PREFIX: {{softlayer-director-name-prefix}}
             SL_VM_NAME_PREFIX_2: {{softlayer-vm-name-prefix}}
             SL_PUBLIC_SSH_KEY: {{softlayer-public-ssh-key}}
-
+g
         - task: test-stemcell
-          file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/test-stemcell.yml
+          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/test-stemcell.yml
           input_mapping:
             stemcell: light-softlayer-stemcell
         ensure:
           do:
           - task: teardown
-            file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/teardown.yml
+            file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/teardown.yml
           - put: environment
             params:
               release: environment
@@ -153,13 +154,13 @@ jobs:
           passed:
             - bats-ubuntu
       - task: copy-artifacts
-        file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/copy-artifacts.yml
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/copy-artifacts.yml
         params:
           AWS_ACCESS_KEY_ID: {{stemcell-aws-access-key}}
           AWS_SECRET_ACCESS_KEY: {{stemcell-aws-secret-key}}
-          CANDIDATE_BUCKET_NAME: {{candidate-bluemix-stemcell-bucket}}
-      - put: light-bluemix-stemcell-prod
-        params: {file: light-bluemix-stemcell-prod/*.tgz}
+          CANDIDATE_BUCKET_NAME: {{candidate-stemcell-bucket}}
+      - put: light-softlayer-stemcell-prod
+        params: {file: light-softlayer-stemcell-prod/*.tgz}
 
   - name: replace-and-post-stemcells
     serial: true
@@ -169,17 +170,17 @@ jobs:
           passed:
             - publish-stemcells
         - get: bosh-linux-stemcell-builder-master
-        - get: light-bluemix-stemcell-prod
-          resource: light-bluemix-stemcell-prod
+        - get: light-softlayer-stemcell-prod
+          resource: light-softlayer-stemcell-prod
           passed:
             - publish-stemcells
       - do:
         - task: replace-stemcell
-          file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/replace-stemcell-artifacts.yml
+          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/replace-stemcell-artifacts.yml
         - put: light-softlayer-stemcell-prod
           params: {file: replaced/*.tgz}
         - task: post-stemcell
-          file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/post-stemcell-checksum.yml
+          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/post-stemcell-checksum.yml
           params:
             BOSHIO_TOKEN:          {{boshio_token}}
             PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
@@ -195,7 +196,7 @@ jobs:
           - get: bosh-linux-stemcell-builder-master
           - get: bosh-linux-stemcell-builder
       - task: create-stemcell
-        file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/build-softlayer.yml
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/build-softlayer.yml
         privileged: true
         params:
           IAAS:         softlayer
@@ -218,9 +219,9 @@ jobs:
             trigger: true
             passed: [build-softlayer-xen-ubuntu-trusty]
       - task: convert-stemcell
-        file: bosh-softlayer-tools-master/ci/bluemix/tasks/convert-stemcell.yml
+        file: bosh-softlayer-tools-master/ci/softlayer/tasks/convert-stemcell.yml
         params:
-          IAAS:         bluemix
+          IAAS:         softlayer
           HYPERVISOR:   xen
           OS_NAME:      ubuntu
           OS_VERSION:   trusty
@@ -240,9 +241,9 @@ jobs:
         trigger: true
         passed: [convert-softlayer-stemcell]
       - task: import-stemcell-image
-        file: bosh-softlayer-tools-master/ci/bluemix/tasks/import-stemcell.yml
+        file: bosh-softlayer-tools-master/ci/softlayer/tasks/import-stemcell.yml
         params:
-          IAAS: bluemix
+          IAAS: softlayer
           HYPERVISOR: xen
           OS_NAME: ubuntu
           OS_VERSION: trusty
@@ -269,10 +270,10 @@ jobs:
           trigger: true
           passed: [import-softlayer-stemcell]
       - task: create-light-stemcell
-        file: bosh-softlayer-tools-master/ci/bluemix/tasks/create-light-stemcell.yml
+        file: bosh-softlayer-tools-master/ci/softlayer/tasks/create-light-stemcell.yml
         params:
           HYPERVISOR: xen
-          IAAS: bluemix
+          IAAS: softlayer
           OS_NAME: ubuntu
           OS_VERSION: trusty
           SL_USERNAME: {{softlayer-username}}
@@ -331,6 +332,12 @@ resources:
     type: git
     source:
       uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
+      branch: softlayer
+
+  - name: bosh-linux-stemcell-builder-test
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
       branch: bluemix-3421.x
 
   - name: version
@@ -339,14 +346,14 @@ resources:
       driver: s3
       initial_version: {{stemcell_initial_version}}
       key: {{stemcell_version_key}}
-      bucket: {{candidate-bluemix-stemcell-bucket}}
+      bucket: {{candidate-stemcell-bucket}}
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}
 
   - name: stemcell-info
     type: s3
     source:
-      bucket: {{candidate-bluemix-stemcell-bucket}}
+      bucket: {{candidate-stemcell-bucket}}
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}
       versioned_file: stemcell-info.json
@@ -354,7 +361,7 @@ resources:
   - name: bosh-softlayer-tools
     type: git
     source:
-      branch: container_based_bluemix_stemcell_pipeline
+      branch: container_based_stemcell_pipeline
       uri: https://github.com/bluebosh/bosh-softlayer-tools
 
   - name: bosh-softlayer-tools-master
@@ -385,7 +392,7 @@ resources:
   - name: softlayer-xen-ubuntu-trusty
     type: s3
     source:
-      bucket: {{candidate-bluemix-stemcell-bucket}}
+      bucket: {{candidate-stemcell-bucket}}
       regexp: bosh-stemcell-(.+)-softlayer-esxi-ubuntu-trusty-go_agent.tgz
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}
@@ -431,16 +438,8 @@ resources:
   - name: light-softlayer-stemcell
     type: s3
     source:
-      bucket: {{candidate-bluemix-stemcell-bucket}}
-      regexp: light-bosh-stemcell-(.*)-bluemix-(.*).tgz
-      access_key_id: {{stemcell-aws-access-key}}
-      secret_access_key: {{stemcell-aws-secret-key}}
-
-  - name: light-bluemix-stemcell-prod
-    type: s3
-    source:
-      bucket: {{published-bluemix-stemcell-bucket}}
-      regexp: light-bosh-stemcell-(.*)-bluemix-(.*).tgz
+      bucket: {{candidate-stemcell-bucket}}
+      regexp: light-bosh-stemcell-(.*)-softlayer-(.*).tgz
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}
 
