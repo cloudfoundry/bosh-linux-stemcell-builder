@@ -4,6 +4,8 @@ name: bosh-stemcell-smoke-tests
 releases:
 - name: syslog
   version: latest
+- name: os-conf
+  version: latest
 
 stemcells:
 - alias: default
@@ -17,6 +19,17 @@ update:
   update_watch_time: 1000-30000
 
 instance_groups:
+- name: immutable_audit_rules
+  stemcell: default
+  vm_type: default
+  instances: 1
+  networks:
+  - {name: default}
+  azs: [z1]
+  jobs:
+  - name: auditd
+    release: os-conf
+
 - name: syslog_storer
   stemcell: default
   vm_type: default
@@ -31,6 +44,7 @@ instance_groups:
       syslog:
         transport: tcp
         port: 514
+
 - name: syslog_forwarder
   stemcell: default
   vm_type: default
