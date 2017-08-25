@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `ihJo8x_d96oR38fLItL5y7tpWL6lgj.B`
+  - Make auditd rules mutable by default
+  - built from master (7aa3cd9b0cacf646852e1ee762eaf31e1baaf2b1)
+
 * `cxAdZKzPogT77Dmk_J9DeLbSY46ts.dB`
   - USN-3392-2: Linux kernel (Xenial HWE) regression
   - built from master (75623d0c4cd7ec002f26d763fa8db3740efa4f69)
@@ -606,6 +610,10 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `AxujRQcXRggs7x17hKz3ImaI6q3b.ik7`
+  - Make auditd rules mutable by default
+  - built from master (7aa3cd9b0cacf646852e1ee762eaf31e1baaf2b1)
 
 * `ZF9M8.wWClnvTrXSSrreednJcDAzns.9`
   - Periodic bump
