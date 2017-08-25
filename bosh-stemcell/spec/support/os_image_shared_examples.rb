@@ -627,9 +627,9 @@ shared_examples_for 'every OS image' do
       its(:content) { should match /^-a always,exit -F arch=b32 -S unlink -S unlinkat -S rmdir -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete$/ }
     end
 
-    describe 'audit rules are made immutable (CIS-8.1.18)' do
-      it 'last line should be -e 2' do
-        expect(subject.content.split("\n").last).to eq '-e 2'
+    describe 'audit rules are made mutable (CIS-8.1.18)' do
+      it 'should not have a -e 2 line' do
+        expect(subject.content).not_to match '-e 2'
       end
     end
 
