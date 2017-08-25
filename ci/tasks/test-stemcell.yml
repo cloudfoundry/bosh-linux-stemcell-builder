@@ -9,6 +9,7 @@ inputs:
 - name: bosh-cli
 - name: stemcell
 - name: syslog-release
+- name: os-conf-release
 - name: director-state
 
 run:

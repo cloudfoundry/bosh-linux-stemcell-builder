@@ -147,6 +147,7 @@ jobs:
           - get: bosh-deployment
           - get: bosh-cli
           - get: syslog-release
+          - get: os-conf-release
           - get: vsphere-esxi-ubuntu-trusty
             passed: [build-vsphere-esxi-ubuntu-trusty]
             tags:
@@ -710,6 +711,11 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry/syslog-release
+
+  - name: os-conf-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/os-conf-release
 
   - name: bosh-release
     type: bosh-io-release

@@ -51,6 +51,10 @@ func uploadRelease(cmdRunner system.CmdRunner, boshBinaryPath string) {
 	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "upload-release", os.Getenv("SYSLOG_RELEASE_PATH"))
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
+
+	stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "upload-release", os.Getenv("OS_CONF_RELEASE_PATH"))
+	Expect(err).ToNot(HaveOccurred())
+	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
 
 func assertRequiredParams() {
@@ -58,6 +62,8 @@ func assertRequiredParams() {
 	Expect(ok).To(BeTrue(), "BOSH_BINARY_PATH was not set")
 	_, ok = os.LookupEnv("SYSLOG_RELEASE_PATH")
 	Expect(ok).To(BeTrue(), "SYSLOG_RELEASE_PATH was not set")
+	_, ok = os.LookupEnv("OS_CONF_RELEASE_PATH")
+	Expect(ok).To(BeTrue(), "OS_CONF_RELEASE_PATH was not set")
 	_, ok = os.LookupEnv("STEMCELL_PATH")
 	Expect(ok).To(BeTrue(), "STEMCELL_PATH was not set")
 	_, ok = os.LookupEnv("BOSH_stemcell_version")

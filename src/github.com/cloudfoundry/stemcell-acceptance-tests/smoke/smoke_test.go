@@ -197,4 +197,26 @@ var _ = Describe("Stemcell", func() {
 
 		Expect(stdout).To(MatchRegexp(`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,6}\+00:00 localhost bosh_[^ ]+: story146390925`))
 	})
+
+	It("#150315687: make audit rules immutable", func() {
+		stdout, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath,
+			"-d", "bosh-stemcell-smoke-tests",
+			"--column=stdout",
+			"ssh", "syslog_forwarder/0", "-r", "-c",
+			`sudo auditctl -w /etc/network -p wa -k system-locale-story-50315687`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+		Expect(stdout).NotTo(ContainSubstring("The audit system is in immutable mode, no rule changes allowed"))
+
+		stdout, _, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath,
+			"-d", "bosh-stemcell-smoke-tests",
+			"--column=stdout",
+			"ssh", "immutable_audit_rules/0", "-r", "-c",
+			`sudo auditctl -w /etc/network -p wa -k system-locale-story-50315687`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+		Expect(stdout).To(ContainSubstring("The audit system is in immutable mode, no rule changes allowed"))
+	})
 })
