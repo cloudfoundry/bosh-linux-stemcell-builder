@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: boshcpi/cpi-certification}
+
+inputs:
+  - name: bosh-linux-stemcell-builder-master
+    path: bosh-linux-stemcell-builder
+  - name: director-state
+  - name: bosh-cli
+
+run:
+  path: bosh-linux-stemcell-builder/ci/softlayer_ng/tasks/teardown.sh

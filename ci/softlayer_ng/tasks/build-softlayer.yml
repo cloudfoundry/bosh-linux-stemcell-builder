@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: bosh/os-image-stemcell-builder
+
+inputs:
+  - name: bosh-linux-stemcell-builder-master
+  - name: bosh-linux-stemcell-builder
+  - name: version
+
+outputs:
+  - name: stemcell
+
+run:
+  path: bosh-linux-stemcell-builder-master/ci/softlayer_ng/tasks/build-softlayer.sh
+
+params:
+  IAAS:         ""
+  HYPERVISOR:   ""
+  OS_NAME:      ""
+  OS_VERSION:   ""
+  BOSHIO_TOKEN: ""
+
