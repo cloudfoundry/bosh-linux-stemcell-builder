@@ -202,6 +202,8 @@ jobs:
           passed:
             - bats-centos
             - bats-ubuntu
+      - task: assert-version-aligns
+        file: bosh-linux-stemcell-builder/ci/tasks/assert-version-aligns.yml
       - task: copy-artifacts
         file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
         params:
