@@ -1,3 +1,5 @@
+require 'support/shellout_type_assertions'
+
 module Bosh::Stemcell
   module SpecAssets
     def spec_asset(name)
