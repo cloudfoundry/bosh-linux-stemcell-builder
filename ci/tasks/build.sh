@@ -63,6 +63,8 @@ done
 
 chown -R ubuntu:ubuntu bosh-linux-stemcell-builder
 
+sudo chmod u+s $(which sudo)
+
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
   set -e
 
