@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `m_U29czb58XlvKg1Mrqtjwj0p84mtdSC`
+  - Bump os-image to get logrotate 3.8.7-1ubuntu12
+  - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
+
 * `ihJo8x_d96oR38fLItL5y7tpWL6lgj.B`
   - Make auditd rules mutable by default
   - built from master (7aa3cd9b0cacf646852e1ee762eaf31e1baaf2b1)
@@ -558,6 +562,9 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 6.6
 
 CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
+
+* `JRWJGXQazjhzWM.S5qW.573fmI4dsfFi`
+  - bump os-image to get newer logrotate
 
 * `p8M5lmQFEzXDA3MKeiDMsdLq6jVkJOQt`
   - changes for stig
