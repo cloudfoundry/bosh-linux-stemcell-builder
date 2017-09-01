@@ -563,9 +563,6 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
 CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 
-* `JRWJGXQazjhzWM.S5qW.573fmI4dsfFi`
-  - bump os-image to get newer logrotate
-
 * `p8M5lmQFEzXDA3MKeiDMsdLq6jVkJOQt`
   - changes for stig
 
@@ -617,6 +614,10 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `JRWJGXQazjhzWM.S5qW.573fmI4dsfFi`
+  - bump os-image to get newer logrotate
+  - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
 
 * `AxujRQcXRggs7x17hKz3ImaI6q3b.ik7`
   - Make auditd rules mutable by default
