@@ -8,13 +8,17 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
-* `_jf_uhySbVw.ZuCsgslxPsB.lzLAucdo`
-  - Make auditd rules mutable by default
-  - built from 3445.x (21d26d72d9e6fd8de0bc6204fe2b557538f45eec)
+* `m_U29czb58XlvKg1Mrqtjwj0p84mtdSC`
+  - Bump os-image to get logrotate 3.8.7-1ubuntu12
+  - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
 
-* `795Bgks7KtLQxfPiYkhzmXcVO3GGak9H`
+* `ihJo8x_d96oR38fLItL5y7tpWL6lgj.B`
+  - Make auditd rules mutable by default
+  - built from master (7aa3cd9b0cacf646852e1ee762eaf31e1baaf2b1)
+
+* `cxAdZKzPogT77Dmk_J9DeLbSY46ts.dB`
   - USN-3392-2: Linux kernel (Xenial HWE) regression
-  - built from 3445.x (fbc0bac4c0f405fafc4fe4bf846adec93022e056)
+  - built from master (75623d0c4cd7ec002f26d763fa8db3740efa4f69)
 
 * `lFTzZ3l8SjN7jdGk20ccirvC8Zmgpwjg`
   - USN-3385-2: Linux kernel (Xenial HWE) vulnerabilities
@@ -611,13 +615,17 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
 
-* `RwjM.ulSVODCDKzu_WNa3aDxhBGZsMOY`
-  - Make auditd rules mutable by default
-  - built from 3445.x (21d26d72d9e6fd8de0bc6204fe2b557538f45eec)
+* `JRWJGXQazjhzWM.S5qW.573fmI4dsfFi`
+  - bump os-image to get newer logrotate
+  - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
 
-* `E4nGcx.1jle3B4MPjLbCUi8oDUjN12tZ`
+* `AxujRQcXRggs7x17hKz3ImaI6q3b.ik7`
+  - Make auditd rules mutable by default
+  - built from master (7aa3cd9b0cacf646852e1ee762eaf31e1baaf2b1)
+
+* `ZF9M8.wWClnvTrXSSrreednJcDAzns.9`
   - Periodic bump
-  - built from 3445.x (fbc0bac4c0f405fafc4fe4bf846adec93022e056)
+  - built from master (75623d0c4cd7ec002f26d763fa8db3740efa4f69)
 
 * `MOpHI7NvEQyUoGjMDEzqU2vR3nNqoDj4`
   - Periodic bump

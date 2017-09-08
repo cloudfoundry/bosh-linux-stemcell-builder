@@ -41,13 +41,4 @@ describe 'Warden Stemcell', stemcell_image: true do
       it { should be_linked_to '/etc/sv/cron' }
     end
   end
-
-  context 'installed by bosh_disable_password_authentication' do
-    describe 'disallows password authentication' do
-      subject { file('/etc/ssh/sshd_config') }
-
-      its(:content) { should_not match /^PasswordAuthentication no$/ }
-      its(:content) { should match /^PasswordAuthentication yes$/ }
-    end
-  end
 end
