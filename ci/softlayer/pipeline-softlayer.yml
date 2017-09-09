@@ -9,7 +9,7 @@ groups:
       - import-softlayer-stemcell
       - create-softlayer-light-stemcell
       - publish-stemcells
-      - replace-and-post-stemcells
+      - post-stemcells
       - test-stemcells
       - build-softlayer-xen-ubuntu-trusty
       - bats-ubuntu
@@ -162,7 +162,7 @@ g
       - put: light-softlayer-stemcell-prod
         params: {file: light-softlayer-stemcell-prod/*.tgz}
 
-  - name: replace-and-post-stemcells
+  - name: post-stemcells
     serial: true
     plan:
       - aggregate:
@@ -170,20 +170,11 @@ g
           passed:
             - publish-stemcells
         - get: bosh-linux-stemcell-builder-master
-        - get: light-softlayer-stemcell-prod
-          resource: light-softlayer-stemcell-prod
-          passed:
-            - publish-stemcells
-      - do:
-        - task: replace-stemcell
-          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/replace-stemcell-artifacts.yml
-        - put: light-softlayer-stemcell-prod
-          params: {file: replaced/*.tgz}
-        - task: post-stemcell
-          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/post-stemcell-checksum.yml
-          params:
-            BOSHIO_TOKEN:          {{boshio_token}}
-            PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
+      - task: post-stemcell
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/post-stemcell-checksum.yml
+        params:
+          BOSHIO_TOKEN:          {{boshio_token}}
+          PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
   #
   # SoftLayer
   #

@@ -16,4 +16,4 @@ outputs:
   - name: replaced
 
 run:
-  path: bosh-linux-stemcell-builder/ci/bluemix/tasks/replace-stemcell-artifacts.sh
+  path: bosh-linux-stemcell-builder/ci/softlayer/tasks/replace-stemcell-artifacts.sh
