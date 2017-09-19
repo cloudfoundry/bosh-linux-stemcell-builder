@@ -7,7 +7,11 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
 # Set up users/groups
-vcap_user_groups='admin,adm,audio,cdrom,dialout,floppy,video,dip,bosh_sshers'
+vcap_user_groups='admin,adm,audio,cdrom,dialout,floppy,video,bosh_sshers'
+
+if [ "${stemcell_operating_system}" != "centos" ] && [ "${stemcell_operating_system}" != "rhel" ] ; then
+  vcap_user_groups="${vcap_user_groups},dip"
+fi
 
 if [ -f $chroot/etc/debian_version ] # Ubuntu
 then
