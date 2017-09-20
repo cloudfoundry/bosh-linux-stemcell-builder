@@ -620,10 +620,6 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
 
-* `60WEdnJNU5.ym5jW6nTVkvCLakYlMenT`
-  - Upgrade to CentOS 7.4
-  - built from master (b8e13968d41b9c51f3eee59e1e7560bc297a2af2)
-
 * `JRWJGXQazjhzWM.S5qW.573fmI4dsfFi`
   - bump os-image to get newer logrotate
   - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
