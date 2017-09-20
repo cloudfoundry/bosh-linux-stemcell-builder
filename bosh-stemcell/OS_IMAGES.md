@@ -8,6 +8,11 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `2cZrhVYgNhEyqf7ufEewlkczbHZeAG1L`
+  - Periodic bump
+  - USN-3422-2: Linux kernel (Trusty HWE) vulnerabilities
+  - built from master (b8e13968d41b9c51f3eee59e1e7560bc297a2af2)
+
 * `m_U29czb58XlvKg1Mrqtjwj0p84mtdSC`
   - Bump os-image to get logrotate 3.8.7-1ubuntu12
   - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
@@ -614,6 +619,10 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `60WEdnJNU5.ym5jW6nTVkvCLakYlMenT`
+  - Upgrade to CentOS 7.4
+  - built from master (b8e13968d41b9c51f3eee59e1e7560bc297a2af2)
 
 * `JRWJGXQazjhzWM.S5qW.573fmI4dsfFi`
   - bump os-image to get newer logrotate
