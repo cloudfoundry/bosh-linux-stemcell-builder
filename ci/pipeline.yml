@@ -203,49 +203,54 @@ jobs:
           passed:
             - bats-centos
             - bats-ubuntu
+        - get: stemcells-index
       - task: assert-version-aligns
         file: bosh-linux-stemcell-builder/ci/tasks/assert-version-aligns.yml
-      - aggregate:
-        - task: copy-ubuntu-trusty-artifacts
-          file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
-          params:
-            AWS_ACCESS_KEY_ID: {{stemcell_aws_access_key}}
-            AWS_SECRET_ACCESS_KEY: {{stemcell_aws_secret_key}}
-            CANDIDATE_BUCKET_NAME: {{candidate_stemcell_bucket}}
-            PUBLISHED_BUCKET_NAME: {{published_stemcell_bucket}}
-            OS_NAME: ubuntu
-            OS_VERSION: trusty
-            COPY_KEYS: |
-              aws/bosh-stemcell-%s-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
-              google/bosh-stemcell-%s-google-kvm-ubuntu-trusty-go_agent.tgz
-              openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent.tgz
-              openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz
-              warden/bosh-stemcell-%s-warden-boshlite-ubuntu-trusty-go_agent.tgz
-              vsphere/bosh-stemcell-%s-vsphere-esxi-ubuntu-trusty-go_agent.tgz
-              vcloud/bosh-stemcell-%s-vcloud-esxi-ubuntu-trusty-go_agent.tgz
-              azure/bosh-stemcell-%s-azure-hyperv-ubuntu-trusty-go_agent.tgz
-        - task: copy-centos-7-artifacts
-          file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
-          params:
-            AWS_ACCESS_KEY_ID: {{stemcell_aws_access_key}}
-            AWS_SECRET_ACCESS_KEY: {{stemcell_aws_secret_key}}
-            CANDIDATE_BUCKET_NAME: {{candidate_stemcell_bucket}}
-            PUBLISHED_BUCKET_NAME: {{published_stemcell_bucket}}
-            OS_NAME: centos
-            OS_VERSION: 7
-            COPY_KEYS: |
-              aws/bosh-stemcell-%s-aws-xen-hvm-centos-7-go_agent.tgz
-              google/bosh-stemcell-%s-google-kvm-centos-7-go_agent.tgz
-              openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent.tgz
-              openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent-raw.tgz
-              warden/bosh-stemcell-%s-warden-boshlite-centos-7-go_agent.tgz
-              vsphere/bosh-stemcell-%s-vsphere-esxi-centos-7-go_agent.tgz
-              azure/bosh-stemcell-%s-azure-hyperv-centos-7-go_agent.tgz
-      - put: bosh-linux-stemcell-builder-push
+      - task: copy-ubuntu-trusty-artifacts
+        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
         params:
-          repository: bosh-linux-stemcell-builder
-          tag: version-tag/tag
-          only_tag: true
+          AWS_ACCESS_KEY_ID: {{stemcell_aws_access_key}}
+          AWS_SECRET_ACCESS_KEY: {{stemcell_aws_secret_key}}
+          CANDIDATE_BUCKET_NAME: {{candidate_stemcell_bucket}}
+          PUBLISHED_BUCKET_NAME: {{published_stemcell_bucket}}
+          OS_NAME: ubuntu
+          OS_VERSION: trusty
+          COPY_KEYS: |
+            aws/bosh-stemcell-%s-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
+            google/bosh-stemcell-%s-google-kvm-ubuntu-trusty-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz
+            warden/bosh-stemcell-%s-warden-boshlite-ubuntu-trusty-go_agent.tgz
+            vsphere/bosh-stemcell-%s-vsphere-esxi-ubuntu-trusty-go_agent.tgz
+            vcloud/bosh-stemcell-%s-vcloud-esxi-ubuntu-trusty-go_agent.tgz
+            azure/bosh-stemcell-%s-azure-hyperv-ubuntu-trusty-go_agent.tgz
+      - task: copy-centos-7-artifacts
+        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
+        params:
+          AWS_ACCESS_KEY_ID: {{stemcell_aws_access_key}}
+          AWS_SECRET_ACCESS_KEY: {{stemcell_aws_secret_key}}
+          CANDIDATE_BUCKET_NAME: {{candidate_stemcell_bucket}}
+          PUBLISHED_BUCKET_NAME: {{published_stemcell_bucket}}
+          OS_NAME: centos
+          OS_VERSION: 7
+          COPY_KEYS: |
+            aws/bosh-stemcell-%s-aws-xen-hvm-centos-7-go_agent.tgz
+            google/bosh-stemcell-%s-google-kvm-centos-7-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent-raw.tgz
+            warden/bosh-stemcell-%s-warden-boshlite-centos-7-go_agent.tgz
+            vsphere/bosh-stemcell-%s-vsphere-esxi-centos-7-go_agent.tgz
+            azure/bosh-stemcell-%s-azure-hyperv-centos-7-go_agent.tgz
+      - aggregate:
+        - put: bosh-linux-stemcell-builder-push
+          params:
+            repository: bosh-linux-stemcell-builder
+            tag: version-tag/tag
+            only_tag: true
+        - put: stemcells-index
+          params:
+            repository: stemcells-index
+            rebase: true
 
   #
   # WARDEN
@@ -274,7 +279,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   - name: build-warden-boshlite-centos-7
@@ -300,7 +305,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   #
@@ -330,7 +335,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   - name: build-aws-xen-hvm-centos-7
@@ -356,7 +361,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   #
@@ -386,7 +391,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   - name: build-azure-hyperv-centos-7
@@ -412,7 +417,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   #
@@ -442,7 +447,7 @@ jobs:
             file: stemcell/*-go_agent.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   - name: build-google-kvm-centos-7
@@ -468,7 +473,7 @@ jobs:
             file: stemcell/*-go_agent.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   #
@@ -501,7 +506,7 @@ jobs:
             file: stemcell/*-go_agent.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   - name: build-openstack-kvm-centos-7
@@ -530,7 +535,7 @@ jobs:
             file: stemcell/*-go_agent.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   #
@@ -560,7 +565,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   - name: build-vsphere-esxi-centos-7
@@ -586,7 +591,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   #
@@ -616,7 +621,7 @@ jobs:
             file: stemcell/*.tgz
       - put: stemcells-index
         params:
-          repo: stemcells-index
+          repository: stemcells-index
           rebase: true
 
   - name: bats-centos
