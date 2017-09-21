@@ -6,41 +6,29 @@ groups:
       - build-stemcell
       - publish-stemcells
       - test-stemcells
-      - build-warden-boshlite-centos-7
       - build-warden-boshlite-ubuntu-trusty
-      - build-aws-xen-hvm-centos-7
       - build-aws-xen-hvm-ubuntu-trusty
-      - build-azure-hyperv-centos-7
       - build-azure-hyperv-ubuntu-trusty
       - build-google-kvm-ubuntu-trusty
-      - build-google-kvm-centos-7
-      - build-openstack-kvm-centos-7
       - build-openstack-kvm-ubuntu-trusty
-      - build-vsphere-esxi-centos-7
       - build-vsphere-esxi-ubuntu-trusty
       - build-vcloud-esxi-ubuntu-trusty
-      - bats-centos
       - bats-ubuntu
   - name: aws
     jobs:
       - build-aws-xen-hvm-ubuntu-trusty
-      - build-aws-xen-hvm-centos-7
   - name: azure
     jobs:
       - build-azure-hyperv-ubuntu-trusty
-      - build-azure-hyperv-centos-7
   - name: google
     jobs:
       - build-google-kvm-ubuntu-trusty
-      - build-google-kvm-centos-7
   - name: openstack
     jobs:
       - build-openstack-kvm-ubuntu-trusty
-      - build-openstack-kvm-centos-7
   - name: vsphere
     jobs:
       - build-vsphere-esxi-ubuntu-trusty
-      - build-vsphere-esxi-centos-7
   - name: vcloud
     jobs:
       - build-vcloud-esxi-ubuntu-trusty
@@ -52,15 +40,8 @@ groups:
       - build-openstack-kvm-ubuntu-trusty
       - build-vsphere-esxi-ubuntu-trusty
       - build-vcloud-esxi-ubuntu-trusty
-  - name: centos
-    jobs:
-      - build-aws-xen-hvm-centos-7
-      - build-azure-hyperv-centos-7
-      - build-openstack-kvm-centos-7
-      - build-vsphere-esxi-centos-7
   - name: bats
     jobs:
-      - bats-centos
       - bats-ubuntu
 
 shared:
@@ -129,19 +110,13 @@ jobs:
         - get: version
           trigger: true
           passed:
-            - build-warden-boshlite-centos-7
             - build-warden-boshlite-ubuntu-trusty
             - build-aws-xen-hvm-ubuntu-trusty
             - build-azure-hyperv-ubuntu-trusty
             - build-google-kvm-ubuntu-trusty
-            - build-google-kvm-centos-7
             - build-openstack-kvm-ubuntu-trusty
             - build-vsphere-esxi-ubuntu-trusty
             - build-vcloud-esxi-ubuntu-trusty
-            - build-aws-xen-hvm-centos-7
-            - build-azure-hyperv-centos-7
-            - build-openstack-kvm-centos-7
-            - build-vsphere-esxi-centos-7
         - get: bosh-linux-stemcell-builder
         - get: bosh-deployment
         - get: bosh-cli
@@ -197,11 +172,9 @@ jobs:
         - get: version
           passed:
             - test-stemcells
-            - bats-centos
             - bats-ubuntu
         - get: bosh-linux-stemcell-builder
           passed:
-            - bats-centos
             - bats-ubuntu
         - get: stemcells-index
       - task: assert-version-aligns
@@ -224,23 +197,6 @@ jobs:
             vsphere/bosh-stemcell-%s-vsphere-esxi-ubuntu-trusty-go_agent.tgz
             vcloud/bosh-stemcell-%s-vcloud-esxi-ubuntu-trusty-go_agent.tgz
             azure/bosh-stemcell-%s-azure-hyperv-ubuntu-trusty-go_agent.tgz
-      - task: copy-centos-7-artifacts
-        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
-        params:
-          AWS_ACCESS_KEY_ID: {{stemcell_aws_access_key}}
-          AWS_SECRET_ACCESS_KEY: {{stemcell_aws_secret_key}}
-          CANDIDATE_BUCKET_NAME: {{candidate_stemcell_bucket}}
-          PUBLISHED_BUCKET_NAME: {{published_stemcell_bucket}}
-          OS_NAME: centos
-          OS_VERSION: 7
-          COPY_KEYS: |
-            aws/bosh-stemcell-%s-aws-xen-hvm-centos-7-go_agent.tgz
-            google/bosh-stemcell-%s-google-kvm-centos-7-go_agent.tgz
-            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent.tgz
-            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent-raw.tgz
-            warden/bosh-stemcell-%s-warden-boshlite-centos-7-go_agent.tgz
-            vsphere/bosh-stemcell-%s-vsphere-esxi-centos-7-go_agent.tgz
-            azure/bosh-stemcell-%s-azure-hyperv-centos-7-go_agent.tgz
       - aggregate:
         - put: bosh-linux-stemcell-builder-push
           params:
@@ -282,32 +238,6 @@ jobs:
           repository: stemcells-index
           rebase: true
 
-  - name: build-warden-boshlite-centos-7
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         warden
-          HYPERVISOR:   boshlite
-          OS_NAME:      centos
-          OS_VERSION:   '7'
-      - aggregate:
-        - put: warden-boshlite-centos-7
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
   #
   # AWS
   #
@@ -331,32 +261,6 @@ jobs:
           OS_VERSION:   trusty
       - aggregate:
         - put: aws-xen-hvm-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
-  - name: build-aws-xen-hvm-centos-7
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         aws
-          HYPERVISOR:   xen-hvm
-          OS_NAME:      centos
-          OS_VERSION:   7
-      - aggregate:
-        - put: aws-xen-hvm-centos-7
           params:
             file: stemcell/*.tgz
       - put: stemcells-index
@@ -394,32 +298,6 @@ jobs:
           repository: stemcells-index
           rebase: true
 
-  - name: build-azure-hyperv-centos-7
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         azure
-          HYPERVISOR:   hyperv
-          OS_NAME:      centos
-          OS_VERSION:   7
-      - aggregate:
-        - put: azure-hyperv-centos-7
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
   #
   # Google
   #
@@ -443,32 +321,6 @@ jobs:
           OS_VERSION:   trusty
       - aggregate:
         - put: google-kvm-ubuntu-trusty
-          params:
-            file: stemcell/*-go_agent.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
-  - name: build-google-kvm-centos-7
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         google
-          HYPERVISOR:   kvm
-          OS_NAME:      centos
-          OS_VERSION:   7
-      - aggregate:
-        - put: google-kvm-centos-7
           params:
             file: stemcell/*-go_agent.tgz
       - put: stemcells-index
@@ -509,35 +361,6 @@ jobs:
           repository: stemcells-index
           rebase: true
 
-  - name: build-openstack-kvm-centos-7
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         openstack
-          HYPERVISOR:   kvm
-          OS_NAME:      centos
-          OS_VERSION:   7
-      - aggregate:
-        - put: openstack-kvm-centos-7-raw
-          params:
-            file: stemcell/*-raw.tgz
-        - put: openstack-kvm-centos-7
-          params:
-            file: stemcell/*-go_agent.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
   #
   # vSphere
   #
@@ -561,32 +384,6 @@ jobs:
           OS_VERSION:   trusty
       - aggregate:
         - put: vsphere-esxi-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
-  - name: build-vsphere-esxi-centos-7
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         vsphere
-          HYPERVISOR:   esxi
-          OS_NAME:      centos
-          OS_VERSION:   7
-      - aggregate:
-        - put: vsphere-esxi-centos-7
           params:
             file: stemcell/*.tgz
       - put: stemcells-index
@@ -624,72 +421,6 @@ jobs:
           repository: stemcells-index
           rebase: true
 
-  - name: bats-centos
-    serial: true
-    plan:
-    - do:
-      - aggregate:
-        - get: bosh-release
-        - get: cpi-release
-        - get: stemcell
-          trigger: true
-          tags:
-          - vsphere-v5.1
-          resource: vsphere-esxi-centos-7
-          passed:
-          - build-vsphere-esxi-centos-7
-        - get: bosh-cli
-        - get: bats
-        - get: bosh-deployment
-        - get: bosh-linux-stemcell-builder
-          passed:
-            - build-warden-boshlite-centos-7
-            - build-warden-boshlite-ubuntu-trusty
-            - build-aws-xen-hvm-ubuntu-trusty
-            - build-azure-hyperv-ubuntu-trusty
-            - build-google-kvm-ubuntu-trusty
-            - build-google-kvm-centos-7
-            - build-openstack-kvm-ubuntu-trusty
-            - build-vsphere-esxi-ubuntu-trusty
-            - build-vcloud-esxi-ubuntu-trusty
-            - build-aws-xen-hvm-centos-7
-            - build-azure-hyperv-centos-7
-            - build-openstack-kvm-centos-7
-            - build-vsphere-esxi-centos-7
-        - get: version
-          passed:
-            - build-warden-boshlite-centos-7
-            - build-warden-boshlite-ubuntu-trusty
-            - build-aws-xen-hvm-ubuntu-trusty
-            - build-azure-hyperv-ubuntu-trusty
-            - build-google-kvm-ubuntu-trusty
-            - build-google-kvm-centos-7
-            - build-openstack-kvm-ubuntu-trusty
-            - build-vsphere-esxi-ubuntu-trusty
-            - build-vcloud-esxi-ubuntu-trusty
-            - build-aws-xen-hvm-centos-7
-            - build-azure-hyperv-centos-7
-            - build-openstack-kvm-centos-7
-            - build-vsphere-esxi-centos-7
-
-      - {put: environment, params: {acquire: true}}
-
-      - do:
-        - <<: *deploy-director
-
-        - <<: *prepare-bats-config
-          params:
-            STEMCELL_NAME: bosh-vsphere-esxi-centos-7-go_agent
-
-        - <<: *run-bats
-        ensure:
-          do:
-            - <<: *teardown
-      ensure:
-        do:
-        - {put: environment, params: {release: environment}}
-
-
   - name: bats-ubuntu
     serial: true
     plan:
@@ -709,34 +440,22 @@ jobs:
         - get: bosh-deployment
         - get: bosh-linux-stemcell-builder
           passed:
-            - build-warden-boshlite-centos-7
             - build-warden-boshlite-ubuntu-trusty
             - build-aws-xen-hvm-ubuntu-trusty
             - build-azure-hyperv-ubuntu-trusty
             - build-google-kvm-ubuntu-trusty
-            - build-google-kvm-centos-7
             - build-openstack-kvm-ubuntu-trusty
             - build-vsphere-esxi-ubuntu-trusty
             - build-vcloud-esxi-ubuntu-trusty
-            - build-aws-xen-hvm-centos-7
-            - build-azure-hyperv-centos-7
-            - build-openstack-kvm-centos-7
-            - build-vsphere-esxi-centos-7
         - get: version
           passed:
-            - build-warden-boshlite-centos-7
             - build-warden-boshlite-ubuntu-trusty
             - build-aws-xen-hvm-ubuntu-trusty
             - build-azure-hyperv-ubuntu-trusty
             - build-google-kvm-ubuntu-trusty
-            - build-google-kvm-centos-7
             - build-openstack-kvm-ubuntu-trusty
             - build-vsphere-esxi-ubuntu-trusty
             - build-vcloud-esxi-ubuntu-trusty
-            - build-aws-xen-hvm-centos-7
-            - build-azure-hyperv-centos-7
-            - build-openstack-kvm-centos-7
-            - build-vsphere-esxi-centos-7
 
       - {put: environment, params: {acquire: true}}
 
@@ -817,14 +536,6 @@ resources:
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
-  - name: warden-boshlite-centos-7
-    type: s3
-    source:
-      bucket: {{candidate_stemcell_bucket}}
-      regexp: warden/bosh-stemcell-(.+)-warden-boshlite-centos-7-go_agent.tgz
-      access_key_id: {{stemcell_aws_access_key}}
-      secret_access_key: {{stemcell_aws_secret_key}}
-
   #
   # AWS
   #
@@ -834,14 +545,6 @@ resources:
     source:
       bucket: {{candidate_stemcell_bucket}}
       regexp: aws/bosh-stemcell-(.+)-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
-      access_key_id: {{stemcell_aws_access_key}}
-      secret_access_key: {{stemcell_aws_secret_key}}
-
-  - name: aws-xen-hvm-centos-7
-    type: s3
-    source:
-      bucket: {{candidate_stemcell_bucket}}
-      regexp: aws/bosh-stemcell-(.+)-aws-xen-hvm-centos-7-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
@@ -857,14 +560,6 @@ resources:
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
-  - name: azure-hyperv-centos-7
-    type: s3
-    source:
-      bucket: {{candidate_stemcell_bucket}}
-      regexp: azure/bosh-stemcell-(.+)-azure-hyperv-centos-7-go_agent.tgz
-      access_key_id: {{stemcell_aws_access_key}}
-      secret_access_key: {{stemcell_aws_secret_key}}
-
   #
   # Google
   #
@@ -874,14 +569,6 @@ resources:
     source:
       bucket: {{candidate_stemcell_bucket}}
       regexp: google/bosh-stemcell-(.+)-google-kvm-ubuntu-trusty-go_agent.tgz
-      access_key_id: {{stemcell_aws_access_key}}
-      secret_access_key: {{stemcell_aws_secret_key}}
-
-  - name: google-kvm-centos-7
-    type: s3
-    source:
-      bucket: {{candidate_stemcell_bucket}}
-      regexp: google/bosh-stemcell-(.+)-google-kvm-centos-7-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
@@ -905,22 +592,6 @@ resources:
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
-  - name: openstack-kvm-centos-7
-    type: s3
-    source:
-      bucket: {{candidate_stemcell_bucket}}
-      regexp: openstack/bosh-stemcell-(.+)-openstack-kvm-centos-7-go_agent.tgz
-      access_key_id: {{stemcell_aws_access_key}}
-      secret_access_key: {{stemcell_aws_secret_key}}
-
-  - name: openstack-kvm-centos-7-raw
-    type: s3
-    source:
-      bucket: {{candidate_stemcell_bucket}}
-      regexp: openstack/bosh-stemcell-(.+)-openstack-kvm-centos-7-go_agent-raw.tgz
-      access_key_id: {{stemcell_aws_access_key}}
-      secret_access_key: {{stemcell_aws_secret_key}}
-
   #
   # vSphere
   #
@@ -933,13 +604,6 @@ resources:
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
-  - name: vsphere-esxi-centos-7
-    type: s3
-    source:
-      bucket: {{candidate_stemcell_bucket}}
-      regexp: vsphere/bosh-stemcell-(.+)-vsphere-esxi-centos-7-go_agent.tgz
-      access_key_id: {{stemcell_aws_access_key}}
-      secret_access_key: {{stemcell_aws_secret_key}}
   #
   # vCloud
   #
