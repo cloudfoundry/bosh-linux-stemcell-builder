@@ -196,23 +196,6 @@ jobs:
             vsphere/bosh-stemcell-%s-vsphere-esxi-ubuntu-trusty-go_agent.tgz
             vcloud/bosh-stemcell-%s-vcloud-esxi-ubuntu-trusty-go_agent.tgz
             azure/bosh-stemcell-%s-azure-hyperv-ubuntu-trusty-go_agent.tgz
-      - task: copy-centos-7-artifacts
-        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
-        params:
-          AWS_ACCESS_KEY_ID: {{stemcell_aws_access_key}}
-          AWS_SECRET_ACCESS_KEY: {{stemcell_aws_secret_key}}
-          CANDIDATE_BUCKET_NAME: {{candidate_stemcell_bucket}}
-          PUBLISHED_BUCKET_NAME: {{published_stemcell_bucket}}
-          OS_NAME: centos
-          OS_VERSION: 7
-          COPY_KEYS: |
-            aws/bosh-stemcell-%s-aws-xen-hvm-centos-7-go_agent.tgz
-            google/bosh-stemcell-%s-google-kvm-centos-7-go_agent.tgz
-            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent.tgz
-            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent-raw.tgz
-            warden/bosh-stemcell-%s-warden-boshlite-centos-7-go_agent.tgz
-            vsphere/bosh-stemcell-%s-vsphere-esxi-centos-7-go_agent.tgz
-            azure/bosh-stemcell-%s-azure-hyperv-centos-7-go_agent.tgz
       - aggregate:
         - put: bosh-linux-stemcell-builder-push
           params:
