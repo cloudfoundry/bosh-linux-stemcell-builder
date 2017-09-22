@@ -30,7 +30,7 @@ if is_ppc64le; then
   echo "d034db7caa859ad64ea35bd262ac87ea9c24c21aed1f30c4f749b49bfa11aa96  bosh-agent" | shasum -a 256 -c -
 else
   curl -L -o bosh-agent "https://s3.eu-central-1.amazonaws.com/opensuse-stemcells/bosh-agent/bosh-agent"
-  echo "972c90ecce7b14b00c6080fc1bd6f933f139369c58ae17ff3bb075ba6891e442  bosh-agent" | shasum -a 256 -c -
+  echo "4a3f11544e2ebb9526cb7f62cfdb10ef709df528888cd24d45cf65f827a9a389  bosh-agent" | shasum -a 256 -c -
 fi
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 

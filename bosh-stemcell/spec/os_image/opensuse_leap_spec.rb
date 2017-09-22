@@ -30,7 +30,7 @@ describe 'openSUSE leap OS image', os_image: true do
     end
   end
 
-  context 'official Centos gpg key is installed (stig: V-38476)' do
+  context 'official SuSE gpg key is installed (stig: V-38476)' do
     describe command('rpm -qa gpg-pubkey* 2>/dev/null | xargs rpm -qi 2>/dev/null') do
       its(:stdout) { should include('SuSE Package Signing Key') }
     end
