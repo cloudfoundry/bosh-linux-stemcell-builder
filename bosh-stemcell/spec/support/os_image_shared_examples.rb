@@ -198,6 +198,11 @@ shared_examples_for 'every OS image' do
       it { should be_file }
       its(:content) { should match('ModLoad imklog') }
     end
+
+    describe file('/etc/rsyslog.d/avoid-startup-deadlock.conf') do
+      it { should be_file }
+      its(:content) { should match(/global\(processInternalMessages="on"\)/) }
+    end
   end
 
   context 'auditd should be installed but not enabled (stig: V-38628) (stig: V-38631) (stig: V-38632)' do
@@ -327,8 +332,16 @@ shared_examples_for 'every OS image' do
   context 'anacron is configured' do
     describe file('/etc/anacrontab') do
       it { should be_file }
-      its(:content) { should match /^RANDOM_DELAY=60$/ }
-      its(:content) { should_not match /^RANDOM_DELAY=[0-57-9][0-9]*$/ }
+
+      it 'declares RANDOM_DELAY early on' do
+        lines = subject.content.lines.map(&:strip)
+        random_delay_index = lines.index('RANDOM_DELAY=60')
+        expect(random_delay_index).not_to be_nil
+
+        (0..random_delay_index).each do |idx|
+          expect(lines[idx]).not_to(match /(\S+\s+){2}cron\./)
+        end
+      end
     end
   end
 
@@ -614,9 +627,9 @@ shared_examples_for 'every OS image' do
       its(:content) { should match /^-a always,exit -F arch=b32 -S unlink -S unlinkat -S rmdir -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete$/ }
     end
 
-    describe 'audit rules are made immutable (CIS-8.1.18)' do
-      it 'last line should be -e 2' do
-        expect(subject.content.split("\n").last).to eq '-e 2'
+    describe 'audit rules are made mutable (CIS-8.1.18)' do
+      it 'should not have a -e 2 line' do
+        expect(subject.content).not_to match '-e 2'
       end
     end
 

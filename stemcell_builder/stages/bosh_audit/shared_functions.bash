@@ -110,12 +110,6 @@ function write_shared_audit_rules {
 ' >> $chroot/etc/audit/rules.d/audit.rules
 }
 
-function make_audit_rules_immutable {
-      echo '
-# Make audit rules immutable
--e 2' >> $chroot/etc/audit/rules.d/audit.rules
-}
-
 function override_default_audit_variables {
     sed -i 's/^disk_error_action = .*$/disk_error_action = SYSLOG/g' $chroot/etc/audit/auditd.conf
     sed -i 's/^disk_full_action = .*$/disk_full_action = SYSLOG/g' $chroot/etc/audit/auditd.conf

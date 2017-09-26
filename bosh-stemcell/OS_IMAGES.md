@@ -8,6 +8,46 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `m_U29czb58XlvKg1Mrqtjwj0p84mtdSC`
+  - Bump os-image to get logrotate 3.8.7-1ubuntu12
+  - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
+
+* `ihJo8x_d96oR38fLItL5y7tpWL6lgj.B`
+  - Make auditd rules mutable by default
+  - built from master (7aa3cd9b0cacf646852e1ee762eaf31e1baaf2b1)
+
+* `cxAdZKzPogT77Dmk_J9DeLbSY46ts.dB`
+  - USN-3392-2: Linux kernel (Xenial HWE) regression
+  - built from master (75623d0c4cd7ec002f26d763fa8db3740efa4f69)
+
+* `lFTzZ3l8SjN7jdGk20ccirvC8Zmgpwjg`
+  - USN-3385-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from master (0bbb162561f121136057610655b425b8dfaed928)
+
+* `clPl6xM8zGROUDkuQYcv2S.hc7ZUDqFA`
+  - USN-3378-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from master (b4b87b224d219a8279ea52c036c096b8930cde7b)
+
+* `mldQXnQFBxEshqoLtAhSxzjFdK4VsKDk`
+  - Fix for occasional rsyslog hang on startup
+  - built from master (8afb6b25f5d01961f473afa722e0dc761d934712)
+
+* `oeP0x5_NSqDqQn9w5LlZKx0ycieR_XCJ`
+  - Periodic bump
+  - built from master (aa5f16c2a6f142a092afd49c7f9bc1f4a6bae36b)
+
+* `8zApY4ctWhWag.8ewavNINnJli5NmLeH`
+  - updated rsyslog configuration for precision times
+  - built from master (56863c7b780dda14b85f246f0e2f585fb839ff79)
+
+* `r_WNtzobxc0nnQ8eGDlzholta243M8hq`
+  - Periodic bump
+  - built from master (68b92ffd4007625b994c12c21847c39b400b55f4)
+
+* `v9zIu3GyTfQQaev5hhm6P8duLyg_PDqt`
+  - cron should respect RANDOM_DELAY
+  - built from master (70c5e98f42123eb763e1481458f65e5a7be1e161)
+
 * `MU9r.9kKO4KZL3l9dzRxld.qN7K5m2y_`
   - Periodic bump
   - built from master (67b8ac6788ac388ad51707577c4a76b873c81d29)
@@ -574,6 +614,46 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `JRWJGXQazjhzWM.S5qW.573fmI4dsfFi`
+  - bump os-image to get newer logrotate
+  - built from master (051a340072e25babefc1a1a117ab044e12cd377f)
+
+* `AxujRQcXRggs7x17hKz3ImaI6q3b.ik7`
+  - Make auditd rules mutable by default
+  - built from master (7aa3cd9b0cacf646852e1ee762eaf31e1baaf2b1)
+
+* `ZF9M8.wWClnvTrXSSrreednJcDAzns.9`
+  - Periodic bump
+  - built from master (75623d0c4cd7ec002f26d763fa8db3740efa4f69)
+
+* `MOpHI7NvEQyUoGjMDEzqU2vR3nNqoDj4`
+  - Periodic bump
+  - built from master (0bbb162561f121136057610655b425b8dfaed928)
+
+* `T7ljccputCgQ_GQgzYZ3YLPe0nJWRzLF`
+  - Periodic bump
+  - built from master (b4b87b224d219a8279ea52c036c096b8930cde7b)
+
+* `7l.1KviBUAkKAqIA4K19P.kojGGctzLk`
+  - Fix for occasional rsyslog hang on startup
+  - built from master (8afb6b25f5d01961f473afa722e0dc761d934712)
+
+* `1MIhQFwaMHis56U0H64Fd6cwCotTSocp`
+  - Periodic bump
+  - built from master (aa5f16c2a6f142a092afd49c7f9bc1f4a6bae36b)
+
+* `qWEsvsL_cKNsR_P4Ou9lY1bUngcUbX2j`
+  - updated rsyslog configuration for precision times
+  - built from master (56863c7b780dda14b85f246f0e2f585fb839ff79)
+
+* `rvM9hTPYTmIErAmhyzaMRcfgD4xcMzxR`
+  - Periodic bump
+  - built from master (68b92ffd4007625b994c12c21847c39b400b55f4)
+
+* `MlY9FjlIzqd3xTlLk2qf8SlI0LjcGE8e`
+  - cron should respect RANDOM_DELAY
+  - built from master (70c5e98f42123eb763e1481458f65e5a7be1e161)
 
 * `HUu7U8e6IrJVrNMTwww84Zs.eu74PkaY`
   - Periodic bump to include CESA-2017:0933

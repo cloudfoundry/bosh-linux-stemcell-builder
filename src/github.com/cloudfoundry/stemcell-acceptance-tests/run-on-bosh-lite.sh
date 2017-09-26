@@ -17,4 +17,4 @@ export BOSH_GW_PRIVATE_KEY="$temp_file"
 export BOSH_GW_HOST=192.168.50.6
 export BOSH_GW_USER=jumpbox5
 
-ginkgo -r smoke
+ginkgo -r .
