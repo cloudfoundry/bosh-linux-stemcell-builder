@@ -2,18 +2,15 @@
 
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
+source $base_dir/lib/prelude_agent.bash
 
 agent_settings_file=$chroot/var/vcap/bosh/agent.json
-
-if [ "$(get_os_type)" == "opensuse" ]; then
-  partitioner_type="\"PartitionerType\": \"parted\","
-fi
 
 cat > $agent_settings_file <<JSON
 {
   "Platform": {
     "Linux": {
-      ${partitioner_type:-}
+      $(get_partitioner_type_mapping)
       "CreatePartitionIfNoEphemeralDisk": true,
       "DevicePathResolutionType": "virtio"
     }

@@ -2,17 +2,14 @@
 
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
-
-if [ "$(get_os_type)" == "opensuse" ]; then
-  partitioner_type="\"PartitionerType\": \"parted\","
-fi
+source $base_dir/lib/prelude_agent.bash
 
 # Set SettingsPath but never use it because file_meta_service is avaliable only when the settings file exists.
 cat > $chroot/var/vcap/bosh/agent.json <<JSON
 {
   "Platform": {
     "Linux": {
-      ${partitioner_type:-}
+      $(get_partitioner_type_mapping)
       "CreatePartitionIfNoEphemeralDisk": true
     }
   },
