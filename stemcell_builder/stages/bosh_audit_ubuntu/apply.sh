@@ -11,7 +11,11 @@ pkg_mgr install auditd
 # Without this, auditd will read from /etc/audit/audit.rules instead
 # of /etc/audit/rules.d/*.
 sed -i 's/^USE_AUGENRULES="[Nn][Oo]"$/USE_AUGENRULES="yes"/' $chroot/etc/default/auditd
-run_in_bosh_chroot $chroot "update-rc.d auditd disable"
+if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
+   run_in_bosh_chroot $chroot "systemctl disable auditd.service"
+else
+   run_in_bosh_chroot $chroot "update-rc.d auditd disable"
+fi
 
 write_shared_audit_rules
 
