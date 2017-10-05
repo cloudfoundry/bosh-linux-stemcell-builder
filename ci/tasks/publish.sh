@@ -45,6 +45,6 @@ for file in $COPY_KEYS ; do
   echo ""
 done
 
-echo "stable-${VERSION}" > version-tag/tag
+echo "stable-${VERSION}" > ../version-tag/tag
 
 echo "Done"
