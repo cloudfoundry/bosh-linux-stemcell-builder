@@ -12,6 +12,16 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     it { should be_installed }
   end
 
+  describe user('vcap') do
+    it { should be_in_group 'admin' }
+    it { should be_in_group 'adm' }
+    it { should be_in_group 'audio' }
+    it { should be_in_group 'cdrom' }
+    it { should be_in_group 'dialout' }
+    it { should be_in_group 'floppy' }
+    it { should be_in_group 'video' }
+  end
+
   context 'installed by base_centos or base_rhel' do
     describe file('/etc/redhat-release') do
       it { should be_file }
