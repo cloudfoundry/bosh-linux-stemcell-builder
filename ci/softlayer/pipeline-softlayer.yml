@@ -127,7 +127,6 @@ jobs:
             SL_VM_NAME_PREFIX: {{softlayer-director-name-prefix}}
             SL_VM_NAME_PREFIX_2: {{softlayer-vm-name-prefix}}
             SL_PUBLIC_SSH_KEY: {{softlayer-public-ssh-key}}
-g
         - task: test-stemcell
           file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/test-stemcell.yml
           input_mapping:

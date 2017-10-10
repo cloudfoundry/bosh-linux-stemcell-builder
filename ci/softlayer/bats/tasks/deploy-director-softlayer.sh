@@ -15,7 +15,7 @@ trap cp_artifacts EXIT
 mv bosh-cli/bosh-cli-* /usr/local/bin/bosh-cli
 chmod +x /usr/local/bin/bosh-cli
 
-powerdns_yml_path=$(find ${pwd}  -name powerdns.yml)
+powerdns_yml_path=$(find ${pwd} -name powerdns.yml | head -n 1)
 bosh-cli interpolate bosh-deployment/bosh.yml \
   -o bosh-deployment/$BAT_INFRASTRUCTURE/cpi.yml \
   -o ${powerdns_yml_path} \
