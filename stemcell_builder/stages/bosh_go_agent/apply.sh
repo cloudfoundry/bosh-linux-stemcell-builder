@@ -26,11 +26,11 @@ cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
 
 cd $assets_dir
 if is_ppc64le; then
-  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.15.0-linux-ppc64le?versionId=GS9O3Z13bjjPYWQXyKnt1EH5OuJvQrP4"
-  echo "d034db7caa859ad64ea35bd262ac87ea9c24c21aed1f30c4f749b49bfa11aa96  bosh-agent" | shasum -a 256 -c -
+  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.30.0-linux-ppc64le?versionId=MGJh4JL8eMtv.SD14yMQP14BopI27E1y"
+  echo "a67628e4219e55db4cab71a5abb48e3eed44aefaac8415d96ae3aaa240517bbd  bosh-agent" | shasum -a 256 -c -
 else
-  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.15.0-linux-amd64?versionId=Xps6BhOnFjNsocp8O2sst0_8uktYVMPK"
-  echo "e879dbbdafb38fe6d99fb70d3297cfb9cd147c5e5cb527427bba9a929dd8d94c  bosh-agent" | shasum -a 256 -c -
+  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.30.0-linux-amd64?versionId=6VY6f_xeBLnJLiNU6Ay2c6CYCJ6K1oNq"
+  echo "480c52aaf6c6be8711a802549bd2bb755cf7a2596752ea73e9a5551ca90e8fbf  bosh-agent" | shasum -a 256 -c -
 fi
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 
