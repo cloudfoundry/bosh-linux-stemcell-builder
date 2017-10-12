@@ -192,6 +192,7 @@ module Bosh::Stemcell
           :bosh_harden,
           :bosh_enable_password_authentication,
           :bosh_softlayer_agent_settings,
+          :bosh_config_root_ssh_login,
           :bosh_clean_ssh,
           :image_create,
           :image_install_grub,

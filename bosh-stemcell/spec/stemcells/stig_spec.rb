@@ -90,7 +90,6 @@ describe 'Stig test case verification', { stemcell_image: true, security_spec: t
       V-38610
       V-38611
       V-38612
-      V-38613
       V-38614
       V-38615
       V-38616
