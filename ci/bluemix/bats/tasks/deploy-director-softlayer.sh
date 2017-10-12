@@ -17,7 +17,7 @@ chmod +x /usr/local/bin/bosh-cli
 
 bosh-cli interpolate bosh-deployment/bosh.yml \
   -o bosh-deployment/$BAT_INFRASTRUCTURE/cpi.yml \
-  -o bosh-deployment/powerdns.yml \
+  -o bosh-deployment/misc/powerdns.yml \
   -o bosh-deployment/jumpbox-user.yml \
   -o bosh-linux-stemcell-builder-master/ci/bluemix/bats/ops/remove-health-monitor.yml \
   -v dns_recursor_ip=8.8.8.8 \
