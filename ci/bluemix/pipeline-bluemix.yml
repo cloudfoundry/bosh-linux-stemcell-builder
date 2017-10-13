@@ -106,6 +106,7 @@ jobs:
         - get: bosh-deployment
         - get: bosh-cli
         - get: syslog-release
+        - get: os-conf-release
         - get: light-softlayer-stemcell
           passed: [create-softlayer-light-stemcell]
         - put: environment
@@ -451,3 +452,8 @@ resources:
       regexp: light-bosh-stemcell-(.*)-softlayer-(.*).tgz
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}
+
+  - name: os-conf-release
+      type: bosh-io-release
+      source:
+        repository: cloudfoundry/os-conf-release

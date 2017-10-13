@@ -11,6 +11,7 @@ export BOSH_CLIENT_SECRET=`$BOSH_BINARY_PATH int director-state/director-creds.y
 export SYSLOG_RELEASE_PATH=$(realpath syslog-release/*.tgz)
 export STEMCELL_PATH=$(realpath stemcell/*.tgz)
 export BOSH_stemcell_version=\"$(realpath stemcell/version | xargs -n 1 cat)\"
+export OS_CONF_RELEASE_PATH=$(realpath os-conf-release/*.tgz)
 
 pushd bosh-linux-stemcell-builder
   export PATH=/usr/local/go/bin:$PATH
