@@ -11,4 +11,4 @@ inputs:
 outputs:
   - name: version
 run:
-  path: bosh-linux-stemcell-builder-master/ci/tasks/bluemix_ng/make-stemcell-version.sh
+  path: bosh-linux-stemcell-builder-master/ci/bluemix_ng/tasks/make-stemcell-version.sh
