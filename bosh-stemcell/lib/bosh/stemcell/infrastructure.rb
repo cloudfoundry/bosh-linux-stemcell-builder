@@ -6,6 +6,8 @@ module Bosh::Stemcell
           OpenStack.new
         when 'aws'
           Aws.new
+        when 'alicloud'
+          Alicloud.new
         when 'google'
           Google.new
         when 'vsphere'
@@ -123,6 +125,22 @@ module Bosh::Stemcell
 
       def additional_cloud_properties
         {'root_device_name' => '/dev/sda1'}
+      end
+    end
+
+    class Alicloud < Base
+      def initialize
+        super(
+          name: 'alicloud',
+          hypervisor: 'kvm',
+          default_disk_size: 3072,
+          disk_formats: ['raw'],
+          stemcell_formats: ['alicloud-raw']
+        )
+      end
+
+      def additional_cloud_properties
+        {'root_device_name' => '/dev/vda1'}
       end
     end
 

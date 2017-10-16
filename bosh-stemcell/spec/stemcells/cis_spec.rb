@@ -70,6 +70,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
   end
 
   context "For Azure infrastructure", {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,

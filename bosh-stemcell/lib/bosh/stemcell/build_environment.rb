@@ -160,6 +160,8 @@ module Bosh::Stemcell
     def exclude_exclusions
       [
       case infrastructure.name
+      when 'alicloud'
+        ' --tag ~exclude_on_alicloud'
       when 'vsphere'
         ' --tag ~exclude_on_vsphere'
       when 'vcloud'
