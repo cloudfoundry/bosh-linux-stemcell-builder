@@ -20,5 +20,4 @@ outputs:
   - name: director-state
 
 run:
-  path: bosh-linux-stemcell-builder-master/ci/bluemix/bats/tasks/deploy-director-softlayer.sh
-
+  path: bosh-linux-stemcell-builder-master/ci/bluemix_ng/bats/tasks/deploy-director-softlayer.sh
