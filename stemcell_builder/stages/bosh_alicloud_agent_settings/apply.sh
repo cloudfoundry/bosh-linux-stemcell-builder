@@ -20,8 +20,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
           "InstanceIDPath": "/latest/meta-data/instance-id",
           "UserDataPath": "/latest/user-data"
         }
-      ]
-      "UseServerName": false,
+      ],
+      "UseServerName": true,
       "UseRegistry": true
     }
   }
