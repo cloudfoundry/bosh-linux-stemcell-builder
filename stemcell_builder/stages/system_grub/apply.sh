@@ -7,14 +7,22 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-# Install grub or grub2 (check existence of classic grub package first because Ubuntu Trusty has a transitional grub2 dummy package)
+# Install grub or grub2
+if [ $(get_os_type) == "opensuse" ] ; then
+  preferred=grub2
+  fallback=grub
+else
+  preferred=grub
+  fallback=grub2
+fi
+
 if is_ppc64le; then
   # ppc64le uses grub2
   pkg_mgr install grub2
-elif pkg_exists grub; then
-  pkg_mgr install grub
-elif pkg_exists grub2; then
-  pkg_mgr install grub2
+elif pkg_exists $preferred; then
+  pkg_mgr install $preferred
+elif pkg_exists $fallback; then
+  pkg_mgr install $fallback
 else
   echo "Can't find grub or grub2 package to install"
   exit 2

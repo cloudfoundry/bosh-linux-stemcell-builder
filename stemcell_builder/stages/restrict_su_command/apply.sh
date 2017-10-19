@@ -5,7 +5,7 @@ set -ex
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-if [ "$(get_os_type)" == "centos" ]; then
+if [ "$(get_os_type)" == "centos" ] || [ "$(get_os_type)" == "opensuse" ]; then
   sudoers_group="wheel"
 elif [ "$(get_os_type)" == "ubuntu" ]; then
   sudoers_group="sudo"

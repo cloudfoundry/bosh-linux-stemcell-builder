@@ -34,6 +34,7 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       debconf
       eject
       gnupg
+      gdisk
       ifupdown
       initramfs-tools
       iproute2

@@ -53,15 +53,15 @@ module Bosh::Stemcell
       @device = shell.run("sudo losetup --show --find #{image_file_path}", output_command: verbose)
       if Bosh::Stemcell::Arch.ppc64le?
         # power8 guest images have a p1: PReP partition and p2: file system, we need loopp2 here
-        shell.run("sudo kpartx -av #{device} | grep \"^add\" | grep \"p2 \"", output_command: verbose)
+        shell.run("sudo kpartx -sav #{device} | grep \"^add\" | grep \"p2 \"", output_command: verbose)
       else
-        shell.run("sudo kpartx -av #{device}", output_command: verbose)
+        shell.run("sudo kpartx -sav #{device}", output_command: verbose)
       end
     end
 
     def unmap_image
       shell.run("sudo kpartx -dv #{device}", output_command: verbose)
-      shell.run("sudo losetup -dv #{device}", output_command: verbose)
+      shell.run("sudo losetup -v -d #{device}", output_command: verbose)
     end
   end
 end

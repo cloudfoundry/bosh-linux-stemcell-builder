@@ -19,6 +19,12 @@ shared_examples_for 'every OS image' do
     end
   end
 
+  context 'effective GID for UID vcap' do
+    describe command("id -gn vcap") do
+      its (:stdout) { should eq "vcap\n" }
+    end
+  end
+
   context 'The sudo command must require authentication (stig: V-58901)' do
     describe command("egrep -sh 'NOPASSWD|!authenticate' /etc/sudoers /etc/sudoers.d/* | egrep -v '^#|%bosh_sudoers\s' --") do
       its (:stdout) { should eq('') }
@@ -328,12 +334,6 @@ shared_examples_for 'every OS image' do
           expect(lines[idx]).not_to(match /(\S+\s+){2}cron\./)
         end
       end
-    end
-  end
-
-  context 'gdisk' do
-    it 'should be installed' do
-      expect(package('gdisk')).to be_installed
     end
   end
 

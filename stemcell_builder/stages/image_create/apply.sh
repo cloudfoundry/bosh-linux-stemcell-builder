@@ -40,9 +40,10 @@ device=$(losetup --show --find ${disk_image})
 add_on_exit "losetup --verbose --detach ${device}"
 
 if is_ppc64le; then
-  device_partition=$(kpartx -av ${device} | grep "^add" | grep "p2 " | grep -v "p1" | cut -d" " -f3)
+  device_partition=$(kpartx -sav ${device} | grep "^add" | grep "p2 " | grep -v "p1" | cut -d" "
+  -f3)
 else
-  device_partition=$(kpartx -av ${device} | grep "^add" | cut -d" " -f3)
+  device_partition=$(kpartx -sav ${device} | grep "^add" | cut -d" " -f3)
 fi
 add_on_exit "kpartx -dv ${device}"
 

@@ -35,6 +35,7 @@ describe 'CentOS 7 OS image', os_image: true do
       e2fsprogs
       flex
       gdb
+      gdisk
       glibc-static
       iptables
       libcap-devel

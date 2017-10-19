@@ -25,7 +25,7 @@ module ShelloutTypes
 
       if stdout.match /Ubuntu/
         check_upstart_links(runlevel) || check_init_conf(runlevel)
-      elsif stdout.match /CentOS/
+      elsif stdout.match /CentOS|openSUSE/
         check_is_enabled_systemctl
       else
         raise "Cannot determine Linux distribution: #{stdout}"

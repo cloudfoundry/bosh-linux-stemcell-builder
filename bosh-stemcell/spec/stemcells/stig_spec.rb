@@ -147,9 +147,16 @@ describe 'Stig test case verification', { stemcell_image: true, security_spec: t
         expected_stig_test_cases = expected_base_stig_test_cases + [
           'V-38586'
         ]
+      when 'opensuse'
+        expected_stig_test_cases = expected_base_stig_test_cases + [
+          'V-38586'
+        ]
     end
-    expected_stig_test_cases= expected_stig_test_cases.reject{ |s| Bosh::Stemcell::Arch.ppc64le? and
-                                                ['V-38579', 'V-38581', 'V-38583', 'V-38585'].include?(s) }
+
+    expected_stig_test_cases = expected_stig_test_cases.reject do |stig|
+      (Bosh::Stemcell::Arch.ppc64le?) &&
+        ['V-38579', 'V-38581', 'V-38583', 'V-38585'].include?(stig)
+    end
     expect($stig_test_cases.to_a).to match_array expected_stig_test_cases
   end
 end

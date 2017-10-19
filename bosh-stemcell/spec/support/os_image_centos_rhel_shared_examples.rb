@@ -40,6 +40,10 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       its(:content) { should match 'Restart=always' }
       its(:content) { should match 'KillMode=process' }
     end
+
+    describe service('NetworkManager') do
+      it { should be_enabled }
+    end
   end
 
   context 'installed by base_runsvdir' do
