@@ -12,16 +12,19 @@
 
 #### Stemcells and OS Images
 1. Create a new branch in `bosh-linux-stemcell-builder` named `9999.x`
-1. Using the version of the published stemcell, create a new lastpass note for that stemcell line (include version in the name, see pre-existing notes)
-	1. Change the `stemcell_branch` value to `9999.x`. 
-	1. Change the `stemcell_version_key` value to `bosh-stemcell/version-9999.x`
-	1. Change the `stemcell_version_semver_bump` value to `minor`
-	1. Disregard: ~~Change the `fly` command to refer to the `9999.x` branch, `9999.x` note, and `9999.x` pipeline (or delete that command, we have configure scripts).~~ *Moved to configure.sh*
-1. Create a new note for `concourse:production pipeline:os-images:9999.x` - copy & paste the previous branch `concourse:production pipeline:os-images` into a new secure note, in Shared Folder "Shared-BOSH Core (Pivotal Only)".
-	1. 	Update the `branch` value.
-1. Update the `configure.sh` scripts to create `bosh:os-image:9999.x` and `bosh:stemcell:9999.x` pipelines, using the note(s) for 9999.x.
+1. Using the version of the published stemcell, add some variables to the `ci/configure.sh`
+```
+	-v stemcell_branch=9999.x \
+	-v stemcell_version_key=bosh-stemcell/version-9999.x \
+	-v stemcell_version_semver_bump=minor
+```
+1. Using the version of the published stemcell, add some variables to the `ci/os-image/configure.sh`
+```
+	-v branch=9999.x
+```
+1. Update the `configure.sh` scripts to create `bosh:os-image:9999.x` and `bosh:stemcell:9999.x` pipelines.
 1. Log in to the `bosh core os images stemcells` AWS account. Go into the `bosh-core-stemcells-candidate` bucket, then the `bosh-stemcell` folder.
-1. Locally, `echo -n 9999.0.0 > version-9999.x`. Upload that file. (We do this because the file cannot contain newlines.)
+1. Update `initial_version` value for the `version` semver resource in `ci/pipeline.yml` and update it to `9999.0.0`
 1. Push changes to the branch.
 1. Run the configure scripts: `ci/configure.sh` & `ci/os-images/configure.sh`
 	1. That creates os-image and stemcell pipelines; check them to make sure that they're pointing to the right repos, branches, and version file.

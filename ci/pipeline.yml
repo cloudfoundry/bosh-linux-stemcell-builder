@@ -761,14 +761,14 @@ resources:
     type: git
     source:
       uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
-      branch: {{stemcell-branch}}
+      branch: {{stemcell_branch}}
       private_key: {{bosh_src_key}}
 
   - name: bosh-linux-stemcell-builder
     type: git
     source:
       uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
-      branch: master
+      branch: {{stemcell_branch}}
 
   - name: stemcells-index
     type: git
@@ -785,6 +785,7 @@ resources:
       bucket: {{candidate_stemcell_bucket}}
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
+      initial_version: 3468.0.0
 
   - name: syslog-release
     type: bosh-io-release
