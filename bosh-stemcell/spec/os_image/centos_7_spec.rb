@@ -355,20 +355,19 @@ operator:x:11:0:operator:/root:/sbin/nologin
 games:x:12:100:games:/usr/games:/sbin/nologin
 ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
 nobody:x:99:99:Nobody:/:/sbin/nologin
-systemd-bus-proxy:x:999:998:systemd Bus Proxy:/:/sbin/nologin
 systemd-network:x:192:192:systemd Network Management:/:/sbin/nologin
 dbus:x:81:81:System message bus:/:/sbin/nologin
 polkitd:x:998:997:User for polkitd:/:/sbin/nologin
 rpc:x:32:32:Rpcbind Daemon:/var/lib/rpcbind:/sbin/nologin
 abrt:x:173:173::/etc/abrt:/sbin/nologin
-libstoragemgmt:x:997:996:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
+libstoragemgmt:x:999:998:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
 tcpdump:x:72:72::/:/sbin/nologin
-chrony:x:996:995::/var/lib/chrony:/sbin/nologin
+chrony:x:997:996::/var/lib/chrony:/sbin/nologin
 ntp:x:38:38::/etc/ntp:/sbin/nologin
 tss:x:59:59:Account used by the trousers package to sandbox the tcsd daemon:/dev/null:/sbin/nologin
 sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
-syslog:x:995:992::/home/syslog:/sbin/nologin
+syslog:x:996:993::/home/syslog:/sbin/nologin
 HERE
       passwd_match_lines = passwd_match_raw.split(/\n+/)
 
@@ -390,7 +389,6 @@ operator:\\*:\\d{5}:0:99999:7:::
 games:\\*:\\d{5}:0:99999:7:::
 ftp:\\*:\\d{5}:0:99999:7:::
 nobody:\\*:\\d{5}:0:99999:7:::
-systemd-bus-proxy:!!:\\d{5}::::::
 systemd-network:!!:\\d{5}::::::
 dbus:!!:\\d{5}::::::
 polkitd:!!:\\d{5}::::::
@@ -441,29 +439,27 @@ utmp:x:22:
 utempter:x:35:
 input:x:999:
 systemd-journal:x:190:
-systemd-bus-proxy:x:998:
 systemd-network:x:192:
 dbus:x:81:
 polkitd:x:997:
 rpc:x:32:
 abrt:x:173:
-libstoragemgmt:x:996:
+libstoragemgmt:x:998:
 tcpdump:x:72:
 stapusr:x:156:
 stapsys:x:157:
 stapdev:x:158:
-chrony:x:995:
+chrony:x:996:
 slocate:x:21:
 ntp:x:38:
-ssh_keys:x:994:
+ssh_keys:x:995:
 tss:x:59:
-dip:x:40:vcap
 sshd:x:74:
-admin:x:993:vcap
+admin:x:994:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
 bosh_sudoers:x:1002:
-syslog:x:992:
+syslog:x:993:
 HERE
       group_lines = group_raw.split(/\n+/)
       its(:content_as_lines) { should match_array(group_lines)}
@@ -501,7 +497,6 @@ utmp:!::
 utempter:!::
 input:!::
 systemd-journal:!::
-systemd-bus-proxy:!::
 systemd-network:!::
 dbus:!::
 polkitd:!::
@@ -517,7 +512,6 @@ slocate:!::
 ntp:!::
 ssh_keys:!::
 tss:!::
-dip:!::vcap
 sshd:!::
 admin:!::vcap
 vcap:!::syslog

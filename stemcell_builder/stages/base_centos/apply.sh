@@ -10,7 +10,7 @@ mkdir -p $chroot/var/lib/rpm
 rpm --root $chroot --initdb
 case "${stemcell_operating_system_version}" in
   "7")
-    centos_release_package_url="http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-3.1611.el7.centos.x86_64.rpm"
+    centos_release_package_url="http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-4.1708.el7.centos.x86_64.rpm"
     epel_package_url="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
     ;;
   *)
@@ -54,7 +54,7 @@ rpm --force --nodeps --install epel-package.rpm
 rpm --rebuilddb
 "
 
-pkg_mgr install kernel
+pkg_mgr install kernel kernel-devel
 pkg_mgr groupinstall Base
 pkg_mgr groupinstall 'Development Tools'
 
