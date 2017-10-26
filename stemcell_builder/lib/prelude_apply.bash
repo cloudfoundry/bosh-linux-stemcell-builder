@@ -45,13 +45,16 @@ function get_os_type {
   echo $os_type
 }
 
+os_type=$(get_os_type)
+export OS_TYPE=$os_type
+
 function pkg_mgr {
   os_type=$(get_os_type)
 
   if [ "${os_type}" == 'ubuntu' ]
   then
     run_in_chroot $chroot "apt-get update"
-    run_in_chroot $chroot "apt-get -f -y --force-yes --no-install-recommends $*"
+    run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive;apt-get -f -y --force-yes --no-install-recommends $*"
     run_in_chroot $chroot "apt-get clean"
   elif [ "${os_type}" == 'centos' -o "${os_type}" == 'rhel' -o "${os_type}" == 'photonos' ]
   then
