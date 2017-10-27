@@ -76,9 +76,9 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     end
   end
 
-  context 'installed by bosh_harden' do
+  context 'modified by base_file_permissions' do
     describe 'disallow unsafe setuid binaries' do
-      subject { command('find -L / -xdev -perm +6000 -a -type f') }
+      subject { command('find -L / -xdev -perm /ug=s -type f') }
 
       it('includes the correct binaries') { expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit)) }
     end
