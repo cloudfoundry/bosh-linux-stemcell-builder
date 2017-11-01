@@ -3,8 +3,8 @@ require 'spec_helper'
 describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
 
-  context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
-    describe file('/boot/grub/grub.conf') do
+  context 'installed by image_install_grub', { exclude_on_ppc64le: true } do
+    describe file('/boot/grub/grub.conf'), { exclude_on_oracle: true } do
       it { should be_file }
       its(:content) { should match 'default=0' }
       its(:content) { should match 'timeout=1' }
@@ -37,6 +37,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     exclude_on_vcloud: true,
     exclude_on_vsphere: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_softlayer: true,
   } do
     context 'so we can run upstart in as PID 1 in the container' do
@@ -114,6 +115,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     exclude_on_vsphere: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_softlayer: true,
   } do
     describe file('/etc/network/interfaces') do
@@ -129,6 +131,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     exclude_on_vcloud: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_azure: true,
     exclude_on_softlayer: true,
   } do
@@ -144,6 +147,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
       exclude_on_vcloud: true,
       exclude_on_warden: true,
       exclude_on_openstack: true,
+      exclude_on_oracle: true,
       exclude_on_azure: true,
   } do
     describe package('open-iscsi') do
@@ -158,6 +162,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
       exclude_on_vcloud: true,
       exclude_on_warden: true,
       exclude_on_openstack: true,
+      exclude_on_oracle: true,
       exclude_on_azure: true,
   } do
     describe package('multipath-tools') do
@@ -171,6 +176,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     exclude_on_vcloud: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_azure: true,
     exclude_on_softlayer: true,
   } do
@@ -205,6 +211,7 @@ HERE
   context 'installed by bosh_aws_agent_settings', {
     exclude_on_google: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_vcloud: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -220,6 +227,7 @@ HERE
   context 'installed by bosh_google_agent_settings', {
     exclude_on_aws: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_vcloud: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -240,6 +248,7 @@ HERE
     exclude_on_warden: true,
     exclude_on_azure: true,
     exclude_on_softlayer: true,
+    exclude_on_oracle: true,
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
@@ -254,6 +263,7 @@ HERE
     exclude_on_google: true,
     exclude_on_vcloud: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_warden: true,
     exclude_on_azure: true,
     exclude_on_softlayer: true,
@@ -272,6 +282,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_oracle: true,
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
@@ -282,15 +293,29 @@ HERE
   end
 
   describe 'mounted file systems: /etc/fstab should mount nfs with nodev (stig: V-38654) (stig: V-38652)' do
-    describe file('/etc/fstab') do
+    describe file('/etc/fstab'), { exclude_on_oracle: true } do
       it { should be_file }
       its (:content) { should eq("# UNCONFIGURED FSTAB FOR BASE SYSTEM\n") }
+    end
+    describe file('/etc/fstab'), {
+      exclude_on_aws: true,
+      exclude_on_google: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+      exclude_on_softlayer: true,
+    } do
+      it { should be_file }
+      its (:content) { should eq("LABEL=cloudimg-rootfs\t/\t ext4\tdefaults\t0 0\nLABEL=EFI\t/boot/efi\tvfat\tdefaults\t0 0\n") }
     end
   end
 
   describe 'installed packages' do
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E 's/(linux.*4.4).*/\\1/'"
 
+    let(:dpkg_list_oracle_ubuntu) { File.read(spec_asset('dpkg-list-oracle-ubuntu.txt')) }
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty-vsphere-additions.txt')).map(&:chop) }
@@ -301,6 +326,7 @@ HERE
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
       exclude_on_azure: true,
+      exclude_on_oracle: true,
     } do
       it 'contains only the base set of packages for aws, openstack, warden' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu)
@@ -314,6 +340,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_oracle: true,
     } do
       it 'contains only the base set of packages plus google-specific packages' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_google_ubuntu))
@@ -326,6 +353,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_oracle: true,
     } do
       it 'contains only the base set of packages plus vsphere-specific packages' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_vsphere_ubuntu))
@@ -339,10 +367,23 @@ HERE
       exclude_on_google: true,
       exclude_on_warden: true,
       exclude_on_openstack: true,
+      exclude_on_oracle: true,
     } do
       it 'contains only the base set of packages plus azure-specific packages' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_azure_ubuntu))
       end
+    end
+
+    describe command(dpkg_list_packages), {
+      exclude_on_aws: true,
+      exclude_on_google: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+    } do
+      its(:stdout) { should eq(dpkg_list_oracle_ubuntu) }
     end
   end
 end

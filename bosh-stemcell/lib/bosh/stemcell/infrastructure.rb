@@ -4,6 +4,8 @@ module Bosh::Stemcell
       case name
         when 'openstack'
           OpenStack.new
+        when 'oracle'
+          Oracle.new
         when 'aws'
           Aws.new
         when 'google'
@@ -76,6 +78,22 @@ module Bosh::Stemcell
 
       def additional_cloud_properties
         {'auto_disk_config' => true}
+      end
+    end
+
+    class Oracle < Base
+      def initialize
+        super(
+          name: 'oracle',
+          hypervisor: 'kvm',
+          default_disk_size: 3072,
+          disk_formats: ['qcow2'],
+          stemcell_formats: ['oracle-qcow2']
+        )
+      end
+
+      def additional_cloud_properties
+        {}
       end
     end
 

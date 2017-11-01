@@ -1,0 +1,33 @@
+# CLOUD_IMG: This file was created/modified by the Cloud Image build process
+# iptables configuration for Oracle Bare Metal Cloud
+
+# See the Oracle-Provided Images section in the Oracle Bare Metal
+# documentation for security impact of modifying or removing these rule
+
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [463:49013]
+:BareMetalInstanceServices - [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 6868 -m comment --comment "accept bosh-agent traffic" -j ACCEPT
+-A INPUT -p tcp -s 10.0.0.0/8 -m tcp  -m comment --comment "accept subnet local traffic" -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+-A OUTPUT -d 169.254.0.0/16 -j BareMetalInstanceServices
+-A BareMetalInstanceServices -d 169.254.0.2/32 -p tcp -m owner --uid-owner 0 -m tcp --dport 3260 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.2.0/24 -p tcp -m owner --uid-owner 0 -m tcp --dport 3260 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.0.2/32 -p tcp -m tcp --dport 80 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.169.254/32 -p udp -m udp --dport 53 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.169.254/32 -p tcp -m tcp --dport 53 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.0.3/32 -p tcp -m owner --uid-owner 0 -m tcp --dport 80 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.0.4/32 -p tcp -m tcp --dport 80 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.169.254/32 -p udp -m udp --dport 67 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.169.254/32 -p udp -m udp --dport 69 -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j ACCEPT
+-A BareMetalInstanceServices -d 169.254.0.0/16 -p tcp -m tcp -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j REJECT --reject-with tcp-reset
+-A BareMetalInstanceServices -d 169.254.0.0/16 -p udp -m udp -m comment --comment "See the Oracle-Provided Images section in the Oracle Bare Metal documentation for security impact of modifying or removing this rule" -j REJECT --reject-with icmp-port-unreachable
+COMMIT

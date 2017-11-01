@@ -175,6 +175,8 @@ module Bosh::Stemcell
         ' --tag ~exclude_on_softlayer'
       when 'google'
         ' --tag ~exclude_on_google'
+      when 'oracle'
+        ' --tag ~exclude_on_oracle'
       else
         ''
       end,

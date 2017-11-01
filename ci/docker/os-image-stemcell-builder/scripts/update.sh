@@ -69,6 +69,9 @@ apt-get -y install qemu-utils
 # CentOS building requirements
 apt-get -y install yum
 
+# Oracle image building requirements
+apt-get -y dosfstools gdisk
+
 # needed by stemcell building
 apt-get -y install parted
 
