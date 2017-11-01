@@ -11,10 +11,7 @@ source $base_dir/lib/prelude_apply.bash
 downloaded_file=`mktemp`
 
 # Install debootstrap
-if is_ppc64le; then
-  wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.67_all.deb" -qO $downloaded_file && \
-    echo "0a12e0a2bbff185d47711a716b1f2734856100e8784361203e834fed0cffa51b  $downloaded_file" | shasum -a 256 -c -
-elif [ ${base_debootstrap_suite} == 'xenial' ]; then
+if is_ppc64le || [ ${base_debootstrap_suite} == 'xenial' ]; then
   wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.67_all.deb" -qO $downloaded_file && \
     echo "ead525af2123f34078f6dc6d898ba6657250b383bfa003b953023f4c96a37e22  $downloaded_file" | shasum -a 256 -c -
 else

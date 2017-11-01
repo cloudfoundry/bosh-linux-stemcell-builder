@@ -221,7 +221,7 @@ default=0
 timeout=1
 title ${os_name} (${kernel_version})
   root (hd0,0)
-  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} selinux=0 cgroup_enable=memory swapaccount=1 console=tty0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
+  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} selinux=0 cgroup_enable=memory swapaccount=1 console=ttyS0,115200n8 console=tty0 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
   initrd /boot/${initrd_file}
 GRUB_CONF
 fi

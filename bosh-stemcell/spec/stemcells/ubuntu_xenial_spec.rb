@@ -13,7 +13,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
       its(:content) { should match %r{kernel /boot/vmlinuz-\S+-generic ro root=UUID=} }
       its(:content) { should match ' selinux=0' }
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
-      its(:content) { should match ' console=tty0 console=ttyS0,115200n8' }
+      its(:content) { should match ' console=ttyS0,115200n8 console=tty0' }
       its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
       its(:content) { should match %r{initrd /boot/initrd.img-\S+-generic} }
 
@@ -76,13 +76,13 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
     end
   end
 
- #context 'installed by bosh_harden' do
- #   describe 'disallow unsafe setuid binaries' do
- #     subject { command('find -L / -xdev -perm +6000 -a -type f') }
-      
- #     it ('includes the correct binaries') { expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit)) }
- #   end
- # end
+  context 'modified by base_file_permissions' do
+    describe 'disallow unsafe setuid binaries' do
+      subject { command('find -L / -xdev -perm /ug=s -type f') }
+
+      it ('includes the correct binaries') { expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit)) }
+    end
+  end
 
   context 'installed by system-network', {
     exclude_on_warden: true

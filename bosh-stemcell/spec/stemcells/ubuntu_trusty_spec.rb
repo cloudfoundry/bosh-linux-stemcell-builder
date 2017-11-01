@@ -13,7 +13,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
       its(:content) { should match %r{kernel /boot/vmlinuz-\S+-generic ro root=UUID=} }
       its(:content) { should match ' selinux=0' }
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
-      its(:content) { should match ' console=tty0 console=ttyS0,115200n8' }
+      its(:content) { should match ' console=ttyS0,115200n8 console=tty0' }
       its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
       its(:content) { should match %r{initrd /boot/initrd.img-\S+-generic} }
 
