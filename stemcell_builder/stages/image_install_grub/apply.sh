@@ -169,6 +169,13 @@ if [ -f ${image_mount_point}/etc/debian_version ] # Ubuntu
 then
   initrd_file="initrd.img-${kernel_version}"
   os_name=$(source ${image_mount_point}/etc/lsb-release ; echo -n ${DISTRIB_DESCRIPTION})
+  if [ ${DISTRIB_CODENAME} == 'xenial' ]
+  then
+    cat > ${image_mount_point}/etc/fstab <<FSTAB
+# /etc/fstab Created by BOSH Stemcell Builder
+UUID=${uuid} / ext4 defaults 1 1
+FSTAB
+  fi
 elif [ -f ${image_mount_point}/etc/redhat-release ] # Centos or RHEL
 then
   initrd_file="initramfs-${kernel_version}.img"
@@ -214,7 +221,7 @@ default=0
 timeout=1
 title ${os_name} (${kernel_version})
   root (hd0,0)
-  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} selinux=0 cgroup_enable=memory swapaccount=1 console=tty0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
+  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} selinux=0 cgroup_enable=memory swapaccount=1 console=ttyS0,115200n8 console=tty0 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
   initrd /boot/${initrd_file}
 GRUB_CONF
 fi

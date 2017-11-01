@@ -15,8 +15,10 @@ shared_examples_for 'an upstart-based OS image' do
     end
 
     # Make sure that rsyslog starts with the machine
-    describe file('/etc/init.d/rsyslog') do
-      it { should be_linked_to('/lib/init/upstart-job') }
+    describe file('/etc/init.d/rsyslog'), :rsyslog_check do
+      if ENV["DISTRIB_CODENAME"] == "trusty"
+        it { should be_linked_to('/lib/init/upstart-job') }
+      end
       it { should be_executable }
     end
 

@@ -32,8 +32,12 @@ EOS
 
 fi
 
-# Upgrade upstart first, to prevent it from messing up our stubs and starting daemons anyway
-pkg_mgr install upstart
+# Upgrade systemd/upstart first, to prevent it from messing up our stubs and starting daemons anyway
+if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
+   pkg_mgr install systemd
+else
+   pkg_mgr install upstart
+fi
 pkg_mgr dist-upgrade
 
 # initscripts messes with /dev/shm -> /run/shm and can create self-referencing symbolic links

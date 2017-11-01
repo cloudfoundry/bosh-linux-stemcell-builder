@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
+describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
 
   context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
@@ -8,7 +8,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
       it { should be_file }
       its(:content) { should match 'default=0' }
       its(:content) { should match 'timeout=1' }
-      its(:content) { should match %r{^title Ubuntu 14\.04.* LTS \(.*\)$} }
+      its(:content) { should match %r{^title Ubuntu 16\.04.* LTS \(.*\)$} }
       its(:content) { should match /^  root \(hd0,0\)$/ }
       its(:content) { should match %r{kernel /boot/vmlinuz-\S+-generic ro root=UUID=} }
       its(:content) { should match ' selinux=0' }
@@ -59,7 +59,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     describe file('/var/vcap/bosh/etc/dev_tools_file_list') do
       its(:content) { should match('/usr/bin/gcc') }
     end
-    end
+  end
 
   context 'static libraries to remove' do
     describe file('/var/vcap/bosh/etc/static_libraries_list') do
@@ -80,7 +80,7 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     describe 'disallow unsafe setuid binaries' do
       subject { command('find -L / -xdev -perm /ug=s -type f') }
 
-      it('includes the correct binaries') { expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit)) }
+      it ('includes the correct binaries') { expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit)) }
     end
   end
 
@@ -284,19 +284,20 @@ HERE
   describe 'mounted file systems: /etc/fstab should mount nfs with nodev (stig: V-38654) (stig: V-38652)' do
     describe file('/etc/fstab') do
       it { should be_file }
-      its (:content) { should eq("# UNCONFIGURED FSTAB FOR BASE SYSTEM\n") }
+      its (:content) { should_not match /nfs/ }
     end
   end
 
   describe 'installed packages' do
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E 's/(linux.*4.4).*/\\1/'"
 
-    let(:dpkg_list_aws_ubuntu) { File.read(spec_asset('dpkg-list-aws-ubuntu.txt')) }
-    let(:dpkg_list_vsphere_ubuntu) { File.read(spec_asset('dpkg-list-vsphere-ubuntu.txt')) }
-    let(:dpkg_list_vcloud_ubuntu) { File.read(spec_asset('dpkg-list-vsphere-ubuntu.txt')) }
-    let(:dpkg_list_warden_ubuntu) { File.read(spec_asset('dpkg-list-warden-ubuntu.txt')) }
-    let(:dpkg_list_google_ubuntu) { File.read(spec_asset('dpkg-list-google-ubuntu.txt')) }
-    let(:dpkg_list_openstack_ubuntu) { File.read(spec_asset('dpkg-list-openstack-ubuntu.txt')) }
+    let(:dpkg_list_aws_ubuntu) { File.read(spec_asset('dpkg-list-aws-ubuntu-xenial.txt')) }
+    let(:dpkg_list_azure_ubuntu) { File.read(spec_asset('dpkg-list-azure-ubuntu-xenial.txt')) }
+    let(:dpkg_list_vsphere_ubuntu) { File.read(spec_asset('dpkg-list-vsphere-ubuntu-xenial.txt')) }
+    let(:dpkg_list_vcloud_ubuntu) { File.read(spec_asset('dpkg-list-vsphere-ubuntu-xenial.txt')) }
+    let(:dpkg_list_warden_ubuntu) { File.read(spec_asset('dpkg-list-warden-ubuntu-xenial.txt')) }
+    let(:dpkg_list_google_ubuntu) { File.read(spec_asset('dpkg-list-google-ubuntu-xenial.txt')) }
+    let(:dpkg_list_openstack_ubuntu) { File.read(spec_asset('dpkg-list-openstack-ubuntu-xenial.txt')) }
 
     describe command(dpkg_list_packages), {
       exclude_on_aws: true,
@@ -363,10 +364,20 @@ HERE
     } do
       its(:stdout) { should eq(dpkg_list_aws_ubuntu) }
     end
+    describe command(dpkg_list_packages), {
+      exclude_on_google: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_warden: true,
+      exclude_on_aws: true,
+      exclude_on_openstack: true,
+    } do
+      its(:stdout) { should eq(dpkg_list_azure_ubuntu) }
+    end
   end
 end
 
-describe 'Ubuntu 14.04 stemcell tarball', stemcell_tarball: true do
+describe 'Ubuntu 16.04 stemcell tarball', stemcell_tarball: true do
   context 'installed by bosh_dpkg_list stage' do
     describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/stemcell_dpkg_l.txt", ShelloutTypes::Chroot.new('/')) do
       it { should be_file }
