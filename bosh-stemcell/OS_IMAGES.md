@@ -3,6 +3,13 @@
 
 OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-os-images/).
 
+## Ubuntu 16.04
+
+Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
+
+* `Ud.SnwRmp3cUOr1vJBtY45jbyD11yVa_`
+  - Ubuntu 16.04
+  - built from master (17cf1ebb6d9290ed789c5ef18c3f91c4d30fc091)
 
 ## Ubuntu 14.04
 
