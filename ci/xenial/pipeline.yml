@@ -436,12 +436,12 @@ jobs:
 
 
 resources:
-  - name: bosh-linux-stemcell-builder-push
-    type: git
-    source:
-      uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
-      branch: {{stemcell-branch}}
-      private_key: {{bosh_src_key}}
+  # - name: bosh-linux-stemcell-builder-push
+  #   type: git
+  #   source:
+  #     uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+  #     branch: {{stemcell-branch}}
+  #     private_key: {{bosh_src_key}}
 
   - name: bosh-linux-stemcell-builder
     type: git
@@ -485,6 +485,41 @@ resources:
     source:
       repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
 
+  - name: bosh-deployment
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/bosh-deployment
+      branch: master
+
+  - name: bosh-cli
+    type: s3
+    source:
+      regexp: bosh-cli-([0-9.]+)-linux-amd64
+      bucket: bosh-cli-artifacts
+      region_name: us-east-1
+
+  - name: bats
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/bosh-acceptance-tests.git
+      branch: gocli-bats
+
+  - name: environment
+    type: pool
+    source:
+      pool: vsphere
+      uri: git@github.com:pivotal-cf-experimental/bats-concourse-pool.git
+      branch: master
+      private_key: {{github_deployment_key__bosh-cpi-environments}}
+
+  #
+  # Stemcells
+  #
+
+  #
+  # AWS
+  #
+
   - name: aws-xen-hvm-ubuntu-xenial
     type: s3
     source:
@@ -492,6 +527,10 @@ resources:
       regexp: warden/bosh-stemcell-(.+)-aws-xen-hvm-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
+
+  #
+  # Azure
+  #
 
   - name: azure-hyperv-ubuntu-xenial
     type: s3
@@ -501,6 +540,10 @@ resources:
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
+  #
+  # vSphere
+  #
+
   - name: vsphere-esxi-ubuntu-xenial
     type: s3
     source:
@@ -509,6 +552,10 @@ resources:
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
+  #
+  # Google
+  #
+
   - name: google-kvm-ubuntu-xenial
     type: s3
     source:
@@ -516,6 +563,10 @@ resources:
       regexp: warden/bosh-stemcell-(.+)-google-kvm-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
+
+  #
+  # Openstack
+  #
 
   - name: openstack-kvm-ubuntu-xenial
     type: s3
@@ -533,6 +584,10 @@ resources:
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
+  #
+  # vCloud
+  #
+
   - name: vcloud-esxi-ubuntu-xenial
     type: s3
     source:
@@ -540,6 +595,10 @@ resources:
       regexp: warden/bosh-stemcell-(.+)-vcloud-esxi-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
+
+  #
+  # Warden
+  #
 
   - name: warden-boshlite-ubuntu-xenial
     type: s3
