@@ -112,6 +112,8 @@ jobs:
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
             input_mapping:
               stemcell: vsphere-esxi-ubuntu-xenial
+            params:
+              BOSH_os_name: ubuntu-xenial
           ensure:
             task: teardown
             tags: [vsphere-v5.1]
