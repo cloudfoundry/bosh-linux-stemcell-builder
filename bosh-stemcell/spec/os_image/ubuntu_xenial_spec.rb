@@ -388,6 +388,14 @@ EOF
     end
   end
 
+  context 'auditd is configured to use augenrules' do
+    describe file('/etc/systemd/system/auditd.service') do
+      it { should be_file }
+      its(:content) { should match(/^ExecStartPost=-\/sbin\/augenrules --load$/) }
+      its(:content) { should match(/^#ExecStartPost=-\/sbin\/auditctl -R \/etc\/audit\/audit\.rules$/) }
+    end
+  end
+
   context 'ensure audit package file have unmodified contents (stig: V-38637)' do
     # ignore auditd.conf, auditd, and audit.rules since we modify these files in
     # other stigs

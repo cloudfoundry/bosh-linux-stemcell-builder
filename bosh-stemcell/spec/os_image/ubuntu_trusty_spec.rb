@@ -382,6 +382,12 @@ EOF
     end
   end
 
+  context 'auditd is configured to use augenrules' do
+    describe file('/etc/default/auditd') do
+      its(:content) { should match(/USE_AUGENRULES="yes"/) }
+    end
+  end
+
   context 'ensure audit package file have unmodified contents (stig: V-38637)' do
     # ignore auditd.conf, auditd, and audit.rules since we modify these files in
     # other stigs
