@@ -526,7 +526,7 @@ resources:
     type: s3
     source:
       bucket: {{candidate_stemcell_bucket}}
-      regexp: warden/bosh-stemcell-(.+)-aws-xen-hvm-ubuntu-xenial-go_agent.tgz
+      regexp: aws/bosh-stemcell-(.+)-aws-xen-hvm-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
@@ -538,7 +538,7 @@ resources:
     type: s3
     source:
       bucket: {{candidate_stemcell_bucket}}
-      regexp: warden/bosh-stemcell-(.+)-azure-hyperv-ubuntu-xenial-go_agent.tgz
+      regexp: azure/bosh-stemcell-(.+)-azure-hyperv-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
@@ -550,7 +550,7 @@ resources:
     type: s3
     source:
       bucket: {{candidate_stemcell_bucket}}
-      regexp: warden/bosh-stemcell-(.+)-vsphere-esxi-ubuntu-xenial-go_agent.tgz
+      regexp: vsphere/bosh-stemcell-(.+)-vsphere-esxi-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
@@ -562,7 +562,7 @@ resources:
     type: s3
     source:
       bucket: {{candidate_stemcell_bucket}}
-      regexp: warden/bosh-stemcell-(.+)-google-kvm-ubuntu-xenial-go_agent.tgz
+      regexp: google/bosh-stemcell-(.+)-google-kvm-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
@@ -574,7 +574,7 @@ resources:
     type: s3
     source:
       bucket: {{candidate_stemcell_bucket}}
-      regexp: warden/bosh-stemcell-(.+)-openstack-kvm-ubuntu-xenial-go_agent.tgz
+      regexp: openstack/bosh-stemcell-(.+)-openstack-kvm-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
@@ -594,7 +594,7 @@ resources:
     type: s3
     source:
       bucket: {{candidate_stemcell_bucket}}
-      regexp: warden/bosh-stemcell-(.+)-vcloud-esxi-ubuntu-xenial-go_agent.tgz
+      regexp: vcloud/bosh-stemcell-(.+)-vcloud-esxi-ubuntu-xenial-go_agent.tgz
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
 
