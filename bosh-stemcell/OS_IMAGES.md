@@ -643,6 +643,10 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
 
+* `uAVB2a0ojcpV9Vq0t2hkdHi_ScFr21x5`
+  - Periodic bump
+  - built from master (4d3571fb6acc41224b1470ae4d7518d459b54637)
+
 * `7Lo4I8Cc__obnPb011SL_KzZfKyXqVLf`
   - Periodic bump
   - built from master (a495c5481dea40016bbc9bdcd03313d7bfc019a3)
