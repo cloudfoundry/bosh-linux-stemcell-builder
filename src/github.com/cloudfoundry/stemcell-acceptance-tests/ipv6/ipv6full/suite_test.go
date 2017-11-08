@@ -1,4 +1,4 @@
-package smoke_test
+package ipv6full_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -13,16 +13,19 @@ import (
 	"github.com/cloudfoundry/bosh-utils/system"
 )
 
-func TestSmoke(t *testing.T) {
+func TestReg(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Smoke Suite")
+	RunSpecs(t, "ipv6full")
 }
 
 var _ = BeforeSuite(func() {
+	// This test suite assumes that targeted Director contains:
+	// - network named 'ipv6' in its cloud config
+	// - is multi homed with an IPv6 address
+
 	cmdRunner := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug))
 	boshBinaryPath := os.Getenv("BOSH_BINARY_PATH")
 	assertRequiredParams()
-	uploadRelease(cmdRunner, boshBinaryPath)
 	uploadStemcell(cmdRunner, boshBinaryPath)
 	deploy(cmdRunner, boshBinaryPath)
 })
@@ -30,7 +33,7 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 	cmdRunner := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug))
 	boshBinaryPath := os.Getenv("BOSH_BINARY_PATH")
-	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-n", "-d", "bosh-stemcell-smoke-tests", "delete-deployment")
+	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-n", "-d", "bosh-stemcell-ipv6full-tests", "delete-deployment")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
@@ -40,19 +43,9 @@ var _ = AfterSuite(func() {
 })
 
 func deploy(cmdRunner system.CmdRunner, boshBinaryPath string) {
-	manifestPath, err := filepath.Abs("../assets/manifest.yml")
+	manifestPath, err := filepath.Abs("../../assets/ipv6full.yml")
 	Expect(err).ToNot(HaveOccurred())
-	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-n", "-d", "bosh-stemcell-smoke-tests", "deploy", "--vars-env=BOSH", manifestPath)
-	Expect(err).ToNot(HaveOccurred())
-	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
-}
-
-func uploadRelease(cmdRunner system.CmdRunner, boshBinaryPath string) {
-	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "upload-release", os.Getenv("SYSLOG_RELEASE_PATH"))
-	Expect(err).ToNot(HaveOccurred())
-	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
-
-	stdOut, stdErr, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "upload-release", os.Getenv("OS_CONF_RELEASE_PATH"))
+	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-n", "-d", "bosh-stemcell-ipv6full-tests", "deploy", "--vars-env=BOSH", manifestPath)
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
@@ -60,10 +53,6 @@ func uploadRelease(cmdRunner system.CmdRunner, boshBinaryPath string) {
 func assertRequiredParams() {
 	_, ok := os.LookupEnv("BOSH_BINARY_PATH")
 	Expect(ok).To(BeTrue(), "BOSH_BINARY_PATH was not set")
-	_, ok = os.LookupEnv("SYSLOG_RELEASE_PATH")
-	Expect(ok).To(BeTrue(), "SYSLOG_RELEASE_PATH was not set")
-	_, ok = os.LookupEnv("OS_CONF_RELEASE_PATH")
-	Expect(ok).To(BeTrue(), "OS_CONF_RELEASE_PATH was not set")
 	_, ok = os.LookupEnv("STEMCELL_PATH")
 	Expect(ok).To(BeTrue(), "STEMCELL_PATH was not set")
 	_, ok = os.LookupEnv("BOSH_stemcell_version")

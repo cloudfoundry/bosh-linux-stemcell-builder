@@ -39,7 +39,7 @@ var _ = AfterSuite(func() {
 })
 
 func deploy(cmdRunner system.CmdRunner, boshBinaryPath string) {
-	manifestPath, err := filepath.Abs("../assets/ipv6basic.yml")
+	manifestPath, err := filepath.Abs("../../assets/ipv6basic.yml")
 	Expect(err).ToNot(HaveOccurred())
 	stdOut, stdErr, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-n", "-d", "bosh-stemcell-ipv6basic-tests", "deploy", "--vars-env=BOSH", manifestPath)
 	Expect(err).ToNot(HaveOccurred())
