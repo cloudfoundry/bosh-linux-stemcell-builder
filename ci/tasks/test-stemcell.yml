@@ -17,3 +17,5 @@ params:
 
 run:
   path: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.sh
+params:
+  package: .

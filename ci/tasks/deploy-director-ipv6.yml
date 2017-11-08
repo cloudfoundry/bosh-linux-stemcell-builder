@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: boshcpi/cpi-certification}
+
+inputs:
+  - name: bosh-deployment
+  - name: bosh-linux-stemcell-builder
+  - name: bosh-cli
+  - name: environment
+
+outputs:
+  - name: director-state
+
+run:
+  path: bosh-linux-stemcell-builder/ci/tasks/deploy-director-ipv6.sh
