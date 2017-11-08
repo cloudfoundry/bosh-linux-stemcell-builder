@@ -57,8 +57,12 @@ done
 # init.d configuration is different for each OS
 if [ -f $chroot/etc/debian_version ] # Ubuntu
 then
+  if [ ${DISTRIB_CODENAME} != 'xenial' ]; then
+    run_in_bosh_chroot $chroot "
+      ln -sf /lib/init/upstart-job /etc/init.d/rsyslog
+    "
+  fi
   run_in_bosh_chroot $chroot "
-    ln -sf /lib/init/upstart-job /etc/init.d/rsyslog
     update-rc.d rsyslog defaults
   "
 

@@ -2,7 +2,7 @@ require 'bosh/stemcell/arch'
 require 'spec_helper'
 require 'shellout_types/file'
 
-describe 'Ubuntu 14.04 OS image', os_image: true do
+describe 'Ubuntu 16.04 OS image', os_image: true do
   it_behaves_like 'every OS image'
   it_behaves_like 'an upstart-based OS image'
   it_behaves_like 'a Linux kernel 3.x based OS image'
@@ -34,7 +34,6 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       debconf
       eject
       gnupg
-      gdisk
       ifupdown
       initramfs-tools
       iproute2
@@ -46,11 +45,9 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       lsb-release
       makedev
       mawk
-      module-init-tools
       net-tools
       netbase
       netcat-openbsd
-      ntpdate
       parted
       passwd
       procps
@@ -69,8 +66,8 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
 
     describe file('/etc/lsb-release') do
       it { should be_file }
-      its(:content) { should match 'DISTRIB_RELEASE=14.04' }
-      its(:content) { should match 'DISTRIB_CODENAME=trusty' }
+      its(:content) { should match 'DISTRIB_RELEASE=16.04' }
+      its(:content) { should match 'DISTRIB_CODENAME=xenial' }
     end
 
     describe command('locale -a') do
@@ -94,27 +91,34 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
       if Bosh::Stemcell::Arch.ppc64le?
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty multiverse' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-updates multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates multiverse' }
 
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ trusty-security multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security multiverse' }
 
       else
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu trusty main universe multiverse' }
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu trusty-updates main universe multiverse' }
-        its(:content) { should match 'deb http://security.ubuntu.com/ubuntu trusty-security main universe multiverse' }
+        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial main universe multiverse' }
+        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial-updates main universe multiverse' }
+        its(:content) { should match 'deb http://security.ubuntu.com/ubuntu xenial-security main universe multiverse' }
       end
     end
 
-    describe package('upstart') do
+    describe package('systemd') do
       it { should be_installed }
     end
+
+    describe file('/lib/systemd/system/runit.service') do
+      it { should be_file }
+      its(:content) { should match 'Restart=always' }
+      its(:content) { should match 'KillMode=process' }
+    end
+
   end
 
   context 'installed by base_ubuntu_build_essential' do
@@ -146,7 +150,7 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       libcap2-bin
       libcurl3
       libcurl4-openssl-dev
-      libgcrypt11-dev
+      libgcrypt20-dev
       libncurses5-dev
       libpam-cracklib
       libreadline6-dev
@@ -158,6 +162,8 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       lsof
       mg
       module-assistant
+      module-init-tools
+      ntpdate
       nfs-common
       openssh-server
       psmisc
@@ -383,8 +389,10 @@ EOF
   end
 
   context 'auditd is configured to use augenrules' do
-    describe file('/etc/default/auditd') do
-      its(:content) { should match(/USE_AUGENRULES="yes"/) }
+    describe file('/etc/systemd/system/auditd.service') do
+      it { should be_file }
+      its(:content) { should match(/^ExecStartPost=-\/sbin\/augenrules --load$/) }
+      its(:content) { should match(/^#ExecStartPost=-\/sbin\/auditctl -R \/etc\/audit\/audit\.rules$/) }
     end
   end
 
@@ -472,19 +480,6 @@ EOF
     end
   end
 
-  context 'default user groups that base user should be a part of' do
-    describe user('vcap') do
-      it { should be_in_group 'admin' }
-      it { should be_in_group 'adm' }
-      it { should be_in_group 'audio' }
-      it { should be_in_group 'cdrom' }
-      it { should be_in_group 'dialout' }
-      it { should be_in_group 'floppy' }
-      it { should be_in_group 'video' }
-      it { should be_in_group 'dip' }
-    end
-  end
-
   describe 'allowed user accounts' do
     describe file('/etc/passwd') do
       its(:content) { should eql(<<HERE) }
@@ -506,10 +501,14 @@ list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
 irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
 gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
 nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-libuuid:x:100:101::/var/lib/libuuid:/usr/sbin/nologin
-syslog:x:101:104::/home/syslog:/bin/false
-sshd:x:102:65534::/var/run/sshd:/usr/sbin/nologin
-statd:x:103:65534::/var/lib/nfs:/bin/false
+systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
+systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
+systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
+systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
+syslog:x:104:108::/home/syslog:/bin/false
+_apt:x:105:65534::/nonexistent:/bin/false
+statd:x:106:65534::/var/lib/nfs:/bin/false
+sshd:x:107:65534::/var/run/sshd:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
@@ -534,10 +533,14 @@ list:\*:(\d{5}):0:99999:7:::
 irc:\*:(\d{5}):0:99999:7:::
 gnats:\*:(\d{5}):0:99999:7:::
 nobody:\*:(\d{5}):0:99999:7:::
-libuuid:!:(\d{5}):0:99999:7:::
+systemd-timesync:\*:(\d{5}):0:99999:7:::
+systemd-network:\*:(\d{5}):0:99999:7:::
+systemd-resolve:\*:(\d{5}):0:99999:7:::
+systemd-bus-proxy:\*:(\d{5}):0:99999:7:::
 syslog:\*:(\d{5}):0:99999:7:::
-sshd:\*:(\d{5}):0:99999:7:::
+_apt:\*:(\d{5}):0:99999:7:::
 statd:\*:(\d{5}):0:99999:7:::
+sshd:\*:(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
 
@@ -585,11 +588,16 @@ staff:x:50:
 games:x:60:
 users:x:100:
 nogroup:x:65534:
-libuuid:x:101:
-netdev:x:102:
-crontab:x:103:
-syslog:x:104:
-ssh:x:105:
+systemd-journal:x:101:
+systemd-timesync:x:102:
+systemd-network:x:103:
+systemd-resolve:x:104:
+systemd-bus-proxy:x:105:
+input:x:106:
+crontab:x:107:
+syslog:x:108:
+netdev:x:109:
+ssh:x:110:
 admin:x:999:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
@@ -638,10 +646,15 @@ staff:*::
 games:*::
 users:*::
 nogroup:*::
-libuuid:!::
-netdev:!::
+systemd-journal:!::
+systemd-timesync:!::
+systemd-network:!::
+systemd-resolve:!::
+systemd-bus-proxy:!::
+input:!::
 crontab:!::
 syslog:!::
+netdev:!::
 ssh:!::
 admin:!::vcap
 vcap:!::syslog

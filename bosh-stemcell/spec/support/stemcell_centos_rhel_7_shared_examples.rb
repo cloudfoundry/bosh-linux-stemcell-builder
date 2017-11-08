@@ -53,9 +53,9 @@ shared_examples_for 'a CentOS 7 or RHEL 7 stemcell' do
     end
   end
 
-  context 'installed by bosh_harden' do
+  context 'modified by base_file_permissions' do
     describe 'disallow unsafe setuid binaries' do
-      subject { command('find / -xdev -perm /6000 -a -type f').stdout.split }
+      subject { command('find / -xdev -perm /ug=s -type f').stdout.split }
 
       it { should match_array(%w(/usr/bin/su /usr/bin/sudo)) }
     end

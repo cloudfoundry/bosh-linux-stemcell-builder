@@ -182,6 +182,8 @@ jobs:
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
             input_mapping:
               stemcell: vsphere-esxi-ubuntu-trusty
+            params:
+              BOSH_os_name: ubuntu-trusty
           ensure:
             task: teardown
             tags: [vsphere-v5.1]

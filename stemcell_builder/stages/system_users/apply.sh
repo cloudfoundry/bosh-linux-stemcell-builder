@@ -11,7 +11,7 @@ if [ $(get_os_type) == "opensuse" ] ; then
       usermod -s /bin/false \\\$i
     done
   "
-else
+elif ([ $(get_os_type) != 'ubuntu' ] || [ ${DISTRIB_CODENAME} != 'xenial' ]); then
   run_in_chroot $chroot "
     /usr/sbin/usermod -L libuuid
     /usr/sbin/usermod -s /usr/sbin/nologin libuuid

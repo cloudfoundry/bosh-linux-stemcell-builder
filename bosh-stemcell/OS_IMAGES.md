@@ -3,10 +3,25 @@
 
 OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-os-images/).
 
+## Ubuntu 16.04
+
+Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
+
+* `gJ.ZYbYa9GpasP39GnZndB8LK_J94fLu`
+  - Use augen rules
+  - built from master (4d3571fb6acc41224b1470ae4d7518d459b54637)
+
+* `Ud.SnwRmp3cUOr1vJBtY45jbyD11yVa_`
+  - Ubuntu 16.04
+  - built from master (17cf1ebb6d9290ed789c5ef18c3f91c4d30fc091)
 
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `G71XaogxhnOY6VIeATzFi.EsTUvLhNNM`
+  - Periodic bump
+  - built from master (a495c5481dea40016bbc9bdcd03313d7bfc019a3)
 
 * `vtxhmn43pPhrsF0Z1J6ANe0qLknE7cTA`
   - Bump version of ixgbevf to 4.2.2
@@ -627,6 +642,14 @@ CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `uAVB2a0ojcpV9Vq0t2hkdHi_ScFr21x5`
+  - Periodic bump
+  - built from master (4d3571fb6acc41224b1470ae4d7518d459b54637)
+
+* `7Lo4I8Cc__obnPb011SL_KzZfKyXqVLf`
+  - Periodic bump
+  - built from master (a495c5481dea40016bbc9bdcd03313d7bfc019a3)
 
 * `7Fx.ggVjNsKByV_t3arRW2pBpzJ_nE9W`
   - Upgrade to centos 7.4

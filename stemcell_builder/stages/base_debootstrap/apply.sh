@@ -11,9 +11,9 @@ source $base_dir/lib/prelude_apply.bash
 downloaded_file=`mktemp`
 
 # Install debootstrap
-if is_ppc64le; then
+if is_ppc64le || [ ${base_debootstrap_suite} == 'xenial' ]; then
   wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.67_all.deb" -qO $downloaded_file && \
-    echo "0a12e0a2bbff185d47711a716b1f2734856100e8784361203e834fed0cffa51b  $downloaded_file" | shasum -a 256 -c -
+    echo "ead525af2123f34078f6dc6d898ba6657250b383bfa003b953023f4c96a37e22  $downloaded_file" | shasum -a 256 -c -
 else
   wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.59_all.deb" -qO $downloaded_file && \
     echo "1df1b167fed24eb2cae0bcc0ba6d5357f6a40fe0a8aaa6bfe828c7a007413f65  $downloaded_file" | shasum -a 256 -c -
@@ -21,6 +21,13 @@ fi
 
 dpkg -i $downloaded_file
 rm $downloaded_file
+
+# If xenial, create symlink to gutsy
+if [ ${base_debootstrap_suite} == 'xenial' ]; then
+  pushd /usr/share/debootstrap/scripts
+  sudo ln -sf gutsy xenial
+  popd
+fi
 
 # Bootstrap the base system
 echo "Running debootstrap"
@@ -41,4 +48,4 @@ run_in_chroot $chroot "dpkg-reconfigure -fnoninteractive -pcritical tzdata"
 # Locale
 cp $assets_dir/etc/default/locale $chroot/etc/default/locale
 run_in_chroot $chroot "locale-gen en_US.UTF-8"
-run_in_chroot $chroot "dpkg-reconfigure locales"
+run_in_chroot $chroot "dpkg-reconfigure -fnoninteractive locales"
