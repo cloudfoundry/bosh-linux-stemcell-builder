@@ -16,6 +16,7 @@ export BOSH_internal_gw=$(fromEnvironment '.network1.vCenterGateway')
 export BOSH_internal_ip=$(fromEnvironment '.network1["staticIP-1"]')
 export BOSH_network_name=$(fromEnvironment '.network1.vCenterVLAN')
 export BOSH_reserved_range="[$(fromEnvironment '.network1.reservedRange')]"
+export BOSH_stemcell_path=$(realpath stemcell/*.tgz)
 
 cat > director-creds.yml <<EOF
 internal_ip: $BOSH_internal_ip
@@ -26,6 +27,7 @@ chmod +x $bosh_cli
 
 $bosh_cli interpolate bosh-deployment/bosh.yml \
   -o bosh-deployment/vsphere/cpi.yml \
+  -o bosh-linux-stemcell-builder/ci/assets/local-stemcell.yml \
   --vars-store director-creds.yml \
   -v director_name=stemcell-smoke-tests-director \
   --vars-env "BOSH" > director.yml

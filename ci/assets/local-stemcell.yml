@@ -1,0 +1,4 @@
+- type: replace
+  path: /resource_pools/name=vms/stemcell
+  value:
+    url: file://((stemcell_path))
