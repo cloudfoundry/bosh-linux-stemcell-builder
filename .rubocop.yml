@@ -1,0 +1,16 @@
+AllCops:
+  TargetRubyVersion: 2.4
+  Include:
+  - Rakefile
+  Exclude:
+  - tmp/**/*
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 25
+
+Metrics/BlockLength:
+  Max: 25
+  ExcludedMethods: ['describe', 'context', 'namespace', 'task']
