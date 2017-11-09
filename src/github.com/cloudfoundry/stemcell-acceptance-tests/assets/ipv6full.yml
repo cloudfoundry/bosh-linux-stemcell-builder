@@ -1,0 +1,25 @@
+---
+name: bosh-stemcell-ipv6full-tests
+
+releases: []
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: ((stemcell_version))
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+
+instance_groups:
+- name: test
+  stemcell: default
+  vm_type: default
+  instances: 3
+  networks:
+  - name: ipv6
+  azs: [z1]
+  jobs: []
