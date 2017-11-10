@@ -35,7 +35,6 @@ $bosh_cli interpolate bosh-deployment/bosh.yml \
   -o bosh-deployment/misc/ipv6/bosh.yml \
   -o bosh-deployment/misc/second-network.yml \
   -o bosh-deployment/vsphere/second-network.yml \
-  -o bosh-deployment/experimental/nats-tls.yml \
   -o bosh-linux-stemcell-builder/ci/assets/ipv6-director.yml \
   -o bosh-linux-stemcell-builder/ci/assets/local-stemcell.yml \
   --vars-store director-creds.yml \
