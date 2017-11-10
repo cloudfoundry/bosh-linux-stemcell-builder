@@ -1,0 +1,22 @@
+---
+platform: linux
+image: docker:///boshcpi/azure-cpi-release
+
+inputs:
+- name: director-artifacts
+- name: bosh-linux-stemcell-builder-master
+- name: cf-deployment
+- name: version
+
+run:
+  path: bosh-linux-stemcell-builder-master/ci/softlayer/auto-cf/deploy-cf.sh
+
+outputs:
+- name: cf-artifacts
+  path: cf-artifacts
+- name: deploy-status
+
+params:
+  DEPLOYMENT_NAME:                       ""
+  DEPLOY_NAME:                           ""
+  SYSTEM_DOMAIN:                         ""

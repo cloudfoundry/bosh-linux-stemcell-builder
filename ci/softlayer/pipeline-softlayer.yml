@@ -13,6 +13,10 @@ groups:
       - test-stemcells
       - build-softlayer-xen-ubuntu-trusty
       - bats-ubuntu
+      - deploy-director
+      - deploy-cf
+      - update-dns
+      - verify-cf
 
   - name: softlayer
     jobs:
@@ -24,9 +28,17 @@ groups:
   - name: ubuntu
     jobs:
       - build-softlayer-xen-ubuntu-trusty
+
   - name: bats
     jobs:
       - bats-ubuntu
+
+  - name: automation-cf
+    jobs:
+      - deploy-director
+      - deploy-cf
+      - update-dns
+      - verify-cf
 
 shared:
   - &deploy-director
@@ -112,7 +124,6 @@ jobs:
         - put: environment
           params:
             acquire: true
-
       - do:
         - task: deploy-director
           file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/deploy-director-softlayer.yml
@@ -146,6 +157,8 @@ jobs:
         - get: version
           passed:
             - bats-ubuntu
+            - test-stemcells
+            - verify-cf
         - get: bosh-linux-stemcell-builder-master
         - get: stemcell
           trigger: true
@@ -311,6 +324,102 @@ jobs:
         do:
         - {put: environment, params: {release: environment}}
 
+  - name: deploy-director
+    serial: true
+    plan:
+    - aggregate:
+      - get: version
+        trigger: true
+        passed: [create-softlayer-light-stemcell]
+      - get: bosh-deployment
+      - get: bosh-cli-v2
+        resource: bosh-cli
+      - get: bosh-linux-stemcell-builder-master
+    - do:
+      - task: deploy-dynamic-ip-director
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/auto-cf/deploy-director.yml
+        params:
+          INFRASTRUCTURE:                      softlayer
+          SL_VM_PREFIX:                        {{softlayer-director-name-prefix}}
+          SL_VM_DOMAIN:                        {{softlayer-vm-domain}}
+          CF_PREFIX:                           {{softlayer-cf-prefix}}
+          SL_USERNAME:                         {{softlayer-username}}
+          SL_API_KEY:                          {{softlayer-api-key}}
+          SL_DATACENTER:                       {{softlayer-datacenter}}
+          SL_VLAN_PUBLIC:                      {{softlayer-vlan-public}}
+          SL_VLAN_PRIVATE:                     {{softlayer-vlan-private}}
+      - put: director-artifacts
+        params:
+          file: deploy-artifacts/director_artifacts.tgz
+
+  - name: deploy-cf
+    serial: true
+    plan:
+    - aggregate:
+      - get: version
+        trigger: true
+        passed: [deploy-director]
+      - get: director-artifacts
+        passed: [deploy-director]
+      - get: bosh-softlayer-tools
+        resource: bosh-softlayer-tools-master
+      - get: cf-deployment
+        resource: cf-deployment-softlayer
+      - get: bosh-linux-stemcell-builder-master
+    - task: deploy-comunity-cf
+      file: bosh-linux-stemcell-builder-master/ci/softlayer/auto-cf/deploy-cf.yml
+      params:
+        DEPLOYMENT_NAME:            {{deployment-name}}
+        SYSTEM_DOMAIN:              {{cf_system_domain}}
+    - put: cf-artifacts
+      params:
+        file: cf-artifacts/cf_artifacts.tgz
+
+
+  - name: update-dns
+    serial: true
+    plan:
+    - aggregate:
+      - get: version
+        trigger: true
+        passed: [deploy-cf]
+      - get: bosh-softlayer-tools
+        resource: bosh-softlayer-tools-master
+      - get: cf-artifacts-comm
+        resource: cf-artifacts
+        passed: [deploy-cf]
+    - task: update-dns
+      file: bosh-softlayer-tools/ci/cf_deployment_ng/tasks/community/update-dns.yml
+      params:
+        SYSTEM_DOMAIN:  {{cf_system_domain}}
+    - put: cf-artifacts
+      params:
+        file: cf-artifacts/cf_artifacts.tgz
+
+  - name: verify-cf
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          trigger: true
+          passed: [update-dns]
+        - get: bosh-softlayer-tools
+          resource: bosh-softlayer-tools-master
+        - get: cf-artifacts-comm
+          resource: cf-artifacts
+          passed: [update-dns]
+        - get: director-artifacts
+          resource: director-artifacts
+      - do:
+        - task: verify-cf-push
+          file: bosh-softlayer-tools/ci/cf_deployment_ng/tasks/community/verify-cf.yml
+          params: &cf-params
+            SYSTEM_DOMAIN:  {{cf_system_domain}}
+        - task: teardown
+          file: bosh-softlayer-tools/ci/cf_deployment_ng/tasks/community/teardown.yml
+          params:
+            DEPLOYMENT_COMMUNITY_NAME: {{deployment-name}}
+
 resources:
   - name: bosh-linux-stemcell-builder-master
     type: git
@@ -438,5 +547,31 @@ resources:
     source:
       bucket: {{published-stemcell-bucket}}
       regexp: light-bosh-stemcell-(.*)-softlayer-(.*).tgz
+      access_key_id: {{stemcell-aws-access-key}}
+      secret_access_key: {{stemcell-aws-secret-key}}
+
+  #
+  # Automation-test
+  #
+
+  - name: cf-deployment-softlayer
+    type: git
+    source:
+      uri: https://github.com/bluebosh/cf-deployment
+      branch: softlayer
+
+  - name: director-artifacts
+    type: s3
+    source:
+      bucket: {{automation-cf-bucket}}
+      versioned_file: director_artifacts.tgz
+      access_key_id: {{stemcell-aws-access-key}}
+      secret_access_key: {{stemcell-aws-secret-key}}
+
+  - name: cf-artifacts
+    type: s3
+    source:
+      bucket: {{automation-cf-bucket}}
+      versioned_file: cf-artifacts.tgz
       access_key_id: {{stemcell-aws-access-key}}
       secret_access_key: {{stemcell-aws-secret-key}}

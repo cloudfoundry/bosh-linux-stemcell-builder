@@ -1,0 +1,24 @@
+---
+platform: linux
+image: docker:///boshcpi/azure-cpi-release
+
+inputs:
+- name: bosh-cli-v2
+- name: bosh-linux-stemcell-builder-master
+- name: bosh-deployment
+
+outputs:
+- name: deploy-artifacts
+
+run:
+  path: bosh-linux-stemcell-builder-master/ci/softlayer/auto-cf/deploy-director.sh
+
+params:
+  INFRASTRUCTURE:       ""
+  SL_VM_PREFIX:         ""
+  SL_VM_DOMAIN:         ""
+  CF_PREFIX:            ""
+  SL_API_KEY:           ""
+  SL_DATACENTER:        ""
+  SL_VLAN_PUBLIC:       ""
+  SL_VLAN_PRIVATE:      ""
