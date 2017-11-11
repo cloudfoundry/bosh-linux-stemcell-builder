@@ -24,7 +24,7 @@ echo "d8cc6556a73e5766a032230b900f6a24e30e66df  google-config-trusty_2.0.0-0.147
 mkdir -p $assets_dir/google-centos
 cd $assets_dir/google-centos
 
-# Download google-image-packages ubuntu
+# Download google-image-packages centos
 wget https://storage.googleapis.com/bosh-cpi-artifacts/google-compute-engine-init-2.1.0-0.el7.x86_64.rpm
 echo "67e47c9322293170518c05510edb9dfef1e2dfe7  google-compute-engine-init-2.1.0-0.el7.x86_64.rpm" | sha1sum -c -
 
