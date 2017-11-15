@@ -15,6 +15,8 @@ fi
 if [ -f $chroot/etc/lsb-release ]
 then
   source $chroot/etc/lsb-release
+else
+  export DISTRIB_CODENAME="no-distrib-codename"
 fi
 
 function get_os_type {
