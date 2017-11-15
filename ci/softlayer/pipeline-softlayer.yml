@@ -2,6 +2,7 @@
 groups:
   - name: all
     jobs:
+      - new-version-notification
       - test-unit
       - increment-version
       - new-stemcell-version
@@ -77,6 +78,16 @@ shared:
     file: bosh-linux-stemcell-builder-master/ci/softlayer/bats/tasks/destroy-director.yml
 
 jobs:
+  - name: new-version-notification
+    plan:
+      - get: published-stemcell
+        trigger: true
+      - get: bosh-linux-stemcell-builder-master
+      - task: notice-new-version
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/notice-new-version.yml
+        params:
+          SLACK_URL:      {{slack_url}}
+
   - name: test-unit
     serial: true
     plan:
