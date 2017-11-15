@@ -7,6 +7,12 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `8lygg8NgmOIJaLNYjBKKaBtnkQyCAqn0`
+  - Update google-compute package
+  - Switch to chrony to update ntp servers
+  - Disable predictable network names
+  - built from master (76ea1d3155a049fb741c46547b8b205c965fa7d7)
+
 * `gJ.ZYbYa9GpasP39GnZndB8LK_J94fLu`
   - Use augen rules
   - built from master (4d3571fb6acc41224b1470ae4d7518d459b54637)
