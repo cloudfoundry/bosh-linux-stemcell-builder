@@ -810,7 +810,7 @@ resources:
       bucket: {{candidate_stemcell_bucket}}
       access_key_id: {{stemcell_aws_access_key}}
       secret_access_key: {{stemcell_aws_secret_key}}
-      initial_version: 3468.0.0
+      initial_version: 3422.0.0
 
   - name: syslog-release
     type: bosh-io-release
