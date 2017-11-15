@@ -205,6 +205,7 @@ module Bosh::Stemcell
           "STEMCELL_IMAGE=#{File.join(work_path, 'fake-root-disk-image.raw')}",
           "STEMCELL_WORKDIR=#{work_path}",
           "OS_NAME=#{operating_system.name}",
+          "OS_VERSION=#{operating_system.version}",
           "bundle exec rspec -fd#{tag}",
           "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/#{operating_system.name}_#{operating_system.version}_spec.rb",
