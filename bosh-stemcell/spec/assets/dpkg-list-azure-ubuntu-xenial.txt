@@ -18,6 +18,7 @@ build-essential
 busybox-initramfs
 bzip2
 ca-certificates
+chrony
 cloud-guest-utils
 cmake
 cmake-data
@@ -79,6 +80,7 @@ initramfs-tools-bin
 initramfs-tools-core
 initscripts
 insserv
+install-info
 intltool-debian
 iproute2
 iptables
@@ -279,6 +281,8 @@ libtimedate-perl
 libtinfo-dev:amd64
 libtinfo5:amd64
 libtirpc1:amd64
+libtomcrypt0:amd64
+libtommath0
 libtsan0:amd64
 libubsan0:amd64
 libudev1:amd64
@@ -327,7 +331,6 @@ net-tools
 netbase
 netcat-openbsd
 nfs-common
-ntpdate
 openssh-client
 openssh-server
 openssh-sftp-server
@@ -385,6 +388,7 @@ sysv-rc
 sysvinit-utils
 tar
 tcpdump
+timelimit
 traceroute
 tzdata
 ubuntu-keyring
