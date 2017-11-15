@@ -52,6 +52,7 @@ module Bosh::Stemcell
         "STEMCELL_IMAGE=#{image_file_path}",
         "STEMCELL_WORKDIR=#{work_path}",
         "OS_NAME=#{operating_system.name}",
+        "OS_VERSION=#{operating_system.version}",
         "bundle exec rspec -fd#{exclude_exclusions}",
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
         "spec/stemcells/#{operating_system_spec_name}_spec.rb",

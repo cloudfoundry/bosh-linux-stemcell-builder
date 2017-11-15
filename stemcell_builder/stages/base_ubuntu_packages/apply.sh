@@ -16,9 +16,9 @@ scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk libpam-cracklib"
 
-# add ntpdate module-init-tools upstart-sysv for xenial
+# add chrony module-init-tools upstart-sysv for xenial
 if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
-  debs="$debs ntpdate module-init-tools"
+  debs="$debs chrony module-init-tools"
 fi
 
 if is_ppc64le; then

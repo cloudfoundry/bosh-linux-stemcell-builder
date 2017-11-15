@@ -4,6 +4,7 @@ require 'shellout_types/file'
 
 describe 'Ubuntu 16.04 OS image', os_image: true do
   it_behaves_like 'every OS image'
+  it_behaves_like 'an os with ntpdate'
   it_behaves_like 'an upstart-based OS image'
   it_behaves_like 'a Linux kernel 3.x based OS image'
   it_behaves_like 'a Linux kernel module configured OS image'
@@ -163,7 +164,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       mg
       module-assistant
       module-init-tools
-      ntpdate
       nfs-common
       openssh-server
       psmisc
@@ -509,6 +509,7 @@ syslog:x:104:108::/home/syslog:/bin/false
 _apt:x:105:65534::/nonexistent:/bin/false
 statd:x:106:65534::/var/lib/nfs:/bin/false
 sshd:x:107:65534::/var/run/sshd:/usr/sbin/nologin
+_chrony:x:108:111:Chrony daemon,,,:/var/lib/chrony:/bin/false
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
@@ -541,6 +542,7 @@ syslog:\*:(\d{5}):0:99999:7:::
 _apt:\*:(\d{5}):0:99999:7:::
 statd:\*:(\d{5}):0:99999:7:::
 sshd:\*:(\d{5}):0:99999:7:::
+_chrony:(.+):(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
 
@@ -598,6 +600,7 @@ crontab:x:107:
 syslog:x:108:
 netdev:x:109:
 ssh:x:110:
+_chrony:x:111:
 admin:x:999:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
@@ -656,6 +659,7 @@ crontab:!::
 syslog:!::
 netdev:!::
 ssh:!::
+_chrony:!::
 admin:!::vcap
 vcap:!::syslog
 bosh_sshers:!::vcap

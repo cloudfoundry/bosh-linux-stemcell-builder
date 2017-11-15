@@ -1,0 +1,21 @@
+#!/bin/bash
+
+BOSH=/var/vcap/bosh
+NTP_SERVER_FILE=$BOSH/etc/ntpserver
+if [ -f $NTP_SERVER_FILE ]; then
+  exec > $BOSH/log/ntpdate.out
+  exec 2>&1
+
+  new_file=/etc/chrony/chrony.conf.new
+  cp /etc/chrony/chrony.conf.base $new_file
+
+  echo "# appended by $0" >> $new_file
+
+  for ip in $( cat $NTP_SERVER_FILE ); do
+    echo "pool $ip" >> $new_file
+  done
+
+  mv $new_file /etc/chrony/chrony.conf
+
+  invoke-rc.d chrony restart
+fi

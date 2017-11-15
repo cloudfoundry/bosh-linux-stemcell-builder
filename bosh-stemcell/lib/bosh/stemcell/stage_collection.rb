@@ -317,7 +317,7 @@ module Bosh::Stemcell
         :bosh_limits,
         :bosh_users,
         :bosh_monit,
-        :bosh_ntpdate,
+        :bosh_ntp,
         :bosh_sudoers,
       ].flatten
     end
