@@ -27,20 +27,20 @@ describe 'CentOS 7 OS image', os_image: true do
   context 'installed by base_centos_umask' do
     describe file('/etc/profile') do
       it { should be_file }
-      its(:content) { should contain 'umask 077'}
-      its(:content) { should_not contain 'umask 022'}
+      its(:content) { should match 'umask 077'}
+      its(:content) { should_not match 'umask 022'}
     end
 
     describe file('/etc/bashrc') do
       it { should be_file }
-      its(:content) { should contain 'umask 077' }
-      its(:content) { should_not contain 'umask 022' }
+      its(:content) { should match 'umask 077' }
+      its(:content) { should_not match 'umask 022' }
     end
 
     describe file('/etc/csh.cshrc') do
       it { should be_file }
-      its(:content) { should contain 'umask 077'}
-      its(:content) { should_not contain 'umask 022'}
+      its(:content) { should match 'umask 077'}
+      its(:content) { should_not match 'umask 022'}
     end
   end
 
