@@ -114,6 +114,7 @@ jobs:
               stemcell: vsphere-esxi-ubuntu-xenial
             params:
               BOSH_os_name: ubuntu-xenial
+              package: ipv4
           ensure:
             task: teardown
             tags: [vsphere-v5.1]

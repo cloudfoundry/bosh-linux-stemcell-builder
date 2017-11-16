@@ -164,7 +164,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       mg
       module-assistant
       module-init-tools
-      nfs-common
       openssh-server
       psmisc
       quota
@@ -507,9 +506,8 @@ systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
 systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
 syslog:x:104:108::/home/syslog:/bin/false
 _apt:x:105:65534::/nonexistent:/bin/false
-statd:x:106:65534::/var/lib/nfs:/bin/false
-sshd:x:107:65534::/var/run/sshd:/usr/sbin/nologin
-_chrony:x:108:111:Chrony daemon,,,:/var/lib/chrony:/bin/false
+sshd:x:106:65534::/var/run/sshd:/usr/sbin/nologin
+_chrony:x:107:111:Chrony daemon,,,:/var/lib/chrony:/bin/false
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
@@ -540,7 +538,6 @@ systemd-resolve:\*:(\d{5}):0:99999:7:::
 systemd-bus-proxy:\*:(\d{5}):0:99999:7:::
 syslog:\*:(\d{5}):0:99999:7:::
 _apt:\*:(\d{5}):0:99999:7:::
-statd:\*:(\d{5}):0:99999:7:::
 sshd:\*:(\d{5}):0:99999:7:::
 _chrony:(.+):(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z

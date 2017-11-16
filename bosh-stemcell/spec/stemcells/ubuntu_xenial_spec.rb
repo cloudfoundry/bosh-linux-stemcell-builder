@@ -288,6 +288,14 @@ HERE
     end
   end
 
+  context 'open ports' do
+    context 'when nfs is removed' do
+      describe command('lsof -iTCP:111') do
+        its(:exit_status) { should eq(1) }
+      end
+    end
+  end
+
   describe 'installed packages' do
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E 's/(linux.*4.4).*/\\1/'"
 
