@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `NaNujxx4PAcv_N7.syyDRG4sVoeFs7gy`
+  - Remove nfs, closes off port 111 due to removal of rpcbind
+  - built from master (88859aa4566230191120ad2f16e20f217e803faf)
+
 * `8lygg8NgmOIJaLNYjBKKaBtnkQyCAqn0`
   - Update google-compute package
   - Switch to chrony to update ntp servers
