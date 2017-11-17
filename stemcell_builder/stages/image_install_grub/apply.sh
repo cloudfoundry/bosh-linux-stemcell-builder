@@ -160,9 +160,9 @@ fi
 uuid=$(blkid -c /dev/null -sUUID -ovalue ${loopback_dev})
 
 if is_ppc64le; then
-  kernel_version=$(basename $(ls ${image_mount_point}/boot/vmlinux-* |tail -1) |cut -f2-8 -d'-')
+  kernel_version=$(basename $(ls -rt ${image_mount_point}/boot/vmlinux-* |tail -1) |cut -f2-8 -d'-')
 else
-  kernel_version=$(basename $(ls ${image_mount_point}/boot/vmlinuz-* |tail -1) |cut -f2-8 -d'-')
+  kernel_version=$(basename $(ls -rt ${image_mount_point}/boot/vmlinuz-* |tail -1) |cut -f2-8 -d'-')
 fi
 
 if [ -f ${image_mount_point}/etc/debian_version ] # Ubuntu
@@ -206,7 +206,6 @@ else
 fi
 
 if [ -f ${image_mount_point}/etc/debian_version ] # Ubuntu
-
 then
   if is_ppc64le; then
     run_in_chroot ${image_mount_point} "

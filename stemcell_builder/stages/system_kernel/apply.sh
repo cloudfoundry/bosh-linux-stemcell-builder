@@ -10,4 +10,9 @@ pkg_mgr install wireless-crda
 
 mkdir -p $chroot/tmp
 
-pkg_mgr install linux-generic-lts-xenial
+
+if [[ "${DISTRIB_CODENAME}" == "xenial" ]]; then
+  pkg_mgr install linux-headers-4.10.0-38-generic linux-image-4.10.0-38-generic
+else
+  pkg_mgr install linux-generic-lts-xenial
+fi

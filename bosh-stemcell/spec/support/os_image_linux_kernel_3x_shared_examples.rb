@@ -1,7 +1,7 @@
 shared_examples_for 'a Linux kernel 3.x based OS image' do
 
   def kernel_version
-    command('ls /lib/modules').stdout.chomp
+    command('ls -rt /lib/modules | tail -1').stdout.chomp
   end
 
   context 'installed by bosh_sysctl' do

@@ -16,12 +16,10 @@ scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk libpam-cracklib"
 
-# add chrony module-init-tools upstart-sysv for xenial
 if [[ "${DISTRIB_CODENAME}" != 'xenial' ]]; then
   debs="$debs nfs-common"
 fi
 
-# add chrony module-init-tools upstart-sysv for xenial
 if [[ "${DISTRIB_CODENAME}" == 'xenial' ]]; then
   debs="$debs chrony module-init-tools"
 fi
