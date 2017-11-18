@@ -49,9 +49,6 @@ mount ${mapper_device}p1 ${image_mount_point}
 add_on_exit "umount ${image_mount_point}"
 time rsync -aHA ${chroot}/ ${image_mount_point}
 
-# Copy in Oracle specific assets
-yes | cp -rf $dir/assets/etc/* ${image_mount_point}/etc/
-
 # Generate a random grub password
 random_password=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 16)
 pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
