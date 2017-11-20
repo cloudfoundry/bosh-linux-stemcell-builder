@@ -70,7 +70,7 @@ apt-get -y install qemu-utils
 apt-get -y install yum
 
 # Oracle image building requirements
-apt-get -y dosfstools gdisk
+apt-get -y install dosfstools gdisk
 
 # needed by stemcell building
 apt-get -y install parted
