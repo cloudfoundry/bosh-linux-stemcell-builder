@@ -36,7 +36,11 @@ var _ = Describe("Syslogrelease", func() {
 	})
 
 	It("#133776519: forwards deeply nested logs", func() {
-		stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "syslog_forwarder/0", `sudo mkdir -p /var/vcap/sys/log/deep/path && sudo chmod 777 /var/vcap/sys/log/deep/path && touch /var/vcap/sys/log/deep/path/deepfile.log`)
+		stdOut, stdErr, exitStatus, err := bosh.Run(
+			"ssh",
+			"syslog_forwarder/0",
+			`sudo mkdir -p /var/vcap/sys/log/deep/path && sudo chmod -R 777 /var/vcap/sys/log/deep && touch /var/vcap/sys/log/deep/path/deepfile.log`,
+		)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not create nested log path! \n stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
