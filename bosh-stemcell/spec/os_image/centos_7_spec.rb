@@ -357,10 +357,10 @@ ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
 nobody:x:99:99:Nobody:/:/sbin/nologin
 systemd-network:x:192:192:systemd Network Management:/:/sbin/nologin
 dbus:x:81:81:System message bus:/:/sbin/nologin
-polkitd:x:998:997:User for polkitd:/:/sbin/nologin
+polkitd:x:999:998:User for polkitd:/:/sbin/nologin
 rpc:x:32:32:Rpcbind Daemon:/var/lib/rpcbind:/sbin/nologin
 abrt:x:173:173::/etc/abrt:/sbin/nologin
-libstoragemgmt:x:999:998:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
+libstoragemgmt:x:998:997:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
 tcpdump:x:72:72::/:/sbin/nologin
 chrony:x:997:996::/var/lib/chrony:/sbin/nologin
 ntp:x:38:38::/etc/ntp:/sbin/nologin
@@ -441,10 +441,10 @@ input:x:999:
 systemd-journal:x:190:
 systemd-network:x:192:
 dbus:x:81:
-polkitd:x:997:
+polkitd:x:998:
 rpc:x:32:
 abrt:x:173:
-libstoragemgmt:x:998:
+libstoragemgmt:x:997:
 tcpdump:x:72:
 stapusr:x:156:
 stapsys:x:157:
