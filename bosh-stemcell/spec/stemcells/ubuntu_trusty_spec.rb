@@ -315,8 +315,9 @@ HERE
   describe 'installed packages' do
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E 's/(linux.*4.4).*/\\1/'"
 
-    let(:dpkg_list_oracle_ubuntu) { File.read(spec_asset('dpkg-list-oracle-ubuntu.txt')) }
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty.txt')).map(&:chop) }
+    let(:dpkg_list_oracle_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty-oracle-additions.txt')).map(&:chop) }
+    let(:dpkg_list_oracle_ubuntu_subtractions) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty-oracle-subtractions.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-trusty-azure-additions.txt')).map(&:chop) }
@@ -383,7 +384,9 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
-      its(:stdout) { should eq(dpkg_list_oracle_ubuntu) }
+      it 'contains only the base set of packages plus oracle-specific packages' do
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_oracle_ubuntu) - dpkg_list_oracle_ubuntu_subtractions)
+      end
     end
   end
 end

@@ -16,5 +16,4 @@ pkg_mgr install cloud-init efibootmgr dmidecode ssh-import-id open-iscsi iptable
 pkg_mgr install grub-pc || true
 
 # Copy in Oracle specific assets
-yes | cp -rf $dir/assets/etc/* ${chroot}/etc/
-
+yes | cp -rf ${dir}/assets/etc/* ${chroot}/etc/
