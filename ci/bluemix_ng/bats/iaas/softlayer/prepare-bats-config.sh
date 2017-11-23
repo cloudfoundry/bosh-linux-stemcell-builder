@@ -37,14 +37,14 @@ properties:
     name: ((STEMCELL_NAME))
     version: latest
   cloud_properties:
-    vm_name_prefix: ((SL_VM_NAME_PREFIX))
-    data_center: ((SL_DATACENTER))
+    hostname_prefix: ((SL_VM_NAME_PREFIX))
+    datacenter: ((SL_DATACENTER))
     domain: ((SL_VM_DOMAIN))
   networks:
   - name: default
     type: dynamic
     cloud_properties:
-      vlanIds:
+      vlan_ids:
       - ((SL_VLAN_PUBLIC))
       - ((SL_VLAN_PRIVATE))
   password: "\$6\$Uamn2Hix6MlWro\$UijJSdv4AHPcQIh7T/2tuJAGSY6gq0bseo7wzRfMqzvnco.sPfSJbVCqijixg5VvVdZ2GbPq6uDDieoytK0be/"

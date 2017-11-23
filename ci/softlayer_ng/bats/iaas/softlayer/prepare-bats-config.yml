@@ -18,5 +18,4 @@ outputs:
   - name: bats-config
 
 run:
-  path: bosh-linux-stemcell-builder-master/ci/bats/iaas/softlayer/prepare-bats-config.sh
-  path: bosh-linux-stemcell-builder/ci/bats/iaas/softlayer/prepare-bats-config.sh
+  path: bosh-linux-stemcell-builder-master/ci/softlayer_ng/bats/iaas/softlayer/prepare-bats-config.sh
