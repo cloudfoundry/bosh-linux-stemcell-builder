@@ -738,4 +738,11 @@ shared_examples_for 'every OS image' do
       expect(package('postfix')).to_not be_installed
     end
   end
+
+  context 'installed binaries' do
+    describe file('/var/vcap/bosh/bin/sync-time') do
+      it { should be_file }
+      it { should be_executable }
+    end
+  end
 end
