@@ -24,7 +24,7 @@ bosh-cli interpolate bosh-deployment/bosh.yml \
   -v dns_recursor_ip=8.8.8.8 \
   -v director_name=bats-director \
   -v sl_director_fqn=$BOSH_SL_VM_NAME_PREFIX.$BOSH_SL_VM_DOMAIN \
-  --vars-file <( bosh-linux-stemcell-builder/ci/bats/iaas/$BAT_INFRASTRUCTURE/director-vars ) \
+  --vars-file <( bosh-linux-stemcell-builder-master/ci/bats/iaas/$BAT_INFRASTRUCTURE/director-vars ) \
   > director.yml
 
 bosh-cli create-env \

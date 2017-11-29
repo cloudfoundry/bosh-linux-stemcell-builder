@@ -306,7 +306,7 @@ resources:
     type: git
     source:
       uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
-      branch: 3445.2-ng
+      branch: back-ng
 
   - name: version
     type: semver
