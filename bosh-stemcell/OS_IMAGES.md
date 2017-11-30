@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `uC8D1lxdXTpqoNv2w6.zhNR91VMRfSMG`
+  - use chrony for sync-time
+  - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
+
 * `U3zcB31LFT4AZppjYNKafIvuvga9_Nda`
   - Update kernel to 4.10
   - built from master (bea3e1038fba7409b9f1a4ae2e46efac10a96607)
@@ -32,6 +36,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `8kwlt1sVR2A4Je95x3_MjzkzxZe5q3vx`
+  - refactor /var/vcap/bosh/bin/sync-time
+  - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
 
 * `G71XaogxhnOY6VIeATzFi.EsTUvLhNNM`
   - Periodic bump
@@ -604,6 +612,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `pEKS.VlpukuR0SQaLdOjuf9ZhT7YBeIq`
+  - refactor /var/vcap/bosh/bin/sync-time
+  - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
 
 * `uAVB2a0ojcpV9Vq0t2hkdHi_ScFr21x5`
   - Periodic bump
