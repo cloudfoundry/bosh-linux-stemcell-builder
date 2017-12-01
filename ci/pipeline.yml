@@ -180,7 +180,7 @@ jobs:
               stemcell: vsphere-esxi-ubuntu-trusty
             params:
               BOSH_os_name: ubuntu-trusty
-              package: ipv4
+              package: ipv4director
           ensure:
             task: teardown-director
             tags: [vsphere-v5.1]
@@ -207,7 +207,7 @@ jobs:
             input_mapping:
               stemcell: vsphere-esxi-ubuntu-trusty
             params:
-              package: ipv6
+              package: ipv6director
           ensure:
             task: teardown-director-ipv6
             tags: [vsphere-v5.1]
