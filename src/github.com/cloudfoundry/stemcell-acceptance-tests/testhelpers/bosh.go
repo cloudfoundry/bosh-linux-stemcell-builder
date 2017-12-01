@@ -57,7 +57,13 @@ func (b *BOSH) UploadRelease(releasePath string) {
 func (b *BOSH) Deploy() {
 	manifestPath, err := filepath.Abs("manifest.yml")
 	Expect(err).ToNot(HaveOccurred())
-	stdOut, stdErr, exitStatus, err := b.Run("deploy", "--vars-env=BOSH", "--var-errs", manifestPath)
+
+	// error early and more clearly if variables are missing
+	stdOut, stdErr, exitStatus, err := b.Run("interpolate", "--vars-env=BOSH", "--var-errs", manifestPath)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
+
+	stdOut, stdErr, exitStatus, err = b.Run("deploy", "--vars-env=BOSH", manifestPath)
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
