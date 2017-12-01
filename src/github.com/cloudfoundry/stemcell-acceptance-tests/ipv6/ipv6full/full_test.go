@@ -1,23 +1,17 @@
 package ipv6full_test
 
 import (
-	"os"
-	"net"
 	"fmt"
+	"net"
 	"strings"
 
-	boshlog "github.com/cloudfoundry/bosh-utils/logger"
-	"github.com/cloudfoundry/bosh-utils/system"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("IPv6 Full", func() {
-	cmdRunner := system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelNone))
-	boshBinaryPath := os.Getenv("BOSH_BINARY_PATH")
-
 	It("enables ipv6 in the kernel", func() {
-		stdOut, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-ipv6full-tests", "--column=stdout", "ssh", "test/0", "-r", "-c", `sudo netstat -lnp | grep sshd`)
+		stdOut, _, exitStatus, err := bosh.Run("--column=stdout", "ssh", "test/0", "-r", "-c", `sudo netstat -lnp | grep sshd`)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 		Expect(stdOut).To(ContainSubstring("0.0.0.0:22"))
@@ -58,7 +52,7 @@ var _ = Describe("IPv6 Full", func() {
 		// - configuring tests to use Director as a SSH gateway
 		// - having machine running these tests have an IPv6 address routable to test VMs
 
-		stdOut, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-ipv6full-tests", "--column=instance", "--column=ips", "instances")
+		stdOut, _, exitStatus, err := bosh.Run("--column=instance", "--column=ips", "instances")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
@@ -69,7 +63,7 @@ var _ = Describe("IPv6 Full", func() {
 	})
 
 	It("one instance can talk to another via IPv6", func() {
-		stdOut, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-ipv6full-tests", "--column=instance", "--column=ips", "instances")
+		stdOut, _, exitStatus, err := bosh.Run("--column=instance", "--column=ips", "instances")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
@@ -79,14 +73,14 @@ var _ = Describe("IPv6 Full", func() {
 		instance1 := instances[0].Name
 		ip2 := instances[1].IP
 
-		stdOut, _, exitStatus, err = cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-ipv6full-tests", "--column=stdout", "ssh", instance1, "-r", "-c", "sudo ping6 -c 2 " + ip2.String())
+		stdOut, _, exitStatus, err = bosh.Run("--column=stdout", "ssh", instance1, "-r", "-c", "sudo ping6 -c 2 "+ip2.String())
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 		Expect(stdOut).To(ContainSubstring("2 packets transmitted, 2 received, 0% packet loss"))
 	})
 
 	It("assigns link local ipv6 address", func() {
-		stdOut, _, exitStatus, err := cmdRunner.RunCommand(boshBinaryPath, "-d", "bosh-stemcell-ipv6full-tests", "--column=stdout", "ssh", "test/0", "-r", "-c", "ip a")
+		stdOut, _, exitStatus, err := bosh.Run("--column=stdout", "ssh", "test/0", "-r", "-c", "ip a")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 		Expect(stdOut).To(ContainSubstring("fe80:"))
