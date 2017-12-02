@@ -164,7 +164,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       libxslt1-dev
       libxslt1.1
       lsof
-      mg
       module-assistant
       module-init-tools
       openssh-server
