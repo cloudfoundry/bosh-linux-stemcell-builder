@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `UWLqyMZYpnrmBbporWp2WVFA5vtFCOCH`
+  - Remove packages crda, iw, wireless-crda, wireless-regdb, and mg
+  - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
+
 * `uC8D1lxdXTpqoNv2w6.zhNR91VMRfSMG`
   - use chrony for sync-time
   - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
@@ -36,6 +40,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `tuNJU7fC4UCAP92IdpCKKV5uMAd4RTdW`
+  - Periodic bump
+  - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
 
 * `8kwlt1sVR2A4Je95x3_MjzkzxZe5q3vx`
   - refactor /var/vcap/bosh/bin/sync-time
@@ -612,6 +620,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `vb_TNB_nbU4Q689j_LSLX2SIxLRKnjPe`
+  - Periodic bump
+  - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
 
 * `pEKS.VlpukuR0SQaLdOjuf9ZhT7YBeIq`
   - refactor /var/vcap/bosh/bin/sync-time
