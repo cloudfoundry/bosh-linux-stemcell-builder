@@ -12,4 +12,4 @@ inputs:
 outputs:
   - name: stemcell-image
 run:
-  path: bosh-linux-stemcell-builder/ci/tasks/capture-stemcell.sh
+  path: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/capture-stemcell.sh

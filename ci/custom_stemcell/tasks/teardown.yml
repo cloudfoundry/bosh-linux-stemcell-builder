@@ -11,4 +11,4 @@ inputs:
   - name: bosh-cli
 
 run:
-  path: bosh-linux-stemcell-builder/ci/tasks/teardown.sh
+  path: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/teardown.sh

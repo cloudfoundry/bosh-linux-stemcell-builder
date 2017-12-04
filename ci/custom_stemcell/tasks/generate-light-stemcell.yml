@@ -13,4 +13,4 @@ outputs:
   - name: light-stemcell
 
 run:
-  path: bosh-linux-stemcell-builder/ci/tasks/generate-light-stemcell.sh
+  path: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/generate-light-stemcell.sh

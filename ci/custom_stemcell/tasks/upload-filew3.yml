@@ -12,7 +12,7 @@ inputs:
   - name: version
 
 run:
-  path: bosh-linux-stemcell-builder/ci/tasks/upload-filew3.sh
+  path: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/upload-filew3.sh
 
 params:
   AWS_ACCESS_KEY_ID:     required

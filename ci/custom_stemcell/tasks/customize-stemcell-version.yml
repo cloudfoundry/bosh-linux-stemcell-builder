@@ -10,4 +10,4 @@ inputs:
 outputs:
   - name: version
 run:
-  path: bosh-linux-stemcell-builder/ci/tasks/customize-stemcell-version.sh
+  path: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/customize-stemcell-version.sh

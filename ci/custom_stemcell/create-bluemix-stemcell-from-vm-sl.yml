@@ -66,7 +66,7 @@ jobs:
     plan:
       - get: bosh-linux-stemcell-builder
       - task: customize-stemcell-version
-        file: bosh-linux-stemcell-builder/ci/tasks/customize-stemcell-version.yml
+        file: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/customize-stemcell-version.yml
         params:
           custom_stemcell_version: {{custom_stemcell_version}}
       - put: version
@@ -79,7 +79,7 @@ jobs:
         trigger: true
         passed: [customize-stemcell-version]
       - task: capture-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/capture-stemcell.yml
+        file: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/capture-stemcell.yml
         params:
           stemcell_vm_id: {{stemcell_vm_id}}
           SL_USERNAME: {{softlayer-username}}
@@ -98,7 +98,7 @@ jobs:
           trigger: true
           passed: [capture-stemcell]
       - task: generate-light-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/generate-light-stemcell.yml
+        file: bosh-linux-stemcell-builder/ci/custom_stemcell/tasks/generate-light-stemcell.yml
         params:
           HYPERVISOR: xen
           IAAS: bluemix
@@ -166,7 +166,7 @@ jobs:
 
       - do:
         - task: deploy-director
-          file: bosh-linux-stemcell-builder/ci/tasks/deploy-director-softlayer.yml
+          file: bosh-linux-stemcell-builder/ci/bluemix/tasks/deploy-director-softlayer.yml
           input_mapping:
             stemcell: light-bluemix-stemcell
           params:
@@ -179,13 +179,13 @@ jobs:
             SL_VM_NAME_PREFIX_2: {{softlayer-vm-name-prefix}}
 
         - task: test-stemcell
-          file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
+          file: bosh-linux-stemcell-builder/ci/bluemix/tasks/test-stemcell.yml
           input_mapping:
             stemcell: light-bluemix-stemcell
         ensure:
           do:
           - task: teardown
-            file: bosh-linux-stemcell-builder/ci/tasks/teardown.yml
+            file: bosh-linux-stemcell-builder/ci/bluemix/tasks/teardown.yml
           - put: environment
             params:
               release: environment
@@ -203,7 +203,7 @@ jobs:
         - get: light-bluemix-stemcell
           trigger: true
       - task: copy-artifacts
-        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
+        file: bosh-linux-stemcell-builder/ci/bluemix/tasks/publish.yml
         params:
           AWS_ACCESS_KEY_ID: {{stemcell-sl-os-access-key}}
           AWS_SECRET_ACCESS_KEY: {{stemcell-sl-os-secret-key}}
