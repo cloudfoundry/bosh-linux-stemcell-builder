@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `jouTj71JrZKnTf486DpDRJSdh9SZ1g6x`
+  - bump debootstrap version
+  - built from master (7f891a225df648456711855c3604b59198c1b04f)
+
 * `UWLqyMZYpnrmBbporWp2WVFA5vtFCOCH`
   - Remove packages crda, iw, wireless-crda, wireless-regdb, and mg
   - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
@@ -40,6 +44,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `lz1PrZ22wbWzWPz9mmAx1xJFN8HAsOAU`
+  - Periodic bump
+  - built from master (7f891a225df648456711855c3604b59198c1b04f)
 
 * `tuNJU7fC4UCAP92IdpCKKV5uMAd4RTdW`
   - Periodic bump
@@ -620,6 +628,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `X.5SPARRtIEqJUce18JMMR7AEdemYV26`
+  - Periodic bump
+  - built from master (7f891a225df648456711855c3604b59198c1b04f)
 
 * `vb_TNB_nbU4Q689j_LSLX2SIxLRKnjPe`
   - Periodic bump
