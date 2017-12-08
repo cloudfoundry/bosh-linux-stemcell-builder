@@ -49,13 +49,14 @@ module ShelloutTypes
     let(:chroot) { ShelloutTypes::Chroot.new }
     let(:chroot_dir) { ENV['SHELLOUT_CHROOT_DIR'] }
 
-    let(:regular_file_path) { ::File.basename(Tempfile.new('a-file', chroot_dir)) }
-    let(:regular_file) { described_class.new(regular_file_path, chroot) }
+    let(:regular_system_file) { Tempfile.new('a-file', chroot_dir) }
+    let(:regular_system_filename) { ::File.basename(regular_system_file) }
+    let(:regular_file) { described_class.new(regular_system_filename, chroot) }
     let(:tmp_dirname) { ::File.basename(Dir.mktmpdir('a-dir', chroot_dir)) }
     let(:directory_file) { described_class.new(tmp_dirname, chroot) }
     let(:link_path) { ::File.join(tmp_dirname, 'link') }
     let(:link) do
-      chroot.run('ln', '-s', "/#{regular_file_path}", link_path)
+      chroot.run('ln', '-s', "/#{regular_system_filename}", link_path)
       described_class.new(link_path, chroot)
     end
     let(:nobody_uid) { 65534 }
@@ -77,7 +78,7 @@ module ShelloutTypes
 
     after do
       delete_user_and_group(ephemeral_user_name, ephemeral_group_name)
-      chroot.run('rm', '-rf', regular_file_path, tmp_dirname, link_path)
+      chroot.run('rm', '-rf', regular_system_filename, tmp_dirname, link_path)
     end
 
     describe '#file?' do
@@ -112,7 +113,7 @@ module ShelloutTypes
           before do
             link
 
-            ::File.delete(::File.join(chroot_dir, regular_file_path))
+            ::File.delete(::File.join(chroot_dir, regular_system_filename))
           end
 
           it 'returns false' do
@@ -121,12 +122,10 @@ module ShelloutTypes
         end
 
         context 'that points to a relatively located file' do
-          let(:file_in_dir) do
-            path = Tempfile.new('link-target', ::File.join(chroot_dir, tmp_dirname)).path
-            ::File.basename(path)
-          end
+          let(:file_in_dir) { Tempfile.new('link-target', ::File.join(chroot_dir, tmp_dirname)) }
+          let(:relative_path) { ::File.basename(file_in_dir.path) }
           let(:link_to_relative) do
-            chroot.run('ln', '-s', file_in_dir, link_path)
+            chroot.run('ln', '-s', relative_path, link_path)
             described_class.new(link_path, chroot)
           end
 
@@ -138,10 +137,10 @@ module ShelloutTypes
     end
 
     describe '#owned_by?' do
-      let(:owned_file_path) { Tempfile.new('a-file', chroot_dir).path }
-      let(:owned_file_path_relative_to_chroot) { ::File.basename(owned_file_path) }
+      let(:owned_system_file) { Tempfile.new('a-file', chroot_dir) }
+      let(:owned_file_path_relative_to_chroot) { ::File.basename(owned_system_file.path) }
       let(:owned_file) do
-        ::File.chown(ephemeral_uid, nil, owned_file_path)
+        ::File.chown(ephemeral_uid, nil, owned_system_file.path)
 
         described_class.new(owned_file_path_relative_to_chroot, chroot)
       end
@@ -159,16 +158,16 @@ module ShelloutTypes
       end
 
       context 'when the underlying file belongs to a user that does not exist' do
-        let(:system_file_path) { Tempfile.new('a-file', chroot_dir).path }
+        let(:system_file) { Tempfile.new('a-file', chroot_dir) }
         let(:file_with_unknown_owner) {
           random_uid = rand(100) + 1 * 65535
-          ::File.chown(random_uid, nil, system_file_path)
+          ::File.chown(random_uid, nil, system_file.path)
 
-          described_class.new(::File.basename(system_file_path), chroot)
+          described_class.new(::File.basename(system_file.path), chroot)
         }
 
         it('should raise an error') do
-          expect { file_with_unknown_owner.owned_by?(ephemeral_user_name) }.to raise_error(RuntimeError, "user for file #{system_file_path} does not exist")
+          expect { file_with_unknown_owner.owned_by?(ephemeral_user_name) }.to raise_error(RuntimeError, "user for file #{system_file.path} does not exist")
         end
       end
 
@@ -237,12 +236,12 @@ module ShelloutTypes
     end
 
     describe '#group' do
-      let(:group_file) {
-        group_file = Tempfile.new('a-file', chroot_dir).path
-        ::File.chown(nil, ephemeral_gid, group_file)
+      let(:group_file) do
+        group_file = Tempfile.new('a-file', chroot_dir)
+        ::File.chown(nil, ephemeral_gid, group_file.path)
 
-        described_class.new(::File.basename(group_file), chroot)
-      }
+        described_class.new(::File.basename(group_file.path), chroot)
+      end
 
       it 'returns the group of the file' do
         expect(group_file.group).to eq(ephemeral_group_name)
@@ -260,12 +259,12 @@ module ShelloutTypes
 
       context('when the group belonging to the file does not exist') do
         let(:current_group) { rand(100) + 1 * 65535 }
-        let(:testgroup_file) {
-          testgroup_file = Tempfile.new('a-file', chroot_dir).path
-          ::File.chown(nil, current_group, testgroup_file)
+        let(:testgroup_file) do
+          testgroup_file = Tempfile.new('a-file', chroot_dir)
+          ::File.chown(nil, current_group, testgroup_file.path)
 
-          described_class.new(::File.basename(testgroup_file), chroot)
-        }
+          described_class.new(::File.basename(testgroup_file.path), chroot)
+        end
 
         it 'should raise' do
           expect { testgroup_file.group }.to raise_error(RuntimeError, "group #{current_group} does not exist")
@@ -284,8 +283,8 @@ module ShelloutTypes
     end
 
     describe '#readable_by_user?' do
-      let(:some_file_path) { Tempfile.new('a-file', chroot_dir).path }
-      let(:some_file_path_chroot) { ::File.basename(some_file_path) }
+      let(:some_system_file) { Tempfile.new('a-file', chroot_dir) }
+      let(:some_file_path_chroot) { ::File.basename(some_system_file.path) }
 
       let(:some_file) { described_class.new(some_file_path_chroot, chroot) }
 
@@ -293,12 +292,12 @@ module ShelloutTypes
         let(:user_file_gid) { rand(100) + 1 * 65535 }
 
         before do
-          ::File.chown(ephemeral_uid, user_file_gid, some_file_path)
+          ::File.chown(ephemeral_uid, user_file_gid, some_system_file.path)
         end
 
         context 'and readable' do
           before do
-            ::File.chmod(0400, some_file_path)
+            ::File.chmod(0400, some_system_file.path)
           end
 
           it 'returns true' do
@@ -308,7 +307,7 @@ module ShelloutTypes
 
         context 'and not readable' do
           before do
-            ::File.chmod(0200, some_file_path)
+            ::File.chmod(0200, some_system_file.path)
           end
 
           it 'returns false' do
@@ -319,12 +318,12 @@ module ShelloutTypes
 
       context 'when the user does not own the file but has the same group id' do
         before do
-          ::File.chown(nobody_uid, ephemeral_gid, some_file_path)
+          ::File.chown(nobody_uid, ephemeral_gid, some_system_file.path)
         end
 
         context 'and the file is group readable' do
           before do
-            ::File.chmod(0040, some_file_path)
+            ::File.chmod(0040, some_system_file.path)
           end
 
           it 'returns true' do
@@ -334,7 +333,7 @@ module ShelloutTypes
 
         context 'and the file is not group readable' do
           before do
-            ::File.chmod(0020, some_file_path)
+            ::File.chmod(0020, some_system_file.path)
           end
 
           it 'returns false' do
@@ -351,7 +350,7 @@ module ShelloutTypes
           create_group(group_with_members_id)
           add_user_to_group(group_with_members_id, ephemeral_user_name)
 
-          ::File.chown(nobody_uid, group_with_members_id, some_file_path)
+          ::File.chown(nobody_uid, group_with_members_id, some_system_file.path)
         end
 
         after do
@@ -360,7 +359,7 @@ module ShelloutTypes
 
         context 'and the file is group readable' do
           before do
-            ::File.chmod(0040, some_file_path)
+            ::File.chmod(0040, some_system_file.path)
           end
 
           it 'returns true' do
@@ -370,7 +369,7 @@ module ShelloutTypes
 
         context 'and the file is not group readable' do
           before do
-            ::File.chmod(0020, some_file_path)
+            ::File.chmod(0020, some_system_file.path)
           end
 
           it 'returns false' do
@@ -381,12 +380,12 @@ module ShelloutTypes
 
       context 'when the user is not the owner or file group member' do
         before do
-          ::File.chown(nobody_uid, nogroup_gid, some_file_path)
+          ::File.chown(nobody_uid, nogroup_gid, some_system_file.path)
         end
 
         context 'and the file is world readable' do
           before do
-            ::File.chmod(0004, some_file_path)
+            ::File.chmod(0004, some_system_file.path)
           end
 
           it 'returns true' do
@@ -396,7 +395,7 @@ module ShelloutTypes
 
         context 'and the file is not world readable' do
           before do
-            ::File.chmod(0002, some_file_path)
+            ::File.chmod(0002, some_system_file.path)
           end
 
           it 'returns false' do
@@ -408,9 +407,9 @@ module ShelloutTypes
       context 'when the group belonging to the file does not exist' do
         let(:fake_group) { rand(100) + 1 * 65535 }
         let(:fake_group_file) {
-          fake_group_file = Tempfile.new('a-file', chroot_dir).path
-          ::File.chown(nobody_uid, fake_group, fake_group_file)
-          described_class.new(::File.basename(fake_group_file), chroot)
+          fake_group_file = Tempfile.new('a-file', chroot_dir)
+          ::File.chown(nobody_uid, fake_group, fake_group_file.path)
+          described_class.new(::File.basename(fake_group_file.path), chroot)
         }
 
         it 'should raise' do
@@ -449,7 +448,7 @@ module ShelloutTypes
           let(:getent_passwd_nobody_stdout) { "nobody:x:#{nobody_uid}:#{nobody_uid}:nobody:/nonexistent:/usr/sbin/nologin" }
 
           before do
-            ::File.chown(nobody_uid, ephemeral_gid, some_file_path)
+            ::File.chown(nobody_uid, ephemeral_gid, some_system_file.path)
             expect(chroot).to receive(:run).
               with('stat', '-c', '%u', some_file_path_chroot).
               and_return(["#{nobody_uid}", '', 0])
@@ -511,13 +510,13 @@ module ShelloutTypes
 
     describe '#writable_by?' do
       let(:base_file) do
-        Tempfile.new('a-file', chroot_dir).path
+        Tempfile.new('a-file', chroot_dir)
       end
 
       context 'when the file is writeable by its group' do
         let(:group_writable_file) do
-          ::File.chmod(0020, base_file)
-          described_class.new(::File.basename(base_file), chroot)
+          ::File.chmod(0020, base_file.path)
+          described_class.new(::File.basename(base_file.path), chroot)
         end
 
         it 'returns true' do
@@ -527,8 +526,8 @@ module ShelloutTypes
 
       context 'when the file is not writeable by its group' do
         let(:group_unwritable_file) do
-          ::File.chmod(0000, base_file)
-          described_class.new(::File.basename(base_file), chroot)
+          ::File.chmod(0000, base_file.path)
+          described_class.new(::File.basename(base_file.path), chroot)
         end
 
         it 'returns false' do
@@ -538,8 +537,8 @@ module ShelloutTypes
 
       context 'when the file is writeable by others' do
         let(:other_writable_file) do
-          ::File.chmod(0002, base_file)
-          described_class.new(::File.basename(base_file), chroot)
+          ::File.chmod(0002, base_file.path)
+          described_class.new(::File.basename(base_file.path), chroot)
         end
 
         it 'returns true' do
@@ -549,8 +548,8 @@ module ShelloutTypes
 
       context 'when the file is not writeable by other' do
         let(:other_unwritable_file) do
-          ::File.chmod(0000, base_file)
-          described_class.new(::File.basename(base_file), chroot)
+          ::File.chmod(0000, base_file.path)
+          described_class.new(::File.basename(base_file.path), chroot)
         end
 
         it 'returns false' do
@@ -569,9 +568,9 @@ module ShelloutTypes
     describe '#executable?' do
       context 'when the file is executable' do
         let(:executable_file) do
-          file_path = Tempfile.new('a-file', chroot_dir).path
-          ::File.chmod(0700, file_path)
-          described_class.new(::File.basename(file_path), chroot)
+          file = Tempfile.new('a-file', chroot_dir)
+          ::File.chmod(0700, file.path)
+          described_class.new(::File.basename(file.path), chroot)
         end
 
         it 'returns true' do
@@ -601,17 +600,17 @@ module ShelloutTypes
     end
 
     describe '#linked_to?' do
-      let(:target) { Tempfile.new('target-file', chroot_dir).path }
+      let(:target) { Tempfile.new('target-file', chroot_dir) }
 
       context 'when the file is a symbolic link' do
         let(:source) do
-          file_path = target.gsub(/target/, 'source')
-          ::File.symlink(target, file_path)
+          file_path = target.path.gsub(/target/, 'source')
+          ::File.symlink(target.path, file_path)
           described_class.new(::File.basename(file_path), chroot)
         end
 
         it 'returns true when the file links to the specified target' do
-          expect(source.linked_to?(target)).to eq(true)
+          expect(source.linked_to?(target.path)).to eq(true)
         end
 
         it 'returns false when the file links to a different target' do
@@ -621,11 +620,11 @@ module ShelloutTypes
 
       context 'when the file is not a symbolic link' do
         let(:source) do
-          file_path = Tempfile.new('a-file', chroot_dir).path
-          described_class.new(::File.basename(file_path), chroot)
+          source_file = Tempfile.new('a-file', chroot_dir)
+          described_class.new(::File.basename(source_file.path), chroot)
         end
         it 'returns false' do
-          expect(source.linked_to?(target)).to eq(false)
+          expect(source.linked_to?(target.path)).to eq(false)
         end
       end
     end
