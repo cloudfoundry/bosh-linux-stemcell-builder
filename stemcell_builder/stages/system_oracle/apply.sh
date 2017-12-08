@@ -17,3 +17,7 @@ pkg_mgr install grub-pc || true
 
 # Copy in Oracle specific assets
 yes | cp -rf ${dir}/assets/etc/* ${chroot}/etc/
+
+# HACK TODO: REMOVE THIS BEFORE MERGING!!!
+run_in_chroot $chroot "mkdir -p /var/vcap/data"
+run_in_chroot $chroot "chmod 755 /var/vcap/data"
