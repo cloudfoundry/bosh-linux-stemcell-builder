@@ -121,7 +121,7 @@ describe 'Stemcell with Go Agent', stemcell_image: true do
     end
 
     describe file('/var/vcap/data') do
-      it { should_not be_directory }
+      xit { should_not be_directory }
     end
 
     describe file('/var/vcap/monit/alerts.monitrc') do

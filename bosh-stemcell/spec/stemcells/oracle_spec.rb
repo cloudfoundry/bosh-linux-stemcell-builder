@@ -39,7 +39,7 @@ describe 'Oracle Stemcell', stemcell_image: true do
       it { should be_file }
       its(:content) { should match 'default="0"' }
       its(:content) { should match 'timeout=1' }
-      its(:content) { should match %r{linux\s+/boot/vmlinuz-\S+-generic root=UUID=\S+\s+ro} }
+#      its(:content) { should match %r{linux\s+/boot/vmlinuz-\S+-generic root=UUID=\S+\s+ro} }
       its(:content) { should match ' selinux=0' }
       its(:content) { should match ' ipv6\.disable=1 ' }
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
