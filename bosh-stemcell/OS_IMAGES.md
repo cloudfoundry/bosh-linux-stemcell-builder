@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `6VnS_oNe42ReXaKd__nJvQ6ckUCGtWGq`
+  - Ensure rsyslog is started after bind mount is created at /var/log
+  - built from master (0a52c872e6e0bf5f0b225027040270dc63596de6)
+
 * `jouTj71JrZKnTf486DpDRJSdh9SZ1g6x`
   - bump debootstrap version
   - built from master (7f891a225df648456711855c3604b59198c1b04f)
@@ -628,6 +632,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `skD_a_3vQcVRfWaWidnN.HrD6srcyoVl`
+  - Ensure rsyslog is started after bind mount is created at /var/log
+  - built from master (0a52c872e6e0bf5f0b225027040270dc63596de6)
 
 * `X.5SPARRtIEqJUce18JMMR7AEdemYV26`
   - Periodic bump
