@@ -29,10 +29,4 @@ shared_examples_for 'an upstart-based OS image' do
       it { should be_enabled_for_level(5) }
     end
   end
-
-  context 'X Windows must not be enabled unless required (stig: V-38674)' do
-    describe package('xserver-xorg') do
-      it { should_not be_installed }
-    end
-  end
 end

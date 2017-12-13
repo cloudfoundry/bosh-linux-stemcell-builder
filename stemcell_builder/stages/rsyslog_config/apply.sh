@@ -58,10 +58,11 @@ done
 if [ -f $chroot/etc/debian_version ] # Ubuntu
 then
   if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
-    mkdir -p $chroot/etc/systemd/system/rsyslog.service.d
-    cp -f $assets_dir/rsyslog_override.conf $chroot/etc/systemd/system/rsyslog.service.d/rsyslog_override.conf
-    cp -f $assets_dir/systemd_mountchecker.service  $chroot/etc/systemd/system/mountchecker.service
-    run_in_bosh_chroot $chroot "systemctl enable rsyslog.service"
+    mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
+    cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
+    mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
+    cp -f $assets_dir/rsyslog_to_syslog_service.conf $chroot/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf
+    run_in_bosh_chroot $chroot "systemctl disable rsyslog.service"
   elif [ ${DISTRIB_CODENAME} == 'trusty' ]; then
     run_in_bosh_chroot $chroot "
       ln -sf /lib/init/upstart-job /etc/init.d/rsyslog
@@ -76,18 +77,19 @@ then
   fi
 elif [ -f $chroot/etc/redhat-release ] # Centos or RHEL
 then
-  mkdir -p $chroot/etc/systemd/system/rsyslog.service.d
-  cp -f $assets_dir/rsyslog_override.conf $chroot/etc/systemd/system/rsyslog.service.d/rsyslog_override.conf
-  cp -f $assets_dir/systemd_mountchecker.service  $chroot/etc/systemd/system/mountchecker.service
-  run_in_bosh_chroot $chroot "systemctl enable rsyslog.service"
+  mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
+  cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
+  mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
+  cp -f $assets_dir/rsyslog_to_syslog_service.conf $chroot/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf
+  run_in_bosh_chroot $chroot "systemctl disable rsyslog.service"
 elif [ -f $chroot/etc/SuSE-release ] # openSUSE
 then
   sed -i "s@/dev/xconsole@/dev/console@g" $chroot/etc/rsyslog.d/50-default.conf
-  mkdir -p $chroot/etc/systemd/system/rsyslog.service.d
-  cp -f $assets_dir/rsyslog_override.conf $chroot/etc/systemd/system/rsyslog.service.d/rsyslog_override.conf
-  cp -f $assets_dir/systemd_mountchecker.service  $chroot/etc/systemd/system/mountchecker.service
-  sed -i 's@/usr/bin/bash@/bin/bash@' $chroot/etc/systemd/system/mountchecker.service
-  run_in_bosh_chroot $chroot "systemctl enable rsyslog.service"
+  mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
+  cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
+  mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
+  cp -f $assets_dir/rsyslog_to_syslog_service.conf $chroot/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf
+  run_in_bosh_chroot $chroot "systemctl disable rsyslog.service"
 elif [ -f $chroot/etc/photon-release ] # PhotonOS
 then
   sed -i "s@/dev/xconsole@/dev/console@g" $chroot/etc/rsyslog.d/50-default.conf
