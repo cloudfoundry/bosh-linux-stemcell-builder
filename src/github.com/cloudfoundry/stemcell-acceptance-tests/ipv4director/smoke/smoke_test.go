@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -133,5 +134,32 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 		Expect(stdout).To(ContainSubstring("eth0"))
+	})
+
+	It("corrects systemtime via chrony", func() {
+		if os.Getenv("BOSH_os_name") != "ubuntu-xenial" {
+			Skip(`please set BOSH_os_name to "ubuntu-xenial" run this test`)
+		}
+
+		stdout, _, exitStatus, err := bosh.Run(
+			"--column=stdout",
+			"ssh", "default/0", "-r", "-c",
+			`sudo chronyc -a tracking`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+
+		ntpServer := regexp.MustCompile(`Reference ID\s+:(\s\d\.\d\.\d\.\d)`)
+		match := ntpServer.FindAllStringSubmatch(stdout, -1)
+		Expect(match[0][1]).NotTo(Equal("0.0.0.0"))
+
+		systemTime := regexp.MustCompile(`System time\s+:(\s\d\.\d+)`)
+		match = systemTime.FindAllStringSubmatch(stdout, -1)
+
+		drift, err := strconv.ParseFloat(match[0][1], 32)
+		Expect(err).NotTo(HaveOccurred())
+
+		parsedDrift := strconv.FormatFloat(drift, 'f', -1, 32)
+		Expect(parsedDrift).To(BeNumerically("<", 3))
 	})
 })
