@@ -149,17 +149,16 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
-		ntpServer := regexp.MustCompile(`Reference ID\s+:(\s\d\.\d\.\d\.\d)`)
+		ntpServer := regexp.MustCompile(`Reference ID\s+:(\s[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})`)
 		match := ntpServer.FindAllStringSubmatch(stdout, -1)
 		Expect(match[0][1]).NotTo(Equal("0.0.0.0"))
 
-		systemTime := regexp.MustCompile(`System time\s+:(\s\d\.\d+)`)
+		systemTime := regexp.MustCompile(`System time\s+:\s(\d\.\d+)`)
 		match = systemTime.FindAllStringSubmatch(stdout, -1)
 
 		drift, err := strconv.ParseFloat(match[0][1], 32)
 		Expect(err).NotTo(HaveOccurred())
 
-		parsedDrift := strconv.FormatFloat(drift, 'f', -1, 32)
-		Expect(parsedDrift).To(BeNumerically("<", 3))
+		Expect(drift).To(BeNumerically("<", 1))
 	})
 })
