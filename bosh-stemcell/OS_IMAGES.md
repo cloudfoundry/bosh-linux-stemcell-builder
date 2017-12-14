@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `cThEYpZDLxVuLlm32BN29oSQZ7CxrmHC`
+  - chrony will now force sync systemtime at stemcell boot
+  - built from master (4aa2203b0fc11212fcdca53ff7b7adaa75359c52)
+
 * `6VnS_oNe42ReXaKd__nJvQ6ckUCGtWGq`
   - Ensure rsyslog is started after bind mount is created at /var/log
   - built from master (0a52c872e6e0bf5f0b225027040270dc63596de6)
