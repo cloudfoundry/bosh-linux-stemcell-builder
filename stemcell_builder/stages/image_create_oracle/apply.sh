@@ -93,6 +93,7 @@ EOF
 run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true update-grub"
 
 sed -i "s_/dev/loop[0-9]p1_UUID=${uuid}_g" ${image_mount_point}/boot/grub/grub.cfg
+sed -i "s_/dev/mapper/loop[0-9]p1_UUID=${uuid}_g" ${image_mount_point}/boot/grub/grub.cfg
 chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
 chmod 600 ${image_mount_point}/boot/grub/grub.cfg
 

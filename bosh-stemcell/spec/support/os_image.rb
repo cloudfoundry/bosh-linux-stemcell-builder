@@ -1,6 +1,7 @@
 require 'rspec/core/formatters/console_codes'
 require 'shellout_types/chroot'
 require_relative 'shellout_type_assertions'
+require 'tmpdir'
 
 RSpec.configure do |config|
   if ENV['OS_IMAGE']
