@@ -59,7 +59,7 @@ set superusers=vcap
 password_pbkdf2 vcap $pbkdf2_password
 EOF" >> ${image_mount_point}/etc/grub.d/00_header
 
-# Install grub
+# Mount proc
 mount -t proc none ${image_mount_point}/proc
 add_on_exit "umount ${image_mount_point}/proc"
 
@@ -80,6 +80,8 @@ add_on_exit "umount ${image_mount_point}/sys"
 run_in_chroot ${image_mount_point} "update-initramfs -u"
 run_in_chroot ${image_mount_point} "grub-install --skip-fs-probe --no-floppy --target=i386-pc --modules='ext2 part_gpt' ${device}"
 run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
+
+
 cat >${image_mount_point}/etc/default/grub <<EOF
 GRUB_TIMEOUT=1
 # For dual UEFI/GPT compatability
@@ -90,6 +92,8 @@ GRUB_GFXPAYLOAD_LINUX=text
 EOF
 run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true update-grub"
 
+sed -i "s_/dev/loop[0-9]p1_UUID=${uuid}_g" ${image_mount_point}/boot/grub/grub.cfg
+sed -i "s_/dev/mapper/loop[0-9]p1_UUID=${uuid}_g" ${image_mount_point}/boot/grub/grub.cfg
 chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
 chmod 600 ${image_mount_point}/boot/grub/grub.cfg
 
