@@ -4,8 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: oracle/os-image-stemcell-builder
-    branch: oracle_stemcell_feature
+    repository: dmutreja/os-image-stemcell-builder
 
 inputs:
   - name: bosh-linux-stemcell-builder
