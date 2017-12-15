@@ -79,7 +79,7 @@ mount -t sysfs none ${image_mount_point}/sys
 add_on_exit "umount ${image_mount_point}/sys"
 run_in_chroot ${image_mount_point} "update-initramfs -u"
 run_in_chroot ${image_mount_point} "grub-install --skip-fs-probe --no-floppy --target=i386-pc --modules='ext2 part_gpt' ${device}"
-sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' ${image_mount_point}/etc/grub.d/10_linux
+run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
 
 
 cat >${image_mount_point}/etc/default/grub <<EOF
