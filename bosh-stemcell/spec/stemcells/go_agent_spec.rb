@@ -121,7 +121,8 @@ describe 'Stemcell with Go Agent', stemcell_image: true do
     end
 
     describe file('/var/vcap/data') do
-      xit { should_not be_directory }
+      before { skip 'until bosh-agent fix to set correct permissions for /var/vcap/data is merged upstream' }
+      it { should_not be_directory }
     end
 
     describe file('/var/vcap/monit/alerts.monitrc') do
