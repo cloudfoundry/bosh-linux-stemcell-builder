@@ -9,7 +9,7 @@ cat > $agent_settings_file <<JSON
   "Platform": {
     "Linux": {
       "DevicePathResolutionType": "",
-      "SkipDiskSetup": false,
+      "SkipDiskSetup": true,
       "CreatePartitionIfNoEphemeralDisk": true,
       "PartitionerType": "parted"
     }
