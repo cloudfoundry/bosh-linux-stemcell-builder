@@ -17,5 +17,5 @@ for package_name in \
   make \
   patch \
 ; do
-  rpm -ql $package_name | xargs file | grep -Ev ':\s+directory\s+$' | awk -F ':' '{ print $1 }'
+  rpm -ql $package_name | xargs file | grep -Ev ':\s+directory\s*$' | awk -F ':' '{ print $1 }'
 done

@@ -26,13 +26,13 @@ var _ = Describe("Stemcell", func() {
 
 			time.Sleep(62 * time.Second)
 
-			stdOut, stdErr, exitStatus, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/wtmp | cut -f1")
+			stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/wtmp | cut -f1")
 			Expect(err).ToNot(HaveOccurred())
 			fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
 			Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
 			Expect(fileSizeInKiloBytes).To(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
 
-			stdOut, stdErr, exitStatus, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/btmp | cut -f1")
+			stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/btmp | cut -f1")
 			Expect(err).ToNot(HaveOccurred())
 			fileSizeInKiloBytes, err = strconv.Atoi(strings.TrimSpace(stdOut))
 			Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
@@ -42,7 +42,7 @@ var _ = Describe("Stemcell", func() {
 
 	Context("when syslog threshold limit is reached", func() {
 		It("should rotate the logs", func() {
-			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `logger "old syslog content" \
+			_, _, exitStatus, err := bosh.Run("ssh", "default/0", `logger "old syslog content" \
 	&& sudo bash -c "dd if=/dev/urandom count=10000 bs=1024 >> /var/log/syslog" \
 	&& sudo sed -i "s/0,15,30,45/\*/" /etc/cron.d/logrotate`)
 			Expect(err).ToNot(HaveOccurred())
@@ -50,11 +50,11 @@ var _ = Describe("Stemcell", func() {
 
 			time.Sleep(62 * time.Second)
 
-			stdOut, stdErr, exitStatus, err = bosh.Run("ssh", "default/0", `logger "new syslog content"`)
+			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `logger "new syslog content"`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not log using logger on the syslog forwarder! \n stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-			stdOut, stdErr, exitStatus, err = bosh.Run("ssh", "default/0", `sudo cat /var/vcap/data/root_log/syslog`)
+			stdOut, _, exitStatus, err = bosh.Run("ssh", "default/0", `sudo cat /var/vcap/data/root_log/syslog`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 			Expect(stdOut).To(ContainSubstring("new syslog content"))
@@ -76,7 +76,7 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not create nested log path! \n stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-		stdOut, stdErr, exitStatus, err = bosh.Run("scp", "default/0:/tmp/auth.log", authLogAbsPath)
+		_, _, exitStatus, err = bosh.Run("scp", "default/0:/tmp/auth.log", authLogAbsPath)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
@@ -160,5 +160,29 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(drift).To(BeNumerically("<", 1))
+	})
+
+	It("#153391129: removes dev tools and static libraries", func() {
+		opsFilePath, err := filepath.Abs("remove_dev_tools_and_static_libraries.yml")
+		Expect(err).NotTo(HaveOccurred())
+
+		bosh.Deploy("--recreate", "-o", opsFilePath)
+		stdout, _, exitStatus, err := bosh.Run(
+			"--column=stdout",
+			"ssh", "default/0", "-r", "-c",
+			`sudo cat /var/vcap/bosh/etc/dev_tools_file_list | xargs -n1 -I {} /bin/bash -c '[ ! -e % ] || echo found file %'`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+		Expect(strings.TrimSpace(stdout)).To(Equal("-"))
+
+		stdout, _, exitStatus, err = bosh.Run(
+			"--column=stdout",
+			"ssh", "default/0", "-r", "-c",
+			`sudo cat /var/vcap/bosh/etc/static_libraries_list | xargs -n1 -I % /bin/bash -c '[ ! -e % ] || echo found library %'`,
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(exitStatus).To(Equal(0))
+		Expect(strings.TrimSpace(stdout)).To(Equal("-"))
 	})
 })
