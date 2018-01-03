@@ -11,10 +11,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 IMAGE_NAME="$1"
 DOCKER_IMAGE=${DOCKER_IMAGE:-bosh/$IMAGE_NAME}
 
-if [ $IMAGE_NAME == "os-image-stemcell-builder" ] ; then
+if [ "$IMAGE_NAME" == "os-image-stemcell-builder" ] ; then
   USER_OPTION="--user ubuntu "
-elif [ $IMAGE_NAME == "suse-os-image-stemcell-builder" ] ; then
-  USER_OPTION="-e LOCAL_USER_ID=`id -u $USER`"
+elif [ "$IMAGE_NAME" == "suse-os-image-stemcell-builder" ] ; then
+  USER_OPTION="-e LOCAL_USER_ID=$(id -u "$USER")"
 fi
 
-exec docker run --privileged -v $DIR/../..:/opt/bosh --workdir /opt/bosh $USER_OPTION -t -i $DOCKER_IMAGE
+if [ "$(docker-machine status)" == "Running" ]; then
+  DIR=${DIR//\/home\//\/hosthome\/}
+fi
+exec docker run --privileged -v "$DIR/../..:/opt/bosh" --workdir /opt/bosh $USER_OPTION -t -i "$DOCKER_IMAGE"
