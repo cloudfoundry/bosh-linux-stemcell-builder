@@ -29,5 +29,5 @@ else
 fi
 
 for package_name in ${PACKAGES[*]} ; do
-  dpkg-query -L "$package_name" | xargs file | grep -Ev ':\s+directory\s+$' | awk -F ':' '{ print $1 }'
+  dpkg-query -L "$package_name" | xargs file | grep -Ev ':\s+directory\s*$' | awk -F ':' '{ print $1 }'
 done
