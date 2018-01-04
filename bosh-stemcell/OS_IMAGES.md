@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `fYIzkFFX.O8GDLUOd5C9IAOCNHRtcaVu`
+  - Remount / as rprivate to fix issues with garden
+  - built from master (914b37862104cad6b49b3630be4570c90ef6be20)
+
 * `cThEYpZDLxVuLlm32BN29oSQZ7CxrmHC`
   - chrony will now force sync systemtime at stemcell boot
   - built from master (4aa2203b0fc11212fcdca53ff7b7adaa75359c52)
