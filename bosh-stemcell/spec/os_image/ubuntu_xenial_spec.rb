@@ -18,6 +18,10 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     it { should_not be_installed }
   end
 
+  describe service('remount-rootdir-as-rprivate') do
+    it { should be_enabled }
+  end
+
   context 'installed by system_kernel' do
     describe package('linux-headers-4.10.0-38-generic') do
       it { should be_installed }
