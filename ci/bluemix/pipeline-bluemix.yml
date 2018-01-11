@@ -331,8 +331,6 @@ jobs:
             - publish-stemcells
         - get: bosh-linux-stemcell-builder
           resource: bosh-linux-stemcell-builder-master
-          passed:
-            - bats-ubuntu
         - get: stemcell
           resource: light-bluemix-stemcell-prod
       - task: upload-filew3
