@@ -162,6 +162,8 @@ jobs:
           CANDIDATE_BUCKET_NAME: {{candidate-bluemix-stemcell-bucket}}
       - put: light-bluemix-stemcell-prod
         params: {file: light-bluemix-stemcell-prod/*.tgz}
+      - put: bosh-linux-stemcell-builder
+        params: {tag: version-tag/tag}
 
   - name: replace-and-post-stemcells
     serial: true
