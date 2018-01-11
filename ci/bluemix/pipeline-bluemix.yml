@@ -9,6 +9,7 @@ groups:
       - import-softlayer-stemcell
       - create-softlayer-light-stemcell
       - publish-stemcells
+      - upload-stemcell-filew3
       - replace-and-post-stemcells
       - test-stemcells
       - build-softlayer-xen-ubuntu-trusty
@@ -320,6 +321,28 @@ jobs:
       ensure:
         do:
         - {put: environment, params: {release: environment}}
+
+  - name: upload-stemcell-filew3
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          passed:
+            - publish-stemcells
+        - get: bosh-linux-stemcell-builder
+          resource: bosh-linux-stemcell-builder-master
+          passed:
+            - bats-ubuntu
+        - get: stemcell
+          resource: light-bluemix-stemcell-prod
+      - task: upload-filew3
+        file: bosh-linux-stemcell-builder/ci/bluemix/tasks/upload-filew3.yml
+        params:
+          AWS_ACCESS_KEY_ID: {{stemcell-sl-os-access-key}}
+          AWS_SECRET_ACCESS_KEY: {{stemcell-sl-os-secret-key}}
+          AWS_ENDPOINT: {{stemcell-sl-os-endpoint}}
+          PUBLISHED_BUCKET_NAME: {{custom-bluemix-stemcell-bucket}}
+          FILE_W3_STEMCELL_PEM: {{light-bosh-stemcell_filew3_key}}
 
 resources:
   - name: bosh-linux-stemcell-builder-master
