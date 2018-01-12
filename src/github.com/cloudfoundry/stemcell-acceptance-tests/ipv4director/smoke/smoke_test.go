@@ -191,7 +191,7 @@ var _ = Describe("Stemcell", func() {
 			_, _, exitStatus, err := bosh.Run(
 				"--column=stdout",
 				"ssh", "default/0", "-r", "-c",
-				`sudo cd /var/log; sudo ls audit auth.log btmp daemon.log debug kern.log lastlog messages syslog sysstat user.log wtmp`,
+				`sudo ls /var/log/{audit,auth.log,btmp,daemon.log,debug,kern.log,lastlog,messages,syslog,sysstat,user.log,wtmp}`,
 			)
 
 			Expect(err).ToNot(HaveOccurred())
@@ -207,7 +207,7 @@ var _ = Describe("Stemcell", func() {
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
-			Expect(stdout).To(MatchRegexp(`\/tmp\s+\/dev\/[a-z0-9]+\[\/root_log\]`))
+			Expect(stdout).To(MatchRegexp(`\/var\/log\s+\/dev\/[a-z0-9]+\[\/root_log\]`))
 		})
 
 		It("/tmp is bind mounted to a /dev/disk[/root_tmp]", func() {
