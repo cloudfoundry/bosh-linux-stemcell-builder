@@ -185,4 +185,65 @@ var _ = Describe("Stemcell", func() {
 		Expect(exitStatus).To(Equal(0))
 		Expect(strings.TrimSpace(stdout)).To(Equal("-"))
 	})
-})
+
+	Context("#153887510: basic bind mount locations are verified", func() {
+		It("contains all the expected files in /var/log", func() {
+			_, _, exitStatus, err := bosh.Run(
+				"--column=stdout",
+				"ssh", "default/0", "-r", "-c",
+				`sudo cd /var/log; sudo ls audit auth.log btmp daemon.log debug kern.log lastlog messages syslog sysstat user.log wtmp`,
+			)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+		})
+
+		It("/var/log is bind mounted to a /dev/disk[/root_log]", func() {
+			stdout, _, exitStatus, err := bosh.Run(
+				"--column=stdout",
+				"ssh", "default/0", "-r", "-c",
+				`sudo findmnt -n -T /var/log | awk '{print $1 " " $2}'`,
+			)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+			Expect(stdout).To(MatchRegexp(`\/tmp\s+\/dev\/[a-z0-9]+\[\/root_log\]`))
+		})
+
+		It("/tmp is bind mounted to a /dev/disk[/root_tmp]", func() {
+			stdout, _, exitStatus, err := bosh.Run(
+				"--column=stdout",
+				"ssh", "default/0", "-r", "-c",
+				`sudo findmnt -n -T /tmp | awk '{print $1 " " $2}'`,
+			)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+			Expect(stdout).To(MatchRegexp(`\/tmp\s+\/dev\/[a-z0-9]+\[\/root_tmp\]`))
+		})
+
+		It("/var/tmp is bind mounted to a /dev/disk[/root_tmp]", func() {
+			stdout, _, exitStatus, err := bosh.Run(
+				"--column=stdout",
+				"ssh", "default/0", "-r", "-c",
+				`sudo findmnt -n -T /var/tmp | awk '{print $1 " " $2}'`,
+			)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+			Expect(stdout).To(MatchRegexp(`\/tmp\s+\/dev\/[a-z0-9]+\[\/root_tmp\]`))
+		})
+
+		It("can write a file to the bind mount and appear in the device source", func() {
+			_, _, exitStatus, err := bosh.Run(
+				"--column=stdout",
+				"ssh", "default/0", "-r", "-c",
+				`sudo touch /var/{log/1,vcap/data/root_log/2}; sudo ls /var/{log,vcap/data/root_log}/{1,2}`,
+			)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+		})
+	})
+
+	})
