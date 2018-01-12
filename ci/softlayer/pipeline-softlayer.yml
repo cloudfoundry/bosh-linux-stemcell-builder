@@ -125,7 +125,6 @@ jobs:
           passed:
             - create-softlayer-light-stemcell
         - get: bosh-linux-stemcell-builder-master
-        - get: bosh-linux-stemcell-builder-test
         - get: bosh-linux-stemcell-builder
         - get: bosh-deployment
         - get: bosh-cli
@@ -193,12 +192,22 @@ jobs:
         - get: version
           passed:
             - publish-stemcells
+        - get: stemcell
+          resource: light-softlayer-stemcell-prod
+          passed:
+            - publish-stemcells
         - get: bosh-linux-stemcell-builder-master
+        - get: stemcells-index
       - task: post-stemcell
-        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/post-stemcell-checksum.yml
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/post-stemcell.yml
         params:
-          BOSHIO_TOKEN:          {{boshio_token}}
           PUBLISHED_BUCKET_NAME: {{published-stemcell-bucket}}
+          OS_NAME:               {{os_name}}
+          OS_VERSION:            {{os_version}}
+      - put: stemcells-index
+        params:
+          repository: stemcells-index
+
   #
   # SoftLayer
   #
@@ -445,12 +454,6 @@ resources:
       uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
       branch: softlayer
 
-  - name: bosh-linux-stemcell-builder-test
-    type: git
-    source:
-      uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
-      branch: bluemix-3421.x
-
   - name: version
     type: semver
     source:
@@ -589,6 +592,13 @@ resources:
       secret_access_key: {{stemcell-aws-secret-key}}
 
   - name: os-conf-release
-      type: bosh-io-release
-      source:
-        repository: cloudfoundry/os-conf-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/os-conf-release
+
+  - name: stemcells-index
+    type: git
+    source:
+      uri: git@github.com:bosh-io/stemcells-softlayer-index.git
+      branch: master
+      private_key: {{boshio_private_key}}

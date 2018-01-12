@@ -6,7 +6,7 @@ image_resource:
 
 inputs:
 - name: bosh-linux-stemcell-builder-master
-- name: bosh-linux-stemcell-builder-test
+- name: bosh-linux-stemcell-builder
 - name: bosh-cli
 - name: stemcell
 - name: syslog-release
