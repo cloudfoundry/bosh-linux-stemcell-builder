@@ -3,7 +3,7 @@ set -e
 
 source /etc/profile.d/chruby.sh
 
-chruby 2.2.4
+chruby 2.4.2
 
 : ${INFRASTRUCTURE:?}
 : ${SL_VM_PREFIX:?}
