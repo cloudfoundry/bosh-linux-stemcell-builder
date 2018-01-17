@@ -1,9 +1,10 @@
 #!/bin/sh
 
+BOSH=/var/vcap/bosh
+
 exec > $BOSH/log/sync-time.out
 exec 2>&1
 
-BOSH=/var/vcap/bosh
 NTP_SERVER_FILE=$BOSH/etc/ntpserver
 if [ -f $NTP_SERVER_FILE ]; then
 	NTP_SERVER=`cat $NTP_SERVER_FILE`
