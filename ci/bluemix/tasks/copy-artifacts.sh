@@ -11,6 +11,6 @@ fileUrl=https://s3.amazonaws.com/${CANDIDATE_BUCKET_NAME}/light-bosh-stemcell-${
 checksum=`curl -L ${fileUrl} | sha1sum | cut -d " " -f 1`
 echo -e "Sha1 hashcode -> $checksum"
 
-echo "stable-${VERSION}" > version-tag/tag
+echo "bmx-${VERSION}" > version-tag/tag
 
 echo "Done"

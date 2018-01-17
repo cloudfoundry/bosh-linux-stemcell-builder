@@ -171,6 +171,7 @@ jobs:
             - test-stemcells
             - verify-cf
         - get: bosh-linux-stemcell-builder-master
+        - get: bosh-linux-stemcell-builder
         - get: stemcell
           trigger: true
           resource: light-softlayer-stemcell
@@ -184,6 +185,8 @@ jobs:
           CANDIDATE_BUCKET_NAME: {{candidate-stemcell-bucket}}
       - put: light-softlayer-stemcell-prod
         params: {file: light-softlayer-stemcell-prod/*.tgz}
+      - put: bosh-linux-stemcell-builder
+        params: {repository: bosh-linux-stemcell-builder, tag: version-tag/tag, only_tag: true}
 
   - name: post-stemcells
     serial: true
@@ -451,8 +454,9 @@ resources:
   - name: bosh-linux-stemcell-builder
     type: git
     source:
-      uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
+      uri: git@github.com:bluebosh/bosh-linux-stemcell-builder
       branch: softlayer
+      private_key: {{github_private_key}}
 
   - name: version
     type: semver

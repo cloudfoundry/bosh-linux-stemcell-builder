@@ -149,6 +149,7 @@ jobs:
           passed:
             - bats-ubuntu
         - get: bosh-linux-stemcell-builder-master
+        - get: bosh-linux-stemcell-builder
         - get: stemcell
           trigger: true
           resource: light-softlayer-stemcell
@@ -163,7 +164,7 @@ jobs:
       - put: light-bluemix-stemcell-prod
         params: {file: light-bluemix-stemcell-prod/*.tgz}
       - put: bosh-linux-stemcell-builder
-        params: {tag: version-tag/tag}
+        params: {repository: bosh-linux-stemcell-builder, tag: version-tag/tag, only_tag: true}
 
   - name: replace-and-post-stemcells
     serial: true
@@ -354,8 +355,9 @@ resources:
   - name: bosh-linux-stemcell-builder
     type: git
     source:
-      uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
+      uri: git@github.com:bluebosh/bosh-linux-stemcell-builder
       branch: bluemix-3421.x
+      private_key: {{github_private_key}}
 
   - name: version
     type: semver
