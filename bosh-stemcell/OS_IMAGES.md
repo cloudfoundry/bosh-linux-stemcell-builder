@@ -57,6 +57,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `U8wCPwxQsoiG1.0izDMVrRObun1n_J.W`
+  - Fix sync-time script
+  - built from master (de77af6929dc48a07d7c8e3db6d7b92b78285730)
+
 * `lz1PrZ22wbWzWPz9mmAx1xJFN8HAsOAU`
   - Periodic bump
   - built from master (7f891a225df648456711855c3604b59198c1b04f)
