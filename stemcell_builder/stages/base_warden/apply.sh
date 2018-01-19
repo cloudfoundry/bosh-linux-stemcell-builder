@@ -75,6 +75,10 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
         {
           "Type": "File",
           "SettingsPath": "/var/vcap/bosh/warden-cpi-agent-env.json"
+        },
+        {
+          "Type": "File",
+          "SettingsPath": "/var/vcap/bosh/settings-source-file/config.json"
         }
       ]
     }
