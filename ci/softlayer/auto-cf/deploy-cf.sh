@@ -26,7 +26,7 @@ bosh-cli us https://s3.amazonaws.com/bosh-softlayer-stemcells-candidate-containe
 cat >specify-stemcell-version.yml << EOF
 - path: /stemcells/alias=default/version
   type: replace
-  value: ${SOFTLAYER_STEMCELL_VERSION}
+  value: "${SOFTLAYER_STEMCELL_VERSION}"
 EOF
 
 echo -e "\n\033[32m[INFO] Disabling uaa https.\033[0m"
