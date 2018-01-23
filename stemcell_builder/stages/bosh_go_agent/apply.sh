@@ -84,9 +84,6 @@ chown root:root /var/vcap/monit/alerts.monitrc
 # File will be overwritten in whole by infrastructures.
 echo '{}' > $chroot/var/vcap/bosh/agent.json
 
-# We need to capture ssh events
-cp $assets_dir/rsyslog.d/10-auth_agent_forwarder.conf $chroot/etc/rsyslog.d/10-auth_agent_forwarder.conf
-
 # this directory is utilized by the agent/init/create-env
 # https://github.com/cloudfoundry/bosh-agent/blob/1a6b1e11acd941e65c4f4155c22ff9a8f76098f9/micro/https_handler.go#L119
 mkdir -p $chroot/$bosh_dir/../micro_bosh/data/cache
