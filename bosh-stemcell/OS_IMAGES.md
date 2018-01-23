@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `4Jg7s6pl_ixlU7sBsv55yHq.xJpaI78b`
+  - USN-3540-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from 3468.x (19443138d8b4c5ff21a69426a70c4a4721b1c568)
+
 * `Am1VapkqwI6fJokQEf0WP5VQpyziviTO`
   - USN-3534-1: GNU C Library vulnerabilities
   - built from 3468.x (7c88dcf24b5bffcb11531f9ccd31d94c1c043463)
@@ -604,61 +608,13 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
   (e448b0e8b0967288488c929fbbf953b22a046d1d)
 
 
-## CentOS 6.6
-
-CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
-
-* `p8M5lmQFEzXDA3MKeiDMsdLq6jVkJOQt`
-  - changes for stig
-
-* `gVPTz59wj9kHj1nBzzymxbhm1yvPe.Q.`
-  - remove mesg from profile
-
-* `u1vhDkA5HGFmGJfb9Qg4tBQkE_AMlTOh`
-  - load bashrc in non-login shell
-
-* `Q43Dju2RvjPkbWakc33SAGCwrXAPGZiV`
-  - update kernel and packages
-
-* `2wi4CWKxfqSLjKQp0T4IKcAPaNFNhCFG`
-  - update kernel
-
-* `kkUYP.4sM_hdsn3Sfcr6ksahFpPgb2D8`
-  - Add hmac-sha1 to sshd_config (required by go ssh lib)
-
-* `3Yu.JSS0rB0oV6Gt3QnFfxaxvRju71bQ`
-  - lock down sshd_config permissions
-  - disable weak ssh ciphers
-  - disable weak ssh MACs
-
-* `lUG9hrPUDugWx4Sv5vuKiN1X2Z1.lN.8`
-  - Adds kernel flags to enable console output in openstack environments
-
-* `.EqtRtHJyHTr3hg4nFPq5QmJ4UxQ2WU.`
-  - upgrade linux kernel to 3.13.0-45
-
-* `ISA4tKjaoq4koVay5rAzNZlzX7X0KafH`
-  - patch GNU libc to resolve CVE-2015-0235, "GHOST"
-
-* `aoUtngdallpd2f6HhMxCveFvk6t6B2Ru`
-  - upgrade openssl to 1.0.1e-30.el6_6.5
-
-* `Hb884_xVvhoIhdTEmMtaTHKC.s7b9AmN`
-  - switch logrotate to rotate based on size
-
-* `xbBfE2GA7AgmCGA6MfNfhHX67vkJlIze`
-  - start monit during agent bootstrap
-
-* `PB2C5YnPG.zZ5MgjBR96Y40UDpqVQb_D`
-  - disable reverse DNS resolution for sshd
-
-* `6mBEQ5Gt5O6NJIFZxlyrf_05i.6s0OWF`
-  - CentOS 6.6
-
-
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `WxcUFGbRv6Ns2HrQwhCD42RsZ54C4l3F`
+  - Periodic bump
+  - built from 3468.x (19443138d8b4c5ff21a69426a70c4a4721b1c568)
 
 * `HU8gYfF19xehkvzcKBIzcbZRlIMW543p`
   - Periodic bump
