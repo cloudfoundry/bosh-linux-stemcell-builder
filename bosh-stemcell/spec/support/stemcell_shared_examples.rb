@@ -92,7 +92,9 @@ shared_examples_for 'All Stemcells' do
     end
   end
 
-  context 'rsyslog conf directory only contains the builder-specified config files' do
+  context 'rsyslog conf directory only contains the builder-specified config files', {
+    exclude_on_google: true
+  } do
     describe command('ls -A /etc/rsyslog.d') do
       its (:stdout) { should eq(%q(50-default.conf
 avoid-startup-deadlock.conf
