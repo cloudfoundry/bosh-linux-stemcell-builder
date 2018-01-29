@@ -17,7 +17,7 @@ check_param OS_NAME
 check_param OS_VERSION
 
 export TASK_DIR=$PWD
-export CANDIDATE_BUILD_NUMBER=$( cat version/number | sed 's/\.0$//;s/\.0$//' )
+build_number=$( cat version/number | sed 's/\.0$//;s/\.0$//' )
 
 git clone stemcells-index stemcells-index-output
 
@@ -66,7 +66,7 @@ sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
   cd bosh-linux-stemcell-builder
 
   bundle install --local
-  bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,bosh-os-images,bosh-$OS_NAME-$OS_VERSION-os-image.tgz]
+  bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,bosh-os-images,bosh-$OS_NAME-$OS_VERSION-os-image.tgz,$build_number]
   rm -f ./tmp/base_os_image.tgz
 SUDO
 
@@ -74,8 +74,8 @@ SUDO
 # Output and checksum the stemcell artifacts
 #
 
-stemcell_name="bosh-stemcell-$CANDIDATE_BUILD_NUMBER-$IAAS-$HYPERVISOR-$OS_NAME-$OS_VERSION-go_agent"
-meta4_path=$TASK_DIR/stemcells-index-output/dev/$OS_NAME-$OS_VERSION/$CANDIDATE_BUILD_NUMBER/$IAAS-$HYPERVISOR-go_agent.meta4
+stemcell_name="bosh-stemcell-$build_number-$IAAS-$HYPERVISOR-$OS_NAME-$OS_VERSION-go_agent"
+meta4_path=$TASK_DIR/stemcells-index-output/dev/$OS_NAME-$OS_VERSION/$build_number/$IAAS-$HYPERVISOR-go_agent.meta4
 
 mkdir -p "$( dirname "$meta4_path" )"
 meta4 create --metalink="$meta4_path"
@@ -103,4 +103,4 @@ cd stemcells-index-output
 git add -A
 git config --global user.email "ci@localhost"
 git config --global user.name "CI Bot"
-git commit -m "dev: $OS_NAME-$OS_VERSION/$CANDIDATE_BUILD_NUMBER ($IAAS-$HYPERVISOR)"
+git commit -m "dev: $OS_NAME-$OS_VERSION/$build_number ($IAAS-$HYPERVISOR)"

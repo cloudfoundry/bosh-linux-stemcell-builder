@@ -16,7 +16,7 @@ namespace :stemcell do
       environment = Bosh::Stemcell::BuildEnvironment.new(
         ENV.to_hash,
         definition,
-        ENV['CANDIDATE_BUILD_NUMBER'] || '0000',
+        '',
         args.os_image_path,
       )
       collection = Bosh::Stemcell::StageCollection.new(definition)
@@ -84,7 +84,7 @@ namespace :stemcell do
   end
 
   desc 'Build a stemcell with a remote pre-built base OS image'
-  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_s3_bucket_name, :os_image_key] do |_, args|
+  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_s3_bucket_name, :os_image_key, :build_number] do |_, args|
     begin
       require 'bosh/dev/download_adapter'
       require 'bosh/dev/stemcell_dependency_fetcher'
@@ -101,7 +101,9 @@ namespace :stemcell do
         output_path: os_image_path,
       )
 
-      Rake::Task['stemcell:build_with_local_os_image'].invoke(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, os_image_path)
+      args.with_defaults(build_number: '0000')
+
+      Rake::Task['stemcell:build_with_local_os_image'].invoke(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, os_image_path, build_number)
     rescue RuntimeError => e
       print_help
       raise e
@@ -118,7 +120,7 @@ namespace :stemcell do
       require 'bosh/stemcell/stemcell_packager'
       require 'bosh/stemcell/stemcell_builder'
 
-      args.with_defaults(build_number: (ENV['CANDIDATE_BUILD_NUMBER'] || '0000'))
+      args.with_defaults(build_number: '0000')
 
       definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version)
       environment = Bosh::Stemcell::BuildEnvironment.new(
