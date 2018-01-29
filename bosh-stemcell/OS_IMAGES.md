@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `h1O7ipVJZqjqYf1bIS2NFl194zIev88I`
+  - Add umask changes
+  - built from master (07a11844704dd14d0bd248f1c3ae306e72249f51)
+
 * `fYIzkFFX.O8GDLUOd5C9IAOCNHRtcaVu`
   - Remount / as rprivate to fix issues with garden
   - built from master (914b37862104cad6b49b3630be4570c90ef6be20)
@@ -56,6 +60,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `UziQ_fCYp2tG4nKVZUKj_0O8MRGUQAFA`
+  - Add umask changes
+  - built from master (07a11844704dd14d0bd248f1c3ae306e72249f51)
 
 * `U8wCPwxQsoiG1.0izDMVrRObun1n_J.W`
   - Fix sync-time script
@@ -644,6 +652,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `nGbRvopAX.1uoP3gddZ4dUl7d3Y_WeF6`
+  - Add umask changes
+  - built from master (07a11844704dd14d0bd248f1c3ae306e72249f51)
 
 * `skD_a_3vQcVRfWaWidnN.HrD6srcyoVl`
   - Ensure rsyslog is started after bind mount is created at /var/log
