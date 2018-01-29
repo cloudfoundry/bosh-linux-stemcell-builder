@@ -422,11 +422,11 @@ shared_examples_for 'every OS image' do
     end
 
     it('should restrict permission on new user home directories') do
-      should contain /^UMASK[[:space:]]077/
+      expect(subject.content).to match /^UMASK[[:space:]]077/
     end
 
     it('should not enable user group umask permissions') do
-      should contain /^USERGROUPS_ENAB[[:space:]]no/
+      expect(subject.content).to match /^USERGROUPS_ENAB[[:space:]]no/
     end
 
     it('should use an approved hashing algorithm to save the password (stig: V-38576)') do
