@@ -233,7 +233,21 @@ var _ = Describe("Stemcell", func() {
 			_, _, exitStatus, err := bosh.Run(
 				"--column=stdout",
 				"ssh", "default/0", "-r", "-c",
-				`sudo ls /var/log/{audit,auth.log,btmp,daemon.log,debug,kern.log,lastlog,messages,syslog,sysstat,user.log,wtmp}`,
+				`sudo timeout 30s bash -c 'while [[ ! ( \
+					-e /var/log/audit && \
+					-e /var/log/auth.log && \
+					-e /var/log/btmp && \
+					-e /var/log/daemon.log && \
+					-e /var/log/debug && \
+					-e /var/log/kern.log && \
+					-e /var/log/lastlog && \
+					-e /var/log/messages && \
+					-e /var/log/syslog && \
+					-e /var/log/sysstat && \
+					-e /var/log/user.log && \
+					-e /var/log/wtmp \
+				) ]]; do sleep 1; done
+				ls /var/log/{audit,auth.log,btmp,daemon.log,debug,kern.log,lastlog,messages,syslog,sysstat,user.log,wtmp}`,
 			)
 
 			Expect(err).ToNot(HaveOccurred())
