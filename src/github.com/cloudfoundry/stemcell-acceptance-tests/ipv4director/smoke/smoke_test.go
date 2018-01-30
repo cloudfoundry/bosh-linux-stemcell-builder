@@ -246,8 +246,8 @@ var _ = Describe("Stemcell", func() {
 					-e /var/log/sysstat && \
 					-e /var/log/user.log && \
 					-e /var/log/wtmp \
-				) ]]; do sleep 1; done
-				ls /var/log/{audit,auth.log,btmp,daemon.log,debug,kern.log,lastlog,messages,syslog,sysstat,user.log,wtmp}`,
+				) ]]; do sleep 1; done \
+				ls /var/log/{audit,auth.log,btmp,daemon.log,debug,kern.log,lastlog,messages,syslog,sysstat,user.log,wtmp}'`,
 			)
 
 			Expect(err).ToNot(HaveOccurred())
