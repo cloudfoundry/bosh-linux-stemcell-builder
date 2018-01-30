@@ -103,7 +103,7 @@ namespace :stemcell do
 
       args.with_defaults(build_number: '0000')
 
-      Rake::Task['stemcell:build_with_local_os_image'].invoke(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, os_image_path, build_number)
+      Rake::Task['stemcell:build_with_local_os_image'].invoke(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, os_image_path, args.build_number)
     rescue RuntimeError => e
       print_help
       raise e
