@@ -11,4 +11,4 @@ inputs:
   - name: bosh-linux-stemcell-builder
 
 run:
-  path: bosh-linux-stemcell-builder/ci/bats/tasks/destroy-director.sh
+  path: bosh-linux-stemcell-builder-master/ci/bats/tasks/destroy-director.sh
