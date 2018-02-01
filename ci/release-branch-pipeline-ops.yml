@@ -68,11 +68,27 @@
             rebase: true
 
 - type: replace
+  path: /jobs/name=build-stemcell/plan/get=version/params/bump
+  value: minor
+
+- type: replace
   path: /resources/name=bosh-linux-stemcell-builder-push?
   value:
     name: bosh-linux-stemcell-builder-push
     type: git
     source:
       uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
-      branch: ((stemcell-branch))
+      branch: ((release_branch))
       private_key: ((bosh_src_key))
+
+- type: replace
+  path: /resources/name=bosh-linux-stemcell-builder/source/branch
+  value: ((release_branch))
+
+- type: replace
+  path: /resources/name=version/source/initial_version?
+  value: ((initial_version))
+
+- type: replace
+  path: /resources/name=version/source/key
+  value: bosh-stemcell/version-((release_branch))
