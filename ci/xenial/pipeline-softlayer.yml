@@ -1,0 +1,349 @@
+---
+groups:
+  - name: all
+    jobs:
+      - convert-softlayer-stemcell
+      - import-softlayer-stemcell
+      - create-softlayer-light-stemcell
+      - test-stemcells
+      - build-softlayer-xen-ubuntu-xenial
+      - bats-ubuntu
+
+
+shared:
+  - &deploy-director
+    task: deploy-director
+    file: bosh-linux-stemcell-builder-master/ci/softlayer/bats/tasks/deploy-director-softlayer.yml
+    params:
+      BAT_INFRASTRUCTURE:                   softlayer
+      BOSH_CLIENT:                          {{stemcell-test-director-username}}
+      BOSH_CLIENT_SECRET:                   {{stemcell-test-director-password}}
+      BOSH_SL_USERNAME:                          {{softlayer-username}}
+      BOSH_SL_API_KEY:                           {{softlayer-api-key}}
+      BOSH_SL_DATACENTER:                        {{softlayer-datacenter}}
+      BOSH_SL_VLAN_PUBLIC:                       {{softlayer-vlan-public}}
+      BOSH_SL_VLAN_PRIVATE:                      {{softlayer-vlan-private}}
+      BOSH_SL_VM_DOMAIN:                         {{softlayer-vm-domain}}
+      BOSH_SL_VM_NAME_PREFIX:                    {{softlayer-director-name-prefix}}
+
+  - &prepare-bats-config
+    task: prepare-bats
+    file: bosh-linux-stemcell-builder-master/ci/softlayer/bats/iaas/softlayer/prepare-bats-config.yml
+    params: &prepare-bats-params
+      BAT_VCAP_PASSWORD:      {{bat-vcap-password}}
+      SL_DATACENTER:          {{softlayer-datacenter}}
+      SL_VLAN_PRIVATE:        {{softlayer-vlan-private}}
+      SL_VLAN_PUBLIC:         {{softlayer-vlan-public}}
+      SL_VM_DOMAIN:           {{softlayer-vm-domain}}
+      SL_VM_NAME_PREFIX:      {{softlayer-vm-name-prefix}}
+      STEMCELL_NAME:          bosh-softlayer-xen-ubuntu-xenial-go_agent
+
+  - &run-bats
+    task: run-bats
+    file: bats/ci/tasks/run-bats.yml
+
+  - &teardown
+    task: teardown
+    file: bosh-linux-stemcell-builder-master/ci/softlayer/bats/tasks/destroy-director.yml
+
+jobs:
+
+  #
+  # SoftLayer
+  #
+
+  - name: build-softlayer-xen-ubuntu-xenial
+    plan:
+      - aggregate:
+          - get: version
+            trigger: true
+          - get: bosh-linux-stemcell-builder
+          - get: bosh-linux-stemcell-builder-master
+      - task: create-stemcell
+        file: bosh-linux-stemcell-builder-master/ci/xenial/tasks/build-softlayer.yml
+        privileged: true
+        params:
+          IAAS:         softlayer
+          HYPERVISOR:   xen
+          OS_NAME:      ubuntu
+          OS_VERSION:   xenial
+      - aggregate:
+        - put: softlayer-xen-ubuntu-xenial
+          params:
+            file: stemcell/*.tgz
+
+  - name: convert-softlayer-stemcell
+    plan:
+      - aggregate:
+          - get: version
+            passed: [build-softlayer-xen-ubuntu-xenial]
+          - get: bosh-softlayer-tools-master
+          - get: softlayer-xen-ubuntu-xenial
+            trigger: true
+            passed: [build-softlayer-xen-ubuntu-xenial]
+      - task: convert-stemcell
+        file: bosh-softlayer-tools-master/ci/softlayer/tasks/convert-stemcell.yml
+        params:
+          IAAS:         softlayer
+          HYPERVISOR:   xen
+          OS_NAME:      ubuntu
+          OS_VERSION:   xenial
+          SWIFT_USERNAME:  {{swift-username}}
+          SWIFT_API_KEY: {{softlayer-api-key}}
+          SWIFT_CLUSTER:  {{swift-cluster}}
+          SWIFT_CONTAINER: {{swift-container}}
+        input_mapping:
+          stemcell: softlayer-xen-ubuntu-xenial
+
+  - name: import-softlayer-stemcell
+    plan:
+      - get: stemcell-cmds
+      - get: bosh-softlayer-tools-master
+      - get: bosh-softlayer-tools
+      - get: version
+        trigger: true
+        passed: [convert-softlayer-stemcell]
+      - task: import-stemcell-image
+        file: bosh-softlayer-tools-master/ci/softlayer/tasks/import-stemcell.yml
+        params:
+          IAAS: softlayer
+          HYPERVISOR: xen
+          OS_NAME: ubuntu
+          OS_VERSION: xenial
+          SL_USERNAME: {{softlayer-username}}
+          SL_API_KEY: {{softlayer-api-key}}
+          SWIFT_USERNAME: {{swift-username}}
+          SWIFT_API_KEY: {{softlayer-api-key}}
+          SWIFT_CLUSTER: {{swift-cluster}}
+          SWIFT_CONTAINER: {{swift-container}}
+      - put: stemcell-info
+        params: {file: stemcell-image/stemcell-info.json}
+
+  - name: create-softlayer-light-stemcell
+    plan:
+      - aggregate:
+        - get: stemcell-cmds
+        - get: bosh-softlayer-tools-master
+        - get: bosh-softlayer-tools
+        - get: softlayer-xen-ubuntu-xenial
+        - get: stemcell-info
+          trigger: true
+          passed: [import-softlayer-stemcell]
+        - get: version
+          trigger: true
+          passed: [import-softlayer-stemcell]
+      - task: create-light-stemcell
+        file: bosh-softlayer-tools-master/ci/softlayer/tasks/create-light-stemcell.yml
+        params:
+          HYPERVISOR: xen
+          IAAS: softlayer
+          OS_NAME: ubuntu
+          OS_VERSION: xenial
+          SL_USERNAME: {{softlayer-username}}
+          SL_API_KEY: {{softlayer-api-key}}
+        input_mapping:
+          stemcell: softlayer-xen-ubuntu-xenial
+      - put: light-softlayer-stemcell
+        params: {file: light-stemcell/*.tgz}
+
+  - name: bats-ubuntu
+    serial: true
+    plan:
+    - do:
+      - aggregate:
+        - get: bosh-release
+        - get: cpi-release
+        - get: stemcell
+          trigger: true
+          resource: light-softlayer-stemcell
+          passed:
+            - create-softlayer-light-stemcell
+        - get: bosh-cli
+        - get: bats
+        - get: bosh-deployment
+        - get: bosh-linux-stemcell-builder
+        - get: bosh-linux-stemcell-builder-master
+        - get: version
+          passed:
+            - create-softlayer-light-stemcell
+
+      - {put: environment, params: {acquire: true}}
+
+      - do:
+        - <<: *deploy-director
+
+        - <<: *prepare-bats-config
+          params:
+            <<: *prepare-bats-params
+
+        - <<: *run-bats
+        ensure:
+          do:
+          - <<: *teardown
+      ensure:
+        do:
+        - {put: environment, params: {release: environment}}
+
+  - name: test-stemcells
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          trigger: true
+          passed:
+            - create-softlayer-light-stemcell
+        - get: bosh-linux-stemcell-builder-master
+        - get: bosh-linux-stemcell-builder
+        - get: bosh-deployment
+        - get: bosh-cli
+        - get: syslog-release
+        - get: os-conf-release
+        - get: light-softlayer-stemcell
+          passed: [create-softlayer-light-stemcell]
+        - put: environment
+          params:
+            acquire: true
+      - do:
+        - task: deploy-director
+          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/deploy-director-softlayer.yml
+          input_mapping:
+            stemcell: light-softlayer-stemcell
+          params:
+            SL_API_KEY: {{softlayer-api-key}}
+            SL_USERNAME:  {{softlayer-username}}
+            SL_VLAN_PRIVATE: {{softlayer-vlan-private}}
+            SL_VLAN_PUBLIC: {{softlayer-vlan-public}}
+            SL_VM_DOMAIN: softlayer.com
+            SL_VM_NAME_PREFIX: {{softlayer-director-name-prefix}}
+            SL_VM_NAME_PREFIX_2: {{softlayer-vm-name-prefix}}
+            SL_PUBLIC_SSH_KEY: {{softlayer-public-ssh-key}}
+        - task: test-stemcell
+          file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/test-stemcell.yml
+          input_mapping:
+            stemcell: light-softlayer-stemcell
+          params:
+            BOSH_os_name: ubuntu-xenial
+            package: ipv4director
+        ensure:
+          do:
+          - task: teardown
+            file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/teardown.yml
+          - put: environment
+            params:
+              release: environment
+
+resources:
+  - name: bosh-linux-stemcell-builder-master
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
+      branch: master
+
+  - name: bosh-linux-stemcell-builder
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
+      branch: sl-xenial
+      private_key: {{github_private_key}}
+
+  - name: version
+    type: semver
+    source:
+      driver: s3
+      initial_version: {{stemcell_initial_version}}
+      key: {{stemcell_version_key}}
+      bucket: {{candidate-stemcell-bucket}}
+      access_key_id: {{stemcell-aws-access-key}}
+      secret_access_key: {{stemcell-aws-secret-key}}
+
+  - name: bosh-softlayer-tools-master
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/bluebosh/bosh-softlayer-tools
+
+  - name: bosh-softlayer-tools
+    type: git
+    source:
+      branch: container_based_stemcell_pipeline
+      uri: https://github.com/bluebosh/bosh-softlayer-tools
+
+  - name: stemcell-cmds
+    type: s3
+    source:
+      bucket: bosh-softlayer-artifacts
+      regexp: sl_stemcells-(.*)
+
+  - name: stemcell-info
+    type: s3
+    source:
+      bucket: {{candidate-stemcell-bucket}}
+      access_key_id: {{stemcell-aws-access-key}}
+      secret_access_key: {{stemcell-aws-secret-key}}
+      versioned_file: stemcell-info.json
+
+  - name: bosh-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/bosh
+
+  - name: cpi-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/bosh-softlayer-cpi-release
+
+  - name: bosh-deployment
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-deployment
+      branch: softlayer
+
+  - name: bosh-cli
+    type: s3
+    source:
+      regexp: bosh-cli-([0-9.]+)-softlayer-linux-amd64
+      bucket: bosh-softlayer-artifacts
+
+  - name: bats
+    type: git
+    source:
+      uri: https://github.com/bluebosh/bosh-acceptance-tests.git
+      branch: bluemix
+
+  - name: environment
+    type: pool
+    source:
+      pool: softlayer
+      uri: git@github.com:bluebosh/bats-concourse-pool.git
+      branch: master
+      private_key: {{github_private_key}}
+
+  - name: os-conf-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/os-conf-release
+
+  - name: syslog-release
+    type: bosh-io-release
+    source:
+      repository: cloudfoundry/syslog-release
+
+   #
+   # Stemcells
+   #
+
+  - name: softlayer-xen-ubuntu-xenial
+    type: s3
+    source:
+      bucket: {{candidate-stemcell-bucket}}
+      regexp: bosh-stemcell-(.+)-softlayer-esxi-ubuntu-xenial-go_agent.tgz
+      access_key_id: {{stemcell-aws-access-key}}
+      secret_access_key: {{stemcell-aws-secret-key}}
+
+  - name: light-softlayer-stemcell
+    type: s3
+    source:
+      bucket: {{candidate-stemcell-bucket}}
+      regexp: light-bosh-stemcell-(.*)-softlayer-(.*).tgz
+      access_key_id: {{stemcell-aws-access-key}}
+      secret_access_key: {{stemcell-aws-secret-key}}
