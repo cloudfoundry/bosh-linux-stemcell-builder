@@ -196,6 +196,8 @@ jobs:
     plan:
       - aggregate:
           - get: version
+            passed:
+              - increment-version
             trigger: true
           - get: bosh-linux-stemcell-builder-master
           - get: bosh-linux-stemcell-builder
