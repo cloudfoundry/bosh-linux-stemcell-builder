@@ -73,6 +73,10 @@ describe Bosh::Stemcell::StemcellPackager do
       raise "this step fails if the image already exists!" if File.exist?(image_file)
       File.write(image_file, "i'm an image!")
     end
+    stemcell_dpkg_l = File.join(work_dir, 'stemcell/stemcell_dpkg_l.txt')
+    File.write(stemcell_dpkg_l, 'i am stemcell dpkg_l')
+    dev_tools_file_list = File.join(work_dir, 'stemcell/dev_tools_file_list.txt')
+    File.write(dev_tools_file_list, 'i am dev_tools_file_list')
   end
   after { FileUtils.rm_rf(tmp_dir) }
 
@@ -149,8 +153,28 @@ describe Bosh::Stemcell::StemcellPackager do
 
       extracted_image_path = File.join(stemcell_contents_path, 'image')
       expect(File.exist?(extracted_image_path)).to eq(true)
-
       expect(File.read(extracted_image_path)).to eq("i'm an image!")
+
+      actual_manifest = File.read(File.join(work_dir, 'stemcell/stemcell.MF'))
+      extracted_stemcell_mf = File.join(stemcell_contents_path, 'stemcell.MF')
+      expect(File.exist?(extracted_stemcell_mf)).to eq(true)
+      expect(File.read(extracted_stemcell_mf)).to eq(actual_manifest)
+    end
+
+    it 'stemcell tarball contains files in proper order' do
+      packager.package(disk_format)
+
+      tarball_path = File.join(tarball_dir, "bosh-stemcell-#{arch}1234-fake_infra-fake_hypervisor-centos-7-go_agent.tgz")
+      expect(File.exist?(tarball_path)).to eq(true)
+
+      stdout, _, _ = Open3.capture3("tar tf #{tarball_path}")
+      expect(stdout).to eq(
+'stemcell.MF
+stemcell_dpkg_l.txt
+dev_tools_file_list.txt
+image
+'
+      )
     end
 
     context "when disk format isn't the default for the infrastructure" do
