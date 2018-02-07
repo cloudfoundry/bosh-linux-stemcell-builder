@@ -3,63 +3,13 @@
 
 OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-os-images/).
 
-## Ubuntu 16.04
-
-Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
-
-* `h1O7ipVJZqjqYf1bIS2NFl194zIev88I`
-  - Add umask changes
-  - built from master (07a11844704dd14d0bd248f1c3ae306e72249f51)
-
-* `fYIzkFFX.O8GDLUOd5C9IAOCNHRtcaVu`
-  - Remount / as rprivate to fix issues with garden
-  - built from master (914b37862104cad6b49b3630be4570c90ef6be20)
-
-* `cThEYpZDLxVuLlm32BN29oSQZ7CxrmHC`
-  - chrony will now force sync systemtime at stemcell boot
-  - built from master (4aa2203b0fc11212fcdca53ff7b7adaa75359c52)
-
-* `6VnS_oNe42ReXaKd__nJvQ6ckUCGtWGq`
-  - Ensure rsyslog is started after bind mount is created at /var/log
-  - built from master (0a52c872e6e0bf5f0b225027040270dc63596de6)
-
-* `jouTj71JrZKnTf486DpDRJSdh9SZ1g6x`
-  - bump debootstrap version
-  - built from master (7f891a225df648456711855c3604b59198c1b04f)
-
-* `UWLqyMZYpnrmBbporWp2WVFA5vtFCOCH`
-  - Remove packages crda, iw, wireless-crda, wireless-regdb, and mg
-  - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
-
-* `uC8D1lxdXTpqoNv2w6.zhNR91VMRfSMG`
-  - use chrony for sync-time
-  - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
-
-* `U3zcB31LFT4AZppjYNKafIvuvga9_Nda`
-  - Update kernel to 4.10
-  - built from master (bea3e1038fba7409b9f1a4ae2e46efac10a96607)
-
-* `NaNujxx4PAcv_N7.syyDRG4sVoeFs7gy`
-  - Remove nfs, closes off port 111 due to removal of rpcbind
-  - built from master (88859aa4566230191120ad2f16e20f217e803faf)
-
-* `8lygg8NgmOIJaLNYjBKKaBtnkQyCAqn0`
-  - Update google-compute package
-  - Switch to chrony to update ntp servers
-  - Disable predictable network names
-  - built from master (76ea1d3155a049fb741c46547b8b205c965fa7d7)
-
-* `gJ.ZYbYa9GpasP39GnZndB8LK_J94fLu`
-  - Use augen rules
-  - built from master (4d3571fb6acc41224b1470ae4d7518d459b54637)
-
-* `Ud.SnwRmp3cUOr1vJBtY45jbyD11yVa_`
-  - Ubuntu 16.04
-  - built from master (17cf1ebb6d9290ed789c5ef18c3f91c4d30fc091)
-
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `D5EvMKKnRCGvQAECRBwyfLdLLD5.BVFG`
+  - Periodic bump
+  - built from 3541.x (d19252b0da6978c3a94e9c6c717da4b6cbc6c189)
 
 * `UziQ_fCYp2tG4nKVZUKj_0O8MRGUQAFA`
   - Add umask changes
@@ -652,6 +602,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `f4l23fzh57NyXdbtQqjtGmPe9M2mlC3l`
+  - Periodic bump
+  - built from 3541.x (d19252b0da6978c3a94e9c6c717da4b6cbc6c189)
 
 * `nGbRvopAX.1uoP3gddZ4dUl7d3Y_WeF6`
   - Add umask changes

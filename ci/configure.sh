@@ -10,7 +10,7 @@ if [ -n "${RELEASE_BRANCH:-}" ]; then
   args="
     -o ci/release-branch-pipeline-ops.yml
     -v release_branch=$RELEASE_BRANCH
-    -v initial_version=${RELEASE_BRANCH/.x/.1.0}
+    -v initial_version=${RELEASE_BRANCH/.x/.0.0}
   "
 fi
 
