@@ -9,6 +9,10 @@ module ShelloutTypes
       @chroot = chroot
     end
 
+    def to_s
+      @service
+    end
+
     def enabled?
       check_service_enabled(DEFAULT_RUNLEVEL)
     end

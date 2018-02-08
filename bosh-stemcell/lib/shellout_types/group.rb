@@ -5,6 +5,10 @@ module ShelloutTypes
       @chroot = chroot
     end
 
+    def to_s
+      @group
+    end
+
     def exists?
       _, _, status = @chroot.run('getent', 'group', @group)
       status == 0
