@@ -43,19 +43,6 @@ namespace :stemcell do
     end
   end
 
-  task :upload_os_image, [:os_image_path, :s3_bucket_name, :s3_bucket_key] do |_, args|
-    require 'bosh/dev/upload_adapter'
-
-    adapter = Bosh::Dev::UploadAdapter.new
-    file = adapter.upload(
-      bucket_name: args.s3_bucket_name,
-      key: args.s3_bucket_key,
-      body: File.open(args.os_image_path),
-      public: true,
-    )
-    puts "OS image #{args.os_image_path} version '#{file.version}' uploaded to S3 in bucket '#{args.s3_bucket_name}' with key '#{args.s3_bucket_key}'."
-  end
-
   desc 'Download a remote pre-built base OS image'
   task :download_os_image, [:os_image_s3_bucket_name, :os_image_key] do |_, args|
     begin
