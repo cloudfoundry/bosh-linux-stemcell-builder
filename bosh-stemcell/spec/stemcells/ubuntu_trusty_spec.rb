@@ -349,7 +349,7 @@ end
 
 describe 'Ubuntu 14.04 stemcell tarball', stemcell_tarball: true do
   context 'installed by bosh_dpkg_list stage' do
-    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/stemcell_dpkg_l.txt", ShelloutTypes::Chroot.new('/')) do
+    describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/packages.txt", ShelloutTypes::Chroot.new('/')) do
       it { should be_file }
       its(:content) { should match 'Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend' }
       its(:content) { should match 'ubuntu-minimal' }

@@ -11,24 +11,24 @@ source $base_dir/lib/prelude_apply.bash
 
 if [ "${stemcell_operating_system}" == "ubuntu" ]; then
   # Create list of installed packages
-  run_in_bosh_chroot $chroot "dpkg -l > stemcell_dpkg_l.out"
+  run_in_bosh_chroot $chroot "dpkg -l > packages.out"
 
   # Export list in stemcell tarball
-  cp $chroot/$bosh_dir/stemcell_dpkg_l.out $work/stemcell/stemcell_dpkg_l.txt
+  cp $chroot/$bosh_dir/packages.out $work/stemcell/packages.txt
 
 elif [ "${stemcell_operating_system}" == "centos" ]; then
    # Create list of installed packages
-  run_in_bosh_chroot $chroot "rpm -qa > stemcell_rpm_qa.out"
+  run_in_bosh_chroot $chroot "rpm -qa > packages.out"
 
   # Export list in stemcell tarball
-  cp $chroot/$bosh_dir/stemcell_rpm_qa.out $work/stemcell/stemcell_rpm_qa.txt
+  cp $chroot/$bosh_dir/packages.out $work/stemcell/packages.txt
 
 elif [ "${stemcell_operating_system}" == "opensuse" ]; then
    # Create list of installed packages
-  run_in_bosh_chroot $chroot "rpm -qa > stemcell_rpm_qa.out"
+  run_in_bosh_chroot $chroot "rpm -qa > packages.out"
 
   # Export list in stemcell tarball
-  cp $chroot/$bosh_dir/stemcell_rpm_qa.out $work/stemcell/stemcell_rpm_qa.txt
+  cp $chroot/$bosh_dir/packages.out $work/stemcell/packages.txt
 
 fi
 

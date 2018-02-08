@@ -73,7 +73,7 @@ module Bosh
         tarball_name = File.join(tarball_path, stemcell_name)
 
         Dir.chdir(stemcell_build_path) do
-          system("tar zcf #{tarball_name} stemcell.MF stemcell_dpkg_l.txt dev_tools_file_list.txt image")
+          system("tar zcf #{tarball_name} stemcell.MF packages.txt dev_tools_file_list.txt image")
         end
 
         tarball_name

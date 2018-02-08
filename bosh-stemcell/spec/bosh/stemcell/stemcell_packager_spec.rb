@@ -73,8 +73,8 @@ describe Bosh::Stemcell::StemcellPackager do
       raise "this step fails if the image already exists!" if File.exist?(image_file)
       File.write(image_file, "i'm an image!")
     end
-    stemcell_dpkg_l = File.join(work_dir, 'stemcell/stemcell_dpkg_l.txt')
-    File.write(stemcell_dpkg_l, 'i am stemcell dpkg_l')
+    packages = File.join(work_dir, 'stemcell/packages.txt')
+    File.write(packages, 'i am stemcell dpkg_l')
     dev_tools_file_list = File.join(work_dir, 'stemcell/dev_tools_file_list.txt')
     File.write(dev_tools_file_list, 'i am dev_tools_file_list')
   end
@@ -170,7 +170,7 @@ describe Bosh::Stemcell::StemcellPackager do
       stdout, _, _ = Open3.capture3("tar tf #{tarball_path}")
       expect(stdout).to eq(
 'stemcell.MF
-stemcell_dpkg_l.txt
+packages.txt
 dev_tools_file_list.txt
 image
 '
