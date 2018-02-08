@@ -70,7 +70,7 @@ describe Bosh::Stemcell::StemcellPackager do
 
     allow(runner).to receive(:configure_and_apply) do
       image_file = File.join(work_dir, 'stemcell/image')
-      raise "this step fails if the image already exists!" if File.exist?(image_file)
+      raise 'this step fails if the image already exists!' if File.exist?(image_file)
       File.write(image_file, "i'm an image!")
     end
     packages = File.join(work_dir, 'stemcell/packages.txt')
@@ -148,7 +148,7 @@ describe Bosh::Stemcell::StemcellPackager do
       stemcell_contents_path = File.join(tmp_dir, 'stemcell-contents')
       FileUtils.mkdir_p(stemcell_contents_path)
       Dir.chdir(stemcell_contents_path) do
-        system("tar xfz #{tarball_path}")
+        Open3.capture3("tar xfz #{tarball_path}")
       end
 
       extracted_image_path = File.join(stemcell_contents_path, 'image')
@@ -177,7 +177,14 @@ image
       )
     end
 
-    context "when disk format isn't the default for the infrastructure" do
+    it 'fails if necessary files are not found in the stemcell working directory' do
+      _, _, status = Open3.capture3("rm -f #{work_dir}/stemcell/*")
+      expect(status.success?).to be(true)
+
+      expect{ packager.package(disk_format) }.to raise_error(/No such file or directory/)
+    end
+
+    context 'when disk format is not the default for the infrastructure' do
       let(:disk_format) { 'raw' }
 
       it 'archives the working dir with a different tarball name' do

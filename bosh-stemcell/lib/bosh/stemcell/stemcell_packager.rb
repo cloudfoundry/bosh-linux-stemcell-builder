@@ -1,4 +1,5 @@
 require 'psych'
+require 'open3'
 
 module Bosh
   module Stemcell
@@ -27,8 +28,8 @@ module Bosh
       attr_reader :definition, :version, :stemcell_build_path, :tarball_path, :disk_size, :runner, :collection
 
       def write_manifest(disk_format)
-        manifest_filename = File.join(stemcell_build_path, "stemcell.MF")
-        File.open(manifest_filename, "w") do |f|
+        manifest_filename = File.join(stemcell_build_path, 'stemcell.MF')
+        File.open(manifest_filename, 'w') do |f|
           f.write(Psych.dump(manifest(disk_format)))
         end
       end
@@ -73,7 +74,12 @@ module Bosh
         tarball_name = File.join(tarball_path, stemcell_name)
 
         Dir.chdir(stemcell_build_path) do
-          system("tar zcf #{tarball_name} stemcell.MF packages.txt dev_tools_file_list.txt image")
+          _, stderr, status = Open3.capture3('ls stemcell.MF packages.txt dev_tools_file_list.txt image')
+          unless status.success?
+            raise stderr
+          end
+
+          Open3.capture3("tar zcf #{tarball_name} stemcell.MF packages.txt dev_tools_file_list.txt image")
         end
 
         tarball_name
