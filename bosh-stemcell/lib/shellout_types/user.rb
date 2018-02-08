@@ -5,6 +5,10 @@ module ShelloutTypes
       @chroot_cmd_runner = chroot_cmd_runner
     end
 
+    def to_s
+      @user_name
+    end
+
     def exists?
       _, _, status = @chroot_cmd_runner.run("id #{@user_name}")
       status == 0
