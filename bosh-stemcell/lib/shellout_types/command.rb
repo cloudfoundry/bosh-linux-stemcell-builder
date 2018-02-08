@@ -5,6 +5,10 @@ module ShelloutTypes
       @chroot = chroot
     end
 
+    def to_s
+      @cmd
+    end
+
     def stdout
       exec
       @stdout

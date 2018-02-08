@@ -5,6 +5,10 @@ module ShelloutTypes
       @chroot_cmd_runner = chroot_cmd_runner
     end
 
+    def to_s
+      @package
+    end
+
     def installed?
       _, _, status = @chroot_cmd_runner.run(pkg_query, @package)
       status == 0
