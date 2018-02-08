@@ -1,4 +1,5 @@
 require 'psych'
+require 'open3'
 
 module Bosh
   module Stemcell
@@ -27,8 +28,8 @@ module Bosh
       attr_reader :definition, :version, :stemcell_build_path, :tarball_path, :disk_size, :runner, :collection
 
       def write_manifest(disk_format)
-        manifest_filename = File.join(stemcell_build_path, "stemcell.MF")
-        File.open(manifest_filename, "w") do |f|
+        manifest_filename = File.join(stemcell_build_path, 'stemcell.MF')
+        File.open(manifest_filename, 'w') do |f|
           f.write(Psych.dump(manifest(disk_format)))
         end
       end
@@ -72,8 +73,20 @@ module Bosh
         stemcell_name = ArchiveFilename.new(version, definition, 'bosh-stemcell', disk_format).to_s
         tarball_name = File.join(tarball_path, stemcell_name)
 
+        expected = ['stemcell.MF', 'packages.txt', 'dev_tools_file_list.txt', 'image']
         Dir.chdir(stemcell_build_path) do
-          system("tar zcf #{tarball_name} *")
+          stdout, stderr, status = Open3.capture3('ls')
+          raise stderr unless status.success?
+
+          actual = stdout.split(' ')
+          missing = expected.reject { |f| actual.include?(f) }
+          raise "Files are missing from stemcell directory: #{missing.join(' ')}" unless missing.empty?
+
+          extra = actual.reject { |f| expected.include?(f) }
+          raise "Extra files found in stemcell directory: #{extra.join(' ')}" unless extra.empty?
+
+          _, stderr, status = Open3.capture3("tar zcf #{tarball_name} #{expected.join(' ')}")
+          raise stderr unless status.success?
         end
 
         tarball_name
