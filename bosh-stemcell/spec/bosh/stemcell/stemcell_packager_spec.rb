@@ -178,10 +178,16 @@ image
     end
 
     it 'fails if necessary files are not found in the stemcell working directory' do
-      _, _, status = Open3.capture3("rm -f #{work_dir}/stemcell/*")
+      _, _, status = Open3.capture3("rm -f #{work_dir}/stemcell/dev_tools_file_list.txt #{work_dir}/stemcell/packages.txt")
       expect(status.success?).to be(true)
 
-      expect{ packager.package(disk_format) }.to raise_error(/No such file or directory/)
+      expect{ packager.package(disk_format) }.to raise_error(/Files are missing from stemcell directory: packages.txt dev_tools_file_list.txt/)
+    end
+
+    it 'fails if additional files are found in the stemcell working director' do
+      File.open("#{work_dir}/stemcell/my-extra-file", 'w') {}
+
+      expect{ packager.package(disk_format) }.to raise_error(/Extra files found in stemcell directory: my-extra-file/)
     end
 
     context 'when disk format is not the default for the infrastructure' do

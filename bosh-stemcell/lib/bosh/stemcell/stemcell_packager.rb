@@ -73,13 +73,20 @@ module Bosh
         stemcell_name = ArchiveFilename.new(version, definition, 'bosh-stemcell', disk_format).to_s
         tarball_name = File.join(tarball_path, stemcell_name)
 
+        expected = ['stemcell.MF', 'packages.txt', 'dev_tools_file_list.txt', 'image']
         Dir.chdir(stemcell_build_path) do
-          _, stderr, status = Open3.capture3('ls stemcell.MF packages.txt dev_tools_file_list.txt image')
-          unless status.success?
-            raise stderr
-          end
+          stdout, stderr, status = Open3.capture3('ls')
+          raise stderr unless status.success?
 
-          Open3.capture3("tar zcf #{tarball_name} stemcell.MF packages.txt dev_tools_file_list.txt image")
+          actual = stdout.split(' ')
+          missing = expected.reject { |f| actual.include?(f) }
+          raise "Files are missing from stemcell directory: #{missing.join(' ')}" unless missing.empty?
+
+          extra = actual.reject { |f| expected.include?(f) }
+          raise "Extra files found in stemcell directory: #{extra.join(' ')}" unless extra.empty?
+
+          _, stderr, status = Open3.capture3("tar zcf #{tarball_name} #{expected.join(' ')}")
+          raise stderr unless status.success?
         end
 
         tarball_name
