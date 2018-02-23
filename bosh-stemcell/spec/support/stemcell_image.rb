@@ -3,16 +3,15 @@ require 'shellout_types/chroot'
 require_relative 'shellout_type_assertions'
 
 RSpec.configure do |config|
-  def change_root_dir(example)
-    Bosh::Stemcell::DiskImage.new(image_file_path: ENV['STEMCELL_IMAGE']).while_mounted do |disk_image|
-      ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
-      example.run
-    end
-  end
-
   if ENV['STEMCELL_IMAGE']
-    config.around(stemcell_image: true) { |example| change_root_dir example }
-    config.around(os_image: true) { |example| change_root_dir example }
+    disk_image = Bosh::Stemcell::DiskImage.new(image_file_path: ENV['STEMCELL_IMAGE'])
+    config.before(:suite) do |example|
+      disk_image.mount
+      ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
+    end
+    config.after(:suite) do |example|
+      disk_image.unmount
+    end
   else
     warning = 'All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set'
     puts RSpec::Core::Formatters::ConsoleCodes.wrap(warning, :yellow)
