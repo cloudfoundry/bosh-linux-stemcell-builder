@@ -174,6 +174,7 @@ module Bosh::Stemcell
         expect { disk_image.unmount }.to raise_error RuntimeError
       end
     end
+<<<<<<< HEAD
 
     describe '#while_mounted' do
       it 'mounts the disk, calls the provided block, and unmounts' do
@@ -222,5 +223,7 @@ module Bosh::Stemcell
         end
       end
     end
+=======
+>>>>>>> 2b1c834... Mount/unmount stemcell image to loopback device once for all tests
   end
 end
