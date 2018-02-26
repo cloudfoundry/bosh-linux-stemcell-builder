@@ -133,6 +133,9 @@ jobs:
           file: bosh-linux-stemcell-builder-master/ci/bluemix/tasks/test-stemcell.yml
           input_mapping:
             stemcell: light-softlayer-stemcell
+          params:
+            BOSH_os_name: ubuntu-trusty
+            package: ipv4director
         ensure:
           do:
           - task: teardown
