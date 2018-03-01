@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `.oWdTlCaR0EETh8LDg0jHZC8AcerXmpB`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from 3541.x (dc7371cdb7d1f9aab02f42afa0147e6f10308a0b)
+
 * `q10s1hP1IjS15u5bLOSS7azIGTeEJU3a`
   - USN-3582-2: Linux kernel (Xenial HWE) vulnerabilities
   - built from 3541.x (77574307bd176c1f22e425be7ef4d20541b3d920)
@@ -610,6 +614,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `dwj7lQPj.YJuwCd.UJVABAwBMnSGrOt6`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from 3541.x (dc7371cdb7d1f9aab02f42afa0147e6f10308a0b)
 
 * `0D_NdPeIr0uKe.jeEChtEkoMAYFkn3l3`
   - Remove umask changes
