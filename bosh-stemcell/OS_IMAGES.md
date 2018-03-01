@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `LrbAMDDxUAzW0kbtWWDcKnEKSjQZagDR`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from master (c63518b27bc7c4f8fd570822af3678a799783f4c)
+
 * `tAzc_KVnQkbRExvREIXA416njtf1fJFo`
   - Remove umask changes from os image
   - built from master (a884dcded16524be753b6d1f4bcb66bcbe13f7d3)
@@ -64,6 +68,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `j_oBo7KqBvn7LzZbCZR4lw_4f.GtZjUz`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from master (c63518b27bc7c4f8fd570822af3678a799783f4c)
 
 * `K9y4vI6Swcz_oeHBpJjFHlU8XQFy.E.9`
   - Remove umask changes from os image
@@ -660,6 +668,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `bRx.yU16rrr5HKtRwJ7IffQ5Aqh92ec_`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from master (c63518b27bc7c4f8fd570822af3678a799783f4c)
 
 * `ev..9oZ8yHPB1dMKHf93Redboor1YV1k`
   - Remove umask changes from os image
