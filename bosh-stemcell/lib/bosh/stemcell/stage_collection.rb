@@ -37,6 +37,7 @@ module Bosh::Stemcell
         :bosh_go_agent,
         :aws_cli,
         :google_gcscli,
+        :oracle_bmccli,
         :logrotate_config,
         :dev_tools_config,
         :static_libraries_config,
@@ -51,6 +52,8 @@ module Bosh::Stemcell
         google_stages
       when Infrastructure::OpenStack then
         openstack_stages
+      when Infrastructure::Oracle then
+        oracle_stages
       when Infrastructure::Vsphere then
         vsphere_vcloud_stages
       when Infrastructure::Vcloud then
@@ -108,6 +111,22 @@ module Bosh::Stemcell
         :bosh_clean_ssh,
         :image_create,
         :image_install_grub,
+      ]
+    end
+
+    def oracle_stages
+
+      stages = [
+        :system_network,
+        :system_openstack_clock,
+        :system_openstack_modules,
+        :system_oracle,
+        :system_parameters,
+        :bosh_clean,
+        :bosh_harden,
+        :bosh_oracle_agent_settings,
+        :bosh_clean_ssh,
+        :image_create_oracle,
       ]
     end
 

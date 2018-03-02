@@ -27,6 +27,7 @@ describe 'Azure Stemcell', stemcell_image: true do
     exclude_on_vsphere: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
+    exclude_on_oracle: true,
     exclude_on_softlayer: true,
   } do
     describe file('/var/vcap/bosh/agent.json') do

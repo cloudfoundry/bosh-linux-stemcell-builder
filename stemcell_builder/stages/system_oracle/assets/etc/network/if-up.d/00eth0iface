@@ -1,0 +1,7 @@
+#!/bin/sh
+# filename: 00eth0iface
+
+# In OCI, eth0 is configured by default.  This let's bosh know that that is already done.
+if [ -e /var/run/network/ifstate.eth0 ]; then
+  echo eth0 > /var/run/network/ifstate.eth0
+fi

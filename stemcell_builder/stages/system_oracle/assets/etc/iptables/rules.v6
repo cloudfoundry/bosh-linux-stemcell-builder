@@ -1,0 +1,8 @@
+# CLOUD_IMG: This file was created/modified by the Cloud Image build process
+# iptables configuration for Oracle Bare Metal Cloud
+
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+COMMIT

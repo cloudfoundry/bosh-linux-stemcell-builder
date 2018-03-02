@@ -16,6 +16,7 @@ groups:
       - build-google-kvm-centos-7
       - build-openstack-kvm-centos-7
       - build-openstack-kvm-ubuntu-trusty
+      - build-oracle-kvm-ubuntu-trusty
       - build-vsphere-esxi-centos-7
       - build-vsphere-esxi-ubuntu-trusty
       - build-vcloud-esxi-ubuntu-trusty
@@ -37,6 +38,9 @@ groups:
     jobs:
       - build-openstack-kvm-ubuntu-trusty
       - build-openstack-kvm-centos-7
+  - name: oracle
+    jobs:
+      - build-oracle-kvm-ubuntu-trusty
   - name: vsphere
     jobs:
       - build-vsphere-esxi-ubuntu-trusty
@@ -50,6 +54,7 @@ groups:
       - build-azure-hyperv-ubuntu-trusty
       - build-google-kvm-ubuntu-trusty
       - build-openstack-kvm-ubuntu-trusty
+      - build-oracle-kvm-ubuntu-trusty
       - build-vsphere-esxi-ubuntu-trusty
       - build-vcloud-esxi-ubuntu-trusty
   - name: centos
@@ -247,6 +252,8 @@ jobs:
             google/bosh-stemcell-%s-google-kvm-ubuntu-trusty-go_agent.tgz
             openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent.tgz
             openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz
+            oracle/bosh-stemcell-%s-oracle-kvm-ubuntu-trusty-go_agent.tgz
+            oracle/bosh-stemcell-%s-oracle-kvm-ubuntu-trusty-go_agent-raw.tgz
             warden/bosh-stemcell-%s-warden-boshlite-ubuntu-trusty-go_agent.tgz
             vsphere/bosh-stemcell-%s-vsphere-esxi-ubuntu-trusty-go_agent.tgz
             vcloud/bosh-stemcell-%s-vcloud-esxi-ubuntu-trusty-go_agent.tgz
@@ -1005,3 +1012,36 @@ resources:
       uri: git@github.com:pivotal-cf-experimental/bats-concourse-pool.git
       branch: master
       private_key: {{github_deployment_key__bosh-cpi-environments}}
+
+  #
+  # Oracle
+  #
+
+  - name: build-oracle-kvm-ubuntu-trusty
+    plan:
+      - aggregate:
+          - get: version
+            trigger: true
+            passed: [build-stemcell]
+          - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
+          - get: stemcells-index
+      - task: create-stemcell
+        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+        privileged: true
+        params:
+          IAAS:         oracle
+          HYPERVISOR:   kvm
+          OS_NAME:      ubuntu
+          OS_VERSION:   trusty
+      - aggregate:
+        - put: oracle-kvm-ubuntu-trusty-raw
+          params:
+            file: stemcell/*-raw.tgz
+        - put: oracle-kvm-ubuntu-trusty
+          params:
+            file: stemcell/*-go_agent.tgz
+      - put: stemcells-index
+        params:
+          repository: stemcells-index
+          rebase: true

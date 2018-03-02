@@ -220,8 +220,10 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
     end
   end
 
-  context 'installed by system_grub' do
-    if Bosh::Stemcell::Arch.ppc64le?
+  context 'installed by system_grub', {
+    exclude_on_oracle: true,
+  } do
+    if Bosh::Stemcell::Arch.ppc64le? 
       %w(
         grub2
       ).each do |pkg|

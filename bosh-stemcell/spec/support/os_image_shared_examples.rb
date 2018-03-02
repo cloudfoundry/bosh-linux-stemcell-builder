@@ -104,6 +104,8 @@ shared_examples_for 'every OS image' do
           "grep --no-filename --recursive '/var/log/' /etc/rsyslog*",
           # filter commented directives
           "grep -v '^#'",
+          # filter syslogtag entries
+          "grep -v ':syslogtag'",
           # remove leading characters
           "sed 's%^[ \t]*%%' | awk '{ print $2 }' | tr -d '-'",
           # unique tests
