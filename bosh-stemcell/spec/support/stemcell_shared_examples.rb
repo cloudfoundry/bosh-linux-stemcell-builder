@@ -93,7 +93,8 @@ shared_examples_for 'All Stemcells' do
   end
 
   context 'rsyslog conf directory only contains the builder-specified config files', {
-    exclude_on_google: true
+    exclude_on_google: true,
+    exclude_on_oracle: true
   } do
     describe command('ls -A /etc/rsyslog.d') do
       its (:stdout) { should eq(%q(50-default.conf
