@@ -206,6 +206,7 @@ module Bosh::Stemcell
           "STEMCELL_WORKDIR=#{work_path}",
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
+          "CANDIDATE_BUILD_NUMBER=#{version}",
           "bundle exec rspec -fd#{tag}",
           "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/#{operating_system.name}_#{operating_system.version}_spec.rb",

@@ -10,22 +10,21 @@ shared_examples_for 'a systemd-based OS image' do
     end
 
     describe service('rsyslog') do
-      it { should be_enabled }
+      it { should_not be_enabled }
     end
 
-    describe file('/etc/systemd/system/rsyslog.service.d/rsyslog_override.conf') do
-      # this file is an rsyslog override which make s it wait for
-      # the mountchecker service to start.
+    describe file('/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf') do
+      # this file is an rsyslog override which make s it wait for the var/log
+      # dir to be bind mounted before starting rsyslog
       it { should be_file }
-      its(:content) { should match /^Requires=mountchecker.service/}
-      its(:content) { should match /^After=mountchecker.service/ }
+      its(:content) { should match /^Requires=rsyslog.service/ }
+      its(:content) { should match /^Before=rsyslog.service/ }
     end
 
-    describe file('/etc/systemd/system/mountchecker.service') do
-      # The mountchecker service waits for /var/log to be bind mounted
-      # to /var/vcap/data/root_log, which is done in agent bootstrap.
+    describe file('/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf') do
       it { should be_file }
-      its(:content) { should match /^ExecStart=\/(usr\/)?bin\/bash -c 'until mountpoint -q \/var\/log; do sleep \.1; done'/}
+      its(:content) { should match /^[Socket]/ }
+      its(:content) { should match /^Service=rsyslog.service/ }
     end
   end
 end

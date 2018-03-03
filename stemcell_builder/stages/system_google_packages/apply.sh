@@ -35,9 +35,8 @@ deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-s
 EOM"
 
     pkg_mgr install "google-cloud-packages-archive-keyring"
-    pkg_mgr install "python-google-compute-engine=2.7.1-1"
-    pkg_mgr install "python3-google-compute-engine=2.7.1-1"
-    pkg_mgr install "google-compute-engine"
+    pkg_mgr install "--target-release google-compute-engine-stretch-stable python-google-compute-engine python3-google-compute-engine"
+    pkg_mgr install "google-compute-engine-oslogin google-compute-engine"
 
     run_in_chroot $chroot "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python3/dist-packages/google_compute_engine/metadata_watcher.py"
   fi

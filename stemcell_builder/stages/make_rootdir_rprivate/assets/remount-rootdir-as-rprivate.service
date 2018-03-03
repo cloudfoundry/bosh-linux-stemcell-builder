@@ -1,0 +1,13 @@
+[Unit]
+Description=Remounts / as rprivate to go back to previous behavior (before systemd)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/
+ExecStart=/bin/mount --make-rprivate /
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

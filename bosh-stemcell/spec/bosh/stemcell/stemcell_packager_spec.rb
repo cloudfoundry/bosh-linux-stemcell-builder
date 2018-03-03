@@ -70,9 +70,13 @@ describe Bosh::Stemcell::StemcellPackager do
 
     allow(runner).to receive(:configure_and_apply) do
       image_file = File.join(work_dir, 'stemcell/image')
-      raise "this step fails if the image already exists!" if File.exist?(image_file)
+      raise 'this step fails if the image already exists!' if File.exist?(image_file)
       File.write(image_file, "i'm an image!")
     end
+    packages = File.join(work_dir, 'stemcell/packages.txt')
+    File.write(packages, 'i am stemcell dpkg_l')
+    dev_tools_file_list = File.join(work_dir, 'stemcell/dev_tools_file_list.txt')
+    File.write(dev_tools_file_list, 'i am dev_tools_file_list')
   end
   after { FileUtils.rm_rf(tmp_dir) }
 
@@ -144,16 +148,49 @@ describe Bosh::Stemcell::StemcellPackager do
       stemcell_contents_path = File.join(tmp_dir, 'stemcell-contents')
       FileUtils.mkdir_p(stemcell_contents_path)
       Dir.chdir(stemcell_contents_path) do
-        system("tar xfz #{tarball_path}")
+        Open3.capture3("tar xfz #{tarball_path}")
       end
 
       extracted_image_path = File.join(stemcell_contents_path, 'image')
       expect(File.exist?(extracted_image_path)).to eq(true)
-
       expect(File.read(extracted_image_path)).to eq("i'm an image!")
+
+      actual_manifest = File.read(File.join(work_dir, 'stemcell/stemcell.MF'))
+      extracted_stemcell_mf = File.join(stemcell_contents_path, 'stemcell.MF')
+      expect(File.exist?(extracted_stemcell_mf)).to eq(true)
+      expect(File.read(extracted_stemcell_mf)).to eq(actual_manifest)
     end
 
-    context "when disk format isn't the default for the infrastructure" do
+    it 'stemcell tarball contains files in proper order' do
+      packager.package(disk_format)
+
+      tarball_path = File.join(tarball_dir, "bosh-stemcell-#{arch}1234-fake_infra-fake_hypervisor-centos-7-go_agent.tgz")
+      expect(File.exist?(tarball_path)).to eq(true)
+
+      stdout, _, _ = Open3.capture3("tar tf #{tarball_path}")
+      expect(stdout).to eq(
+'stemcell.MF
+packages.txt
+dev_tools_file_list.txt
+image
+'
+      )
+    end
+
+    it 'fails if necessary files are not found in the stemcell working directory' do
+      _, _, status = Open3.capture3("rm -f #{work_dir}/stemcell/dev_tools_file_list.txt #{work_dir}/stemcell/packages.txt")
+      expect(status.success?).to be(true)
+
+      expect{ packager.package(disk_format) }.to raise_error(/Files are missing from stemcell directory: packages.txt dev_tools_file_list.txt/)
+    end
+
+    it 'fails if additional files are found in the stemcell working director' do
+      File.open("#{work_dir}/stemcell/my-extra-file", 'w') {}
+
+      expect{ packager.package(disk_format) }.to raise_error(/Extra files found in stemcell directory: my-extra-file/)
+    end
+
+    context 'when disk format is not the default for the infrastructure' do
       let(:disk_format) { 'raw' }
 
       it 'archives the working dir with a different tarball name' do

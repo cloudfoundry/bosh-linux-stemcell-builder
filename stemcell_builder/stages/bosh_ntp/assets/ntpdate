@@ -1,10 +1,12 @@
 #!/bin/sh
-#
-# Copyright (c) 2009-2012 VMware, Inc.
 
 BOSH=/var/vcap/bosh
+
+exec > $BOSH/log/sync-time.out
+exec 2>&1
+
 NTP_SERVER_FILE=$BOSH/etc/ntpserver
 if [ -f $NTP_SERVER_FILE ]; then
 	NTP_SERVER=`cat $NTP_SERVER_FILE`
-	/usr/sbin/ntpdate $NTP_SERVER > $BOSH/log/ntpdate.out 2>&1
+	/usr/sbin/ntpdate $NTP_SERVER
 fi

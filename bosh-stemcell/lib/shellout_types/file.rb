@@ -5,6 +5,10 @@ module ShelloutTypes
       @chroot = chroot
     end
 
+    def to_s
+      @path
+    end
+
     def file?
       begin
         stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)

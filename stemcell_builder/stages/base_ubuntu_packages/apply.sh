@@ -145,7 +145,8 @@ fi
 if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
   cp $(dirname $0)/assets/runit.service ${chroot}/lib/systemd/system/
   run_in_chroot ${chroot} "systemctl enable runit"
-  run_in_chroot ${chroot} "systemctl enable rsyslog"
+  pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
+  pkg_mgr purge --auto-remove $pkgs_to_purge
 fi
 
 exclusions="postfix whoopsie apport"

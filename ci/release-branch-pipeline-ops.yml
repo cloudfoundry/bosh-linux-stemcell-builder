@@ -1,0 +1,94 @@
+- type: replace
+  path: /groups/name=all/jobs/-
+  value: publish-stemcells
+
+- type: replace
+  path: /jobs/name=publish-stemcells?
+  value:
+    name: publish-stemcells
+    serial: true
+    plan:
+      - aggregate:
+        - get: version
+          passed:
+            - test-stemcells
+            - bats-centos
+            - bats-ubuntu
+        - get: bosh-linux-stemcell-builder
+          passed:
+            - bats-centos
+            - bats-ubuntu
+        - get: stemcells-index
+      - task: assert-version-aligns
+        file: bosh-linux-stemcell-builder/ci/tasks/assert-version-aligns.yml
+      - task: copy-ubuntu-trusty-artifacts
+        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
+        params:
+          AWS_ACCESS_KEY_ID: ((stemcell_aws_access_key))
+          AWS_SECRET_ACCESS_KEY: ((stemcell_aws_secret_key))
+          CANDIDATE_BUCKET_NAME: ((candidate_stemcell_bucket))
+          PUBLISHED_BUCKET_NAME: ((published_stemcell_bucket))
+          OS_NAME: ubuntu
+          OS_VERSION: trusty
+          COPY_KEYS: |
+            aws/bosh-stemcell-%s-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
+            google/bosh-stemcell-%s-google-kvm-ubuntu-trusty-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz
+            warden/bosh-stemcell-%s-warden-boshlite-ubuntu-trusty-go_agent.tgz
+            vsphere/bosh-stemcell-%s-vsphere-esxi-ubuntu-trusty-go_agent.tgz
+            vcloud/bosh-stemcell-%s-vcloud-esxi-ubuntu-trusty-go_agent.tgz
+            azure/bosh-stemcell-%s-azure-hyperv-ubuntu-trusty-go_agent.tgz
+      - task: copy-centos-7-artifacts
+        file: bosh-linux-stemcell-builder/ci/tasks/publish.yml
+        params:
+          AWS_ACCESS_KEY_ID: ((stemcell_aws_access_key))
+          AWS_SECRET_ACCESS_KEY: ((stemcell_aws_secret_key))
+          CANDIDATE_BUCKET_NAME: ((candidate_stemcell_bucket))
+          PUBLISHED_BUCKET_NAME: ((published_stemcell_bucket))
+          OS_NAME: centos
+          OS_VERSION: 7
+          COPY_KEYS: |
+            aws/bosh-stemcell-%s-aws-xen-hvm-centos-7-go_agent.tgz
+            google/bosh-stemcell-%s-google-kvm-centos-7-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent.tgz
+            openstack/bosh-stemcell-%s-openstack-kvm-centos-7-go_agent-raw.tgz
+            warden/bosh-stemcell-%s-warden-boshlite-centos-7-go_agent.tgz
+            vsphere/bosh-stemcell-%s-vsphere-esxi-centos-7-go_agent.tgz
+            azure/bosh-stemcell-%s-azure-hyperv-centos-7-go_agent.tgz
+      - aggregate:
+        - put: bosh-linux-stemcell-builder-push
+          params:
+            repository: bosh-linux-stemcell-builder
+            tag: version-tag/tag
+            only_tag: true
+        - put: stemcells-index
+          params:
+            repository: stemcells-index
+            rebase: true
+
+- type: replace
+  path: /jobs/name=build-stemcell/plan/get=version/params/bump
+  value: minor
+
+- type: replace
+  path: /resources/name=bosh-linux-stemcell-builder-push?
+  value:
+    name: bosh-linux-stemcell-builder-push
+    type: git
+    source:
+      uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+      branch: ((release_branch))
+      private_key: ((bosh_src_key))
+
+- type: replace
+  path: /resources/name=bosh-linux-stemcell-builder/source/branch
+  value: ((release_branch))
+
+- type: replace
+  path: /resources/name=version/source/initial_version?
+  value: ((initial_version))
+
+- type: replace
+  path: /resources/name=version/source/key
+  value: bosh-stemcell/version-((release_branch))

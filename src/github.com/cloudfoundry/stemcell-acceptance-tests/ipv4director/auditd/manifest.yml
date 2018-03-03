@@ -1,0 +1,38 @@
+---
+name: stemcell-acceptance-tests
+
+releases:
+- name: os-conf
+  version: latest
+
+stemcells:
+- alias: default
+  os: ((os_name))
+  version: ((stemcell_version))
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+
+instance_groups:
+- name: immutable
+  stemcell: default
+  vm_type: default
+  instances: 1
+  networks:
+  - {name: default}
+  azs: [z1]
+  jobs:
+  - name: auditd
+    release: os-conf
+
+- name: mutable
+  stemcell: default
+  vm_type: default
+  azs: [z1]
+  instances: 1
+  networks:
+  - {name: default}
+  jobs: []

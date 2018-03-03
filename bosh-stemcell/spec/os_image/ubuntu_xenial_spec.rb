@@ -4,8 +4,9 @@ require 'shellout_types/file'
 
 describe 'Ubuntu 16.04 OS image', os_image: true do
   it_behaves_like 'every OS image'
-  it_behaves_like 'an os with ntpdate'
-  it_behaves_like 'an upstart-based OS image'
+  it_behaves_like 'an os with chrony'
+  it_behaves_like 'a systemd-based OS image'
+  it_behaves_like 'an Ubuntu-based OS image'
   it_behaves_like 'a Linux kernel 3.x based OS image'
   it_behaves_like 'a Linux kernel module configured OS image'
 
@@ -15,6 +16,10 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
 
   describe package('rpm') do
     it { should_not be_installed }
+  end
+
+  describe service('remount-rootdir-as-rprivate') do
+    it { should be_enabled }
   end
 
   context 'installed by system_kernel' do
@@ -164,7 +169,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       libxslt1-dev
       libxslt1.1
       lsof
-      mg
       module-assistant
       module-init-tools
       openssh-server

@@ -114,7 +114,7 @@ jobs:
               stemcell: vsphere-esxi-ubuntu-xenial
             params:
               BOSH_os_name: ubuntu-xenial
-              package: ipv4
+              package: ipv4director
           ensure:
             task: teardown
             tags: [vsphere-v5.1]
@@ -505,7 +505,7 @@ resources:
     type: git
     source:
       uri: https://github.com/cloudfoundry/bosh-acceptance-tests.git
-      branch: gocli-bats
+      branch: master
 
   - name: environment
     type: pool

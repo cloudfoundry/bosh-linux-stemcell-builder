@@ -139,18 +139,17 @@ The stemcell should be rebuilt when you are making and testing BOSH-specific cha
 
 The last two arguments to the rake command are the S3 bucket and key of the OS image to use (i.e. in the example below, the .tgz will be downloaded from [http://bosh-os-images.s3.amazonaws.com/bosh-centos-7-os-image.tgz](http://bosh-os-images.s3.amazonaws.com/bosh-centos-7-os-image.tgz)). More info at OS\_IMAGES.
 
-    $ bundle exec rake stemcell:build[aws,xen,ubuntu,trusty,bosh-os-images,bosh-ubuntu-trusty-os-image.tgz]
+    $ bundle exec rake stemcell:build[aws,xen,ubuntu,trusty,bosh-os-images,bosh-ubuntu-trusty-os-image.tgz,"1234.56"]
 
-By default, the stemcell build number will be `0000`. If you need to manually configure it, first run...
-
-    $ export CANDIDATE_BUILD_NUMBER=<current_build>
-
+The final argument, which specifies the build number, is optional and will default to '0000'
 
 #### with local OS image
 
 If you want to use an OS Image that you just created, use the `stemcell:build_with_local_os_image` task, specifying the OS image tarball.
 
-    $ CANDIDATE_BUILD_NUMBER=0000.dev1 bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,trusty,$PWD/tmp/ubuntu_base_image.tgz]
+    $ bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,trusty,$PWD/tmp/ubuntu_base_image.tgz,"1234.56"]
+
+The final argument, which specifies the build number, is optional and will default to '0000'
 
 You can also download OS Images from the public S3 bucket. Public OS images can be obtained here:
 

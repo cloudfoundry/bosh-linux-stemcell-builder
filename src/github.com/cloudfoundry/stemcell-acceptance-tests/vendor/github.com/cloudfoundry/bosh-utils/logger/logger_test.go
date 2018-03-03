@@ -1,17 +1,68 @@
 package logger_test
 
 import (
-	"fmt"
-
-	. "github.com/cloudfoundry/bosh-utils/internal/github.com/onsi/ginkgo"
-	. "github.com/cloudfoundry/bosh-utils/internal/github.com/onsi/gomega"
-
 	"bytes"
+	"fmt"
+	"io"
+	"runtime"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+
 	. "github.com/cloudfoundry/bosh-utils/logger"
 )
 
 func expectedLogFormat(tag, msg string) string {
 	return fmt.Sprintf("\\[%s\\] [0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} %s\n", tag, msg)
+}
+
+func testConcurrentPrefix(newLogger func(lv LogLevel, out io.Writer) Logger) {
+	var out blockingWriter
+	logger := newLogger(LevelDebug, &out)
+
+	const tagLen = 5
+	const msgLen = 20
+
+	start := make(chan struct{})
+	wg := new(sync.WaitGroup)
+	for i := 0; i < runtime.NumCPU(); i++ {
+		wg.Add(1)
+		go func(index int) {
+			defer wg.Done()
+			s := strconv.Itoa(index % 10)
+			tag := strings.Repeat(s, tagLen)
+			msg := strings.Repeat(s, msgLen) + "\n"
+			<-start
+			for i := 0; i < 1000; i++ {
+				logger.Debug(tag, msg)
+				logger.Error(tag, msg)
+			}
+		}(i)
+	}
+	close(start)
+	wg.Wait()
+
+	testOutput := func(context, output string) {
+		lines := strings.Split(output, "\n")
+		for _, line := range lines {
+			if len(line) < msgLen+tagLen {
+				continue
+			}
+			c := line[2:3]
+
+			prefix := fmt.Sprintf("[%s] ", strings.Repeat(c, tagLen))
+			Expect(line[:len(prefix)]).To(Equal(prefix), context)
+
+			suffix := strings.Repeat(c, msgLen)
+			Expect(line[len(line)-len(suffix):]).To(Equal(suffix), context)
+		}
+	}
+
+	testOutput("out", out.String())
 }
 
 var _ = Describe("Levelify", func() {
@@ -71,89 +122,83 @@ var _ = Describe("Levelify", func() {
 var _ = Describe("Logger", func() {
 	var (
 		outBuf *bytes.Buffer
-		errBuf *bytes.Buffer
 	)
 	BeforeEach(func() {
-		outBuf = bytes.NewBufferString("")
-		errBuf = bytes.NewBufferString("")
+		outBuf = new(bytes.Buffer)
 	})
 
 	Describe("Debug", func() {
 		It("logs the formatted message to Logger.out at the debug level", func() {
-			logger := NewWriterLogger(LevelDebug, outBuf, errBuf)
+			logger := NewWriterLogger(LevelDebug, outBuf)
 			logger.Debug("TAG", "some %s info to log", "awesome")
 
 			expectedContent := expectedLogFormat("TAG", "DEBUG - some awesome info to log")
 			Expect(outBuf).To(MatchRegexp(expectedContent))
-			Expect(errBuf).ToNot(MatchRegexp(expectedContent))
 		})
 	})
 
 	Describe("DebugWithDetails", func() {
 		It("logs the message to Logger.out at the debug level with specially formatted arguments", func() {
-			logger := NewWriterLogger(LevelDebug, outBuf, errBuf)
+			logger := NewWriterLogger(LevelDebug, outBuf)
 			logger.DebugWithDetails("TAG", "some info to log", "awesome")
 			expectedContent := expectedLogFormat("TAG", "DEBUG - some info to log")
 			Expect(outBuf).To(MatchRegexp(expectedContent))
-			Expect(errBuf).ToNot(MatchRegexp(expectedContent))
 
 			expectedDetails := "\n********************\nawesome\n********************"
 			Expect(outBuf).To(ContainSubstring(expectedDetails))
-			Expect(errBuf).ToNot(ContainSubstring(expectedDetails))
 		})
 	})
 
 	Describe("Info", func() {
 		It("logs the formatted message to Logger.out at the info level", func() {
-			logger := NewWriterLogger(LevelInfo, outBuf, errBuf)
+			logger := NewWriterLogger(LevelInfo, outBuf)
 			logger.Info("TAG", "some %s info to log", "awesome")
 
 			expectedContent := expectedLogFormat("TAG", "INFO - some awesome info to log")
 			Expect(outBuf).To(MatchRegexp(expectedContent))
-			Expect(errBuf).ToNot(MatchRegexp(expectedContent))
 		})
 	})
 
 	Describe("Warn", func() {
 		It("logs the formatted message to Logger.err at the warn level", func() {
-			logger := NewWriterLogger(LevelWarn, outBuf, errBuf)
+			logger := NewWriterLogger(LevelWarn, outBuf)
 			logger.Warn("TAG", "some %s info to log", "awesome")
 
 			expectedContent := expectedLogFormat("TAG", "WARN - some awesome info to log")
-			Expect(outBuf).ToNot(MatchRegexp(expectedContent))
-			Expect(errBuf).To(MatchRegexp(expectedContent))
+			Expect(outBuf).To(MatchRegexp(expectedContent))
 		})
 	})
 
 	Describe("Error", func() {
 		It("logs the formatted message to Logger.err at the error level", func() {
-			logger := NewWriterLogger(LevelError, outBuf, errBuf)
+			logger := NewWriterLogger(LevelError, outBuf)
 			logger.Error("TAG", "some %s info to log", "awesome")
 
 			expectedContent := expectedLogFormat("TAG", "ERROR - some awesome info to log")
-			Expect(outBuf).ToNot(MatchRegexp(expectedContent))
-			Expect(errBuf).To(MatchRegexp(expectedContent))
+			Expect(outBuf).To(MatchRegexp(expectedContent))
 		})
 	})
 
 	Describe("ErrorWithDetails", func() {
 		It("logs the message to Logger.err at the error level with specially formatted arguments", func() {
-			logger := NewWriterLogger(LevelError, outBuf, errBuf)
+			logger := NewWriterLogger(LevelError, outBuf)
 
 			logger.ErrorWithDetails("TAG", "some error to log", "awesome")
 
 			expectedContent := expectedLogFormat("TAG", "ERROR - some error to log")
-			Expect(outBuf).ToNot(MatchRegexp(expectedContent))
-			Expect(errBuf).To(MatchRegexp(expectedContent))
+			Expect(outBuf).To(MatchRegexp(expectedContent))
 
 			expectedDetails := "\n********************\nawesome\n********************"
-			Expect(outBuf).ToNot(ContainSubstring(expectedDetails))
-			Expect(errBuf).To(ContainSubstring(expectedDetails))
+			Expect(outBuf).To(ContainSubstring(expectedDetails))
 		})
 	})
 
+	It("prints the correct prefix during concurrent writes", func() {
+		testConcurrentPrefix(NewWriterLogger)
+	})
+
 	It("log level debug", func() {
-		logger := NewWriterLogger(LevelDebug, outBuf, errBuf)
+		logger := NewWriterLogger(LevelDebug, outBuf)
 		logger.Debug("DEBUG", "some debug log")
 		logger.Info("INFO", "some info log")
 		logger.Warn("WARN", "some warn log")
@@ -161,12 +206,12 @@ var _ = Describe("Logger", func() {
 
 		Expect(outBuf).To(ContainSubstring("DEBUG"))
 		Expect(outBuf).To(ContainSubstring("INFO"))
-		Expect(errBuf).To(ContainSubstring("WARN"))
-		Expect(errBuf).To(ContainSubstring("ERROR"))
+		Expect(outBuf).To(ContainSubstring("WARN"))
+		Expect(outBuf).To(ContainSubstring("ERROR"))
 	})
 
 	It("log level info", func() {
-		logger := NewWriterLogger(LevelInfo, outBuf, errBuf)
+		logger := NewWriterLogger(LevelInfo, outBuf)
 
 		logger.Debug("DEBUG", "some debug log")
 		logger.Info("INFO", "some info log")
@@ -175,12 +220,12 @@ var _ = Describe("Logger", func() {
 
 		Expect(outBuf).ToNot(ContainSubstring("DEBUG"))
 		Expect(outBuf).To(ContainSubstring("INFO"))
-		Expect(errBuf).To(ContainSubstring("WARN"))
-		Expect(errBuf).To(ContainSubstring("ERROR"))
+		Expect(outBuf).To(ContainSubstring("WARN"))
+		Expect(outBuf).To(ContainSubstring("ERROR"))
 	})
 
 	It("log level warn", func() {
-		logger := NewWriterLogger(LevelWarn, outBuf, errBuf)
+		logger := NewWriterLogger(LevelWarn, outBuf)
 
 		logger.Debug("DEBUG", "some debug log")
 		logger.Info("INFO", "some info log")
@@ -189,12 +234,12 @@ var _ = Describe("Logger", func() {
 
 		Expect(outBuf).ToNot(ContainSubstring("DEBUG"))
 		Expect(outBuf).ToNot(ContainSubstring("INFO"))
-		Expect(errBuf).To(ContainSubstring("WARN"))
-		Expect(errBuf).To(ContainSubstring("ERROR"))
+		Expect(outBuf).To(ContainSubstring("WARN"))
+		Expect(outBuf).To(ContainSubstring("ERROR"))
 	})
 
 	It("log level error", func() {
-		logger := NewWriterLogger(LevelError, outBuf, errBuf)
+		logger := NewWriterLogger(LevelError, outBuf)
 
 		logger.Debug("DEBUG", "some debug log")
 		logger.Info("INFO", "some info log")
@@ -203,14 +248,14 @@ var _ = Describe("Logger", func() {
 
 		Expect(outBuf).ToNot(ContainSubstring("DEBUG"))
 		Expect(outBuf).ToNot(ContainSubstring("INFO"))
-		Expect(errBuf).ToNot(ContainSubstring("WARN"))
-		Expect(errBuf).To(ContainSubstring("ERROR"))
+		Expect(outBuf).ToNot(ContainSubstring("WARN"))
+		Expect(outBuf).To(ContainSubstring("ERROR"))
 	})
 
 	Describe("Toggling forced debug", func() {
 		Describe("when the log level is error", func() {
 			It("outputs at debug level", func() {
-				logger := NewWriterLogger(LevelError, outBuf, errBuf)
+				logger := NewWriterLogger(LevelError, outBuf)
 
 				logger.ToggleForcedDebug()
 				logger.Debug("TOGGLED_DEBUG", "some debug log")
@@ -220,12 +265,12 @@ var _ = Describe("Logger", func() {
 
 				Expect(outBuf).To(ContainSubstring("TOGGLED_DEBUG"))
 				Expect(outBuf).To(ContainSubstring("TOGGLED_INFO"))
-				Expect(errBuf).To(ContainSubstring("TOGGLED_WARN"))
-				Expect(errBuf).To(ContainSubstring("TOGGLED_ERROR"))
+				Expect(outBuf).To(ContainSubstring("TOGGLED_WARN"))
+				Expect(outBuf).To(ContainSubstring("TOGGLED_ERROR"))
 			})
 
 			It("outputs at error level when toggled back", func() {
-				logger := NewWriterLogger(LevelError, outBuf, errBuf)
+				logger := NewWriterLogger(LevelError, outBuf)
 
 				logger.ToggleForcedDebug()
 				logger.ToggleForcedDebug()
@@ -236,9 +281,41 @@ var _ = Describe("Logger", func() {
 
 				Expect(outBuf).ToNot(ContainSubstring("STANDARD_DEBUG"))
 				Expect(outBuf).ToNot(ContainSubstring("STANDARD_INFO"))
-				Expect(errBuf).ToNot(ContainSubstring("STANDARD_WARN"))
-				Expect(errBuf).To(ContainSubstring("STANDARD_ERROR"))
+				Expect(outBuf).ToNot(ContainSubstring("STANDARD_WARN"))
+				Expect(outBuf).To(ContainSubstring("STANDARD_ERROR"))
 			})
 		})
 	})
+
+	It("does not block while printing a string", func() {
+		var slow slowGoStringer
+		logger := NewWriterLogger(LevelError, outBuf)
+
+		start := make(chan struct{})
+		go func() {
+			close(start)
+			for i := 0; i < 10; i++ {
+				logger.Error("TAG", "%#v", slow)
+			}
+		}()
+
+		fast := func() time.Duration {
+			t := time.Now()
+			logger.Error("TAG", "1")
+			return time.Since(t)
+		}
+		<-start
+		Consistently(fast, slow.Duration(), time.Millisecond).Should(BeNumerically("<", slow.Duration()/4))
+	})
 })
+
+type slowGoStringer struct{}
+
+func (s slowGoStringer) Duration() time.Duration {
+	return time.Second
+}
+
+func (s slowGoStringer) GoString() string {
+	time.Sleep(s.Duration())
+	return "Hello, Slow Stringer!"
+}

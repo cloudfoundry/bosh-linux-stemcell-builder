@@ -145,11 +145,11 @@ shared_examples_for 'every OS image' do
 
   context 'installed by rsyslog_config' do
     before do
-      system("sudo mount --bind /dev #{ @os_image_dir }/dev")
+      Open3.capture3("sudo mount --bind /dev #{ @os_image_dir }/dev")
     end
 
     after do
-      system("sudo umount #{ @os_image_dir }/dev")
+      Open3.capture3("sudo umount #{ @os_image_dir }/dev")
     end
 
     describe file('/etc/rsyslog.conf') do
@@ -738,6 +738,13 @@ shared_examples_for 'every OS image' do
   context 'postfix is not installed (stig: V-38622) (stig: V-38446)' do
     it "shouldn't be installed" do
       expect(package('postfix')).to_not be_installed
+    end
+  end
+
+  context 'installed binaries' do
+    describe file('/var/vcap/bosh/bin/sync-time') do
+      it { should be_file }
+      it { should be_executable }
     end
   end
 end

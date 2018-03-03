@@ -3,6 +3,16 @@ require 'spec_helper'
 describe 'Google Stemcell', stemcell_image: true do
   it_behaves_like 'udf module is disabled'
 
+  context 'rsyslog conf directory only contains files installed by rsyslog_config stage and google-compute-engine package' do
+    describe command('ls -A /etc/rsyslog.d') do
+      its (:stdout) { should eq(%q(50-default.conf
+90-google.conf
+avoid-startup-deadlock.conf
+enable-kernel-logging.conf
+))}
+    end
+  end
+
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/infrastructure') do
       its(:content) { should include('google') }

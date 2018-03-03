@@ -9,6 +9,10 @@ module ShelloutTypes
       @chroot = chroot
     end
 
+    def to_s
+      @service
+    end
+
     def enabled?
       check_service_enabled(DEFAULT_RUNLEVEL)
     end
@@ -23,9 +27,9 @@ module ShelloutTypes
       stdout, stderr, status = @chroot.run('cat', '/etc/*release')
       raise RuntimeError, stderr if status != 0
 
-      if stdout.match /Ubuntu/
+      if stdout.match(/Ubuntu/) && !stdout.match(/Xenial/)
         check_upstart_links(runlevel) || check_init_conf(runlevel)
-      elsif stdout.match /CentOS|openSUSE/
+      elsif stdout.match /CentOS|openSUSE|Xenial/
         check_is_enabled_systemctl
       else
         raise "Cannot determine Linux distribution: #{stdout}"

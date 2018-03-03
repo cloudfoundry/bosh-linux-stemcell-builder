@@ -7,6 +7,42 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `LrbAMDDxUAzW0kbtWWDcKnEKSjQZagDR`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from master (c63518b27bc7c4f8fd570822af3678a799783f4c)
+
+* `tAzc_KVnQkbRExvREIXA416njtf1fJFo`
+  - Remove umask changes from os image
+  - built from master (a884dcded16524be753b6d1f4bcb66bcbe13f7d3)
+
+* `h1O7ipVJZqjqYf1bIS2NFl194zIev88I`
+  - Add umask changes
+  - built from master (07a11844704dd14d0bd248f1c3ae306e72249f51)
+
+* `fYIzkFFX.O8GDLUOd5C9IAOCNHRtcaVu`
+  - Remount / as rprivate to fix issues with garden
+  - built from master (914b37862104cad6b49b3630be4570c90ef6be20)
+
+* `cThEYpZDLxVuLlm32BN29oSQZ7CxrmHC`
+  - chrony will now force sync systemtime at stemcell boot
+  - built from master (4aa2203b0fc11212fcdca53ff7b7adaa75359c52)
+
+* `6VnS_oNe42ReXaKd__nJvQ6ckUCGtWGq`
+  - Ensure rsyslog is started after bind mount is created at /var/log
+  - built from master (0a52c872e6e0bf5f0b225027040270dc63596de6)
+
+* `jouTj71JrZKnTf486DpDRJSdh9SZ1g6x`
+  - bump debootstrap version
+  - built from master (7f891a225df648456711855c3604b59198c1b04f)
+
+* `UWLqyMZYpnrmBbporWp2WVFA5vtFCOCH`
+  - Remove packages crda, iw, wireless-crda, wireless-regdb, and mg
+  - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
+
+* `uC8D1lxdXTpqoNv2w6.zhNR91VMRfSMG`
+  - use chrony for sync-time
+  - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
+
 * `U3zcB31LFT4AZppjYNKafIvuvga9_Nda`
   - Update kernel to 4.10
   - built from master (bea3e1038fba7409b9f1a4ae2e46efac10a96607)
@@ -32,6 +68,34 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `j_oBo7KqBvn7LzZbCZR4lw_4f.GtZjUz`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from master (c63518b27bc7c4f8fd570822af3678a799783f4c)
+
+* `K9y4vI6Swcz_oeHBpJjFHlU8XQFy.E.9`
+  - Remove umask changes from os image
+  - built from master (a884dcded16524be753b6d1f4bcb66bcbe13f7d3)
+
+* `UziQ_fCYp2tG4nKVZUKj_0O8MRGUQAFA`
+  - Add umask changes
+  - built from master (07a11844704dd14d0bd248f1c3ae306e72249f51)
+
+* `U8wCPwxQsoiG1.0izDMVrRObun1n_J.W`
+  - Fix sync-time script
+  - built from master (de77af6929dc48a07d7c8e3db6d7b92b78285730)
+
+* `lz1PrZ22wbWzWPz9mmAx1xJFN8HAsOAU`
+  - Periodic bump
+  - built from master (7f891a225df648456711855c3604b59198c1b04f)
+
+* `tuNJU7fC4UCAP92IdpCKKV5uMAd4RTdW`
+  - Periodic bump
+  - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
+
+* `8kwlt1sVR2A4Je95x3_MjzkzxZe5q3vx`
+  - refactor /var/vcap/bosh/bin/sync-time
+  - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
 
 * `G71XaogxhnOY6VIeATzFi.EsTUvLhNNM`
   - Periodic bump
@@ -601,61 +665,37 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
   (e448b0e8b0967288488c929fbbf953b22a046d1d)
 
 
-## CentOS 6.6
-
-CentOS 6.6 images have filename `bosh-centos-6-os-image.tgz`
-
-* `p8M5lmQFEzXDA3MKeiDMsdLq6jVkJOQt`
-  - changes for stig
-
-* `gVPTz59wj9kHj1nBzzymxbhm1yvPe.Q.`
-  - remove mesg from profile
-
-* `u1vhDkA5HGFmGJfb9Qg4tBQkE_AMlTOh`
-  - load bashrc in non-login shell
-
-* `Q43Dju2RvjPkbWakc33SAGCwrXAPGZiV`
-  - update kernel and packages
-
-* `2wi4CWKxfqSLjKQp0T4IKcAPaNFNhCFG`
-  - update kernel
-
-* `kkUYP.4sM_hdsn3Sfcr6ksahFpPgb2D8`
-  - Add hmac-sha1 to sshd_config (required by go ssh lib)
-
-* `3Yu.JSS0rB0oV6Gt3QnFfxaxvRju71bQ`
-  - lock down sshd_config permissions
-  - disable weak ssh ciphers
-  - disable weak ssh MACs
-
-* `lUG9hrPUDugWx4Sv5vuKiN1X2Z1.lN.8`
-  - Adds kernel flags to enable console output in openstack environments
-
-* `.EqtRtHJyHTr3hg4nFPq5QmJ4UxQ2WU.`
-  - upgrade linux kernel to 3.13.0-45
-
-* `ISA4tKjaoq4koVay5rAzNZlzX7X0KafH`
-  - patch GNU libc to resolve CVE-2015-0235, "GHOST"
-
-* `aoUtngdallpd2f6HhMxCveFvk6t6B2Ru`
-  - upgrade openssl to 1.0.1e-30.el6_6.5
-
-* `Hb884_xVvhoIhdTEmMtaTHKC.s7b9AmN`
-  - switch logrotate to rotate based on size
-
-* `xbBfE2GA7AgmCGA6MfNfhHX67vkJlIze`
-  - start monit during agent bootstrap
-
-* `PB2C5YnPG.zZ5MgjBR96Y40UDpqVQb_D`
-  - disable reverse DNS resolution for sshd
-
-* `6mBEQ5Gt5O6NJIFZxlyrf_05i.6s0OWF`
-  - CentOS 6.6
-
-
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `bRx.yU16rrr5HKtRwJ7IffQ5Aqh92ec_`
+  - Bump ixgbevf 4.2.2 -> 4.3.4
+  - built from master (c63518b27bc7c4f8fd570822af3678a799783f4c)
+
+* `ev..9oZ8yHPB1dMKHf93Redboor1YV1k`
+  - Remove umask changes from os image
+  - built from master (a884dcded16524be753b6d1f4bcb66bcbe13f7d3)
+
+* `nGbRvopAX.1uoP3gddZ4dUl7d3Y_WeF6`
+  - Add umask changes
+  - built from master (07a11844704dd14d0bd248f1c3ae306e72249f51)
+
+* `skD_a_3vQcVRfWaWidnN.HrD6srcyoVl`
+  - Ensure rsyslog is started after bind mount is created at /var/log
+  - built from master (0a52c872e6e0bf5f0b225027040270dc63596de6)
+
+* `X.5SPARRtIEqJUce18JMMR7AEdemYV26`
+  - Periodic bump
+  - built from master (7f891a225df648456711855c3604b59198c1b04f)
+
+* `vb_TNB_nbU4Q689j_LSLX2SIxLRKnjPe`
+  - Periodic bump
+  - built from master (c92e74444ef79eb4d5e827dee16dacc27f65d89e)
+
+* `pEKS.VlpukuR0SQaLdOjuf9ZhT7YBeIq`
+  - refactor /var/vcap/bosh/bin/sync-time
+  - built from master (d81ef5110368b61fd92051fda81ae020ab6aabe6)
 
 * `uAVB2a0ojcpV9Vq0t2hkdHi_ScFr21x5`
   - Periodic bump
