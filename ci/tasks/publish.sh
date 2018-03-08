@@ -34,10 +34,11 @@ for file in $COPY_KEYS ; do
   file="${file/\%s/$VERSION}"
 
   echo "$file"
+  filename=$(basename "$file")
 
   # occasionally this fails for unexpected reasons; retry a few times
   for i in {1..4}; do
-    aws s3 cp "s3://$CANDIDATE_BUCKET_NAME/$file" "s3://$PUBLISHED_BUCKET_NAME/$file" \
+    aws s3 cp --content-disposition filename=${filename} --metadata-directive REPLACE "s3://$CANDIDATE_BUCKET_NAME/$file" "s3://$PUBLISHED_BUCKET_NAME/$file" \
       && break \
       || sleep 5
   done
