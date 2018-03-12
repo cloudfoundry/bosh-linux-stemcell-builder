@@ -8,6 +8,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 
+* `TB8R_yaRuokjLgpl50AWxkKlINyJS8Y0`
+  - Periodic bump
+  - built from 3421.x (b3f7ae7b329385fbaebfca34ec4f7b15d337bc61)
+
 * `4acLTvuZZa6bNAQG7Q9FTlkKAycoJbOo`
   - USN-3582-2: Linux kernel (Xenial HWE) vulnerabilities
   - built from 3421.x (ad57b4a3cd1e62d8953d3f46c868abc056304335)
