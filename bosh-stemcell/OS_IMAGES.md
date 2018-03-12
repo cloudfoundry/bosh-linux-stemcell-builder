@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `xUXLkZti.HovXjIN8zJsyHiz_7q92xe_`
+  - Periodic bump
+  - built from master (d98f12dc742ad61e4af6981be24fe7e23fd54062)
+
 * `LrbAMDDxUAzW0kbtWWDcKnEKSjQZagDR`
   - Bump ixgbevf 4.2.2 -> 4.3.4
   - built from master (c63518b27bc7c4f8fd570822af3678a799783f4c)
@@ -68,6 +72,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `uEqbbhG3hwdlEC6J.6gsB_T7_inLs.p3`
+  - Periodic bump
+  - built from master (d98f12dc742ad61e4af6981be24fe7e23fd54062)
 
 * `j_oBo7KqBvn7LzZbCZR4lw_4f.GtZjUz`
   - Bump ixgbevf 4.2.2 -> 4.3.4
@@ -668,6 +676,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `pX5IKCVlM1_TzKdIZ_HfVgfxOYDWdfOo`
+  - Periodic bump
+  - built from master (d98f12dc742ad61e4af6981be24fe7e23fd54062)
 
 * `bRx.yU16rrr5HKtRwJ7IffQ5Aqh92ec_`
   - Bump ixgbevf 4.2.2 -> 4.3.4
