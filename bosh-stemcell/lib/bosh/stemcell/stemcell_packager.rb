@@ -16,7 +16,7 @@ module Bosh
       def package(disk_format)
         File.delete(stemcell_image_path) if File.exist?(stemcell_image_path)
 
-        runner.configure_and_apply(collection.package_stemcell_stages(disk_format))
+        @runner.configure_and_apply(@collection.package_stemcell_stages(disk_format))
 
         write_manifest(disk_format)
         create_tarball(disk_format)
@@ -24,25 +24,23 @@ module Bosh
 
       private
 
-      attr_reader :definition, :version, :stemcell_build_path, :tarball_path, :disk_size, :runner, :collection
-
       def write_manifest(disk_format)
-        manifest_filename = File.join(stemcell_build_path, "stemcell.MF")
+        manifest_filename = File.join(@stemcell_build_path, "stemcell.MF")
         File.open(manifest_filename, "w") do |f|
           f.write(Psych.dump(manifest(disk_format)))
         end
       end
 
       def manifest(disk_format)
-        infrastructure = definition.infrastructure
+        infrastructure = @definition.infrastructure
 
-        stemcell_name = "bosh-#{definition.stemcell_name(disk_format)}"
+        stemcell_name = "bosh-#{@definition.stemcell_name(disk_format)}"
         {
           'name' => stemcell_name,
-          'version' => version.to_s,
+          'version' => @version.to_s,
           'bosh_protocol' => 1,
           'sha1' => image_checksum,
-          'operating_system' => "#{definition.operating_system.name}-#{definition.operating_system.version}",
+          'operating_system' => "#{@definition.operating_system.name}-#{@definition.operating_system.version}",
           'stemcell_formats' => infrastructure.stemcell_formats,
           'cloud_properties' => manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
         }
@@ -56,23 +54,23 @@ module Bosh
 
         {
             'name' => stemcell_name,
-            'version' => version.to_s,
+            'version' => @version.to_s,
             'infrastructure' => infrastructure.name,
             'hypervisor' => infrastructure.hypervisor,
-            'disk' => disk_size,
+            'disk' => @disk_size,
             'disk_format' => disk_format,
             'container_format' => 'bare',
             'os_type' => 'linux',
-            'os_distro' => definition.operating_system.name,
+            'os_distro' => @definition.operating_system.name,
             'architecture' => architecture,
         }.merge(infrastructure.additional_cloud_properties)
       end
 
       def create_tarball(disk_format)
-        stemcell_name = ArchiveFilename.new(version, definition, 'bosh-stemcell', disk_format).to_s
-        tarball_name = File.join(tarball_path, stemcell_name)
+        stemcell_name = ArchiveFilename.new(@version, @definition, 'bosh-stemcell', disk_format).to_s
+        tarball_name = File.join(@tarball_path, stemcell_name)
 
-        Dir.chdir(stemcell_build_path) do
+        Dir.chdir(@stemcell_build_path) do
           system("tar zcf #{tarball_name} *")
         end
 
@@ -84,7 +82,7 @@ module Bosh
       end
 
       def stemcell_image_path
-        File.join(stemcell_build_path, 'image')
+        File.join(@stemcell_build_path, 'image')
       end
     end
   end

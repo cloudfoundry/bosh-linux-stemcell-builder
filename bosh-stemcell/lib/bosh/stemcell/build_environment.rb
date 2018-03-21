@@ -40,7 +40,7 @@ module Bosh::Stemcell
     def os_image_rspec_command
       [
         "cd #{STEMCELL_SPECS_DIR};",
-        "OS_IMAGE=#{os_image_tarball_path}",
+        "OS_IMAGE=#{@os_image_tarball_path}",
         "bundle exec rspec -fd#{exclude_arch_exclusions}",
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
       ].join(' ')
@@ -69,7 +69,7 @@ module Bosh::Stemcell
     end
 
     def stemcell_files
-      definition.disk_formats.map do |disk_format|
+      @definition.disk_formats.map do |disk_format|
         stemcell_filename = Stemcell.new(@definition, 'bosh-stemcell', @version, disk_format)
         File.join(work_path, stemcell_filename.name)
       end
@@ -92,7 +92,7 @@ module Bosh::Stemcell
     end
 
     def stemcell_disk_size
-      stemcell_builder_options.image_create_disk_size
+      @stemcell_builder_options.image_create_disk_size
     end
 
     def command_env
@@ -108,23 +108,15 @@ module Bosh::Stemcell
       :agent,
     )
 
-    attr_reader(
-      :shell,
-      :environment,
-      :definition,
-      :stemcell_builder_options,
-      :os_image_tarball_path,
-    )
-
     def sanitize
       FileUtils.rm(Dir.glob('*.tgz'))
 
-      shell.run("sudo umount #{File.join(work_path, 'mnt/tmp/grub', settings['stemcell_image_name'])} 2> /dev/null",
+      @shell.run("sudo umount #{File.join(work_path, 'mnt/tmp/grub', settings['stemcell_image_name'])} 2> /dev/null",
                 { ignore_failures: true })
 
-      shell.run("sudo umount #{image_mount_point} 2> /dev/null", { ignore_failures: true })
+      @shell.run("sudo umount #{image_mount_point} 2> /dev/null", { ignore_failures: true })
 
-      shell.run("sudo rm -rf #{base_directory}", { ignore_failures: true })
+      @shell.run("sudo rm -rf #{base_directory}", { ignore_failures: true })
     end
 
     def operating_system_spec_name
@@ -200,7 +192,7 @@ module Bosh::Stemcell
     end
 
     def settings
-      stemcell_builder_options.default
+      @stemcell_builder_options.default
     end
 
     def base_directory
@@ -218,7 +210,7 @@ module Bosh::Stemcell
     def proxy_settings_from_environment
       keep = %w(HTTP_PROXY HTTPS_PROXY NO_PROXY)
 
-      environment.select { |k| keep.include?(k.upcase) }
+      @environment.select { |k| keep.include?(k.upcase) }
     end
 
     def hash_as_bash_env(env)

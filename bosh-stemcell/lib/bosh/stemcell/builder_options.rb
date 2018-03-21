@@ -25,7 +25,7 @@ module Bosh::Stemcell
         'stemcell_operating_system_version' => operating_system.version,
         'ruby_bin' => ruby_bin,
         'image_create_disk_size' => image_create_disk_size,
-        'os_image_tgz' => os_image_tgz_path,
+        'os_image_tgz' => @os_image_tgz_path,
       }.merge(environment_variables).merge(ovf_options)
     end
 
@@ -43,15 +43,9 @@ module Bosh::Stemcell
       :agent,
     )
 
-    attr_reader(
-      :environment,
-      :definition,
-      :os_image_tgz_path,
-    )
-
     def ovf_options
       if infrastructure.name == 'vsphere' || infrastructure.name == 'vcloud'
-        { 'image_ovftool_path' => environment['OVFTOOL'] }
+        { 'image_ovftool_path' => @environment['OVFTOOL'] }
       else
         {}
       end
@@ -59,10 +53,10 @@ module Bosh::Stemcell
 
     def environment_variables
       {
-        'UBUNTU_ISO' => environment['UBUNTU_ISO'],
-        'UBUNTU_MIRROR' => environment['UBUNTU_MIRROR'],
-        'RHN_USERNAME' => environment['RHN_USERNAME'],
-        'RHN_PASSWORD' => environment['RHN_PASSWORD'],
+        'UBUNTU_ISO' => @environment['UBUNTU_ISO'],
+        'UBUNTU_MIRROR' => @environment['UBUNTU_MIRROR'],
+        'RHN_USERNAME' => @environment['RHN_USERNAME'],
+        'RHN_PASSWORD' => @environment['RHN_PASSWORD'],
       }
     end
 
@@ -71,7 +65,7 @@ module Bosh::Stemcell
     end
 
     def ruby_bin
-      environment['RUBY_BIN'] || File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+      @environment['RUBY_BIN'] || File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
     end
 
     def source_root

@@ -27,27 +27,27 @@ module Bosh::Stemcell
 
     def configure(stages)
       stages.each do |stage|
-        stage_config_script = File.join(build_path, 'stages', stage.to_s, 'config.sh')
+        stage_config_script = File.join(@build_path, 'stages', stage.to_s, 'config.sh')
 
         puts "=== Configuring '#{stage}' stage ==="
         puts "== Started #{Time.now.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
         if File.exists?(stage_config_script) && File.executable?(stage_config_script)
-          run_sudo_with_command_env("#{stage_config_script} #{settings_file}")
+          run_sudo_with_command_env("#{stage_config_script} #{@settings_file}")
         end
       end
     end
 
     def apply(stages)
       stages.each do |stage|
-        FileUtils.mkdir_p(work_path)
+        FileUtils.mkdir_p(@work_path)
 
         puts "=== Applying '#{stage}' stage ==="
         puts "== Started #{Time.now.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
 
         begin
-          stage_apply_script = File.join(build_path, 'stages', stage.to_s, 'apply.sh')
+          stage_apply_script = File.join(@build_path, 'stages', stage.to_s, 'apply.sh')
 
-          run_sudo_with_command_env("#{stage_apply_script} #{work_path}")
+          run_sudo_with_command_env("#{stage_apply_script} #{@work_path}")
 
         rescue => _
           puts "=== You can resume_from the '#{stage}' stage by using resume_from=#{stage} ==="
@@ -58,8 +58,6 @@ module Bosh::Stemcell
     end
 
     private
-
-    attr_reader :stages, :build_path, :command_env, :settings_file, :work_path
 
     def resume_from(all_stages, resume_from_stage)
       if resume_from_stage != NIL
@@ -76,7 +74,7 @@ module Bosh::Stemcell
     def run_sudo_with_command_env(command)
       shell = Bosh::Core::Shell.new
 
-      shell.run("sudo #{command_env} #{command} 2>&1", output_command: true)
+      shell.run("sudo #{@command_env} #{command} 2>&1", output_command: true)
     end
   end
 end

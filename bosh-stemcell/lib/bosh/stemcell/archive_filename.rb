@@ -15,8 +15,8 @@ module Bosh::Stemcell
     def to_s
       stemcell_filename_parts = [
         name,
-        version,
-        definition.stemcell_name(disk_format)
+        @version,
+        @definition.stemcell_name(@disk_format)
       ]
 
       "#{stemcell_filename_parts.join('-')}.tgz"
@@ -26,17 +26,10 @@ module Bosh::Stemcell
 
     def name
       if Bosh::Stemcell::Arch.ppc64le?
-        "#{base_name}-ppc64le"
+        "#{@base_name}-ppc64le"
       else
-        base_name
+        @base_name
       end
     end
-
-    attr_reader(
-      :base_name,
-      :version,
-      :definition,
-      :disk_format,
-    )
   end
 end
