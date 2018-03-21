@@ -41,9 +41,9 @@ EOS
 
 vm_mem=512
 vm_cpus=1
-vm_hostname=ubuntu
+vm_hostname=${stemcell_operating_system}
 vm_arch=amd64
-vm_guestos=ubuntu-64
+vm_guestos=${stemcell_operating_system}-64
 
 cat > $ovf/$vm_hostname.vmx <<EOS
 config.version = "8"
