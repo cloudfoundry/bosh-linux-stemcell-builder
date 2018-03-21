@@ -32,10 +32,9 @@ module Bosh::Stemcell
       File.join('/mnt/stemcells', infrastructure.name, infrastructure.hypervisor, operating_system.name)
     end
 
-    let(:build_path) { File.join(root_dir, 'build', 'build') }
+    let(:build_path) { File.join(root_dir, 'build') }
     let(:settings_file) { File.join(build_path, 'etc', 'settings.bash') }
-    let(:work_root) { File.join(root_dir, 'work') }
-    let(:work_path) { File.join(work_root, 'work') }
+    let(:work_path) { File.join(root_dir, 'work') }
 
     let(:infrastructure) do
       instance_double('Bosh::Stemcell::Infrastructure::Base',
@@ -127,12 +126,6 @@ module Bosh::Stemcell
         expect {
           subject.prepare_build
         }.to change { File.exist?(leftover_file) }.from(true).to(false)
-      end
-
-      it 'creates the work root' do
-        expect {
-          subject.prepare_build
-        }.to change { Dir.exists?(work_root) }.from(false).to(true)
       end
 
       it 'creates the stemcell path' do

@@ -32,7 +32,7 @@ module Bosh::Stemcell
         prepare_build_path
       end
       copy_stemcell_builder_to_build_path
-      prepare_work_root
+      prepare_work_path
       prepare_stemcell_path
       persist_settings_for_bash
     end
@@ -65,7 +65,7 @@ module Bosh::Stemcell
     end
 
     def build_path
-      File.join(build_root, 'build')
+      File.join(base_directory, 'build')
     end
 
     def stemcell_files
@@ -84,7 +84,7 @@ module Bosh::Stemcell
     end
 
     def work_path
-      File.join(work_root, 'work')
+      File.join(base_directory, 'work')
     end
 
     def stemcell_tarball_path
@@ -136,8 +136,8 @@ module Bosh::Stemcell
       FileUtils.cp_r(Dir.glob("#{STEMCELL_BUILDER_SOURCE_DIR}/*"), build_path, preserve: true, verbose: true)
     end
 
-    def prepare_work_root
-      FileUtils.mkdir_p(work_root, verbose: true)
+    def prepare_work_path
+      FileUtils.mkdir_p(work_path, verbose: true)
     end
 
     def persist_settings_for_bash
@@ -197,14 +197,6 @@ module Bosh::Stemcell
 
     def base_directory
       File.join('/mnt', 'stemcells', infrastructure.name, infrastructure.hypervisor, operating_system.name)
-    end
-
-    def build_root
-      File.join(base_directory, 'build')
-    end
-
-    def work_root
-      File.join(base_directory, 'work')
     end
 
     def proxy_settings_from_environment
