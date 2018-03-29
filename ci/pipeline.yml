@@ -14,6 +14,7 @@ groups:
       - build-vsphere-esxi-ubuntu-trusty
       - build-vcloud-esxi-ubuntu-trusty
       - bats-ubuntu
+      - delivery
   - name: aws
     jobs:
       - build-aws-xen-hvm-ubuntu-trusty
@@ -466,6 +467,19 @@ jobs:
         do:
         - {put: environment, params: {release: environment}}
 
+  - name: delivery
+    plan:
+      - aggregate:
+        - get: bosh-linux-stemcell-builder
+          trigger: true
+          passed:
+          - bats-ubuntu
+          - test-stemcells
+      - put: tracker-output
+        params:
+          repos:
+          - bosh-linux-stemcell-builder
+
 resources:
   - name: bosh-linux-stemcell-builder-push
     type: git
@@ -629,3 +643,10 @@ resources:
       uri: git@github.com:pivotal-cf-experimental/bats-concourse-pool.git
       branch: master
       private_key: {{github_deployment_key__bosh-cpi-environments}}
+
+  - name: tracker-output
+    type: tracker
+    source:
+      token: {{tracker_api_token}}
+      project_id: {{tracker_project_id}}
+      tracker_url: https://www.pivotaltracker.com
