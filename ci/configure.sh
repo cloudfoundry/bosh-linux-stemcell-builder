@@ -15,6 +15,8 @@ if [ -n "${RELEASE_BRANCH:-}" ]; then
 fi
 
 fly -t production set-pipeline \
-  -p "$pipeline" -c <( bosh interpolate $args ci/pipeline.yml ) \
+  -p "$pipeline" \
+  -c <( bosh interpolate $args ci/pipeline.yml ) \
   -l <(lpass show --note "concourse:production pipeline:bosh:stemcells") \
-  -l <(lpass show --note "bats-concourse-pool:vsphere secrets")
+  -l <(lpass show --note "bats-concourse-pool:vsphere secrets") \
+  -l <(lpass show --note "tracker-bot-story-delivery")
