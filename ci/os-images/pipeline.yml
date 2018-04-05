@@ -1,4 +1,12 @@
 ---
+groups:
+- name: bosh:os-images
+  jobs:
+  - build-centos-7
+  - build-ubuntu-trusty
+  - build-ubuntu-xenial
+  - start-job
+
 jobs:
   - name: start-job
     serial: true
