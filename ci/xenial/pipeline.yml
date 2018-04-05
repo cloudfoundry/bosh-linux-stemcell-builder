@@ -1,3 +1,17 @@
+groups:
+- name: bosh:xenial-stemcells
+  jobs:
+  - bats-ubuntu
+  - build-vcloud-esxi-ubuntu-xenial
+  - build-vsphere-esxi-ubuntu-xenial
+  - build-openstack-kvm-ubuntu-xenial
+  - build-google-kvm-ubuntu-xenial
+  - build-azure-hyperv-ubuntu-xenial
+  - build-aws-xen-hvm-ubuntu-xenial
+  - build-warden-boshlite-ubuntu-xenial
+  - test-stemcells
+  - build-stemcell
+  - test-unit
 
 shared:
   - &deploy-director
