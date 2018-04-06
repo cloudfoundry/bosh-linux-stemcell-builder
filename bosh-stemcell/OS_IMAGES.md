@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `By3Zgyj97MkdE8evRkDb850k9PQLbjB7`
+  - USN-3619-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from master (906e0b938262b6d2cfe9b7278a6b911db30ff51e)
+
 * `Jo93p5TOY7s.9PgxXq1qW.yhf5Sdyr.V`
   - Periodic bump
   - built from master (895e1ef1c4e5f8311ae94926e357f4e5566cbc43)
@@ -76,6 +80,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `RcJii5ynUjEPNnu8uTNmz.997LCi9tIC`
+  - USN-3619-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from master (906e0b938262b6d2cfe9b7278a6b911db30ff51e)
 
 * `pPq76RHGuPAEZ0CLmsb1cbkZZoJz7RUa`
   - Periodic bump
@@ -684,6 +692,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `By3Zgyj97MkdE8evRkDb850k9PQLbjB7`
+  - USN-3619-2: Linux kernel (Xenial HWE) vulnerabilities
+  - built from master (906e0b938262b6d2cfe9b7278a6b911db30ff51e)
 
 * `OJVPOMdCdpxknC2LPZspsGt6tXTlABt5`
   - Periodic bump
