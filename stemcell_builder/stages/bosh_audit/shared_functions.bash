@@ -106,6 +106,7 @@ function write_shared_audit_rules {
 -a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/sbin/postdrop -k privileged
 -a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/sbin/postqueue -k privileged
 -a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/sbin/usernetctl -k privileged
+-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/sbin/service -k privileged
 
 ' >> $chroot/etc/audit/rules.d/audit.rules
 }
