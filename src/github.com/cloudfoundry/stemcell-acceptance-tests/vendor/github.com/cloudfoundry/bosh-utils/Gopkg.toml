@@ -1,5 +1,10 @@
 required = ["github.com/onsi/ginkgo/ginkgo"]
 
+[prune]
+  unused-packages = true
+  go-tests = true
+  non-go = true
+
 [[constraint]]
   name = "github.com/bmatcuk/doublestar"
   version = "1.0.9"
@@ -27,10 +32,6 @@ required = ["github.com/onsi/ginkgo/ginkgo"]
 [[constraint]]
   branch = "master"
   name = "github.com/pivotal-cf/paraphernalia"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/pivotal-golang/clock"
 
 [[constraint]]
   name = "github.com/stretchr/testify"
