@@ -147,6 +147,7 @@ if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
   run_in_chroot ${chroot} "systemctl enable runit"
   pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
   pkg_mgr purge --auto-remove $pkgs_to_purge
+  run_in_chroot ${chroot} "systemctl disable chrony"
 fi
 
 exclusions="postfix whoopsie apport"

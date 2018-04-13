@@ -20,5 +20,5 @@ done
 
 mv $new_file /etc/chrony/chrony.conf
 
-invoke-rc.d chrony restart
+systemctl restart chrony.service
 chronyc waitsync
