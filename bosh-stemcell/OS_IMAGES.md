@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `BO8oyZu0epzIdADWx1Ylm2cpOIU6Vm_T`
+  - Only start chrony service after update config
+  - built from master (61e047ef4f13ee7db9be123c2f8d1d62fe96e35a)
+
 * `By3Zgyj97MkdE8evRkDb850k9PQLbjB7`
   - USN-3619-2: Linux kernel (Xenial HWE) vulnerabilities
   - built from master (906e0b938262b6d2cfe9b7278a6b911db30ff51e)
