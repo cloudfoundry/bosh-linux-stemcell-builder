@@ -92,7 +92,12 @@ shared_examples_for 'a Linux kernel 3.x based OS image' do
 
       describe 'the ixgbevf kernel module', exclude_on_ppc64le: true  do
         it 'is installed with the right version' do
-          expect(file("/var/lib/dkms/ixgbevf/4.3.4/#{kernel_version}/x86_64/module/ixgbevf.ko")).to be_file
+          files = [
+            file("/var/lib/dkms/ixgbevf/4.3.4/#{kernel_version}/x86_64/module/ixgbevf.ko"),
+            file("/var/lib/dkms/ixgbevf/4.3.4/#{kernel_version}/x86_64/module/ixgbevf.ko.xz")
+          ]
+
+          expect(files).to include(be_file)
         end
       end
     end
