@@ -353,39 +353,6 @@ HERE
       end
     end
   end
-
-  context 'installed by system_azure_serial_console', {
-    exclude_on_aws: true,
-    exclude_on_google: true,
-    exclude_on_vcloud: true,
-    exclude_on_vsphere: true,
-    exclude_on_warden: true,
-    exclude_on_openstack: true,
-    exclude_on_softlayer: true,
-  } do
-    describe file('/etc/init/ttyS0.conf') do
-      it { should be_file }
-      its(:content) { should eql(<<HERE) }
-# ttyS0 - getty
-#
-# This service maintains a getty on ttyS0 from the point the system is
-# started until it is shut down again.
-
-start on stopped rc RUNLEVEL=[12345]
-stop on runlevel [!12345]
-
-pre-start script
-    # getty will not be started if the serial console is not present
-    stty -F /dev/ttyS0 -a 2> /dev/null > /dev/null || { stop; exit 0; }
-end script
-
-respawn
-script
-    exec /sbin/getty -L ttyS0 115200 vt102
-end script
-HERE
-    end
-  end
 end
 
 describe 'Ubuntu 16.04 stemcell tarball', stemcell_tarball: true do

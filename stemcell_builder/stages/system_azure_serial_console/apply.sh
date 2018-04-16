@@ -5,7 +5,7 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-if [ "$(get_os_type)" == "ubuntu" ]; then
+if [ ${DISTRIB_CODENAME} == 'trusty' ]; then
   cat >> $chroot/etc/init/ttyS0.conf <<EOS
 # ttyS0 - getty
 #
