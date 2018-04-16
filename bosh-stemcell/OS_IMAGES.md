@@ -7,9 +7,9 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
-* `BO8oyZu0epzIdADWx1Ylm2cpOIU6Vm_T`
+* `mnY4sdr2H7pplJ.IYMzoeaxdTzS4HKY7`
   - Only start chrony service after update config
-  - built from master (61e047ef4f13ee7db9be123c2f8d1d62fe96e35a)
+  - built from master (23a8a5ce5f77cef0ff00f0f52cede9b8a23f5160)
 
 * `By3Zgyj97MkdE8evRkDb850k9PQLbjB7`
   - USN-3619-2: Linux kernel (Xenial HWE) vulnerabilities
@@ -84,6 +84,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `uwo7KC.x1bYs2FU30mNRmkVHKhQ3DJVF`
+  - Periodic bump
+  - built from master (23a8a5ce5f77cef0ff00f0f52cede9b8a23f5160)
 
 * `RcJii5ynUjEPNnu8uTNmz.997LCi9tIC`
   - USN-3619-2: Linux kernel (Xenial HWE) vulnerabilities
@@ -696,6 +700,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `lMuKiMXu.wCwGh5Lt4uZoN6GTVu21mKj`
+  - Periodic bump
+  - built from master (23a8a5ce5f77cef0ff00f0f52cede9b8a23f5160)
 
 * `By3Zgyj97MkdE8evRkDb850k9PQLbjB7`
   - USN-3619-2: Linux kernel (Xenial HWE) vulnerabilities
