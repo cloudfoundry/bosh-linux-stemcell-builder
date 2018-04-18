@@ -5,6 +5,9 @@ set -e
 export BASE=$(pwd)
 
 semver=`cat ${BASE}/version/number`
+if [ $VERSION_PREFIX ]; then
+  branch_prefix="${VERSION_PREFIX}-"
+fi
 
 pushd "${BASE}/bosh-linux-stemcell-builder"
   git_branch=`git branch --list -r --contains HEAD | grep -v 'origin/HEAD' | cut -d'/' -f2`
@@ -21,7 +24,7 @@ fi
 
 echo "will only continue if version to promote matches $version_must_match ..."
 
-if [[ $semver =~ $version_must_match ]]; then
+if [[ "$branch_prefix$semver" =~ $version_must_match ]]; then
   echo "version $semver is appropriate for branch $git_branch -- promote will continue"
   exit 0
 fi
