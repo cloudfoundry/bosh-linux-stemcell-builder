@@ -7,6 +7,10 @@ OS images are stored in S3 bucket [bosh-os-images](http://s3.amazonaws.com/bosh-
 
 Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 
+* `spSfqM2fXrHHOvzTcJ27GidiQwI.hY5f`
+  - Periodic bump
+  - built from master (e45d564a697ddb306ee49068cf660be54e89ffb0)
+
 * `mnY4sdr2H7pplJ.IYMzoeaxdTzS4HKY7`
   - Only start chrony service after update config
   - built from master (23a8a5ce5f77cef0ff00f0f52cede9b8a23f5160)
@@ -84,6 +88,10 @@ Ubuntu 16.04 images have filename `bosh-ubuntu-xenial-os-image.tgz`
 ## Ubuntu 14.04
 
 Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
+
+* `VscbJQMskkZbs3ZINMOStDQ0N43hfbKR`
+  - Periodic bump
+  - built from master (e45d564a697ddb306ee49068cf660be54e89ffb0)
 
 * `uwo7KC.x1bYs2FU30mNRmkVHKhQ3DJVF`
   - Periodic bump
@@ -700,6 +708,10 @@ Ubuntu 14.04 images have filename `bosh-ubuntu-trusty-os-image.tgz`
 ## CentOS 7
 
 CentOS 7 images have filename `bosh-centos-7-os-image.tgz`
+
+* `6lae20DJ1RFjTpcwRLq3ZSwNt3ojLd1A`
+  - Periodic bump
+  - built from master (e45d564a697ddb306ee49068cf660be54e89ffb0)
 
 * `lMuKiMXu.wCwGh5Lt4uZoN6GTVu21mKj`
   - Periodic bump
