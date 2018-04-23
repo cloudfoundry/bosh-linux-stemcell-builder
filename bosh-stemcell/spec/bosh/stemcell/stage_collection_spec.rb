@@ -405,6 +405,7 @@ module Bosh::Stemcell
           [
             :system_azure_network,
             :system_azure_wala,
+            :system_azure_serial_console,
             :system_parameters,
             :enable_udf_module,
             :bosh_clean,
