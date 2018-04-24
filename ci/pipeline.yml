@@ -83,6 +83,7 @@ shared:
       BOSH_VSPHERE_VCENTER_VM_FOLDER:       ((vcenter-vm-folder))
       BOSH_VSPHERE_VCENTER_TEMPLATE_FOLDER: ((vcenter-template-folder))
       BOSH_VSPHERE_VCENTER_DISK_PATH:       ((vcenter-disk-path))
+      BOSH_VSPHERE_VCENTER_RP:              ((vcenter-rp))
 
   - &prepare-bats-config
     task: prepare-bats
@@ -178,6 +179,7 @@ jobs:
               BOSH_vcenter_vms:         ((vcenter-vm-folder))
               BOSH_vcenter_templates:   ((vcenter-template-folder))
               BOSH_vcenter_disks:       ((vcenter-disk-path))
+              BOSH_vcenter_rp:          ((vcenter-rp))
           - task: test-stemcell
             tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
@@ -206,6 +208,7 @@ jobs:
               BOSH_vcenter_vms:         ((vcenter-vm-folder))
               BOSH_vcenter_templates:   ((vcenter-template-folder))
               BOSH_vcenter_disks:       ((vcenter-disk-path))
+              BOSH_vcenter_rp:          ((vcenter-rp))
           - task: test-stemcell-ipv6
             tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
