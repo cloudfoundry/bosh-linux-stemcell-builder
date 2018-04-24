@@ -138,19 +138,20 @@ jobs:
           input_mapping:
             stemcell: vsphere-esxi-ubuntu-trusty
           params:
-            BOSH_internal_ip:         {{stemcell-test-director-address}}
-            BOSH_internal_cidr:       {{bosh-director-vcenter-cidr}}
-            BOSH_internal_gw:         {{bosh-director-vcenter-gateway}}
-            BOSH_vcenter_ip:          {{vcenter-ip}}
-            BOSH_vcenter_user:        {{vcenter-user}}
-            BOSH_vcenter_password:    {{vcenter-password}}
-            BOSH_vcenter_dc:          {{vcenter-dc}}
-            BOSH_vcenter_cluster:     {{vcenter-cluster}}
-            BOSH_vcenter_ds:          {{vcenter-datastore}}
-            BOSH_network_name:        {{vcenter-vlan}}
-            BOSH_vcenter_vms:         {{vcenter-vm-folder}}
-            BOSH_vcenter_templates:   {{vcenter-template-folder}}
-            BOSH_vcenter_disks:       {{vcenter-disk-path}}
+            BOSH_internal_ip:       {{stemcell-test-director-address}}
+            BOSH_internal_cidr:     {{bosh-director-vcenter-cidr}}
+            BOSH_internal_gw:       {{bosh-director-vcenter-gateway}}
+            BOSH_vcenter_ip:        {{vcenter-ip}}
+            BOSH_vcenter_user:      {{vcenter-user}}
+            BOSH_vcenter_password:  {{vcenter-password}}
+            BOSH_vcenter_dc:        {{vcenter-dc}}
+            BOSH_vcenter_cluster:   {{vcenter-cluster}}
+            BOSH_vcenter_ds:        {{vcenter-datastore}}
+            BOSH_network_name:      {{vcenter-vlan}}
+            BOSH_vcenter_vms:       {{vcenter-vm-folder}}
+            BOSH_vcenter_templates: {{vcenter-template-folder}}
+            BOSH_vcenter_disks:     {{vcenter-disk-path}}
+            BOSH_vcenter_rp:        {{vcenter-rp}}
 
         - task: test-stemcell
           tags: [vsphere-v6.5]
