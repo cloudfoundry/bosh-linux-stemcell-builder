@@ -1019,7 +1019,7 @@ resources:
   - name: environment
     type: pool
     source:
-      pool: vsphere-new
+      pool: vsphere
       uri: git@github.com:pivotal-cf-experimental/bats-concourse-pool.git
       branch: master
       private_key: {{github_deployment_key__bosh-cpi-environments}}
