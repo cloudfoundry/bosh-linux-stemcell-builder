@@ -67,7 +67,7 @@ groups:
 shared:
   - &deploy-director
     task: deploy-director
-    tags: [vsphere-v5.1]
+    tags: [vsphere-v6.5]
     file: bosh-linux-stemcell-builder/ci/bats/tasks/deploy-director.yml
     params:
       BAT_INFRASTRUCTURE: vsphere
@@ -84,20 +84,21 @@ shared:
       BOSH_VSPHERE_VCENTER_VM_FOLDER:       {{vcenter-vm-folder}}
       BOSH_VSPHERE_VCENTER_TEMPLATE_FOLDER: {{vcenter-template-folder}}
       BOSH_VSPHERE_VCENTER_DISK_PATH:       {{vcenter-disk-path}}
+      BOSH_VSPHERE_VCENTER_RP:              {{vcenter-rp}}
 
   - &prepare-bats-config
     task: prepare-bats
-    tags: [vsphere-v5.1]
+    tags: [vsphere-v6.5]
     file: bosh-linux-stemcell-builder/ci/bats/iaas/vsphere/prepare-bats-config.yml
 
   - &run-bats
     task: run-bats
-    tags: [vsphere-v5.1]
+    tags: [vsphere-v6.5]
     file: bats/ci/tasks/run-bats.yml
 
   - &teardown
     task: teardown
-    tags: [vsphere-v5.1]
+    tags: [vsphere-v6.5]
     file: bosh-linux-stemcell-builder/ci/bats/tasks/destroy-director.yml
 
 jobs:
@@ -151,7 +152,7 @@ jobs:
         - get: vsphere-esxi-ubuntu-trusty
           passed: [build-vsphere-esxi-ubuntu-trusty]
           tags:
-          - vsphere-v5.1
+          - vsphere-v6.5
 
       - do:
         - put: environment
@@ -160,7 +161,7 @@ jobs:
 
         - do:
           - task: deploy-director
-            tags: [vsphere-v5.1]
+            tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/deploy-director.yml
             input_mapping:
               stemcell: vsphere-esxi-ubuntu-trusty
@@ -174,8 +175,9 @@ jobs:
               BOSH_vcenter_vms:         {{vcenter-vm-folder}}
               BOSH_vcenter_templates:   {{vcenter-template-folder}}
               BOSH_vcenter_disks:       {{vcenter-disk-path}}
+              BOSH_vcenter_rp:          {{vcenter-rp}}
           - task: test-stemcell
-            tags: [vsphere-v5.1]
+            tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
             input_mapping:
               stemcell: vsphere-esxi-ubuntu-trusty
@@ -183,11 +185,11 @@ jobs:
               package: ipv4
           ensure:
             task: teardown-director
-            tags: [vsphere-v5.1]
+            tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/teardown.yml
         - do:
           - task: deploy-director-ipv6
-            tags: [vsphere-v5.1]
+            tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/deploy-director-ipv6.yml
             input_mapping:
               stemcell: vsphere-esxi-ubuntu-trusty
@@ -201,8 +203,9 @@ jobs:
               BOSH_vcenter_vms:         {{vcenter-vm-folder}}
               BOSH_vcenter_templates:   {{vcenter-template-folder}}
               BOSH_vcenter_disks:       {{vcenter-disk-path}}
+              BOSH_vcenter_rp:          {{vcenter-rp}}
           - task: test-stemcell-ipv6
-            tags: [vsphere-v5.1]
+            tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
             input_mapping:
               stemcell: vsphere-esxi-ubuntu-trusty
@@ -210,7 +213,7 @@ jobs:
               package: ipv6
           ensure:
             task: teardown-director-ipv6
-            tags: [vsphere-v5.1]
+            tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/teardown.yml
         ensure:
           put: environment
@@ -660,7 +663,7 @@ jobs:
       - get: stemcell
         trigger: true
         tags:
-        - vsphere-v5.1
+        - vsphere-v6.5
         resource: vsphere-esxi-centos-7
         passed:
         - build-vsphere-esxi-centos-7
@@ -726,7 +729,7 @@ jobs:
       - get: stemcell
         trigger: true
         tags:
-        - vsphere-v5.1
+        - vsphere-v6.5
         resource: vsphere-esxi-ubuntu-trusty
         passed:
           - build-vsphere-esxi-ubuntu-trusty
