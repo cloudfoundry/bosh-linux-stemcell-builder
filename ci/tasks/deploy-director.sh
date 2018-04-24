@@ -26,6 +26,7 @@ chmod +x $bosh_cli
 
 $bosh_cli interpolate bosh-deployment/bosh.yml \
   -o bosh-deployment/vsphere/cpi.yml \
+  -o bosh-deployment/vsphere/resource-pool.yml \
   --vars-store director-creds.yml \
   -v director_name=stemcell-smoke-tests-director \
   --vars-env "BOSH" > director.yml
