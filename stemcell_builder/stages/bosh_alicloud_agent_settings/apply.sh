@@ -3,8 +3,6 @@
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-KEY_ID=`curl http://100.100.100.200/latest/meta-data/public-keys/`
-
 cat > $chroot/var/vcap/bosh/agent.json <<JSON
 {
   "Platform": {
@@ -19,9 +17,9 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
         {
           "Type": "HTTP",
           "URI": "http://100.100.100.200",
+          "UserDataPath": "/latest/user-data",
           "InstanceIDPath": "/latest/meta-data/instance-id",
-          "SSHKeysPath": "/latest/meta-data/public-keys/$KEY_ID/openssh-key",
-          "UserDataPath": "/latest/user-data"
+          "SSHKeysPath": "/latest/meta-data/public-keys/0/openssh-key"
         }
       ],
       "UseServerName": false,
