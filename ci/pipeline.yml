@@ -2,6 +2,9 @@
 groups:
   - name: all
     jobs:
+      - start-job
+      - build-ubuntu-trusty-image
+      - bump-os-image
       - test-unit
       - build-stemcell
       - publish-stemcells
@@ -44,6 +47,11 @@ groups:
   - name: bats
     jobs:
       - bats-ubuntu
+  - name: os-images
+    jobs:
+      - start-job
+      - build-ubuntu-trusty-image
+      - bump-os-image
 
 shared:
   - &deploy-director
@@ -83,6 +91,50 @@ shared:
     file: bosh-linux-stemcell-builder/ci/bats/tasks/destroy-director.yml
 
 jobs:
+  - name: start-job
+    serial: true
+    plan:
+      - aggregate:
+        - get: bosh-linux-stemcell-builder
+        - get: every-2-weeks-on-mondays
+          trigger: true
+
+  - name: build-ubuntu-trusty-image
+    plan:
+      - get: bosh-linux-stemcell-builder
+        trigger: true
+        passed:
+          - start-job
+      - task: build
+        file: bosh-linux-stemcell-builder/ci/os-images/tasks/build.yml
+        privileged: true
+        params:
+          OPERATING_SYSTEM_NAME:      ubuntu
+          OPERATING_SYSTEM_VERSION:   trusty
+      - put: ubuntu-trusty-tarball
+        params:
+          file: os-image/ubuntu-trusty.tgz
+          acl: public-read
+
+  - name: bump-os-image
+    plan:
+      - aggregate:
+          - get: bosh-linux-stemcell-builder
+            trigger: true
+            passed:
+              - build-ubuntu-trusty-image
+          - get: ubuntu-trusty-tarball
+            passed:
+              - build-ubuntu-trusty-image
+          - get: centos-7-tarball
+            params:
+              version: ".4F24xF2CMBOp.D8ERS4KAL_TjVjNHhx" # Do not uncomment this because we don't build centos images for this line
+      - task: bump-os-image
+        file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
+      - put: bosh-linux-stemcell-builder-push
+        params:
+          repository: bosh-linux-stemcell-builder-push
+
   - name: test-unit
     serial: true
     plan:
@@ -658,3 +710,35 @@ resources:
       token: {{tracker_api_token}}
       project_id: {{tracker_project_id}}
       tracker_url: https://www.pivotaltracker.com
+
+  #
+  # ubuntu-trusty
+  #
+
+  - name: ubuntu-trusty-tarball
+    type: s3
+    source:
+      bucket: ((osimage_bucket))
+      versioned_file: bosh-ubuntu-trusty-os-image.tgz
+      access_key_id: ((osimage_aws_access_key))
+      secret_access_key: ((osimage_aws_secret_key))
+  #
+  # centos-7
+  #
+
+  - name: centos-7-tarball
+    type: s3
+    source:
+      bucket: ((osimage_bucket))
+      versioned_file: bosh-centos-7-os-image.tgz
+      access_key_id: ((osimage_aws_access_key))
+      secret_access_key: ((osimage_aws_secret_key))
+
+  - name: every-2-weeks-on-mondays
+    type: time
+    source:
+      start: 6:00
+      stop: 8:30
+      location: America/Los_Angeles
+      days: [Monday]
+      interval: 336h # every 2 weeks (24h * 14)
