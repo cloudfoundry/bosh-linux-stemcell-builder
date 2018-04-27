@@ -18,5 +18,6 @@ fly -t production set-pipeline \
   -p "$pipeline" \
   -c <( bosh interpolate $args ci/pipeline.yml ) \
   -l <(lpass show --note "concourse:production pipeline:bosh:stemcells") \
+  -l <(lpass show --notes "concourse:production pipeline:os-images") \
   -l <(lpass show --note "bats-concourse-pool:vsphere secrets") \
   -l <(lpass show --note "tracker-bot-story-delivery")
