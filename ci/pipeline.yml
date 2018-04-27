@@ -127,8 +127,8 @@ jobs:
             passed:
               - build-ubuntu-trusty-image
           - get: centos-7-tarball
-            params:
-              version: ".4F24xF2CMBOp.D8ERS4KAL_TjVjNHhx" # Do not uncomment this because we don't build centos images for this line
+            version:
+              version_id: ".4F24xF2CMBOp.D8ERS4KAL_TjVjNHhx" # Do not uncomment this because we don't build centos images for this line
       - task: bump-os-image
         file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
       - put: bosh-linux-stemcell-builder-push
