@@ -1,0 +1,48 @@
+groups: []
+jobs: []
+resources:
+- name: bats
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-acceptance-tests.git
+  type: git
+- name: stemcells-index
+  source:
+    branch: master
+    private_key: ((boshio_stemcells_index_key))
+    uri: git@github.com:bosh-io/stemcells-core-index.git
+  type: git
+- name: syslog-release
+  source:
+    repository: cloudfoundry/syslog-release
+  type: bosh-io-release
+- name: os-conf-release
+  source:
+    repository: cloudfoundry/os-conf-release
+  type: bosh-io-release
+- name: bosh-release
+  source:
+    repository: cloudfoundry/bosh
+  type: bosh-io-release
+- name: cpi-release
+  source:
+    repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
+  type: bosh-io-release
+- name: bosh-deployment
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-deployment
+  type: git
+- name: bosh-cli
+  source:
+    bucket: bosh-cli-artifacts
+    regexp: bosh-cli-([0-9.]+)-linux-amd64
+    region_name: us-east-1
+  type: s3
+- name: environment
+  source:
+    branch: master
+    pool: vsphere
+    private_key: ((github_deployment_key__bosh-cpi-environments))
+    uri: git@github.com:pivotal-cf-experimental/bats-concourse-pool.git
+  type: pool
