@@ -59,13 +59,24 @@ Concourse will want to publish its artifacts. Create an IAM user with the [requi
         {
             "Effect": "Allow",
             "Principal": "*",
-            "Action": "s3:GetObject",
+            "Action": [
+              "s3:PutObject",
+              "s3:GetObjectAcl",
+              "s3:GetObject",
+              "s3:GetObjectVersionAcl",
+              "s3:PutObjectAcl",
+              "s3:GetObjectVersion"
+            ],
             "Resource": "arn:aws:s3:::bosh-os-images/*"
         },
         {
             "Effect": "Allow",
             "Principal": "*",
-            "Action": "s3:ListBucket",
+            "Action": [
+              "s3:ListBucketVersions",
+              "s3:ListBucket",
+              "s3:GetBucketVersioning"
+            ],
             "Resource": "arn:aws:s3:::bosh-os-images"
         }
     ]

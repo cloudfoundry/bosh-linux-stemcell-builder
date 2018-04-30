@@ -4,6 +4,15 @@
         {
             "Effect": "Allow",
             "Action": [
+                "s3:ListBucketVersions",
+                "s3:ListBucket",
+                "s3:GetBucketVersioning"
+            ],
+            "Resource": "arn:aws:s3:::bosh-os-images"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
                 "s3:GetObject",
                 "s3:GetObjectAcl",
                 "s3:GetObjectVersion",
@@ -11,9 +20,7 @@
                 "s3:PutObject",
                 "s3:PutObjectAcl"
             ],
-            "Resource": [
-                "arn:aws:s3:::bosh-os-images/*"
-            ]
+            "Resource": "arn:aws:s3:::bosh-os-images/*"
         }
     ]
   }
