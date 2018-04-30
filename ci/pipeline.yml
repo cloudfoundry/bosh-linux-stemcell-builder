@@ -823,7 +823,7 @@ resources:
   - name: bosh-linux-stemcell-builder-push
     type: git
     source:
-      uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
+      uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
       branch: master
       private_key: ((bosh_src_key))
 
