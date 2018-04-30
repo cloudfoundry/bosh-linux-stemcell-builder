@@ -69,7 +69,7 @@
     - get: version
       resource: version-((group))
       params:
-        bump: major
+        bump: ((bump_version))
     - params:
         file: version/number
       put: version-((group))
