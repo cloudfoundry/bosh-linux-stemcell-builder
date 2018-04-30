@@ -1,35 +1,32 @@
 #!/usr/bin/env bash
 
-set -e
+set -eu
 
-export BASE=$(pwd)
+version="$( cat version/number )"
+IFS="." read -r -a version_array <<< "$version"
 
-semver=`cat ${BASE}/version/number`
-if [ $VERSION_PREFIX ]; then
-  branch_prefix="${VERSION_PREFIX}-"
-fi
+echo "version is $version"
 
-pushd "${BASE}/bosh-linux-stemcell-builder"
-  git_branch=`git branch --list -r --contains HEAD | grep -v 'origin/HEAD' | cut -d'/' -f2`
-popd
+pushd "bosh-linux-stemcell-builder" > /dev/null
+  git_branch=$( git branch --list --format="%(refname:short)" --contains HEAD | grep -v 'detached' )
+  echo "branch is $git_branch"
 
-echo "detected bosh-linux-stemcell-builder will build from branch $git_branch ..."
+  # for directory'd branches, only use the last, release.x part
+  git_branch=$( basename "$git_branch" )
+  echo "branch-version is $git_branch"
+popd > /dev/null
 
-if [ "$git_branch" = "master" ]; then
-  version_must_match='^[0-9]+\.0\.0$'
-else
-  version_must_match="^${git_branch//x/[0-9]+.0}$"
-  version_must_match="${version_must_match//./\.}"
-fi
 
-echo "will only continue if version to promote matches $version_must_match ..."
-
-if [[ "$branch_prefix$semver" =~ $version_must_match ]]; then
-  echo "version $semver is appropriate for branch $git_branch -- promote will continue"
+if [[ "$git_branch" == "master" ]]; then
+  echo "SKIPPED: version check is ignored on $git_branch"
   exit 0
 fi
 
-echo "version $semver DOES NOT ALIGN with branch $git_branch -- promotion canceled!"
+IFS="." read -r -a branch_array <<< "$git_branch"
 
-exit 1
+if [[ "${branch_array[0]}" != "${version_array[0]}" ]]; then
+  echo "ERROR: version does not match branch"
+  exit 1
+fi
 
+echo "SUCCESS: version matches branch"
