@@ -179,6 +179,7 @@
         OS_NAME: ubuntu
         OS_VERSION: xenial
         PUBLISHED_BUCKET_NAME: ((published_stemcell_bucket))
+        VERSION_PREFIX: ubuntu-xenial/v
       task: copy-artifacts
     - aggregate:
       - params:
