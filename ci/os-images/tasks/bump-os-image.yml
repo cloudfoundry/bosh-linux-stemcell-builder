@@ -8,11 +8,14 @@ image_resource:
 
 inputs:
   - name: bosh-linux-stemcell-builder
-  - name: ubuntu-trusty-tarball
-  - name: centos-7-tarball
+  - name: image-tarball
 
 outputs:
   - name: bosh-linux-stemcell-builder-push
+
+params:
+  OS_NAME: ~
+  OS_VERSION: ~
 
 run:
   path: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.sh

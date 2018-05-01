@@ -7,7 +7,6 @@ group :development, :test do
   gem 'rspec-instafail'
   gem 'bosh-stemcell', path: 'bosh-stemcell'
   gem 'bosh-core'
-  gem 'bosh-dev', path: 'bosh-dev'
   gem 'fakefs'
   gem 'timecop'
   gem 'logging'

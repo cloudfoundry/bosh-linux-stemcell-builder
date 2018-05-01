@@ -44,24 +44,22 @@ namespace :stemcell do
   end
 
   desc 'Download a remote pre-built base OS image'
-  task :download_os_image, [:os_image_s3_bucket_name, :os_image_key] do |_, args|
+  task :download_os_image, [:operating_system_name, :operating_system_version] do |_, args|
     begin
-      require 'bosh/dev/download_adapter'
-      require 'bosh/dev/stemcell_dependency_fetcher'
-
-      puts "Using OS image #{args.os_image_key} from #{args.os_image_s3_bucket_name}"
-
-      logger = Logging.logger($stdout)
-      downloader = Bosh::Dev::DownloadAdapter.new(logger)
-      fetcher = Bosh::Dev::StemcellDependencyFetcher.new(downloader, logger)
+      puts "Using OS image #{args.operating_system_name}-#{args.operating_system_version}"
 
       mkdir_p('tmp')
-      os_image_path = File.join(Dir.pwd, 'tmp', 'base_os_image.tgz')
-      fetcher.download_os_image(
-        bucket_name: args.os_image_s3_bucket_name,
-        key:         args.os_image_key,
-        output_path: os_image_path,
+
+      metalink_path = File.join(
+        Dir.pwd,
+        'bosh-stemcell',
+        'image-metalinks',
+        "#{args.operating_system_name}-#{args.operating_system_version}.meta4"
       )
+
+      os_image_path = File.join(Dir.pwd, 'tmp', 'base_os_image.tgz')
+      `meta4 file-download --metalink #{metalink_path} #{os_image_path}`
+      raise 'Failed to download metalink' if $?.exitstatus != 0
 
       puts "Successfully downloaded OS image to #{os_image_path}"
     rescue RuntimeError => e
@@ -71,26 +69,24 @@ namespace :stemcell do
   end
 
   desc 'Build a stemcell with a remote pre-built base OS image'
-  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_s3_bucket_name, :os_image_key, :build_number] do |_, args|
+  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :build_number] do |_, args|
     begin
-      require 'bosh/dev/download_adapter'
-      require 'bosh/dev/stemcell_dependency_fetcher'
-
-      logger = Logging.logger($stdout)
-      downloader = Bosh::Dev::DownloadAdapter.new(logger)
-      fetcher = Bosh::Dev::StemcellDependencyFetcher.new(downloader, logger)
-
-      mkdir_p('tmp')
-      os_image_path = File.join(Dir.pwd, 'tmp', 'base_os_image.tgz')
-      fetcher.download_os_image(
-        bucket_name: args.os_image_s3_bucket_name,
-        key:         args.os_image_key,
-        output_path: os_image_path,
+      Rake::Task['stemcell:download_os_image'].invoke(
+        args.operating_system_name,
+        args.operating_system_version
       )
 
+      os_image_path = File.join(Dir.pwd, 'tmp', 'base_os_image.tgz')
       args.with_defaults(build_number: '0000')
 
-      Rake::Task['stemcell:build_with_local_os_image'].invoke(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, os_image_path, args.build_number)
+      Rake::Task['stemcell:build_with_local_os_image'].invoke(
+        args.infrastructure_name,
+        args.hypervisor_name,
+        args.operating_system_name,
+        args.operating_system_version,
+        os_image_path,
+        args.build_number
+      )
     rescue RuntimeError => e
       print_help
       raise e

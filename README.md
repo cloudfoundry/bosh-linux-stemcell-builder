@@ -139,7 +139,7 @@ The stemcell should be rebuilt when you are making and testing BOSH-specific cha
 
 The last two arguments to the rake command are the S3 bucket and key of the OS image to use (i.e. in the example below, the .tgz will be downloaded from [http://bosh-os-images.s3.amazonaws.com/bosh-centos-7-os-image.tgz](http://bosh-os-images.s3.amazonaws.com/bosh-centos-7-os-image.tgz)). More info at OS\_IMAGES.
 
-    $ bundle exec rake stemcell:build[aws,xen,ubuntu,trusty,bosh-os-images,bosh-ubuntu-trusty-os-image.tgz,"1234.56"]
+    $ bundle exec rake stemcell:build[aws,xen,ubuntu,trusty,"1234.56"]
 
 The final argument, which specifies the build number, is optional and will default to '0000'
 
@@ -151,12 +151,20 @@ If you want to use an OS Image that you just created, use the `stemcell:build_wi
 
 The final argument, which specifies the build number, is optional and will default to '0000'
 
-You can also download OS Images from the public S3 bucket. Public OS images can be obtained here:
+You can also download OS Images from the public S3 bucket.  Download information
+and metadata can be found in the corresponding [metalink files](./bosh-stemcell/image-metalinks).
+Public OS images can be obtained by:
 
-* latest Ubuntu - https://s3.amazonaws.com/bosh-os-images/bosh-ubuntu-trusty-os-image.tgz
-* latest CentOS - https://s3.amazonaws.com/bosh-os-images/bosh-centos-7-os-image.tgz
+```
+# latest ubuntu-trusty
+$ bundle exec rake stemcell:download_os_image[ubuntu,trusty]
 
-*Note*: you may need to append `?versionId=value` to those tarballs. You can find the expected `versionId` by looking at [`os_image_versions.json`](./os_image_versions.json).
+# latest centos-7
+$ bundle exec rake stemcell:download_os_image[centos,7]
+```
+
+**NOTE**: The `download_os_image` rake task has a dependency on the
+[meta4 binary](https://github.com/dpb587/metalink/releases).
 
 #### How to run tests for Stemcell
 When you run the `stemcell:build_with_local_os_image` or `stemcell:build` rake task, it will create a stemcell that it runs the stemcell specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests.

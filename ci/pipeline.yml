@@ -5,7 +5,7 @@ groups:
       - start-job
       - build-ubuntu-trusty-image
       - build-centos-7-image
-      - bump-os-image
+      - bump-os-images
       - test-unit
       - build-stemcell
       - test-stemcells
@@ -71,7 +71,7 @@ groups:
       - start-job
       - build-ubuntu-trusty-image
       - build-centos-7-image
-      - bump-os-image
+      - bump-os-images
 
 shared:
   - &deploy-director
@@ -158,7 +158,7 @@ jobs:
           file: os-image/centos-7.tgz
           acl: public-read
 
-  - name: bump-os-image
+  - name: bump-os-images
     plan:
       - aggregate:
           - get: bosh-linux-stemcell-builder
@@ -172,8 +172,20 @@ jobs:
           - get: centos-7-tarball
             passed:
               - build-centos-7-image
-      - task: bump-os-image
+      - task: bump-ubuntu-trusty-os-image
         file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
+        params:
+          OS_NAME: ubuntu
+          OS_VERSION: trusty
+        input_mapping: { image-tarball: ubuntu-trusty-tarball }
+      - task: bump-centos-7-os-image
+        file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
+        params:
+          OS_NAME: centos
+          OS_VERSION: 7
+        input_mapping:
+          image-tarball: centos-7-tarball
+          bosh-linux-stemcell-builder: bosh-linux-stemcell-builder-push
       - put: bosh-linux-stemcell-builder-push
         params:
           repository: bosh-linux-stemcell-builder-push
