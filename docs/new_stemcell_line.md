@@ -31,37 +31,25 @@
 1. Review and unpause the new pipelines.
 
 
-
-
 # Creating a new "single" stemcell line (for Xenial and beyond)
 
-1. Edit `.envrc` to uncomment and update `RELEASE_BRANCH`, `STEMCELL_OS`, `STEMCELL_OS_VERSION`, and optionally `INITIAL_STEMCELL_VERSION` following the example given.
+1. Create a new branch from the passing commit you want to release from. Use `{os_name}-{os_version}/{major}.x` format for branch name (e.g. `ubuntu-xenial/1.x`).
 
-    `vim .envrc`
+    `git checkout -b <<BRANCH_NAME>> {commit}`
 
-1. Be sure to update your environment with the new value.
-
-    `direnv allow`
-
-1. Create a new branch from the passing commit you want to branch.
-
-    `git checkout -b $RELEASE_BRANCH {commit}`
-
-1. Add, commit, and push the updated `.envrc` to the branch.
+1. Add, commit, and push the new branch.
 
     ```
-    git add .envrc
-    git ci -m "Branch for $RELEASE_BRANCH"
-    git push origin "$RELEASE_BRANCH"
+    git push origin <<BRANCH_NAME>>
     ```
 
-1. Create the stemcell and OS image branch pipelines.
+1. On master, update `ci/{os_name}-{os_version}/configure-aggregated-pipeline.sh` with the new branch details using the previous release branch as an example. Specifically, be sure to update the interpolated variables for the correct branch. For `initial_version`, use the same value of the stemcell produced by the commit in the `master` pipeline (e.g. `2.0.0`).
 
     ```
-    ./ci/single-stemcell/configure.sh
+    ./ci/{os_name}-{os_version}/configure-aggregated-pipeline.sh
     ```
 
-1. Review and unpause the new pipelines.
+1. Once configured, the stemcell should automatically trigger and create the next minor version of the stemcell (e.g. `2.1.0`).
 
 
 # References
