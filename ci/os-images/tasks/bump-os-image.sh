@@ -16,9 +16,11 @@ function main() {
   local metalink_relative="bosh-stemcell/image-metalinks/${OS_NAME}-${OS_VERSION}.meta4"
   local metalink="${PWD}/bosh-linux-stemcell-builder/${metalink_relative}"
 
+  rm "${metalink}"
   meta4 create --metalink "${metalink}"
   meta4 import-file --metalink "${metalink}" "${PWD}/image-tarball/*.tgz"
   meta4 file-set-url --metalink "${metalink}" "$(cat "${PWD}/image-tarball/url")"
+  cat "${metalink}"
 
   rsync -avzp bosh-linux-stemcell-builder/ bosh-linux-stemcell-builder-push
 
