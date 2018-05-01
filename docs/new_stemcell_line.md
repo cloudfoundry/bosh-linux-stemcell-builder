@@ -26,7 +26,6 @@
 
     ```
     ./ci/configure.sh
-    ./ci/os-image/configure.sh
     ```
 
 1. Review and unpause the new pipelines.
