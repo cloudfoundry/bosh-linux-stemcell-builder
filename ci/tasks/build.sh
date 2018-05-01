@@ -66,7 +66,7 @@ sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
   cd bosh-linux-stemcell-builder
 
   bundle install --local
-  bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,bosh-os-images,bosh-$OS_NAME-$OS_VERSION-os-image.tgz,$build_number]
+  bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,$build_number]
   rm -f ./tmp/base_os_image.tgz
 SUDO
 
