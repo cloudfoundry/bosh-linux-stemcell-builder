@@ -109,8 +109,6 @@
         put: environment
       - do:
         - file: bosh-linux-stemcell-builder/ci/tasks/deploy-director.yml
-          input_mapping:
-            stemcell: vsphere-esxi
           params:
             BOSH_internal_cidr: ((bosh-director-vcenter-cidr))
             BOSH_internal_gw: ((bosh-director-vcenter-gateway))
