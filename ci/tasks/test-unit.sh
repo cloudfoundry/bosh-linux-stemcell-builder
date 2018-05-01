@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 source /etc/profile.d/chruby.sh
-chruby 2.3.1
+chruby ruby
 
 set +e
 #create user for ShelloutTypes::File tests
