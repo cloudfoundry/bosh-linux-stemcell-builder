@@ -62,9 +62,9 @@ module Bosh::Stemcell
     attr_reader :stages, :build_path, :command_env, :settings_file, :work_path
 
     def resume_from(all_stages, resume_from_stage)
-      if resume_from_stage != NIL
+      if !resume_from_stage.nil?
         stage_index = all_stages.index(resume_from_stage.to_sym)
-        if stage_index == NIL
+        if stage_index.nil?
           raise "Can't find stage '#{resume_from_stage}' to resume from. Aborting."
         end
         all_stages.drop(stage_index)
