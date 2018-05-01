@@ -110,19 +110,16 @@
       - do:
         - file: bosh-linux-stemcell-builder/ci/tasks/deploy-director.yml
           params:
-            BOSH_internal_cidr: ((bosh-director-vcenter-cidr))
-            BOSH_internal_gw: ((bosh-director-vcenter-gateway))
-            BOSH_internal_ip: ((stemcell-test-director-address))
-            BOSH_network_name: ((vcenter-vlan))
-            BOSH_vcenter_cluster: ((vcenter-cluster))
-            BOSH_vcenter_dc: ((vcenter-dc))
-            BOSH_vcenter_disks: ((vcenter-disk-path))
-            BOSH_vcenter_ds: ((vcenter-datastore))
-            BOSH_vcenter_ip: ((vcenter-ip))
-            BOSH_vcenter_password: ((vcenter-password))
-            BOSH_vcenter_templates: ((vcenter-template-folder))
-            BOSH_vcenter_user: ((vcenter-user))
-            BOSH_vcenter_vms: ((vcenter-vm-folder))
+            BOSH_vcenter_ip:          ((vcenter-ip))
+            BOSH_vcenter_user:        ((vcenter-user))
+            BOSH_vcenter_password:    ((vcenter-password))
+            BOSH_vcenter_dc:          ((vcenter-dc))
+            BOSH_vcenter_cluster:     ((vcenter-cluster))
+            BOSH_vcenter_ds:          ((vcenter-datastore))
+            BOSH_vcenter_vms:         ((vcenter-vm-folder))
+            BOSH_vcenter_templates:   ((vcenter-template-folder))
+            BOSH_vcenter_disks:       ((vcenter-disk-path))
+            BOSH_vcenter_rp:          ((vcenter-rp))
           tags:
           - vsphere-v6.5
           task: deploy-director
@@ -476,6 +473,7 @@
             BOSH_VSPHERE_VCENTER_VLAN: ((vcenter-vlan))
             BOSH_VSPHERE_VCENTER_VM_FOLDER: ((vcenter-vm-folder))
             BOSH_VSPHERE_VERSION: ((vsphere-version))
+            BOSH_VSPHERE_VCENTER_RP: ((vcenter-rp))
           tags:
           - vsphere-v6.5
           task: deploy-director
