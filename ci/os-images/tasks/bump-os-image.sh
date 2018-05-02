@@ -18,7 +18,7 @@ function main() {
 
   rm "${metalink}"
   meta4 create --metalink "${metalink}"
-  meta4 import-file --metalink "${metalink}" "${PWD}/image-tarball/*.tgz"
+  meta4 import-file --metalink "${metalink}" "${PWD}"/image-tarball/*.tgz
   meta4 file-set-url --metalink "${metalink}" "$(cat "${PWD}/image-tarball/url")"
   cat "${metalink}"
 
