@@ -549,6 +549,9 @@
     source:
       branch: ((branch))
       uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
+      ignore_paths:
+        - bosh-stemcell/image-metalinks/ubuntu-trusty.meta4
+        - bosh-stemcell/image-metalinks/centos-7.meta4.meta4
     type: git
 - path: /resources/-
   type: replace

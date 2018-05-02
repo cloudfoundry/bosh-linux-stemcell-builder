@@ -831,6 +831,8 @@ resources:
     source:
       uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
       branch: master
+      ignore_paths:
+        - bosh-stemcell/image-metalinks/ubuntu-xenial.meta4
 
   - name: bosh-linux-stemcell-builder-push
     type: git
