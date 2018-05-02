@@ -10,7 +10,7 @@ if [[ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]]; then
 fi
 
 git fetch --all
-git branch --track ubuntu-xenial/1.x origin/ubuntu-xenial/1.x 2>/dev/null || tru e
+git branch --track ubuntu-xenial/1.x origin/ubuntu-xenial/1.x 2>/dev/null || true
 
 fly -t production set-pipeline \
   -p "bosh:stemcells:ubuntu-xenial" \
