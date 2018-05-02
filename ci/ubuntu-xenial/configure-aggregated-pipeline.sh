@@ -4,6 +4,14 @@ set -eu
 
 dir=$(dirname $0)
 
+if [[ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]]; then
+  echo -e "Do not run this script from any branch other than \033[1mmaster\033[0m"
+  exit 1
+fi
+
+git fetch --all
+git branch --track ubuntu-xenial/1.x origin/ubuntu-xenial/1.x 2>/dev/null || tru e
+
 fly -t production set-pipeline \
   -p "bosh:stemcells:ubuntu-xenial" \
   -c <(

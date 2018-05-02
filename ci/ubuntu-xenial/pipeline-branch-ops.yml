@@ -15,6 +15,7 @@
     - test-unit-((group))
     - publish-stemcells-((group))
     - build-os-image-((group))
+    - bump-os-image-((group))
     - start-job-((group))
     name: ((group))
 - path: /jobs/-
@@ -45,6 +46,29 @@
         acl: public-read
         file: os-image/ubuntu-xenial.tgz
       put: os-image-tarball-((group))
+- path: /jobs/-
+  type: replace
+  value:
+    name: bump-os-image-((group))
+    plan:
+    - aggregate:
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-os-image-((group))
+        trigger: true
+      - get: os-image-tarball-((group))
+        passed:
+        - build-os-image-((group))
+    - task: bump-os-image
+      file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
+      params:
+        OS_NAME: ubuntu
+        OS_VERSION: xenial
+      input_mapping: { image-tarball: os-image-tarball-((group)) }
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder-push
 - path: /jobs/-
   type: replace
   value:
