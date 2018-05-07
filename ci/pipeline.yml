@@ -121,7 +121,7 @@ jobs:
     plan:
       - aggregate:
         - get: bosh-linux-stemcell-builder
-        - get: every-2-weeks-on-mondays
+        - get: every-2-weeks-on-monday
           trigger: true
 
   - name: build-ubuntu-trusty-image
@@ -1050,11 +1050,11 @@ resources:
       access_key_id: ((osimage_aws_access_key))
       secret_access_key: ((osimage_aws_secret_key))
 
-  - name: every-2-weeks-on-mondays
+  - name: every-2-weeks-on-monday
     type: time
     source:
       start: 6:00
       stop: 8:30
       location: America/Los_Angeles
       days: [Monday]
-      interval: 336h # every 2 weeks (24h * 14)
+      interval: 192h
