@@ -173,6 +173,7 @@ jobs:
       - put: bosh-linux-stemcell-builder-push
         params:
           repository: bosh-linux-stemcell-builder-push
+          rebase: true
 
   - name: test-unit
     serial: true
