@@ -46,7 +46,7 @@ for file in $COPY_KEYS ; do
   echo ""
 done
 
-VERSION_PREFIX=${$VERSION_PREFIX:-stable-}
+VERSION_PREFIX=${VERSION_PREFIX:-stable-}
 
 echo "${VERSION_PREFIX}${VERSION}" > ../version-tag/tag
 
