@@ -11,7 +11,7 @@ mkdir -p $chroot/tmp
 
 
 if [[ "${DISTRIB_CODENAME}" == "xenial" ]]; then
-  pkg_mgr install linux-headers-4.10.0-38-generic linux-image-4.10.0-38-generic
+  pkg_mgr install linux-generic-hwe-16.04-edge
 else
   pkg_mgr install wireless-crda linux-generic-lts-xenial
 fi

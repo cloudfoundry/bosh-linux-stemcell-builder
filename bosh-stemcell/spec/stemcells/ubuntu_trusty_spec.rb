@@ -65,12 +65,12 @@ describe 'Ubuntu 14.04 stemcell image', stemcell_image: true do
     describe file('/var/vcap/bosh/etc/static_libraries_list') do
       it { should be_file }
 
-      it 'should be a proper superset of the installed static libraries' do
+      it 'should be a proper subset of the installed static libraries' do
         libraries_to_remove = subject.content.split("\n")
         found_libraries = command('find / -iname "*.a" | sort | uniq').stdout.split("\n")
 
-        found_libraries.each do |library|
-          expect(libraries_to_remove.include?(library)).to eq(true)
+        libraries_to_remove.each do |library|
+          expect(found_libraries).to include(library)
         end
       end
     end

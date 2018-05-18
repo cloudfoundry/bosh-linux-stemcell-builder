@@ -23,10 +23,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
   end
 
   context 'installed by system_kernel' do
-    describe package('linux-headers-4.10.0-38-generic') do
-      it { should be_installed }
-    end
-    describe package('linux-image-4.10.0-38-generic') do
+    describe package('linux-generic-hwe-16.04-edge') do
       it { should be_installed }
     end
   end
