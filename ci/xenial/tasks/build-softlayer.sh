@@ -93,7 +93,7 @@ if [ -e bosh-linux-stemcell-builder/tmp/*-raw.tgz ] ; then
 fi
 
 stemcell_filename="${stemcell_name}.tgz"
-mv "bosh-linux-stemcell-builder/tmp/*.tgz" "${output_dir}/${stemcell_filename}"
+mv "bosh-linux-stemcell-builder/tmp/${stemcell_filename}" "${output_dir}/${stemcell_filename}"
 
 #checksum="$(sha1sum "${output_dir}/${stemcell_filename}" | awk '{print $1}')"
 #echo "$stemcell_filename sha1=$checksum"
