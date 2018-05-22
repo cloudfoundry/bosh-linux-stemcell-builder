@@ -16,7 +16,7 @@ meta4_path=$PWD/stemcells-index-output/published/$OS_NAME-$OS_VERSION/$VERSION/s
 mkdir -p "$( dirname "$meta4_path" )"
 meta4 create --metalink="$meta4_path"
 
-find "stemcells-index-output/dev/$OS_NAME-$OS_VERSION/$VERSION" -name "*.meta4" -print0 \
+find "stemcells-index-output/dev/$OS_NAME-$OS_VERSION/$VERSION" -name "*.meta4" \
   | xargs -n1 -- meta4 import-metalink --metalink="$meta4_path"
 
 cd stemcells-index-output
