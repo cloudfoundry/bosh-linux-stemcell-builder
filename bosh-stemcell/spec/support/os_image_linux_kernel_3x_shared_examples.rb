@@ -96,8 +96,8 @@ shared_examples_for 'a Linux kernel 3.x based OS image' do
           uncompressed = "#{prefix}/ixgbevf.ko"
           compressed = "#{uncompressed}.xz"
 
-          expect(file(uncompressed)).to be_file
-          expect(file(compressed)).to be_file
+          expect(file(uncompressed).file? || file(compressed).file?)
+            .to be_truthy
         end
       end
     end
