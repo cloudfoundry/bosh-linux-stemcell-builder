@@ -15,6 +15,7 @@ module ShelloutTypes
     end
 
     def run(*cmd)
+      cmd.unshift('mknod -m 666 /dev/random c 1 8; mknod -m 666 /dev/urandom c 1 9;')
       stdout, stderr, status = Open3.capture3('sudo', 'chroot', chroot_dir, '/bin/bash', '-c', cmd.join(' '))
       return stdout, stderr, status.exitstatus
     end

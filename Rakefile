@@ -115,6 +115,8 @@ namespace :stemcell do
 
       sh(environment.os_image_rspec_command)
 
+      puts "Working from #{environment.work_path}..."
+      puts "########################################"
       runner = Bosh::Stemcell::StageRunner.new(
         build_path: environment.build_path,
         command_env: environment.command_env,

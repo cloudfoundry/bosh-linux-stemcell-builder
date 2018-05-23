@@ -23,6 +23,10 @@ echo '
 -a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/libexec/utempter/utempter -k privileged
 ' >> $chroot/etc/audit/rules.d/audit.rules
 
+# for stig V-38663: brings file permissions in aligment with what is declared by the RPM database
+# this is techinically not necessary as per the stig definition, but our tests are not as lenient as the stig is
+chmod 640 $chroot/etc/audit/rules.d/audit.rules
+
 record_use_of_privileged_binaries
 
 override_default_audit_variables

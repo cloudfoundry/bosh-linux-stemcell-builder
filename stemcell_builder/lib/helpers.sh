@@ -27,12 +27,12 @@ function run_in_chroot {
   # `unshare -f -p` to prevent `kill -HUP 1` from causing `init` to exit;
   unshare -f -p -m $SHELL <<EOS
     mkdir -p $chroot/dev
-    mount -n --bind /dev $chroot/dev
-    mount -n --bind /dev/shm $chroot/dev/shm
-    mount -n --bind /dev/pts $chroot/dev/pts
+    mount -o bind /dev $chroot/dev
+    mount -o bind /dev/shm $chroot/dev/shm
+    mount -o bind /dev/pts $chroot/dev/pts
 
     mkdir -p $chroot/proc
-    mount -n --bind /proc $chroot/proc
+    mount -o bind /proc $chroot/proc
 
     chroot $chroot env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin http_proxy=${http_proxy:-} bash -e -c "$script"
 EOS
