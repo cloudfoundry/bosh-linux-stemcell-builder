@@ -187,7 +187,7 @@ The ShelloutTypes code has its own unit tests, but require root privileges and a
 ```
 $ docker run bosh/main-ubuntu-chroot    # now in /opt/bosh
 $ source /etc/profile.d/chruby.sh
-$ chruby 2.3.1
+$ chruby 2.4.4
 
 $ #create user for ShelloutTypes::File tests
 $ chroot /tmp/ubuntu-chroot /bin/bash -c 'useradd -G nogroup shellout'

@@ -9,6 +9,7 @@ image_resource:
 inputs:
   - name: director-state
   - name: bosh-linux-stemcell-builder
+  - name: bosh-linux-stemcell-builder-master
 
 run:
   path: bosh-linux-stemcell-builder-master/ci/bluemix_ng/bats/tasks/destroy-director.sh
