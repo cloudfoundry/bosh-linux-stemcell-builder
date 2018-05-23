@@ -430,7 +430,7 @@ man:x:15:
 dialout:x:18:vcap
 floppy:x:19:vcap
 games:x:20:
-tape:x:33:
+tape:x:30:
 video:x:39:vcap
 ftp:x:50:
 lock:x:54:
