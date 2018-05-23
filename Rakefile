@@ -160,6 +160,6 @@ namespace :stemcell do
   end
 
   def print_help
-    puts "\nFor help with stemcell building, see: <https://github.com/cloudfoundry/bosh/blob/master/bosh-stemcell/README.md>\n\n"
+    puts "\nFor help with stemcell building, see: https://github.com/cloudfoundry/bosh-linux-stemcell-builder/blob/master/README.md\n\n"
   end
 end
