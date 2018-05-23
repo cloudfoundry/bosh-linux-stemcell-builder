@@ -1,5 +1,7 @@
 module ShelloutTypes
   class Package
+    attr_reader :last_message, :last_error
+
     def initialize(package, chroot_cmd_runner)
       @package = package
       @chroot_cmd_runner = chroot_cmd_runner
@@ -10,7 +12,7 @@ module ShelloutTypes
     end
 
     def installed?
-      _, _, status = @chroot_cmd_runner.run(pkg_query, @package)
+      @last_message, @last_error, status = @chroot_cmd_runner.run(pkg_query, @package)
       status == 0
     end
 

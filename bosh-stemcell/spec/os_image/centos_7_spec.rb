@@ -85,7 +85,7 @@ describe 'CentOS 7 OS image', os_image: true do
 
   context 'installed by system_grub' do
     describe package('grub2-tools') do
-      it { should be_installed }
+      it { should be_installed, -> { "Message: #{subject.last_message} #{subject.last_error}" } }
     end
   end
 
@@ -324,7 +324,7 @@ describe 'CentOS 7 OS image', os_image: true do
 
   context 'restrict access to the su command CIS-9.5' do
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
-      it('exits 0') { expect(subject.exit_status).to eq(0) }
+      it('exits 0') { expect(subject.exit_status).to eq(0), -> { "Stdout: #{subject.stdout} Stderr: #{subject.stderr}" } }
     end
     describe user('vcap') do
       it { should exist }
@@ -430,7 +430,7 @@ man:x:15:
 dialout:x:18:vcap
 floppy:x:19:vcap
 games:x:20:
-tape:x:30:
+tape:x:33:
 video:x:39:vcap
 ftp:x:50:
 lock:x:54:
