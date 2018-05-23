@@ -1,4 +1,5 @@
 adduser
+amd64-microcode
 anacron
 apparmor
 apparmor-utils
@@ -75,6 +76,7 @@ initramfs-tools
 initramfs-tools-bin
 initscripts
 insserv
+intel-microcode
 intltool-debian
 iproute2
 iptables
@@ -83,6 +85,7 @@ iputils-ping
 isc-dhcp-client
 isc-dhcp-common
 iso-codes
+iucode-tool
 kbd
 keyboard-configuration
 keyutils
@@ -114,19 +117,19 @@ libbz2-1.0:amd64
 libbz2-dev:amd64
 libc-bin
 libc-dev-bin
-libc6:amd64
 libc6-dev:amd64
+libc6:amd64
 libcap-dev:amd64
-libcap2:amd64
 libcap2-bin
+libcap2:amd64
 libcgmanager0:amd64
 libck-connector0:amd64
 libcloog-isl4:amd64
 libcomerr2:amd64
 libcrack2:amd64
 libcroco3:amd64
-libcurl3:amd64
 libcurl3-gnutls:amd64
+libcurl3:amd64
 libcurl4-openssl-dev:amd64
 libdb5.3:amd64
 libdbus-1-3:amd64
@@ -148,8 +151,8 @@ libfribidi0:amd64
 libfuse2:amd64
 libgcc-4.8-dev:amd64
 libgcc1:amd64
-libgcrypt11:amd64
 libgcrypt11-dev
+libgcrypt11:amd64
 libgdbm3:amd64
 libgeoip1:amd64
 libgirepository-1.0-1
@@ -172,8 +175,8 @@ libheimbase1-heimdal:amd64
 libheimntlm0-heimdal:amd64
 libhx509-5-heimdal:amd64
 libicu52:amd64
-libidn11:amd64
 libidn11-dev
+libidn11:amd64
 libisc95
 libisccc90
 libisccfg90
@@ -209,8 +212,8 @@ libmount1:amd64
 libmpc3:amd64
 libmpdec2:amd64
 libmpfr4:amd64
-libncurses5:amd64
 libncurses5-dev:amd64
+libncurses5:amd64
 libncursesw5:amd64
 libnettle4:amd64
 libnewt0.52:amd64
@@ -224,8 +227,8 @@ libp11-kit-dev
 libp11-kit0:amd64
 libpam-cap:amd64
 libpam-cracklib:amd64
-libpam-modules:amd64
 libpam-modules-bin
+libpam-modules:amd64
 libpam-runtime
 libpam0g:amd64
 libparted0debian1:amd64
@@ -241,13 +244,13 @@ libpython-stdlib:amd64
 libpython2.7-minimal:amd64
 libpython2.7-stdlib:amd64
 libpython3-stdlib:amd64
-libpython3.4:amd64
 libpython3.4-minimal:amd64
 libpython3.4-stdlib:amd64
+libpython3.4:amd64
 libquadmath0:amd64
 libreadline5:amd64
-libreadline6:amd64
 libreadline6-dev:amd64
+libreadline6:amd64
 librelp0
 libroken18-heimdal:amd64
 librtmp-dev
@@ -268,8 +271,8 @@ libssl-dev:amd64
 libssl1.0.0:amd64
 libstdc++-4.8-dev:amd64
 libstdc++6:amd64
-libtasn1-6:amd64
 libtasn1-6-dev
+libtasn1-6:amd64
 libterm-ui-perl
 libtext-charwidth-perl
 libtext-iconv-perl
@@ -287,8 +290,8 @@ libustr-1.0-1:amd64
 libuuid1:amd64
 libwind0-heimdal:amd64
 libwrap0:amd64
-libxml2:amd64
 libxml2-dev:amd64
+libxml2:amd64
 libxslt1-dev:amd64
 libxslt1.1:amd64
 libxtables10
@@ -404,5 +407,5 @@ xfsprogs
 xkb-data
 xz-utils
 zip
-zlib1g:amd64
 zlib1g-dev:amd64
+zlib1g:amd64
