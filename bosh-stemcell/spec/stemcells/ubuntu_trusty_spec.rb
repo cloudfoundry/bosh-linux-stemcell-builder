@@ -291,12 +291,12 @@ HERE
   describe 'installed packages' do
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E 's/(linux.*4.4).*/\\1/'"
 
-    let(:dpkg_list_aws_ubuntu) { File.read(spec_asset('dpkg-list-aws-ubuntu.txt')) }
-    let(:dpkg_list_vsphere_ubuntu) { File.read(spec_asset('dpkg-list-vsphere-ubuntu.txt')) }
-    let(:dpkg_list_vcloud_ubuntu) { File.read(spec_asset('dpkg-list-vsphere-ubuntu.txt')) }
-    let(:dpkg_list_warden_ubuntu) { File.read(spec_asset('dpkg-list-warden-ubuntu.txt')) }
-    let(:dpkg_list_google_ubuntu) { File.read(spec_asset('dpkg-list-google-ubuntu.txt')) }
-    let(:dpkg_list_openstack_ubuntu) { File.read(spec_asset('dpkg-list-openstack-ubuntu.txt')) }
+    let(:dpkg_list_aws_ubuntu) { File.readlines(spec_asset('dpkg-list-aws-ubuntu.txt')).map(&:chop) }
+    let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-vsphere-ubuntu.txt')).map(&:chop) }
+    let(:dpkg_list_vcloud_ubuntu) { File.readlines(spec_asset('dpkg-list-vsphere-ubuntu.txt')).map(&:chop) }
+    let(:dpkg_list_warden_ubuntu) { File.readlines(spec_asset('dpkg-list-warden-ubuntu.txt')).map(&:chop) }
+    let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-google-ubuntu.txt')).map(&:chop) }
+    let(:dpkg_list_openstack_ubuntu) { File.readlines(spec_asset('dpkg-list-openstack-ubuntu.txt')).map(&:chop) }
 
     describe command(dpkg_list_packages), {
       exclude_on_aws: true,
@@ -306,7 +306,10 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
     } do
-      its(:stdout) { should eq(dpkg_list_openstack_ubuntu) }
+      it 'should have the right packages' do
+        expect(subject.stdout.split("\n"))
+          .to match_array(dpkg_list_openstack_ubuntu)
+      end
     end
 
     describe command(dpkg_list_packages), {
@@ -317,7 +320,10 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
-      its(:stdout) { should eq(dpkg_list_google_ubuntu) }
+      it 'should have the right packages' do
+        expect(subject.stdout.split("\n"))
+          .to match_array(dpkg_list_google_ubuntu)
+      end
     end
 
     describe command(dpkg_list_packages), {
@@ -328,7 +334,10 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
-      its(:stdout) { should eq(dpkg_list_warden_ubuntu) }
+      it 'should have the right packages' do
+        expect(subject.stdout.split("\n"))
+          .to match_array(dpkg_list_warden_ubuntu)
+      end
     end
 
     describe command(dpkg_list_packages), {
@@ -339,7 +348,10 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
-      its(:stdout) { should eq(dpkg_list_vcloud_ubuntu) }
+      it 'should have the right packages' do
+        expect(subject.stdout.split("\n"))
+          .to match_array(dpkg_list_vcloud_ubuntu)
+      end
     end
 
     describe command(dpkg_list_packages), {
@@ -350,7 +362,10 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
-      its(:stdout) { should eq(dpkg_list_vsphere_ubuntu) }
+      it 'should have the right packages' do
+        expect(subject.stdout.split("\n"))
+          .to match_array(dpkg_list_vsphere_ubuntu)
+      end
     end
 
     describe command(dpkg_list_packages), {
@@ -361,7 +376,10 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
-      its(:stdout) { should eq(dpkg_list_aws_ubuntu) }
+      it 'should have the right packages' do
+        expect(subject.stdout.split("\n"))
+          .to match_array(dpkg_list_aws_ubuntu)
+      end
     end
   end
 end
