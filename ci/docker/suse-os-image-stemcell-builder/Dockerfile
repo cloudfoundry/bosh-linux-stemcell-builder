@@ -1,9 +1,5 @@
 FROM opensuse:42.2
 
-ENV GOROOT /usr/local/go
-ENV PATH $GOROOT/bin:$PATH
-RUN echo 'export PATH=$GOROOT/bin:$PATH' >> /etc/profile.d/go.sh
-
 RUN zypper -n ar http://download.opensuse.org/repositories/Virtualization:/Appliances:/Builder/openSUSE_Leap_42.2/ kiwi
 RUN zypper --gpg-auto-import-keys ref
 RUN zypper -n in -t pattern devel_C_C++
@@ -24,9 +20,9 @@ RUN curl -sSL https://get.rvm.io | bash -s stable --ruby=2.3.1
 
 RUN /bin/bash -c "source /usr/local/rvm/scripts/rvm && gem install bundler '--version=1.11.2' --no-format-executable"
 
-ADD scripts/install-go.sh /tmp/install-go.sh
-RUN /tmp/install-go.sh && rm /tmp/install-go.sh
-RUN ln -s /usr/local/go/bin/go /usr/bin
+COPY --from=golang:1 /usr/local/go /usr/local/go
+ENV GOROOT=/usr/local/go PATH=/usr/local/go/bin:$PATH
+RUN echo 'export PATH=$GOROOT/bin:$PATH' >> /etc/profile.d/go.sh
 
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
 RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" \
