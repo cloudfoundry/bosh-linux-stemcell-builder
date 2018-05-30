@@ -123,7 +123,7 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
-		Expect(stdout).To(MatchRegexp(`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,6}\+00:00 localhost bosh_[^ ]+: story146390925`))
+		Expect(stdout).To(MatchRegexp(`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,6}\+00:00 [\w-]+ bosh_[^ ]+: story146390925`))
 	})
 
 	It("#153023582: network interface eth0 exists", func() {
