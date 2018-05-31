@@ -708,6 +708,7 @@ shared_examples_for 'every OS image' do
       its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/sbin\/postdrop -k privileged/ }
       its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/sbin\/postqueue -k privileged/ }
       its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/sbin\/usernetctl -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/sbin\/service -k privileged/ }
     end
   end
 
