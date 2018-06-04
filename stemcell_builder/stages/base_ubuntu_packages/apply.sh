@@ -17,7 +17,7 @@ cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk libpam-cracklib"
 
 if [[ "${DISTRIB_CODENAME}" != 'xenial' ]]; then
-  debs="$debs nfs-common"
+  debs="$debs nfs-common acpid"
 fi
 
 if [[ "${DISTRIB_CODENAME}" == 'xenial' ]]; then
