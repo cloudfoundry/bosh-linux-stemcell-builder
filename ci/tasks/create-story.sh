@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+: ${BRANCH:?}
 : ${TOKEN:?}
 : ${PROJECT_ID:?}
 
@@ -17,10 +18,10 @@ curl -s -X POST "https://www.pivotaltracker.com/services/v5/projects/$PROJECT_ID
 {
   "current_state" : "unstarted",
   "estimate" : 1,
-  "name" : "_$(date +%Y-%0m-%0d)_ - stemcell periodic bump [master]",
+  "name" : "_$(date +%Y-%0m-%0d)_ - stemcell periodic bump [**$BRANCH**]",
   "description" : "It's time to build a new version of stemcells which include the latest upstream vulnerability fixes. The pipeline should have automatically triggered when this story was created to kick off that process.\\n\\nEnsure the OS image and subsequent stemcell builds finished successfully.\\n\\n**Acceptance Criteria**\\n\\n* A new version of the stemcell can be published from the pipeline.",
   "story_type" : "feature",
-  "labels" : ["master", "stemcell", "sec"],
+  "labels" : ["$BRANCH", "stemcell", "sec"],
   "before_id" : $FIRST_UNSTARTED_STORY
 }
 EOF

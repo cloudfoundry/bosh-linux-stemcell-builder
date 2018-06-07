@@ -6,6 +6,7 @@ image_resource:
     repository: bosh/main-base
 
 params:
+  BRANCH: ~
   PROJECT_ID: ~
   TOKEN: ~
 

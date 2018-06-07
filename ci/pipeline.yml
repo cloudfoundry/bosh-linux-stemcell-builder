@@ -130,9 +130,10 @@ jobs:
         - get: every-2-weeks-on-monday
           trigger: true
         - get: bosh-linux-stemcell-builder
-      - task: build
+      - task: create-story
         file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
         params:
+          BRANCH: master
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
 
