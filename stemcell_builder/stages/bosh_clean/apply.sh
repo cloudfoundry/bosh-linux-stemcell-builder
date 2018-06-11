@@ -28,3 +28,11 @@ fi
 if [ -f $chroot/etc/resolvconf/resolv.conf.d/tail ]; then
   cat /dev/null > $chroot/etc/resolvconf/resolv.conf.d/tail
 fi
+
+if [ -f $chroot/run/resolvconf/interface/original.resolvconf ]; then
+  cat /dev/null > $chroot/run/resolvconf/interface/original.resolvconf
+fi
+
+if [ -f $chroot/etc/resolvconf/resolv.conf.d/original ]; then
+  cat /dev/null > $chroot/etc/resolvconf/resolv.conf.d/original
+fi
