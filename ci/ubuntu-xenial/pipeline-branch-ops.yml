@@ -445,7 +445,6 @@
     plan:
     - do:
       - aggregate:
-        - get: bosh-release
         - get: cpi-release
         - get: stemcell
           passed:

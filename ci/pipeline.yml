@@ -699,7 +699,6 @@ jobs:
     serial: true
     plan:
     - aggregate:
-      - get: bosh-release
       - get: cpi-release
       - get: stemcell
         trigger: true
@@ -764,7 +763,6 @@ jobs:
     serial: true
     plan:
     - aggregate:
-      - get: bosh-release
       - get: cpi-release
       - get: stemcell
         trigger: true
@@ -878,11 +876,6 @@ resources:
     type: bosh-io-release
     source:
       repository: cloudfoundry/os-conf-release
-
-  - name: bosh-release
-    type: bosh-io-release
-    source:
-      repository: cloudfoundry/bosh
 
   - name: cpi-release
     type: bosh-io-release
