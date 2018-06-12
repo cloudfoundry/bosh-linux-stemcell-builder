@@ -22,7 +22,7 @@ esac
 pkg_mgr install ${init_package_name}
 
 # Install base packages needed by both the warden and bosh
-packages="openssl-devel lsof \
+packages="openssl-devel libyaml-devel lsof \
 strace bind9-host dnsutils tcpdump iputils-arping \
 curl wget libcurl3 libcurl3-dev bison \
 readline-devel \
