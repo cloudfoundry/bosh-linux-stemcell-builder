@@ -464,7 +464,6 @@
     plan:
     - do:
       - aggregate:
-        - get: cpi-release
         - get: stemcell
           passed:
           - build-vsphere-esxi-((group))

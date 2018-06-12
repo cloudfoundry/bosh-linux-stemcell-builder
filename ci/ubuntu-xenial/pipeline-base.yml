@@ -20,10 +20,6 @@ resources:
   source:
     repository: cloudfoundry/os-conf-release
   type: bosh-io-release
-- name: cpi-release
-  source:
-    repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
-  type: bosh-io-release
 - name: bosh-deployment
   source:
     branch: master
