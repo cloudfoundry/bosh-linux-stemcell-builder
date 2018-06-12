@@ -42,3 +42,11 @@ resources:
     private_key: ((github_deployment_key__bosh-cpi-environments))
     uri: git@github.com:pivotal-cf-experimental/bats-concourse-pool.git
   type: pool
+- name: every-2-weeks-on-monday
+  type: time
+  source:
+    start: 6:00
+    stop: 8:30
+    location: America/Los_Angeles
+    days: [Monday]
+    interval: 192h

@@ -2,6 +2,8 @@
   type: replace
   value:
     jobs:
+    - start-job-((group))
+    - create-story-((group))
     - bats-((group))
     - build-vcloud-esxi-((group))
     - build-vsphere-esxi-((group))
@@ -16,7 +18,6 @@
     - publish-stemcells-((group))
     - build-os-image-((group))
     - bump-os-image-((group))
-    - start-job-((group))
     name: ((group))
 - path: /jobs/-
   type: replace
@@ -25,7 +26,25 @@
     plan:
     - get: bosh-linux-stemcell-builder
       resource: bosh-linux-stemcell-builder-((group))
+    - get: every-2-weeks-on-monday
+      trigger: true
     serial: true
+- path: /jobs/-
+  type: replace
+  value:
+    name: create-story-((group))
+    plan:
+      - aggregate:
+        - get: every-2-weeks-on-monday
+          trigger: true
+        - get: bosh-linux-stemcell-builder
+          resource: bosh-linux-stemcell-builder-((group))
+      - task: create-story
+        file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
+        params:
+          BRANCH: ((branch))
+          PROJECT_ID: ((story_creator_tracker_project_id))
+          TOKEN: ((story_creator_tracker_token))
 - path: /jobs/-
   type: replace
   value:
