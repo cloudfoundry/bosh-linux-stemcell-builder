@@ -42,7 +42,7 @@
       - task: create-story
         file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
         params:
-          BRANCH: ((branch))
+          BRANCH: xenial-((branch))
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
 - path: /jobs/-
