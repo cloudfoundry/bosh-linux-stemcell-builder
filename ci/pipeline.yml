@@ -706,6 +706,12 @@ jobs:
         resource: vsphere-esxi-centos-7
         passed:
         - build-vsphere-esxi-centos-7
+      - get: ubuntu-stemcell
+        tags:
+        - vsphere-v6.5
+        resource: vsphere-esxi-ubuntu-trusty
+        passed:
+          - build-vsphere-esxi-ubuntu-trusty
       - get: bosh-cli
       - get: bats
       - get: bosh-deployment
@@ -745,6 +751,8 @@ jobs:
 
       - do:
         - <<: *deploy-director
+          input_mapping:
+            stemcell: ubuntu-stemcell
 
         - <<: *prepare-bats-config
           params:
