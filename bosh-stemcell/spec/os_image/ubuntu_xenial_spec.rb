@@ -265,12 +265,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     end
   end
 
-  context 'installed from source' do
-    describe package('libyaml-dev') do
-      it { should_not be_installed }
-    end
-  end
-
   context 'symlinked by vim_tiny' do
     describe file('/usr/bin/vim') do
       it { should be_linked_to '/usr/bin/vim.tiny' }

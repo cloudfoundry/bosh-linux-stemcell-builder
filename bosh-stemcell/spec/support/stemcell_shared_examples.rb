@@ -58,16 +58,6 @@ shared_examples_for 'All Stemcells' do
     it('should still be created') { should be_directory }
   end
 
-  context 'libyaml should be installed' do
-    describe command('test -L /usr/lib64/libyaml.so') do
-      it('exits 0') { expect(subject.exit_status).to eq(0) }
-    end
-
-    describe command('readlink -e /usr/lib64/libyaml.so') do
-      it('exits 0') { expect(subject.exit_status).to eq(0) }
-    end
-  end
-
   context 'Library files must have mode 0755 or less permissive (stig: V-38465)' do
     describe command("find -L /lib /lib64 /usr/lib $( [ ! -e /usr/lib64 ] || echo '/usr/lib64' ) -perm /022 -type f") do
       its (:stdout) { should eq('') }

@@ -124,7 +124,6 @@ module Bosh::Stemcell
     describe '#agent_stages' do
       let(:agent_stages) do
         [
-          :bosh_libyaml,
           :bosh_go_agent,
           :aws_cli,
           :google_gcscli,
