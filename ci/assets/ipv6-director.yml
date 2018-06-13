@@ -19,3 +19,7 @@
 - type: replace
   path: /variables/name=nats_server_tls/options/alternative_names/-
   value: "((second_internal_ip))"
+
+- type: replace
+  path: /variables/name=blobstore_server_tls/options/alternative_names/-
+  value: "((second_internal_ip))"

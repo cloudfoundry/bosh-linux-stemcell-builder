@@ -24,7 +24,6 @@ func RequireEnv(env string) string {
 }
 
 func NewBOSH() *BOSH {
-
 	return &BOSH{
 		cmdRunner:      system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug)),
 		boshBinaryPath: RequireEnv("BOSH_BINARY_PATH"),
