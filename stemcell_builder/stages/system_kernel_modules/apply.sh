@@ -20,3 +20,7 @@ install squashfs /bin/true
 install udf /bin/true
 install rds /bin/true
 options ipv6 disable=1' >> $chroot/etc/modprobe.d/blacklist.conf
+
+if ([ $(get_os_type) == 'ubuntu' ] && [ ${DISTRIB_CODENAME} == 'xenial' ]); then
+  rm -rf $chroot/lib/modules/*/kernel/zfs $chroot/usr/src/linux-headers-*/zfs
+fi
