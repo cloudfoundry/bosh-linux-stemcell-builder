@@ -29,7 +29,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
   end
 
   context 'installed by base_debootstrap' do
-    %w(
+    %w[
       adduser
       apt
       apt-utils
@@ -64,7 +64,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       ureadahead
       vim-tiny
       whiptail
-    ).each do |pkg|
+    ].each do |pkg|
       describe package(pkg) do
         it { should be_installed }
       end
@@ -92,7 +92,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       end
     end
   end
-
 
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
@@ -124,7 +123,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       its(:content) { should match 'Restart=always' }
       its(:content) { should match 'KillMode=process' }
     end
-
   end
 
   context 'installed by base_ubuntu_build_essential' do
@@ -135,7 +133,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
 
   context 'installed by base_ubuntu_packages' do
     # rsyslog-mmjsonparse is removed because of https://gist.github.com/allomov-altoros/cd579aa76f3049bee9c7
-    %w(
+    %w[
       anacron
       apparmor-utils
       bind9-host
@@ -187,7 +185,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       uuid-dev
       wget
       zip
-    ).reject{ |pkg| Bosh::Stemcell::Arch.ppc64le? and ( pkg == 'rsyslog-mmjsonparse' or pkg == 'rsyslog-gnutls' or pkg == 'rsyslog-relp') }.each do |pkg|
+    ].reject { |pkg| Bosh::Stemcell::Arch.ppc64le? && ((pkg == 'rsyslog-mmjsonparse') || (pkg == 'rsyslog-gnutls') || (pkg == 'rsyslog-relp')) }.each do |pkg|
       describe package(pkg) do
         it { should be_installed }
       end
@@ -203,18 +201,18 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     subject(:sshd_config) { file('/etc/ssh/sshd_config') }
 
     it 'only allow 3DES and AES series ciphers (stig: V-38617)' do
-      ciphers = %w(
+      ciphers = %w[
         aes256-gcm@openssh.com
         aes128-gcm@openssh.com
         aes256-ctr
         aes192-ctr
         aes128-ctr
-      ).join(',')
+      ].join(',')
       expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
     it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
-      macs = %w(
+      macs = %w[
         hmac-sha2-512-etm@openssh.com
         hmac-sha2-256-etm@openssh.com
         hmac-ripemd160-etm@openssh.com
@@ -223,34 +221,34 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
         hmac-sha2-256
         hmac-ripemd160
         hmac-sha1
-      ).join(',')
+      ].join(',')
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
   end
 
   context 'installed by system_grub' do
     if Bosh::Stemcell::Arch.ppc64le?
-      %w(
+      %w[
         grub2
-      ).each do |pkg|
+      ].each do |pkg|
         describe package(pkg) do
           it { should be_installed }
         end
       end
-      %w(grub grubenv grub.chrp).each do |grub_file|
+      %w[grub grubenv grub.chrp].each do |grub_file|
         describe file("/boot/grub/#{grub_file}") do
           it { should be_file }
         end
       end
     else
-      %w(
+      %w[
         grub
-      ).each do |pkg|
+      ].each do |pkg|
         describe package(pkg) do
           it { should be_installed }
         end
       end
-      %w(e2fs_stage1_5 stage1 stage2).each do |grub_stage|
+      %w[e2fs_stage1_5 stage1 stage2].each do |grub_stage|
         describe file("/boot/grub/#{grub_stage}") do
           it { should be_file }
         end
@@ -281,10 +279,10 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     end
 
     describe file '/etc/apt/apt.conf.d/02periodic' do
-      its(:content) { should match <<EOF }
-APT::Periodic {
-  Enable "0";
-}
+      its(:content) { should match <<~EOF }
+        APT::Periodic {
+          Enable "0";
+        }
 EOF
     end
   end
@@ -349,35 +347,35 @@ EOF
   end
 
   context 'ensure auditd file permissions and ownership (stig: V-38663) (stig: V-38664) (stig: V-38665)' do
-    [[0644, '/usr/share/lintian/overrides/auditd'],
-    [0755, '/usr/bin/auvirt'],
-    [0755, '/usr/bin/ausyscall'],
-    [0755, '/usr/bin/aulastlog'],
-    [0755, '/usr/bin/aulast'],
-    [0750, '/var/log/audit'],
-    [0755, '/sbin/aureport'],
-    [0755, '/sbin/auditd'],
-    [0755, '/sbin/autrace'],
-    [0755, '/sbin/ausearch'],
-    [0755, '/sbin/augenrules'],
-    [0755, '/sbin/auditctl'],
-    [0755, '/sbin/audispd'],
-    [0750, '/etc/audisp'],
-    [0750, '/etc/audisp/plugins.d'],
-    [0640, '/etc/audisp/plugins.d/af_unix.conf'],
-    [0640, '/etc/audisp/plugins.d/syslog.conf'],
-    [0640, '/etc/audisp/audispd.conf'],
-    [0755, '/etc/init.d/auditd'],
-    [0750, '/etc/audit'],
-    [0750, '/etc/audit/rules.d'],
-    [0640, '/etc/audit/rules.d/audit.rules'],
-    [0640, '/etc/audit/audit.rules'],
-    [0640, '/etc/audit/auditd.conf'],
-    [0644, '/etc/default/auditd'],
-    [0644, '/lib/systemd/system/auditd.service']].each do |tuple|
+    [[0o644, '/usr/share/lintian/overrides/auditd'],
+     [0o755, '/usr/bin/auvirt'],
+     [0o755, '/usr/bin/ausyscall'],
+     [0o755, '/usr/bin/aulastlog'],
+     [0o755, '/usr/bin/aulast'],
+     [0o750, '/var/log/audit'],
+     [0o755, '/sbin/aureport'],
+     [0o755, '/sbin/auditd'],
+     [0o755, '/sbin/autrace'],
+     [0o755, '/sbin/ausearch'],
+     [0o755, '/sbin/augenrules'],
+     [0o755, '/sbin/auditctl'],
+     [0o755, '/sbin/audispd'],
+     [0o750, '/etc/audisp'],
+     [0o750, '/etc/audisp/plugins.d'],
+     [0o640, '/etc/audisp/plugins.d/af_unix.conf'],
+     [0o640, '/etc/audisp/plugins.d/syslog.conf'],
+     [0o640, '/etc/audisp/audispd.conf'],
+     [0o755, '/etc/init.d/auditd'],
+     [0o750, '/etc/audit'],
+     [0o750, '/etc/audit/rules.d'],
+     [0o640, '/etc/audit/rules.d/audit.rules'],
+     [0o640, '/etc/audit/audit.rules'],
+     [0o640, '/etc/audit/auditd.conf'],
+     [0o644, '/etc/default/auditd'],
+     [0o644, '/lib/systemd/system/auditd.service']].each do |tuple|
       describe file(tuple[1]) do
-        it ('should be owned by root') { should be_owned_by('root')}
-        it ("should have mode #{tuple[0]}") { should be_mode(tuple[0])}
+        it ('should be owned by root') { should be_owned_by('root') }
+        it ("should have mode #{tuple[0]}") { should be_mode(tuple[0]) }
         context 'should be owned by root group' do
           its(:group) { should eq('root') }
         end
@@ -446,7 +444,7 @@ EOF
 
   context 'display the number of unsuccessful logon/access attempts since the last successful logon/access (stig: V-51875)' do
     describe file('/etc/pam.d/common-password') do
-      its(:content){ should match /session     required      pam_lastlog\.so showfailed/ }
+      its(:content) { should match /session     required      pam_lastlog\.so showfailed/ }
     end
   end
 
@@ -479,186 +477,186 @@ EOF
 
   describe 'allowed user accounts' do
     describe file('/etc/passwd') do
-      its(:content) { should eql(<<HERE) }
-root:x:0:0:root:/root:/bin/bash
-daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
-bin:x:2:2:bin:/bin:/usr/sbin/nologin
-sys:x:3:3:sys:/dev:/usr/sbin/nologin
-sync:x:4:65534:sync:/bin:/bin/sync
-games:x:5:60:games:/usr/games:/usr/sbin/nologin
-man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
-lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
-mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
-news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
-uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
-proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
-www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
-backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
-list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
-irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
-gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
-nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
-systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
-systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
-systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
-syslog:x:104:108::/home/syslog:/bin/false
-_apt:x:105:65534::/nonexistent:/bin/false
-sshd:x:106:65534::/var/run/sshd:/usr/sbin/nologin
-_chrony:x:107:111:Chrony daemon,,,:/var/lib/chrony:/bin/false
-vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
+      its(:content) { should eql(<<~HERE) }
+        root:x:0:0:root:/root:/bin/bash
+        daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+        bin:x:2:2:bin:/bin:/usr/sbin/nologin
+        sys:x:3:3:sys:/dev:/usr/sbin/nologin
+        sync:x:4:65534:sync:/bin:/bin/sync
+        games:x:5:60:games:/usr/games:/usr/sbin/nologin
+        man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+        lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+        mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+        news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+        uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+        proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+        www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+        backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+        list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+        irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+        gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+        nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+        systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
+        systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
+        systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
+        systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
+        syslog:x:104:108::/home/syslog:/bin/false
+        _apt:x:105:65534::/nonexistent:/bin/false
+        sshd:x:106:65534::/var/run/sshd:/usr/sbin/nologin
+        _chrony:x:107:111:Chrony daemon,,,:/var/lib/chrony:/bin/false
+        vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
 
     describe file('/etc/shadow') do
-      shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
-\Aroot:(.+):(\d{5}):0:99999:7:::
-daemon:\*:(\d{5}):0:99999:7:::
-bin:\*:(\d{5}):0:99999:7:::
-sys:\*:(\d{5}):0:99999:7:::
-sync:\*:(\d{5}):0:99999:7:::
-games:\*:(\d{5}):0:99999:7:::
-man:\*:(\d{5}):0:99999:7:::
-lp:\*:(\d{5}):0:99999:7:::
-mail:\*:(\d{5}):0:99999:7:::
-news:\*:(\d{5}):0:99999:7:::
-uucp:\*:(\d{5}):0:99999:7:::
-proxy:\*:(\d{5}):0:99999:7:::
-www-data:\*:(\d{5}):0:99999:7:::
-backup:\*:(\d{5}):0:99999:7:::
-list:\*:(\d{5}):0:99999:7:::
-irc:\*:(\d{5}):0:99999:7:::
-gnats:\*:(\d{5}):0:99999:7:::
-nobody:\*:(\d{5}):0:99999:7:::
-systemd-timesync:\*:(\d{5}):0:99999:7:::
-systemd-network:\*:(\d{5}):0:99999:7:::
-systemd-resolve:\*:(\d{5}):0:99999:7:::
-systemd-bus-proxy:\*:(\d{5}):0:99999:7:::
-syslog:\*:(\d{5}):0:99999:7:::
-_apt:\*:(\d{5}):0:99999:7:::
-sshd:\*:(\d{5}):0:99999:7:::
-_chrony:(.+):(\d{5}):0:99999:7:::
-vcap:(.+):(\d{5}):1:99999:7:::\Z
+      shadow_match = Regexp.new <<~'END_SHADOW', [Regexp::MULTILINE]
+        \Aroot:(.+):(\d{5}):0:99999:7:::
+        daemon:\*:(\d{5}):0:99999:7:::
+        bin:\*:(\d{5}):0:99999:7:::
+        sys:\*:(\d{5}):0:99999:7:::
+        sync:\*:(\d{5}):0:99999:7:::
+        games:\*:(\d{5}):0:99999:7:::
+        man:\*:(\d{5}):0:99999:7:::
+        lp:\*:(\d{5}):0:99999:7:::
+        mail:\*:(\d{5}):0:99999:7:::
+        news:\*:(\d{5}):0:99999:7:::
+        uucp:\*:(\d{5}):0:99999:7:::
+        proxy:\*:(\d{5}):0:99999:7:::
+        www-data:\*:(\d{5}):0:99999:7:::
+        backup:\*:(\d{5}):0:99999:7:::
+        list:\*:(\d{5}):0:99999:7:::
+        irc:\*:(\d{5}):0:99999:7:::
+        gnats:\*:(\d{5}):0:99999:7:::
+        nobody:\*:(\d{5}):0:99999:7:::
+        systemd-timesync:\*:(\d{5}):0:99999:7:::
+        systemd-network:\*:(\d{5}):0:99999:7:::
+        systemd-resolve:\*:(\d{5}):0:99999:7:::
+        systemd-bus-proxy:\*:(\d{5}):0:99999:7:::
+        syslog:\*:(\d{5}):0:99999:7:::
+        _apt:\*:(\d{5}):0:99999:7:::
+        sshd:\*:(\d{5}):0:99999:7:::
+        _chrony:(.+):(\d{5}):0:99999:7:::
+        vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
 
       its(:content) { should match(shadow_match) }
     end
 
     describe file('/etc/group') do
-      its(:content) { should eql(<<HERE) }
-root:x:0:
-daemon:x:1:
-bin:x:2:
-sys:x:3:
-adm:x:4:vcap
-tty:x:5:
-disk:x:6:
-lp:x:7:
-mail:x:8:
-news:x:9:
-uucp:x:10:
-man:x:12:
-proxy:x:13:
-kmem:x:15:
-dialout:x:20:vcap
-fax:x:21:
-voice:x:22:
-cdrom:x:24:vcap
-floppy:x:25:vcap
-tape:x:26:
-sudo:x:27:vcap
-audio:x:29:vcap
-dip:x:30:vcap
-www-data:x:33:
-backup:x:34:
-operator:x:37:
-list:x:38:
-irc:x:39:
-src:x:40:
-gnats:x:41:
-shadow:x:42:
-utmp:x:43:
-video:x:44:vcap
-sasl:x:45:
-plugdev:x:46:vcap
-staff:x:50:
-games:x:60:
-users:x:100:
-nogroup:x:65534:
-systemd-journal:x:101:
-systemd-timesync:x:102:
-systemd-network:x:103:
-systemd-resolve:x:104:
-systemd-bus-proxy:x:105:
-input:x:106:
-crontab:x:107:
-syslog:x:108:
-netdev:x:109:
-ssh:x:110:
-_chrony:x:111:
-admin:x:999:vcap
-vcap:x:1000:syslog
-bosh_sshers:x:1001:vcap
-bosh_sudoers:x:1002:
+      its(:content) { should eql(<<~HERE) }
+        root:x:0:
+        daemon:x:1:
+        bin:x:2:
+        sys:x:3:
+        adm:x:4:vcap
+        tty:x:5:
+        disk:x:6:
+        lp:x:7:
+        mail:x:8:
+        news:x:9:
+        uucp:x:10:
+        man:x:12:
+        proxy:x:13:
+        kmem:x:15:
+        dialout:x:20:vcap
+        fax:x:21:
+        voice:x:22:
+        cdrom:x:24:vcap
+        floppy:x:25:vcap
+        tape:x:26:
+        sudo:x:27:vcap
+        audio:x:29:vcap
+        dip:x:30:vcap
+        www-data:x:33:
+        backup:x:34:
+        operator:x:37:
+        list:x:38:
+        irc:x:39:
+        src:x:40:
+        gnats:x:41:
+        shadow:x:42:
+        utmp:x:43:
+        video:x:44:vcap
+        sasl:x:45:
+        plugdev:x:46:vcap
+        staff:x:50:
+        games:x:60:
+        users:x:100:
+        nogroup:x:65534:
+        systemd-journal:x:101:
+        systemd-timesync:x:102:
+        systemd-network:x:103:
+        systemd-resolve:x:104:
+        systemd-bus-proxy:x:105:
+        input:x:106:
+        crontab:x:107:
+        syslog:x:108:
+        netdev:x:109:
+        ssh:x:110:
+        _chrony:x:111:
+        admin:x:999:vcap
+        vcap:x:1000:syslog
+        bosh_sshers:x:1001:vcap
+        bosh_sudoers:x:1002:
 HERE
     end
 
     describe file('/etc/gshadow') do
-      its(:content) { should eql(<<HERE) }
-root:*::
-daemon:*::
-bin:*::
-sys:*::
-adm:*::vcap
-tty:*::
-disk:*::
-lp:*::
-mail:*::
-news:*::
-uucp:*::
-man:*::
-proxy:*::
-kmem:*::
-dialout:*::vcap
-fax:*::
-voice:*::
-cdrom:*::vcap
-floppy:*::vcap
-tape:*::
-sudo:*::vcap
-audio:*::vcap
-dip:*::vcap
-www-data:*::
-backup:*::
-operator:*::
-list:*::
-irc:*::
-src:*::
-gnats:*::
-shadow:*::
-utmp:*::
-video:*::vcap
-sasl:*::
-plugdev:*::vcap
-staff:*::
-games:*::
-users:*::
-nogroup:*::
-systemd-journal:!::
-systemd-timesync:!::
-systemd-network:!::
-systemd-resolve:!::
-systemd-bus-proxy:!::
-input:!::
-crontab:!::
-syslog:!::
-netdev:!::
-ssh:!::
-_chrony:!::
-admin:!::vcap
-vcap:!::syslog
-bosh_sshers:!::vcap
-bosh_sudoers:!::
+      its(:content) { should eql(<<~HERE) }
+        root:*::
+        daemon:*::
+        bin:*::
+        sys:*::
+        adm:*::vcap
+        tty:*::
+        disk:*::
+        lp:*::
+        mail:*::
+        news:*::
+        uucp:*::
+        man:*::
+        proxy:*::
+        kmem:*::
+        dialout:*::vcap
+        fax:*::
+        voice:*::
+        cdrom:*::vcap
+        floppy:*::vcap
+        tape:*::
+        sudo:*::vcap
+        audio:*::vcap
+        dip:*::vcap
+        www-data:*::
+        backup:*::
+        operator:*::
+        list:*::
+        irc:*::
+        src:*::
+        gnats:*::
+        shadow:*::
+        utmp:*::
+        video:*::vcap
+        sasl:*::
+        plugdev:*::vcap
+        staff:*::
+        games:*::
+        users:*::
+        nogroup:*::
+        systemd-journal:!::
+        systemd-timesync:!::
+        systemd-network:!::
+        systemd-resolve:!::
+        systemd-bus-proxy:!::
+        input:!::
+        crontab:!::
+        syslog:!::
+        netdev:!::
+        ssh:!::
+        _chrony:!::
+        admin:!::vcap
+        vcap:!::syslog
+        bosh_sshers:!::vcap
+        bosh_sudoers:!::
 HERE
     end
   end
