@@ -13,7 +13,7 @@ downloaded_file=`mktemp`
 # Install debootstrap
 if is_ppc64le || [ ${base_debootstrap_suite} == 'xenial' ]; then
   wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.78+nmu1ubuntu1_all.deb" -qO $downloaded_file && \
-    echo "92e4e8479b5c4adbe9f36ed68502df5483be211d27c5118fc3518376d138b82  $downloaded_file" | shasum -a 256 -c -
+    echo "92e4e8479b5c4adbe9f36ed68502df5483be211d27c5118fc3518376d138b825  $downloaded_file" | shasum -a 256 -c -
 else
   wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.59_all.deb" -qO $downloaded_file && \
     echo "1df1b167fed24eb2cae0bcc0ba6d5357f6a40fe0a8aaa6bfe828c7a007413f65  $downloaded_file" | shasum -a 256 -c -
