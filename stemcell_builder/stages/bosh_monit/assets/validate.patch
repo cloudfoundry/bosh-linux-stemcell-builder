@@ -1,0 +1,35 @@
+diff --git a/validate.c b/validate.c
+index 5723b72..0db677f 100644
+--- a/validate.c
++++ b/validate.c
+@@ -27,6 +27,14 @@
+  * files in the program, then also delete it here.
+  */
+
++/*
++ * Portions Copyright © 2016-Present Pivotal Software, Inc.
++ *
++ * Modified from Monit source code version 5.2.5 on Tue Mar 8 14:26:41 2016 -0500.
++ * In the event that a process is not in a running state but does have a PID, change the process state to running.
++ * Fixes an issue where processes never enter running state.
++*/
++
+ #include <config.h>
+
+ #ifdef HAVE_STDIO_H
+@@ -199,9 +207,14 @@ int check_process(Service_T s) {
+   if (!(pid = Util_isProcessRunning(s, FALSE))) {
+     Event_post(s, Event_Nonexist, STATE_FAILED, s->action_NONEXIST, "process is not running");
+     return FALSE;
+-  } else
++  } else {
+     Event_post(s, Event_Nonexist, STATE_SUCCEEDED, s->action_NONEXIST, "process is running with pid %d", (int)pid);
+
++    if (IS_EVENT_SET(s->error, Event_Exec)) {
++      Event_post(s, Event_Exec, STATE_SUCCEEDED, s->action_EXEC, "process is running with pid %d", (int)pid);
++    }
++  }
++
+   if (Run.doprocess) {
+     if (update_process_data(s, ptree, ptreesize, pid)) {
+       check_process_state(s);

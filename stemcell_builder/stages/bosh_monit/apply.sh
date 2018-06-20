@@ -11,11 +11,13 @@ monit_archive=$monit_basename.tar.gz
 
 mkdir -p $chroot/$bosh_dir/src
 cp -r $dir/assets/$monit_archive $chroot/$bosh_dir/src
+cp -r $dir/assets/validate.patch $chroot/$bosh_dir/src
 
 run_in_bosh_chroot $chroot "
 cd src
 tar zxvf $monit_archive
 cd $monit_basename
+patch -p 1 < ../validate.patch
 ./configure --prefix=$bosh_dir --without-ssl
 make -j4 && make install
 "
