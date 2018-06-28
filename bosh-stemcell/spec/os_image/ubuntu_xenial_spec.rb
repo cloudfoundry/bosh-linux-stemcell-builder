@@ -488,7 +488,7 @@ EOF
 
   describe 'allowed user accounts' do
     describe file('/etc/passwd') do
-      its(:content) { should eql(<<~HERE) }
+      its(:content) { should eql(<<HERE) }
         root:x:0:0:root:/root:/bin/bash
         daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
         bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -513,14 +513,15 @@ EOF
         systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
         syslog:x:104:108::/home/syslog:/bin/false
         _apt:x:105:65534::/nonexistent:/bin/false
-        sshd:x:106:65534::/var/run/sshd:/usr/sbin/nologin
-        _chrony:x:107:111:Chrony daemon,,,:/var/lib/chrony:/bin/false
+        messagebus:x:106:110::/var/run/dbus:/bin/false
+        sshd:x:107:65534::/var/run/sshd:/usr/sbin/nologin
+        _chrony:x:108:112:Chrony daemon,,,:/var/lib/chrony:/bin/false
         vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
 
     describe file('/etc/shadow') do
-      shadow_match = Regexp.new <<~'END_SHADOW', [Regexp::MULTILINE]
+      shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
         \Aroot:(.+):(\d{5}):0:99999:7:::
         daemon:\*:(\d{5}):0:99999:7:::
         bin:\*:(\d{5}):0:99999:7:::
@@ -545,6 +546,7 @@ HERE
         systemd-bus-proxy:\*:(\d{5}):0:99999:7:::
         syslog:\*:(\d{5}):0:99999:7:::
         _apt:\*:(\d{5}):0:99999:7:::
+        messagebus:\*:(\d{5}):0:99999:7:::
         sshd:\*:(\d{5}):0:99999:7:::
         _chrony:(.+):(\d{5}):0:99999:7:::
         vcap:(.+):(\d{5}):1:99999:7:::\Z
@@ -554,7 +556,7 @@ END_SHADOW
     end
 
     describe file('/etc/group') do
-      its(:content) { should eql(<<~HERE) }
+      its(:content) { should eql(<<HERE) }
         root:x:0:
         daemon:x:1:
         bin:x:2:
@@ -603,8 +605,9 @@ END_SHADOW
         crontab:x:107:
         syslog:x:108:
         netdev:x:109:
-        ssh:x:110:
-        _chrony:x:111:
+        messagebus:x:110:
+        ssh:x:111:
+        _chrony:x:112:
         admin:x:999:vcap
         vcap:x:1000:syslog
         bosh_sshers:x:1001:vcap
@@ -613,7 +616,7 @@ HERE
     end
 
     describe file('/etc/gshadow') do
-      its(:content) { should eql(<<~HERE) }
+      its(:content) { should eql(<<HERE) }
         root:*::
         daemon:*::
         bin:*::
@@ -662,6 +665,7 @@ HERE
         crontab:!::
         syslog:!::
         netdev:!::
+        messagebus:!::
         ssh:!::
         _chrony:!::
         admin:!::vcap

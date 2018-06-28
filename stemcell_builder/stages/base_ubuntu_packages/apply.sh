@@ -21,7 +21,7 @@ if [[ "${DISTRIB_CODENAME}" != 'xenial' ]]; then
 fi
 
 if [[ "${DISTRIB_CODENAME}" == 'xenial' ]]; then
-  debs="$debs chrony module-init-tools"
+  debs="$debs chrony module-init-tools dbus"
 fi
 
 if is_ppc64le; then
@@ -145,6 +145,7 @@ fi
 if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
   cp $(dirname $0)/assets/runit.service ${chroot}/lib/systemd/system/
   run_in_chroot ${chroot} "systemctl enable runit"
+  run_in_chroot ${chroot} "systemctl enable systemd-logind"
   pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
   pkg_mgr purge --auto-remove $pkgs_to_purge
   run_in_chroot ${chroot} "systemctl disable chrony"
