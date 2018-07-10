@@ -21,4 +21,4 @@ done
 mv $new_file /etc/chrony/chrony.conf
 
 systemctl restart chrony.service
-chronyc waitsync
+chronyc waitsync 10
