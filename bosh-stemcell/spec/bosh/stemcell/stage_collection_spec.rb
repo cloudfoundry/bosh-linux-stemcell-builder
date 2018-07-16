@@ -159,10 +159,11 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_aws_agent_settings,
             :bosh_clean_ssh,
+            :udev_aws_rules,
             :image_create,
             :image_install_grub,
             :image_aws_update_grub,
-            :bosh_package_list
+            :bosh_package_list,
           ]
         }
 

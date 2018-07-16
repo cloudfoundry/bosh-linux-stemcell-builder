@@ -1,0 +1,7 @@
+#!/bin/bash
+
+device_name="$(echo -n "$1" | cut -d 'p' -f1)"
+partition_number="$(echo -n "$1" | sed -E "s#${device_name}p?##")"
+resolved_device_name=$(/usr/sbin/nvme id-ctrl -v "$1" | sed -n -E '/0000:/s/.*"([^.]+).*".*/\1/p')
+echo "${resolved_device_name}${partition_number}"
+

@@ -53,6 +53,7 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       netbase
       netcat-openbsd
       ntpdate
+      nvme-cli
       parted
       passwd
       procps

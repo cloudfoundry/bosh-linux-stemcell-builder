@@ -121,6 +121,9 @@ module Bosh::Stemcell
         :bosh_enable_password_authentication,
         :bosh_vsphere_agent_settings,
         :bosh_clean_ssh,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
       ]
@@ -135,6 +138,10 @@ module Bosh::Stemcell
         :bosh_harden,
         :bosh_aws_agent_settings,
         :bosh_clean_ssh,
+        :udev_aws_rules,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
         :image_aws_update_grub,
@@ -151,6 +158,9 @@ module Bosh::Stemcell
         :bosh_harden,
         :bosh_google_agent_settings,
         :bosh_clean_ssh,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
       ]
@@ -163,6 +173,9 @@ module Bosh::Stemcell
         :bosh_clean,
         :bosh_harden,
         :bosh_clean_ssh,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
       ]
@@ -178,6 +191,9 @@ module Bosh::Stemcell
         :bosh_harden,
         :bosh_azure_agent_settings,
         :bosh_clean_ssh,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
       ]
@@ -185,17 +201,20 @@ module Bosh::Stemcell
 
     def softlayer_stages
       [
-          :system_network,
-          :system_softlayer_open_iscsi,
-          :system_softlayer_multipath_tools,
-          :system_parameters,
-          :bosh_clean,
-          :bosh_harden,
-          :bosh_enable_password_authentication,
-          :bosh_softlayer_agent_settings,
-          :bosh_clean_ssh,
-          :image_create,
-          :image_install_grub,
+        :system_network,
+        :system_softlayer_open_iscsi,
+        :system_softlayer_multipath_tools,
+        :system_parameters,
+        :bosh_clean,
+        :bosh_harden,
+        :bosh_enable_password_authentication,
+        :bosh_softlayer_agent_settings,
+        :bosh_clean_ssh,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
+        :image_create,
+        :image_install_grub,
       ]
     end
 

@@ -166,6 +166,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       lsof
       module-assistant
       module-init-tools
+      nvme-cli
       openssh-server
       psmisc
       quota
@@ -198,7 +199,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
 
     context 'zfs' do
       %w[
-        /lib/modules/*/kernel/zfs/
+       /lib/modules/*/kernel/zfs/
         /usr/src/linux-headers-*/zfs
       ].each do |folder|
         describe file(folder) do

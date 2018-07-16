@@ -16,12 +16,12 @@ scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk libpam-cracklib"
 
-if [[ "${DISTRIB_CODENAME}" != 'xenial' ]]; then
+if [[ "${DISTRIB_CODENAME}" == 'trusty' ]]; then
   debs="$debs nfs-common acpid"
 fi
 
 if [[ "${DISTRIB_CODENAME}" == 'xenial' ]]; then
-  debs="$debs chrony module-init-tools dbus"
+  debs="$debs chrony module-init-tools dbus nvme-cli"
 fi
 
 if is_ppc64le; then
@@ -31,6 +31,17 @@ libruby bundler libgmp-dev libgmp3-dev libmpfr-dev libmpc-dev"
 fi
 
 pkg_mgr install $debs
+
+if [[ "${DISTRIB_CODENAME}" == 'trusty' ]]; then
+  run_in_chroot $chroot "
+    cd /tmp
+
+    wget http://archive.ubuntu.com/ubuntu/pool/universe/n/nvme-cli/nvme-cli_0.5-1_amd64.deb
+    echo 'd2eee79dd72d1102c2c6e685f134b82f98768041eca7e1ae2a3575ce36a6bbee  nvme-cli_0.5-1_amd64.deb' | shasum -a 256 -c -
+    dpkg -i nvme-cli_0.5-1_amd64.deb
+    rm -f nvme-cli_0.5-1_amd64.deb
+  "
+fi
 
 if ! is_ppc64le; then
   run_in_chroot $chroot "
