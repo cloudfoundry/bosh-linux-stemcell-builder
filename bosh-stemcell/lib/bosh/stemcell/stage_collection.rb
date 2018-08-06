@@ -153,6 +153,7 @@ module Bosh::Stemcell
     def alicloud_stages
       [
         :system_network,
+        :system_alicloud_modules,
         :system_parameters,
         :bosh_clean,
         :bosh_harden,
@@ -160,6 +161,7 @@ module Bosh::Stemcell
         :bosh_clean_ssh,
         :image_create,
         :image_install_grub,
+        :image_alicloud_update_grub,
       ]      
     end
 

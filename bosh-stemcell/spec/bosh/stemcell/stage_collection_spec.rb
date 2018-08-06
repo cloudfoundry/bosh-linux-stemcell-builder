@@ -208,7 +208,7 @@ module Bosh::Stemcell
             :image_create,
             :image_install_grub,
             :image_alicloud_update_grub,
-            :bosh_package_list
+            :bosh_package_list,
           ]
         }
 
