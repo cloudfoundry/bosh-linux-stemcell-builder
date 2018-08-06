@@ -23,6 +23,7 @@ groups:
       - build-vsphere-esxi-centos-7
       - build-vsphere-esxi-ubuntu-trusty
       - build-vcloud-esxi-ubuntu-trusty
+      - build-alicloud-kvm-ubuntu-trusty
       - bats-centos
       - bats-ubuntu
       - delivery
@@ -46,10 +47,13 @@ groups:
     jobs:
       - build-vsphere-esxi-ubuntu-trusty
       - build-vsphere-esxi-centos-7
+  - name: alicloud
+    jobs:
+      - build-alicloud-kvm-ubuntu-trusty
   - name: vcloud
     jobs:
       - build-vcloud-esxi-ubuntu-trusty
-  - name: ubuntu
+  - name: ubuntu-trusty
     jobs:
       - build-aws-xen-hvm-ubuntu-trusty
       - build-azure-hyperv-ubuntu-trusty
@@ -57,6 +61,7 @@ groups:
       - build-openstack-kvm-ubuntu-trusty
       - build-vsphere-esxi-ubuntu-trusty
       - build-vcloud-esxi-ubuntu-trusty
+      - build-alicloud-kvm-ubuntu-trusty
   - name: centos
     jobs:
       - build-aws-xen-hvm-centos-7
@@ -246,6 +251,7 @@ jobs:
             - build-azure-hyperv-centos-7
             - build-openstack-kvm-centos-7
             - build-vsphere-esxi-centos-7
+            - build-alicloud-kvm-ubuntu-trusty
         - get: bosh-linux-stemcell-builder
         - get: bosh-deployment
         - get: bosh-cli
@@ -666,6 +672,36 @@ jobs:
           rebase: true
 
   #
+  # AliCloud
+  #
+
+  - name: build-alicloud-kvm-ubuntu-trusty
+    plan:
+      - aggregate:
+          - get: version
+            trigger: true
+            passed: [build-stemcell]
+          - get: bosh-linux-stemcell-builder
+            passed: [build-stemcell]
+          - get: stemcells-index
+      - task: create-stemcell
+        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+        privileged: true
+        params:
+          IAAS:         alicloud
+          HYPERVISOR:   kvm
+          OS_NAME:      ubuntu
+          OS_VERSION:   trusty
+      - aggregate:
+        - put: alicloud-kvm-ubuntu-trusty
+          params:
+            file: stemcell/*.tgz
+      - put: stemcells-index
+        params:
+          repository: stemcells-index
+          rebase: true
+
+  #
   # vCloud
   #
 
@@ -795,6 +831,7 @@ jobs:
           - build-azure-hyperv-centos-7
           - build-openstack-kvm-centos-7
           - build-vsphere-esxi-centos-7
+          - build-alicloud-kvm-ubuntu-trusty
       - get: version
         passed:
           - build-warden-boshlite-centos-7
@@ -810,7 +847,7 @@ jobs:
           - build-azure-hyperv-centos-7
           - build-openstack-kvm-centos-7
           - build-vsphere-esxi-centos-7
-
+          - build-alicloud-kvm-ubuntu-trusty
     - do:
       - {put: environment, params: {acquire: true}}
 
@@ -990,6 +1027,16 @@ resources:
     source:
       <<: *stemcell_bucket
       regexp: vsphere/bosh-stemcell-(.+)-vsphere-esxi-centos-7-go_agent.tgz
+
+  #
+  # AliCloud
+  #
+
+  - name: alicloud-kvm-ubuntu-trusty
+    type: s3
+    source:
+      <<: *stemcell_bucket
+      regexp: alicloud/bosh-stemcell-(.+)-alicloud-kvm-ubuntu-trusty-go_agent.tgz
 
   #
   # vCloud
