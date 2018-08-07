@@ -88,6 +88,7 @@
     - put: bosh-linux-stemcell-builder-push-((group))
       params:
         repository: bosh-linux-stemcell-builder-push
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
