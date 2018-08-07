@@ -34,3 +34,7 @@ TYPE="Ethernet"
 EOS
 
 fi
+
+# The port 65330 is unusable on Azure
+cp $dir/assets/90-azure-sysctl.conf $chroot/etc/sysctl.d
+chmod 0644 $chroot/etc/sysctl.d/90-azure-sysctl.conf
