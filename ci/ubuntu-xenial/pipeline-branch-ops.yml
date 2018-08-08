@@ -6,6 +6,7 @@
   type: replace
   value:
     name: publish-stemcells-((group))
+    serial: true
     plan:
     - aggregate:
       - get: version
@@ -49,4 +50,30 @@
           rebase: true
           repository: stemcells-index
         put: stemcells-index
-    serial: true
+    - task: build-release-metadata
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: alpine
+        run:
+          path: /bin/sh
+          args:
+          - -c
+          - |
+            version=$(cat version/version | sed 's/\.0$//')
+            mkdir -p release-metadata
+            echo -n "Stemcell $version" > release-metadata/name
+            echo -n "stable-$version" > release-metadata/tag
+            echo -n "Periodic Ubuntu Xenial stemcell bump ($(date "+%h %d, %Y"))" > release-metadata/body
+        inputs:
+        - name: bosh-linux-stemcell-builder
+        - name: version
+        outputs:
+        - name: release-metadata
+    - put: gh-release
+      params:
+        body: release-metadata/body
+        name: release-metadata/name
+        tag: release-metadata/tag
