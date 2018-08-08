@@ -303,6 +303,33 @@ jobs:
           params:
             repository: stemcells-index
             rebase: true
+      - task: build-release-metadata
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: alpine
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              version=$(cat version/version | sed 's/\.0$//')
+              mkdir -p release-metadata
+              echo -n "Stemcell $version" > release-metadata/name
+              echo -n "stable-$version" > release-metadata/tag
+              echo -n "Periodic Ubuntu Trusty/CentOS stemcell bump ($(date "+%h %d, %Y"))" > release-metadata/body
+          inputs:
+          - name: bosh-linux-stemcell-builder
+          - name: version
+          outputs:
+          - name: release-metadata
+      - put: gh-release
+        params:
+          body: release-metadata/body
+          name: release-metadata/name
+          tag: release-metadata/tag
 
   #
   # WARDEN
@@ -792,3 +819,11 @@ resources:
       location: America/Los_Angeles
       days: [Monday]
       interval: 192h
+
+  - name: gh-release
+    type: github-release
+    source:
+      access_token: ((github_bosh_linux_stemcell_builder_release_maker_token))
+      drafts: true
+      owner: cloudfoundry
+      repository: bosh-linux-stemcell-builder
