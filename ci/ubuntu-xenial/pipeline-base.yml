@@ -46,3 +46,10 @@ resources:
     location: America/Los_Angeles
     days: [Monday]
     interval: 192h
+- name: gh-release
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: bosh-linux-stemcell-builder
+    access_token: ((github_bosh_linux_stemcell_builder_release_maker_token))
+    drafts: true
