@@ -281,6 +281,7 @@ jobs:
           IAAS: bluemix
           OS_NAME: ubuntu
           OS_VERSION: trusty
+          STEMCELL_FORMATS: softlayer-light
           SL_USERNAME: {{softlayer-username}}
           SL_API_KEY: {{softlayer-api-key}}
         input_mapping:
