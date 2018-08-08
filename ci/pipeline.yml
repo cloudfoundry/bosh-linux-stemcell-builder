@@ -319,7 +319,7 @@ jobs:
               mkdir -p release-metadata
               echo -n "Stemcell $version" > release-metadata/name
               echo -n "stable-$version" > release-metadata/tag
-              echo -n "Periodic Ubuntu Trusty/CentOS stemcell bump ($(date "+%h %d, %Y"))" > release-metadata/body
+              echo -n "Periodic Ubuntu Trusty stemcell bump ($(date "+%h %d, %Y"))" > release-metadata/body
           inputs:
           - name: bosh-linux-stemcell-builder
           - name: version
