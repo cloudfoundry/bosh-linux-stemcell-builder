@@ -273,8 +273,8 @@ HERE
   } do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
-      its(:content) { should match('"Type": "File"') }
-      its(:content) { should match('"SettingsPath": "/var/vcap/bosh/user_data.json"') }
+      its(:content) { should match('"Type": "HTTP"') }
+      its(:content) { should match('"UserDataPath": "/rest/v3.1/SoftLayer_Resource_Metadata/getUserMetadata.json"') }
       its(:content) { should match('"UseRegistry": true') }
     end
   end
@@ -301,12 +301,14 @@ HERE
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-xenial-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-xenial-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-xenial-azure-additions.txt')).map(&:chop) }
+    let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-xenial-softlayer-additions.txt')).map(&:chop) }
 
     describe command(dpkg_list_packages), {
       exclude_on_google: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
       exclude_on_azure: true,
+      exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages for aws, openstack, warden' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu)
@@ -320,6 +322,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus google-specific packages' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_google_ubuntu))
@@ -332,6 +335,7 @@ HERE
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus vsphere-specific packages' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_vsphere_ubuntu))
@@ -345,9 +349,24 @@ HERE
       exclude_on_google: true,
       exclude_on_warden: true,
       exclude_on_openstack: true,
+      exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus azure-specific packages' do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_azure_ubuntu))
+      end
+    end
+
+    describe command(dpkg_list_packages), {
+      exclude_on_aws: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_google: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+    } do
+      it 'contains only the base set of packages plus softlayer-specific packages' do
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_softlayer_ubuntu))
       end
     end
   end

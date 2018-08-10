@@ -153,6 +153,13 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
       ]
     end
 
+    case ENV['IAAS']
+    when 'softlayer'
+      expected_stig_test_cases = expected_stig_test_cases - [
+        'V-38613'
+      ]
+    end
+
     expected_stig_test_cases = expected_stig_test_cases.reject do |stig|
       Bosh::Stemcell::Arch.ppc64le? &&
         ['V-38579', 'V-38581', 'V-38583', 'V-38585'].include?(stig)
