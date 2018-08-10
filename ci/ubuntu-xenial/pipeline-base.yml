@@ -1,6 +1,10 @@
 groups: []
 jobs: []
-resource_types: []
+resource_types:
+- name: usn
+  type: docker-image
+  source:
+    repository: bosh/usn-resource
 resources:
 - name: bats
   source:
@@ -54,3 +58,9 @@ resources:
     repository: bosh-linux-stemcell-builder
     access_token: ((github_bosh_linux_stemcell_builder_release_maker_token))
     drafts: true
+- name: xenial-usn
+  type: usn
+  source:
+    os: ubuntu-16.04-lts
+    priorities: [high, critical]
+

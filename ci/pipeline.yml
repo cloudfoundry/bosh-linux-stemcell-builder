@@ -129,6 +129,8 @@ jobs:
         - get: bosh-linux-stemcell-builder
         - get: every-2-weeks-on-monday
           trigger: true
+        - get: trusty-usn
+          trigger: true
   - name: create-story
     plan:
       - aggregate:
@@ -880,7 +882,11 @@ jobs:
           repos:
           - bosh-linux-stemcell-builder
 
-resource_types: []
+resource_types:
+- name: usn
+  type: docker-image
+  source:
+    repository: bosh/usn-resource
 
 resources:
   - name: bosh-linux-stemcell-builder
@@ -1115,3 +1121,9 @@ resources:
       location: America/Los_Angeles
       days: [Monday]
       interval: 192h
+
+  - name: trusty-usn
+    type: usn
+    source:
+      os: ubuntu-14.04-lts
+      priorities: [high, critical]

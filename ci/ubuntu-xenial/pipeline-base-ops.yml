@@ -27,6 +27,8 @@
       resource: bosh-linux-stemcell-builder-((group))
     - get: every-2-weeks-on-monday
       trigger: true
+    - get: xenial-usn
+      trigger: true
     serial: true
 - path: /jobs/-
   type: replace
