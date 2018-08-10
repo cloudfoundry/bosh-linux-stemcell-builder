@@ -4,6 +4,7 @@ groups:
     jobs:
       - start-job
       - create-story
+      - create-story-usn
       - build-ubuntu-trusty-image
       - build-centos-7-image
       - bump-os-image
@@ -124,6 +125,9 @@ jobs:
         - get: bosh-linux-stemcell-builder
         - get: every-2-weeks-on-monday
           trigger: true
+        - get: trusty-usn
+          trigger: true
+
   - name: create-story
     plan:
       - aggregate:
@@ -136,6 +140,20 @@ jobs:
           BRANCH: master
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
+
+  - name: create-story-usn
+    plan:
+      - aggregate:
+        - get: trusty-usn
+          trigger: true
+        - get: bosh-linux-stemcell-builder
+      - task: create-story
+        file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
+        params:
+          BRANCH: master
+          PROJECT_ID: ((story_creator_private_tracker_project_id))
+          TOKEN: ((story_creator_tracker_token))
+          DESCRIPTION: "ubuntu *security* notice"
 
   - name: build-ubuntu-trusty-image
     plan:
@@ -827,6 +845,12 @@ jobs:
           repos:
           - bosh-linux-stemcell-builder
 
+resource_types:
+- name: usn
+  type: docker-image
+  source:
+    repository: bosh/usn-resource
+
 resources:
   - name: bosh-linux-stemcell-builder
     type: git
@@ -1058,3 +1082,9 @@ resources:
       location: America/Los_Angeles
       days: [Monday]
       interval: 192h
+
+  - name: trusty-usn
+    type: usn
+    source:
+      os: ubuntu-14.04-lts
+      priorities: [high, critical]

@@ -138,3 +138,7 @@
 - path: /jobs/name=create-story/plan/task=create-story/params/BRANCH
   type: replace
   value: ((release_branch))
+
+- path: /jobs/name=create-story-usn/plan/task=create-story/params/BRANCH
+  type: replace
+  value: ((release_branch))
