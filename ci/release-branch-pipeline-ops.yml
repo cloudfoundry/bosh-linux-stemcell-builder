@@ -135,6 +135,10 @@
   path: /resources/name=version/source/key
   value: bosh-stemcell/version-((release_branch))
 
-- path: /jobs/name=create-story/plan/task=create-story/params/BRANCH
+- path: /jobs/name=create-story/plan/task=create-story-periodic/params/BRANCH
+  type: replace
+  value: ((release_branch))
+
+- path: /jobs/name=create-story/plan/task=create-story-usn/params/BRANCH
   type: replace
   value: ((release_branch))

@@ -3,7 +3,8 @@ groups:
   - name: all
     jobs:
       - start-job
-      - create-story
+      - create-story-periodic
+      - create-story-usn
       - build-ubuntu-trusty-image
       - build-centos-7-image
       - bump-os-images
@@ -131,7 +132,8 @@ jobs:
           trigger: true
         - get: trusty-usn
           trigger: true
-  - name: create-story
+
+  - name: create-story-periodic
     plan:
       - aggregate:
         - get: every-2-weeks-on-monday
@@ -143,6 +145,21 @@ jobs:
           BRANCH: master
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
+          DESCRIPTION: "periodic bump"
+
+  - name: create-story-usn
+    plan:
+      - aggregate:
+        - get: trusty-usn
+          trigger: true
+        - get: bosh-linux-stemcell-builder
+      - task: create-story
+        file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
+        params:
+          BRANCH: master
+          PROJECT_ID: ((story_creator_private_tracker_project_id))
+          TOKEN: ((story_creator_tracker_token))
+          DESCRIPTION: "ubuntu *security* notice"
 
   - name: build-ubuntu-trusty-image
     plan:
