@@ -4,6 +4,7 @@
     jobs:
     - start-job-((group))
     - create-story-((group))
+    - create-story-usn-((group))
     - bats-((group))
     - build-vcloud-esxi-((group))
     - build-vsphere-esxi-((group))
@@ -46,6 +47,24 @@
           BRANCH: xenial-((branch))
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
+          DESCRIPTION: "periodic bump"
+- path: /jobs/-
+  type: replace
+  value:
+    name: create-story-usn-((group))
+    plan:
+      - aggregate:
+        - get: bosh-linux-stemcell-builder
+          resource: bosh-linux-stemcell-builder-((group))
+        - get: xenial-usn
+          trigger: true
+      - task: create-story
+        file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
+        params:
+          BRANCH: xenial-((branch))
+          PROJECT_ID: ((story_creator_private_tracker_project_id))
+          TOKEN: ((story_creator_tracker_token))
+          DESCRIPTION: "ubuntu *security* notice"
 - path: /jobs/-
   type: replace
   value:
