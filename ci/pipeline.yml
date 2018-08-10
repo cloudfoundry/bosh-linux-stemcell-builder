@@ -3,7 +3,7 @@ groups:
   - name: all
     jobs:
       - start-job
-      - create-story-periodic
+      - create-story
       - create-story-usn
       - build-ubuntu-trusty-image
       - build-centos-7-image
@@ -133,7 +133,7 @@ jobs:
         - get: trusty-usn
           trigger: true
 
-  - name: create-story-periodic
+  - name: create-story
     plan:
       - aggregate:
         - get: every-2-weeks-on-monday

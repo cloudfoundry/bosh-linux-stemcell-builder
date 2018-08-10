@@ -3,8 +3,8 @@
   value:
     jobs:
     - start-job-((group))
-    - create-story-periodic((group))
-    - create-story-usn((group))
+    - create-story-((group))
+    - create-story-usn-((group))
     - bats-((group))
     - build-vcloud-esxi-((group))
     - build-vsphere-esxi-((group))
@@ -34,7 +34,7 @@
 - path: /jobs/-
   type: replace
   value:
-    name: create-story-periodic-((group))
+    name: create-story-((group))
     plan:
       - aggregate:
         - get: every-2-weeks-on-monday
