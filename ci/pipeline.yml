@@ -880,6 +880,8 @@ jobs:
           repos:
           - bosh-linux-stemcell-builder
 
+resource_types: []
+
 resources:
   - name: bosh-linux-stemcell-builder
     type: git

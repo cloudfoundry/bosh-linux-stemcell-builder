@@ -18,6 +18,10 @@ if [ -n "${RELEASE_BRANCH:-}" ]; then
     "-v release_branch=${RELEASE_BRANCH}"
     "-v initial_version=${RELEASE_BRANCH/.x/.1.0}"
   )
+else
+  args=(
+    "-o ${scripts_path}/add-trusty-usn-notification-ops.yml"
+  )
 fi
 
 fly -t production set-pipeline \
