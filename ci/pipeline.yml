@@ -115,6 +115,7 @@ jobs:
           BRANCH: 3445.x
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
+          DESCRIPTION: "stemcell periodic bump"
 
   - name: create-story-usn
     plan:
