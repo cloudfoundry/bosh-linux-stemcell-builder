@@ -64,8 +64,8 @@
           - |
             version=$(cat version/version | sed 's/\.0$//')
             mkdir -p release-metadata
-            echo -n "Stemcell $version" > release-metadata/name
-            echo -n "stable-$version" > release-metadata/tag
+            echo -n "Ubuntu Xenial v$version" > release-metadata/name
+            echo -n "ubuntu-xenial/v$version" > release-metadata/tag
             echo -n "Periodic Ubuntu Xenial stemcell bump ($(date "+%h %d, %Y"))" > release-metadata/body
         inputs:
         - name: bosh-linux-stemcell-builder
