@@ -31,6 +31,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   end
 
   context 'installs recent version of unshare so it gets the -p flag', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_azure: true,
     exclude_on_google: true,
@@ -106,6 +107,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   end
 
   context 'installed by system-azure-network', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
@@ -122,6 +124,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   end
 
   context 'installed by system_open_vm_tools', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
@@ -136,6 +139,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   end
 
   context 'installed by system_softlayer_open_iscsi', {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
@@ -150,6 +154,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   end
 
   context 'installed by system_softlayer_multipath_tools', {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
@@ -164,6 +169,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   end
 
   context 'installed by image_vsphere_cdrom stage', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
@@ -216,6 +222,7 @@ HERE
   end
 
   context 'installed by bosh_google_agent_settings', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_openstack: true,
     exclude_on_vcloud: true,
@@ -231,6 +238,7 @@ HERE
   end
 
   context 'installed by bosh_openstack_agent_settings', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
@@ -248,6 +256,7 @@ HERE
   end
 
   context 'installed by bosh_vsphere_agent_settings', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
@@ -263,6 +272,7 @@ HERE
   end
 
   context 'installed by bosh_softlayer_agent_settings', {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -316,6 +326,7 @@ HERE
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
@@ -330,6 +341,7 @@ HERE
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
       exclude_on_warden: true,
@@ -343,6 +355,7 @@ HERE
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
@@ -357,6 +370,7 @@ HERE
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
