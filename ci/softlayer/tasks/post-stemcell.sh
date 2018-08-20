@@ -28,7 +28,7 @@ cp stemcell/*.tgz stemcells-index/
 
 echo -e "\n[INFO] Generate light stemcell metalink record."
 pushd stemcells-index
-  stemcell_name=light-bosh-stemcell-${VERSION}-softlayer-xen-ubuntu-trusty-go_agent
+  stemcell_name=light-bosh-stemcell-${VERSION}-softlayer-xen-ubuntu-${OS_VERSION}-go_agent
   file_url=https://s3.amazonaws.com/${PUBLISHED_BUCKET_NAME}/${stemcell_name}.tgz
   stemcell_filename="${stemcell_name}.tgz"
 
