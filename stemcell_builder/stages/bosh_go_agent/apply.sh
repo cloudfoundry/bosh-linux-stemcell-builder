@@ -23,15 +23,27 @@ ln -s /etc/sv/monit /etc/service/monit
 
 # Alerts for monit config
 cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
-
 cd $assets_dir
-if is_ppc64le; then
-  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.129.0-linux-ppc64le"
-  echo "13a7440ecf8cf108d467f7d2f560bf1b001786845ab940c648d744d6c869ff88  bosh-agent" | shasum -a 256 -c -
+
+os_type="$(get_os_type)"
+if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "trusty" ]; then
+  if is_ppc64le; then
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/go-1.8/bosh-agent-2.135.0-linux-ppc64le"
+    echo "02a67e1ed56eb0cd48604aaecb9e71c315ff3f886ee757d8c2154b6c061702d7  bosh-agent" | shasum -a 256 -c -
+  else
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/go-1.8/bosh-agent-2.135.0-linux-amd64"
+    echo "81a2876d705e23fb5d58c9264ad23ac708423069981324194d95ff5670ae1af0  bosh-agent" | shasum -a 256 -c -
+  fi
 else
-  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.129.0-linux-amd64"
-  echo "a081409a3f8af943f123a65714a01fcf3029a8f40198ea0bb20069515bbd3d58  bosh-agent" | shasum -a 256 -c -
+  if is_ppc64le; then
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.135.0-linux-ppc64le"
+    echo "228ce01f505074c70f26b39dcdc439610cd65198904eb8715b9553cae70b0158  bosh-agent" | shasum -a 256 -c -
+  else
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.135.0-linux-amd64"
+    echo "b0b0127db2c2edade8c09e863c31f89e099f92ed40fc52e1c28e908fade92001  bosh-agent" | shasum -a 256 -c -
+  fi
 fi
+
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
