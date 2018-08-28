@@ -172,7 +172,7 @@ module Bosh::Stemcell
   describe Infrastructure::Softlayer do
     its(:name)              { should eq('softlayer') }
     its(:hypervisor)        { should eq('esxi') }
-    its(:default_disk_size) { should eq(3072) }
+    its(:default_disk_size) { should eq(25600) }
     its(:disk_formats)      { should eq(['ovf']) }
     its(:stemcell_formats)  { should eq(['softlayer-ovf']) }
 

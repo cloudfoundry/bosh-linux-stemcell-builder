@@ -185,7 +185,7 @@ module Bosh::Stemcell
         super(
           name: 'softlayer',
           hypervisor: 'esxi',
-          default_disk_size: 3072,
+          default_disk_size: 25600,
           disk_formats: ['ovf'],
           stemcell_formats: ['softlayer-ovf']
         )
