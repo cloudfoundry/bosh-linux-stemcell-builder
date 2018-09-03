@@ -449,6 +449,7 @@ module Bosh::Stemcell
             :system_azure_network,
             :system_azure_wala,
             :system_parameters,
+            :bosh_azure_config_disk_packages,
             :enable_udf_module,
             :bosh_clean,
             :bosh_harden,
