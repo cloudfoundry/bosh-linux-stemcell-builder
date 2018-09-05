@@ -23,10 +23,8 @@ bosh-cli interpolate bosh-deployment/bosh.yml \
   -o bosh-deployment/misc/powerdns.yml \
   -o bosh-deployment/jumpbox-user.yml \
   -o bosh-linux-stemcell-builder/ci/bats/ops/remove-health-monitor.yml \
-  -o bosh-linux-stemcell-builder/ci/bats/ops/use-candidate-stemcell.yml \
   -v dns_recursor_ip=8.8.8.8 \
   -v director_name=bats-director \
-  -v local_candidate_stemcell=$(realpath stemcell/*.tgz) \
   --vars-file <( bosh-linux-stemcell-builder/ci/bats/iaas/$BAT_INFRASTRUCTURE/director-vars ) \
   > director.yml
 
