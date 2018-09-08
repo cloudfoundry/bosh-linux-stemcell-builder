@@ -27,6 +27,10 @@ bosh-cli interpolate bosh-deployment/bosh.yml \
   --vars-file <( bosh-linux-stemcell-builder-master/ci/bats/iaas/$BAT_INFRASTRUCTURE/director-vars ) \
   > director.yml
 
+echo '========================================='
+cat director.yml
+echo '========================================='
+
 bosh-cli create-env \
   --state director-state.json \
   --vars-store director-creds.yml \
