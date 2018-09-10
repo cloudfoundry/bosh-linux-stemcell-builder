@@ -223,8 +223,6 @@ jobs:
           - task: deploy-director
             tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/deploy-director.yml
-            input_mapping:
-              stemcell: vsphere-esxi-ubuntu-trusty
             params:
               BOSH_vcenter_ip:          {{vcenter-ip}}
               BOSH_vcenter_user:        {{vcenter-user}}
@@ -251,8 +249,6 @@ jobs:
           - task: deploy-director-ipv6
             tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/deploy-director-ipv6.yml
-            input_mapping:
-              stemcell: vsphere-esxi-ubuntu-trusty
             params:
               BOSH_vcenter_ip:          {{vcenter-ip}}
               BOSH_vcenter_user:        {{vcenter-user}}
@@ -603,7 +599,6 @@ jobs:
 
       - do:
         - <<: *deploy-director
-
         - <<: *prepare-bats-config
           params:
             STEMCELL_NAME: bosh-vsphere-esxi-ubuntu-trusty-go_agent

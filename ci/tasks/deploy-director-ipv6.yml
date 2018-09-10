@@ -8,7 +8,6 @@ image_resource:
 inputs:
   - name: bosh-deployment
   - name: bosh-linux-stemcell-builder
-  - name: stemcell
   - name: bosh-cli
   - name: environment
 
