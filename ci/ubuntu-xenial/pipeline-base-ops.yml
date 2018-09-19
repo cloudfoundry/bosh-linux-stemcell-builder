@@ -10,6 +10,7 @@
     - build-vsphere-esxi-((group))
     - build-openstack-kvm-((group))
     - build-google-kvm-((group))
+    - build-alicloud-kvm-((group))
     - build-azure-hyperv-((group))
     - build-aws-xen-hvm-((group))
     - build-warden-boshlite-((group))
@@ -303,6 +304,38 @@
 - path: /jobs/-
   type: replace
   value:
+    name: build-alicloud-kvm-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: kvm
+        IAAS: alicloud
+        OS_NAME: ubuntu
+        OS_VERSION: xenial
+      privileged: true
+      task: create-stemcell
+    - aggregate:
+      - params:
+          file: stemcell/*-go_agent.tgz
+        put: alicloud-kvm-((group))
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+- path: /jobs/-
+  type: replace
+  value:
     name: build-google-kvm-((group))
     plan:
     - aggregate:
@@ -584,6 +617,16 @@
       access_key_id: ((stemcell_aws_access_key))
       bucket: ((candidate_stemcell_bucket))
       regexp: vsphere/bosh-stemcell-(.+)-vsphere-esxi-ubuntu-xenial-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: alicloud-kvm-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: alicloud/bosh-stemcell-(.+)-alicloud-kvm-ubuntu-xenial-go_agent.tgz
       secret_access_key: ((stemcell_aws_secret_key))
     type: s3
 - path: /resources/-
