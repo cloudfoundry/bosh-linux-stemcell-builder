@@ -17,7 +17,7 @@ update:
   update_watch_time: 1000-30000
 
 instance_groups:
-- name: immutable
+- name: os-conf-auditd
   stemcell: default
   vm_type: default
   instances: 1
@@ -28,7 +28,7 @@ instance_groups:
   - name: auditd
     release: os-conf
 
-- name: mutable
+- name: default-auditd
   stemcell: default
   vm_type: default
   azs: [z1]
