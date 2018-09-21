@@ -8,8 +8,6 @@ set -e -x
 
 published_version=$(cat published-stemcell/version)
 
-echo -e "\n\033[32m[INFO] Installing slacktee:\033[0m"
-
 function post_to_slack () {
   SLACK_MESSAGE="$1"
 
