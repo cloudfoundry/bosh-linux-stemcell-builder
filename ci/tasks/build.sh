@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 function check_param() {
   local name=$1
@@ -85,14 +85,14 @@ if [ -e bosh-linux-stemcell-builder/tmp/*-raw.tgz ] ; then
   raw_stemcell_filename="${stemcell_name}-raw.tgz"
   mv bosh-linux-stemcell-builder/tmp/*-raw.tgz "stemcell/${raw_stemcell_filename}"
 
-  meta4 import-file --metalink="$meta4_path" --version="$version" "stemcell/${raw_stemcell_filename}"
+  meta4 import-file --metalink="$meta4_path" --version="$build_number" "stemcell/${raw_stemcell_filename}"
   meta4 file-set-url --metalink="$meta4_path" --file="${raw_stemcell_filename}" "https://s3.amazonaws.com/bosh-core-stemcells/${IAAS}/${raw_stemcell_filename}"
 fi
 
 stemcell_filename="${stemcell_name}.tgz"
 mv "bosh-linux-stemcell-builder/tmp/${stemcell_filename}" "stemcell/${stemcell_filename}"
 
-meta4 import-file --metalink="$meta4_path" --version="$version" "stemcell/${stemcell_filename}"
+meta4 import-file --metalink="$meta4_path" --version="$build_number" "stemcell/${stemcell_filename}"
 meta4 file-set-url --metalink="$meta4_path" --file="${stemcell_filename}" "https://s3.amazonaws.com/bosh-core-stemcells/${IAAS}/${stemcell_filename}"
 
 # just in case we need to debug/verify the live results
