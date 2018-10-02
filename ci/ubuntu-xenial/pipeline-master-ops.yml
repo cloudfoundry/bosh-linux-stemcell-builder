@@ -59,7 +59,7 @@
               }
               EOF
               cat xenial-usn/usn.json | jq -r "$(cat template.json)" | tee slack-message/attachments
-              cat xenial-usn/usn.json | jq -r '"New USN for Xenial: *[\(.title)](\(.url))*"' | tee slack-message/message
+              cat xenial-usn/usn.json | jq -r '"New USN for Xenial: *<\(.url)|\(.title)>*"' | tee slack-message/message
       - put: slack-alert
         params:
           channel: ((usn_notifications_slack_channel_name))

@@ -59,7 +59,7 @@
               }
               EOF
               cat trusty-usn/usn.json | jq -r "$(cat template.json)" | tee slack-message/attachments
-              cat trusty-usn/usn.json | jq -r '"New USN for Trusty: *[\(.title)](\(.url))*"' | tee slack-message/message
+              cat trusty-usn/usn.json | jq -r '"New USN for Trusty: *<\(.url)|\(.title)>*"' | tee slack-message/message
       - put: slack-alert
         params:
           channel: ((usn_notifications_slack_channel_name))
