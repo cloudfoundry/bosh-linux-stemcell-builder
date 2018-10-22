@@ -167,6 +167,10 @@ jobs:
         trigger: true
         passed:
           - start-job
+      - get: every-2-weeks-on-monday
+        trigger: true
+        passed:
+          - start-job
       - task: build
         file: bosh-linux-stemcell-builder/ci/os-images/tasks/build.yml
         privileged: true
@@ -181,6 +185,10 @@ jobs:
   - name: build-centos-7-image
     plan:
       - get: bosh-linux-stemcell-builder
+        trigger: true
+        passed:
+          - start-job
+      - get: every-2-weeks-on-monday
         trigger: true
         passed:
           - start-job
@@ -199,6 +207,11 @@ jobs:
     plan:
       - aggregate:
           - get: bosh-linux-stemcell-builder
+            trigger: true
+            passed:
+              - build-ubuntu-trusty-image
+              - build-centos-7-image
+          - get: every-2-weeks-on-monday
             trigger: true
             passed:
               - build-ubuntu-trusty-image
