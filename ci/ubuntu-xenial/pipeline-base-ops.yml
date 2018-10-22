@@ -76,6 +76,10 @@
       passed:
       - start-job-((group))
       trigger: true
+    - get: every-2-weeks-on-monday
+      trigger: true
+      passed:
+      - start-job-((group))
     - file: bosh-linux-stemcell-builder/ci/os-images/tasks/build.yml
       params:
         OPERATING_SYSTEM_NAME: ubuntu
@@ -97,6 +101,10 @@
         passed:
         - build-os-image-((group))
         trigger: true
+      - get: every-2-weeks-on-monday
+        trigger: true
+        passed:
+        - build-os-image-((group))
       - get: os-image-tarball-((group))
         passed:
         - build-os-image-((group))
