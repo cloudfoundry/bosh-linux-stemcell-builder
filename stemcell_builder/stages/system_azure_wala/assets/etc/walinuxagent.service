@@ -9,7 +9,7 @@ Description=Azure Linux Agent
 
 After=network-online.target
 Wants=network-online.target
-
+Before=sshd.service
 ConditionFileIsExecutable=/usr/sbin/waagent
 ConditionPathExists=/etc/waagent.conf
 
