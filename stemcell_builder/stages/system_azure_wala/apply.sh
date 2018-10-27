@@ -43,7 +43,7 @@ if [ ${DISTRIB_CODENAME} == 'trusty' ]; then
   "
 else
   cp -f $dir/assets/etc/walinuxagent.service $chroot/lib/systemd/system/walinuxagent.service
-  chmod 0755 $chroot/lib/systemd/system/walinuxagent.service
+  chmod 0644 $chroot/lib/systemd/system/walinuxagent.service
   run_in_chroot $chroot "systemctl enable walinuxagent.service"
 fi
 
