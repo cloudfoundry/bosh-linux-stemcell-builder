@@ -28,19 +28,19 @@ cd $assets_dir
 os_type="$(get_os_type)"
 if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "trusty" ]; then
   if is_ppc64le; then
-    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/go-1.8/bosh-agent-2.146.0-linux-ppc64le"
-    echo "f19c396de9993b281a31a90e48bb2995321c5d1c12e4606329eafdd8b37436f2  bosh-agent" | shasum -a 256 -c -
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/go-1.8/bosh-agent-2.160.0-linux-ppc64le"
+    echo "d3dbfec3c43d8ec5980096faf645b7543c4a17f35fd3e260fb1c7938328d93fd  bosh-agent" | shasum -a 256 -c -
   else
-    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/go-1.8/bosh-agent-2.146.0-linux-amd64"
-    echo "a3f14ac9f19649055ef226a1ebc40b3a1e38188aabc38461a7772f1d08e5b14d  bosh-agent" | shasum -a 256 -c -
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/go-1.8/bosh-agent-2.160.0-linux-amd64"
+    echo "e180085d725a218d5e6989c567f9fce9ea3ea8b8c681f176dcf0e677c79bfa59  bosh-agent" | shasum -a 256 -c -
   fi
 else
   if is_ppc64le; then
-    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.146.0-linux-ppc64le"
-    echo "4f00ac80c3df070bb0646fc2e236ab0fa00a35176dee127075aafec74b4ed3b6  bosh-agent" | shasum -a 256 -c -
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-linux-ppc64le"
+    echo "bc425ed27aa02a757f139456cc6fdd7f95d9341433cd2bde64eb929952be474f  bosh-agent" | shasum -a 256 -c -
   else
-    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.146.0-linux-amd64"
-    echo "b14f8d92303d30866980ebdb598d6888008fbfbab890ba3da60372352f71f5d1  bosh-agent" | shasum -a 256 -c -
+    curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-linux-amd64"
+    echo "3094cbde30cb0b3d2364ff0318d5f93dcd1753166e05a0ecd53398e2e3cfdc04  bosh-agent" | shasum -a 256 -c -
   fi
 fi
 
