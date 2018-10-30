@@ -1,4 +1,5 @@
 source $base_dir/lib/prelude_common.bash
+source $base_dir/lib/helpers.sh
 
 # Include actual settings
 source $1
