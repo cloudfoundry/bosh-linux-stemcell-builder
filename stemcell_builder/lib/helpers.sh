@@ -75,3 +75,21 @@ function is_ppc64le() {
     return 1
   fi
 }
+
+curl_five_times() {
+  output_filename="${1}"
+  address="${2}"
+  download_attempt_count=0
+  set +e
+  until [ $download_attempt_count -ge 5 ]
+  do
+    curl -L -o $output_filename ${address} && break
+    download_attempt_count=$((download_attempt_count+1))
+  done
+
+  if [ ! -e ${output_filename} ]; then
+    echo "Failed to download ${output_filename}"
+    exit 1
+  fi
+  set -e
+}
