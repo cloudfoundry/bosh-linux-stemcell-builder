@@ -53,11 +53,11 @@ if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "trusty" ]; then
   fi
 else
   if is_ppc64le; then
-    curl_it "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-linux-ppc64le"
-    echo "bc425ed27aa02a757f139456cc6fdd7f95d9341433cd2bde64eb929952be474f  bosh-agent" | shasum -a 256 -c -
+    curl_it "https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.1-linux-ppc64le"
+    echo "0111b3486f017ad07c66e1cb6076c7f7f6cc556441fb1221bac151fc0a6755a0  bosh-agent" | shasum -a 256 -c -
   else
-    curl_it "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-linux-amd64"
-    echo "3094cbde30cb0b3d2364ff0318d5f93dcd1753166e05a0ecd53398e2e3cfdc04  bosh-agent" | shasum -a 256 -c -
+    curl_it "https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.1-linux-amd64"
+    echo "1a913731a9065372e241f407202dca2e8ff70e149a0cdc3c05bf36c956cb0a82  bosh-agent" | shasum -a 256 -c -
   fi
 fi
 
