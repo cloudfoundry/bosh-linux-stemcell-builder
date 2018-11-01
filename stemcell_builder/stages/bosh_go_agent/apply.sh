@@ -25,22 +25,23 @@ ln -s /etc/sv/monit /etc/service/monit
 cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
 cd $assets_dir
 
+wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/v0.2.0/meta4-0.2.0-linux-amd64 \
+  && echo "81a592eaf647358563f296aced845ac60d9061a45b30b852d1c3f3674720fe19  /usr/bin/meta4" | shasum -a 256 -c \
+  && chmod +x /usr/bin/meta4
+
 os_type="$(get_os_type)"
+bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
 if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "trusty" ]; then
   if is_ppc64le; then
-    curl_five_times bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-go-1.8-linux-ppc64le"
-    echo "d3dbfec3c43d8ec5980096faf645b7543c4a17f35fd3e260fb1c7938328d93fd  bosh-agent" | shasum -a 256 -c -
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-go-1.8-linux-ppc64le bosh-agent
   else
-    curl_five_times bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-go-1.8-linux-amd64"
-    echo "e180085d725a218d5e6989c567f9fce9ea3ea8b8c681f176dcf0e677c79bfa59  bosh-agent" | shasum -a 256 -c -
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-go-1.8-linux-amd64 bosh-agent
   fi
 else
   if is_ppc64le; then
-    curl_five_times bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-linux-ppc64le"
-    echo "bc425ed27aa02a757f139456cc6fdd7f95d9341433cd2bde64eb929952be474f  bosh-agent" | shasum -a 256 -c -
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-ppc64le bosh-agent
   else
-    curl_five_times bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.160.0-linux-amd64"
-    echo "3094cbde30cb0b3d2364ff0318d5f93dcd1753166e05a0ecd53398e2e3cfdc04  bosh-agent" | shasum -a 256 -c -
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
   fi
 fi
 

@@ -1,4 +1,92 @@
 - type: replace
+  path: /jobs/name=build-aws-xen-hvm-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-azure-hyperv-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-alicloud-kvm-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-google-kvm-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-openstack-kvm-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-vsphere-esxi-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-vcloud-esxi-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-warden-boshlite-master/plan/0/aggregate/-
+  value:
+    get: bosh-agent-index
+
+- type: replace
+  path: /jobs/name=build-aws-xen-hvm-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
+  path: /jobs/name=build-azure-hyperv-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
+  path: /jobs/name=build-alicloud-kvm-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
+  path: /jobs/name=build-google-kvm-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
+  path: /jobs/name=build-openstack-kvm-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
+  path: /jobs/name=build-vsphere-esxi-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
+  path: /jobs/name=build-vcloud-esxi-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
+  path: /jobs/name=build-warden-boshlite-master/plan/task=create-stemcell:before
+  value:
+    task: bump-bosh-agent
+    file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+
+- type: replace
   path: /resources/-
   value:
     name: slack-alert

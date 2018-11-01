@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: bosh/main
+
+inputs:
+- name: bosh-linux-stemcell-builder
+- name: bosh-agent-index
+
+outputs:
+- name: bosh-linux-stemcell-builder
+  path: bosh-linux-stemcell-builder-out
+
+run:
+  path: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.sh

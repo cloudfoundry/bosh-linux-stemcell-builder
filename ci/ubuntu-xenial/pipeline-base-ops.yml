@@ -245,6 +245,10 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -277,6 +281,10 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -309,6 +317,10 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -341,6 +353,10 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -373,6 +389,10 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -408,6 +428,10 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -440,6 +464,10 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -472,6 +500,11 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
+
 - path: /jobs/-
   type: replace
   value:
@@ -584,6 +617,9 @@
       ignore_paths:
         - bosh-stemcell/image-metalinks/ubuntu-trusty.meta4
         - bosh-stemcell/image-metalinks/centos-7.meta4.meta4
+        - stemcell_builder/stages/bosh_go_agent/assets/metalink.meta4
+        - stemcell_builder/stages/bosh_go_agent/assets/bosh-agent-version
+
     type: git
 - path: /resources/-
   type: replace

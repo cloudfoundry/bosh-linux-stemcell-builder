@@ -30,6 +30,11 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-deployment
   type: git
+- name: bosh-agent-index
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/bosh-agent-index.git
+    branch: master
 - name: bosh-cli
   source:
     bucket: bosh-cli-artifacts
