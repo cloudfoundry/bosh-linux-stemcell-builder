@@ -31,27 +31,36 @@ var _ = Describe("Auditd", func() {
 	})
 
 	It("creates a USER_LOGIN event for ssh access", func() {
-		output1, _, exitStatus, err := bosh.Run(
+		getCurrentUserLoginAuditdLogScript := `
+			last_user_login_log() {
+				sudo cat /var/log/syslog | grep "type=USER_LOGIN"
+			}
+			sessionpid() {
+				ps --no-headers -fp $(ps --no-headers -fp $$ | awk '{ print $3 }') | awk '{ print $3 }'
+			}
+			auditpid() {
+				last_user_login_log | tail -n1 | awk '{ print $7 }' | cut -d= -f2
+			}
+			i=0
+			while [[ "$(sessionpid)" != "$(auditpid)" ]]; do
+				i=$((i + 1))
+				if [[ "$i" -gt "5" ]]; then
+					exit 1
+				fi
+				sleep 1
+			done
+			last_user_login_log
+		`
+
+		output, _, exitStatus, err := bosh.Run(
 			"--column=stdout",
 			"ssh", "default-auditd/0", "-r", "-c",
-			`sudo cat /var/log/syslog | grep "type=USER_LOGIN" | tail -n1`,
+			getCurrentUserLoginAuditdLogScript,
 		)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
-
-		output2, _, exitStatus, err := bosh.Run(
-			"--column=stdout",
-			"ssh", "default-auditd/0", "-r", "-c",
-			`sudo cat /var/log/syslog | grep "type=USER_LOGIN" | tail -n1`,
-		)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(exitStatus).To(Equal(0))
-
-		Expect(output1).ToNot(Equal(output2))
 
 		auditLoginRegexp := `.*type=USER_LOGIN.*exe="/usr/sbin/sshd".*res=success`
-
-		Expect(output1).To(MatchRegexp(auditLoginRegexp))
-		Expect(output2).To(MatchRegexp(auditLoginRegexp))
+		Expect(output).To(MatchRegexp(auditLoginRegexp))
 	})
 })
