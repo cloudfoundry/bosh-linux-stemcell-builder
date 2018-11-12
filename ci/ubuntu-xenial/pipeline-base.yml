@@ -5,6 +5,10 @@ resource_types:
   type: docker-image
   source:
     repository: bosh/usn-resource
+- name: metalink-repository
+  type: docker-image
+  source:
+    repository: dpb587/metalink-repository-resource
 resources:
 - name: bats
   source:
@@ -30,11 +34,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-deployment
   type: git
-- name: bosh-agent-index
-  type: git
-  source:
-    uri: https://github.com/cloudfoundry/bosh-agent-index.git
-    branch: master
 - name: bosh-cli
   source:
     bucket: bosh-cli-artifacts

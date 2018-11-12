@@ -5,6 +5,7 @@
     - start-job-((group))
     - create-story-((group))
     - create-story-usn-((group))
+    - bump-bosh-agent-((group))
     - bats-((group))
     - build-vcloud-esxi-((group))
     - build-vsphere-esxi-((group))
@@ -118,6 +119,25 @@
       params:
         repository: bosh-linux-stemcell-builder-push
         rebase: true
+- path: /jobs/-
+  type: replace
+  value:
+    name: bump-bosh-agent-((group))
+    plan:
+    - get: bosh-agent
+      resource: bosh-agent-((group))
+      trigger: true
+      params:
+        skip_download: true
+    - get: bosh-linux-stemcell-builder
+      resource: bosh-linux-stemcell-builder-((group))
+    - file: bosh-linux-stemcell-builder/ci/tasks/bump-bosh-agent.yml
+      task: bump
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
+    serial: true
 - path: /jobs/-
   type: replace
   value:
@@ -245,10 +265,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -281,10 +297,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -317,10 +329,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -353,10 +361,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -389,10 +393,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -428,10 +428,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -464,10 +460,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 - path: /jobs/-
   type: replace
   value:
@@ -500,10 +492,6 @@
         rebase: true
         repository: stemcells-index
       put: stemcells-index
-    - put: bosh-linux-stemcell-builder-push-((group))
-      params:
-        repository: bosh-linux-stemcell-builder
-        rebase: true
 
 - path: /jobs/-
   type: replace
@@ -617,9 +605,6 @@
       ignore_paths:
         - bosh-stemcell/image-metalinks/ubuntu-trusty.meta4
         - bosh-stemcell/image-metalinks/centos-7.meta4.meta4
-        - stemcell_builder/stages/bosh_go_agent/assets/metalink.meta4
-        - stemcell_builder/stages/bosh_go_agent/assets/bosh-agent-version
-
     type: git
 - path: /resources/-
   type: replace
@@ -633,6 +618,14 @@
       key: bosh-stemcell/ubuntu-xenial/((group))-version
       secret_access_key: ((stemcell_aws_secret_key))
     type: semver
+- path: /resources/-
+  type: replace
+  value:
+    name: bosh-agent-((group))
+    type: metalink-repository
+    source:
+      uri: git+https://github.com/cloudfoundry/bosh-agent-index.git
+      version: ((bosh_agent_version))
 - path: /resources/-
   type: replace
   value:

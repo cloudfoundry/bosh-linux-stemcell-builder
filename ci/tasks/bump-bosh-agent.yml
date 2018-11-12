@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: bosh-linux-stemcell-builder
-- name: bosh-agent-index
+- name: bosh-agent
 
 outputs:
 - name: bosh-linux-stemcell-builder
