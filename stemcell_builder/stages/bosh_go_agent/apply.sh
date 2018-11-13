@@ -48,7 +48,6 @@ fi
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
-cp $assets_dir/mbus/agent.{cert,key} $chroot/var/vcap/bosh/
 
 # Download CLI source or release from github into assets directory
 cd $assets_dir
@@ -64,7 +63,6 @@ chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent-rc
 chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
-chmod 600 $chroot/var/vcap/bosh/agent.key
 
 # Setup additional permissions
 run_in_chroot $chroot "
