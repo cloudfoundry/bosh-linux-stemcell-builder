@@ -63,13 +63,6 @@ then
     mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
     cp -f $assets_dir/rsyslog_to_syslog_service.conf $chroot/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf
     run_in_bosh_chroot $chroot "systemctl disable rsyslog.service"
-  elif [ ${DISTRIB_CODENAME} == 'trusty' ]; then
-    run_in_bosh_chroot $chroot "
-      ln -sf /lib/init/upstart-job /etc/init.d/rsyslog
-    "
-    run_in_bosh_chroot $chroot "
-      update-rc.d rsyslog defaults
-    "
   fi
 
   if is_ppc64le; then

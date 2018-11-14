@@ -3,7 +3,6 @@ package smoke_test
 import (
 	"fmt"
 	"io/ioutil"
-	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -162,35 +161,6 @@ var _ = Describe("Stemcell", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(drift).To(BeNumerically("<", 1))
-
-			By("running the sync-time script, we do not see an error", func() {
-				_, _, exitStatus, err := bosh.Run(
-					"--column=stdout",
-					"ssh", "default/0", "-r", "-c",
-					`sudo /var/vcap/bosh/bin/sync-time`,
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(exitStatus).To(Equal(0))
-			})
-		})
-
-		It("corrects trusty systemtime via ntpdate", func() {
-			if os.Getenv("BOSH_os_name") != "ubuntu-trusty" {
-				Skip(`please set BOSH_os_name to "ubuntu-trusty" run this test`)
-			}
-
-			stdout, _, exitStatus, err := bosh.Run(
-				"--column=stdout",
-				"ssh", "default/0", "-r", "-c",
-				`sudo bash -c "ntpdate -q $(sudo cat /var/vcap/bosh/etc/ntpserver) | tail -1 | sed -E 's/^.* offset ([-0-9.]+) .*$/\1/'"`,
-			)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(exitStatus).To(Equal(0))
-
-			drift, err := strconv.ParseFloat(strings.TrimSpace(stdout), 64)
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(math.Abs(drift)).To(BeNumerically("<", 1))
 
 			By("running the sync-time script, we do not see an error", func() {
 				_, _, exitStatus, err := bosh.Run(

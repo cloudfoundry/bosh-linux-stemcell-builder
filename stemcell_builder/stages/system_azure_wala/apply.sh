@@ -34,18 +34,9 @@ run_in_chroot $chroot "
 "
 cp -f $dir/assets/etc/waagent.conf $chroot/etc/waagent.conf
 
-if [ ${DISTRIB_CODENAME} == 'trusty' ]; then
-  cp -a $dir/assets/runit/waagent $chroot/etc/sv/waagent
-  # Set up waagent with runit
-  run_in_chroot $chroot "
-  chmod +x /etc/sv/waagent/run
-  ln -s /etc/sv/waagent /etc/service/waagent
-  "
-else
-  cp -f $dir/assets/etc/walinuxagent.service $chroot/lib/systemd/system/walinuxagent.service
-  chmod 0644 $chroot/lib/systemd/system/walinuxagent.service
-  run_in_chroot $chroot "systemctl enable walinuxagent.service"
-fi
+cp -f $dir/assets/etc/walinuxagent.service $chroot/lib/systemd/system/walinuxagent.service
+chmod 0644 $chroot/lib/systemd/system/walinuxagent.service
+run_in_chroot $chroot "systemctl enable walinuxagent.service"
 
 cat > $chroot/etc/logrotate.d/waagent <<EOS
 /var/log/waagent.log {

@@ -4,65 +4,34 @@ groups:
     jobs:
       - start-job
       - create-story
-      - create-story-usn
-      - build-ubuntu-trusty-image
       - build-centos-7-image
       - bump-os-images
       - test-unit
       - build-stemcell
       - test-stemcells
       - build-warden-boshlite-centos-7
-      - build-warden-boshlite-ubuntu-trusty
       - build-aws-xen-hvm-centos-7
-      - build-aws-xen-hvm-ubuntu-trusty
       - build-azure-hyperv-centos-7
-      - build-azure-hyperv-ubuntu-trusty
-      - build-google-kvm-ubuntu-trusty
       - build-google-kvm-centos-7
       - build-openstack-kvm-centos-7
-      - build-openstack-kvm-ubuntu-trusty
       - build-vsphere-esxi-centos-7
-      - build-vsphere-esxi-ubuntu-trusty
-      - build-vcloud-esxi-ubuntu-trusty
-      - build-alicloud-kvm-ubuntu-trusty
       - bats-centos
-      - bats-ubuntu
       - delivery
   - name: aws
     jobs:
-      - build-aws-xen-hvm-ubuntu-trusty
       - build-aws-xen-hvm-centos-7
   - name: azure
     jobs:
-      - build-azure-hyperv-ubuntu-trusty
       - build-azure-hyperv-centos-7
   - name: google
     jobs:
-      - build-google-kvm-ubuntu-trusty
       - build-google-kvm-centos-7
   - name: openstack
     jobs:
-      - build-openstack-kvm-ubuntu-trusty
       - build-openstack-kvm-centos-7
   - name: vsphere
     jobs:
-      - build-vsphere-esxi-ubuntu-trusty
       - build-vsphere-esxi-centos-7
-  - name: alicloud
-    jobs:
-      - build-alicloud-kvm-ubuntu-trusty
-  - name: vcloud
-    jobs:
-      - build-vcloud-esxi-ubuntu-trusty
-  - name: ubuntu-trusty
-    jobs:
-      - build-aws-xen-hvm-ubuntu-trusty
-      - build-azure-hyperv-ubuntu-trusty
-      - build-google-kvm-ubuntu-trusty
-      - build-openstack-kvm-ubuntu-trusty
-      - build-vsphere-esxi-ubuntu-trusty
-      - build-vcloud-esxi-ubuntu-trusty
-      - build-alicloud-kvm-ubuntu-trusty
   - name: centos
     jobs:
       - build-aws-xen-hvm-centos-7
@@ -72,11 +41,9 @@ groups:
   - name: bats
     jobs:
       - bats-centos
-      - bats-ubuntu
   - name: os-images
     jobs:
       - start-job
-      - build-ubuntu-trusty-image
       - build-centos-7-image
       - bump-os-images
 
@@ -130,8 +97,6 @@ jobs:
         - get: bosh-linux-stemcell-builder
         - get: every-2-weeks-on-monday
           trigger: true
-        - get: trusty-usn
-          trigger: true
 
   - name: create-story
     plan:
@@ -146,41 +111,6 @@ jobs:
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
           DESCRIPTION: "periodic bump"
-
-  - name: create-story-usn
-    plan:
-      - aggregate:
-        - get: trusty-usn
-          trigger: true
-        - get: bosh-linux-stemcell-builder
-      - task: create-story
-        file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
-        params:
-          BRANCH: master
-          PROJECT_ID: ((story_creator_private_tracker_project_id))
-          TOKEN: ((story_creator_tracker_token))
-          DESCRIPTION: "ubuntu *security* notice"
-
-  - name: build-ubuntu-trusty-image
-    plan:
-      - get: bosh-linux-stemcell-builder
-        trigger: true
-        passed:
-          - start-job
-      - get: every-2-weeks-on-monday
-        trigger: true
-        passed:
-          - start-job
-      - task: build
-        file: bosh-linux-stemcell-builder/ci/os-images/tasks/build.yml
-        privileged: true
-        params:
-          OPERATING_SYSTEM_NAME:      ubuntu
-          OPERATING_SYSTEM_VERSION:   trusty
-      - put: ubuntu-trusty-tarball
-        params:
-          file: os-image/ubuntu-trusty.tgz
-          acl: public-read
 
   - name: build-centos-7-image
     plan:
@@ -206,28 +136,13 @@ jobs:
   - name: bump-os-images
     plan:
       - aggregate:
-          - get: bosh-linux-stemcell-builder
-            trigger: true
-            passed:
-              - build-ubuntu-trusty-image
-              - build-centos-7-image
           - get: every-2-weeks-on-monday
             trigger: true
             passed:
-              - build-ubuntu-trusty-image
               - build-centos-7-image
-          - get: ubuntu-trusty-tarball
-            passed:
-              - build-ubuntu-trusty-image
           - get: centos-7-tarball
             passed:
               - build-centos-7-image
-      - task: bump-ubuntu-trusty-os-image
-        file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
-        params:
-          OS_NAME: ubuntu
-          OS_VERSION: trusty
-        input_mapping: { image-tarball: ubuntu-trusty-tarball }
       - task: bump-centos-7-os-image
         file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
         params:
@@ -271,26 +186,18 @@ jobs:
           trigger: true
           passed:
             - build-warden-boshlite-centos-7
-            - build-warden-boshlite-ubuntu-trusty
-            - build-aws-xen-hvm-ubuntu-trusty
-            - build-azure-hyperv-ubuntu-trusty
-            - build-google-kvm-ubuntu-trusty
             - build-google-kvm-centos-7
-            - build-openstack-kvm-ubuntu-trusty
-            - build-vsphere-esxi-ubuntu-trusty
-            - build-vcloud-esxi-ubuntu-trusty
             - build-aws-xen-hvm-centos-7
             - build-azure-hyperv-centos-7
             - build-openstack-kvm-centos-7
             - build-vsphere-esxi-centos-7
-            - build-alicloud-kvm-ubuntu-trusty
         - get: bosh-linux-stemcell-builder
         - get: bosh-deployment
         - get: bosh-cli
         - get: syslog-release
         - get: os-conf-release
-        - get: vsphere-esxi-ubuntu-trusty
-          passed: [build-vsphere-esxi-ubuntu-trusty]
+        - get: vsphere-esxi-centos-7
+          passed: [build-vsphere-esxi-centos-7]
           tags:
           - vsphere-v6.5
 
@@ -318,9 +225,9 @@ jobs:
             tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
             input_mapping:
-              stemcell: vsphere-esxi-ubuntu-trusty
+              stemcell: vsphere-esxi-centos-7
             params:
-              BOSH_os_name: ubuntu-trusty
+              BOSH_os_name: centos-7
               package: ipv4director
           ensure:
             task: teardown-director
@@ -345,7 +252,7 @@ jobs:
             tags: [vsphere-v6.5]
             file: bosh-linux-stemcell-builder/ci/tasks/test-stemcell.yml
             input_mapping:
-              stemcell: vsphere-esxi-ubuntu-trusty
+              stemcell: vsphere-esxi-centos-7
             params:
               package: ipv6director
           ensure:
@@ -360,32 +267,6 @@ jobs:
   #
   # WARDEN
   #
-
-  - name: build-warden-boshlite-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         warden
-          HYPERVISOR:   boshlite
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: warden-boshlite-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
 
   - name: build-warden-boshlite-centos-7
     plan:
@@ -417,32 +298,6 @@ jobs:
   # AWS
   #
 
-  - name: build-aws-xen-hvm-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         aws
-          HYPERVISOR:   xen-hvm
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: aws-xen-hvm-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
   - name: build-aws-xen-hvm-centos-7
     plan:
       - aggregate:
@@ -472,32 +327,6 @@ jobs:
   #
   # Azure
   #
-
-  - name: build-azure-hyperv-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         azure
-          HYPERVISOR:   hyperv
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: azure-hyperv-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
 
   - name: build-azure-hyperv-centos-7
     plan:
@@ -529,32 +358,6 @@ jobs:
   # Google
   #
 
-  - name: build-google-kvm-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         google
-          HYPERVISOR:   kvm
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: google-kvm-ubuntu-trusty
-          params:
-            file: stemcell/*-go_agent.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
   - name: build-google-kvm-centos-7
     plan:
       - aggregate:
@@ -584,35 +387,6 @@ jobs:
   #
   # OpenStack
   #
-
-  - name: build-openstack-kvm-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         openstack
-          HYPERVISOR:   kvm
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: openstack-kvm-ubuntu-trusty-raw
-          params:
-            file: stemcell/*-raw.tgz
-        - put: openstack-kvm-ubuntu-trusty
-          params:
-            file: stemcell/*-go_agent.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
 
   - name: build-openstack-kvm-centos-7
     plan:
@@ -647,32 +421,6 @@ jobs:
   # vSphere
   #
 
-  - name: build-vsphere-esxi-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         vsphere
-          HYPERVISOR:   esxi
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: vsphere-esxi-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
   - name: build-vsphere-esxi-centos-7
     plan:
       - aggregate:
@@ -699,66 +447,6 @@ jobs:
           repository: stemcells-index
           rebase: true
 
-  #
-  # AliCloud
-  #
-
-  - name: build-alicloud-kvm-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         alicloud
-          HYPERVISOR:   kvm
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: alicloud-kvm-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
-  #
-  # vCloud
-  #
-
-  - name: build-vcloud-esxi-ubuntu-trusty
-    plan:
-      - aggregate:
-          - get: version
-            trigger: true
-            passed: [build-stemcell]
-          - get: bosh-linux-stemcell-builder
-            passed: [build-stemcell]
-          - get: stemcells-index
-      - task: create-stemcell
-        file: bosh-linux-stemcell-builder/ci/tasks/build.yml
-        privileged: true
-        params:
-          IAAS:         vcloud
-          HYPERVISOR:   esxi
-          OS_NAME:      ubuntu
-          OS_VERSION:   trusty
-      - aggregate:
-        - put: vcloud-esxi-ubuntu-trusty
-          params:
-            file: stemcell/*.tgz
-      - put: stemcells-index
-        params:
-          repository: stemcells-index
-          rebase: true
-
   - name: bats-centos
     serial: true
     plan:
@@ -770,26 +458,13 @@ jobs:
         resource: vsphere-esxi-centos-7
         passed:
         - build-vsphere-esxi-centos-7
-      - get: ubuntu-stemcell
-        tags:
-        - vsphere-v6.5
-        resource: vsphere-esxi-ubuntu-trusty
-        passed:
-          - build-vsphere-esxi-ubuntu-trusty
       - get: bosh-cli
       - get: bats
       - get: bosh-deployment
       - get: bosh-linux-stemcell-builder
         passed:
           - build-warden-boshlite-centos-7
-          - build-warden-boshlite-ubuntu-trusty
-          - build-aws-xen-hvm-ubuntu-trusty
-          - build-azure-hyperv-ubuntu-trusty
-          - build-google-kvm-ubuntu-trusty
           - build-google-kvm-centos-7
-          - build-openstack-kvm-ubuntu-trusty
-          - build-vsphere-esxi-ubuntu-trusty
-          - build-vcloud-esxi-ubuntu-trusty
           - build-aws-xen-hvm-centos-7
           - build-azure-hyperv-centos-7
           - build-openstack-kvm-centos-7
@@ -797,95 +472,22 @@ jobs:
       - get: version
         passed:
           - build-warden-boshlite-centos-7
-          - build-warden-boshlite-ubuntu-trusty
-          - build-aws-xen-hvm-ubuntu-trusty
-          - build-azure-hyperv-ubuntu-trusty
-          - build-google-kvm-ubuntu-trusty
           - build-google-kvm-centos-7
-          - build-openstack-kvm-ubuntu-trusty
-          - build-vsphere-esxi-ubuntu-trusty
-          - build-vcloud-esxi-ubuntu-trusty
           - build-aws-xen-hvm-centos-7
           - build-azure-hyperv-centos-7
           - build-openstack-kvm-centos-7
           - build-vsphere-esxi-centos-7
-
     - do:
       - {put: environment, params: {acquire: true}}
-
       - do:
         - <<: *deploy-director
         - <<: *prepare-bats-config
           params:
             STEMCELL_NAME: bosh-vsphere-esxi-centos-7-go_agent
-
         - <<: *run-bats
         ensure:
           do:
             - <<: *teardown
-      ensure:
-        do:
-        - {put: environment, params: {release: environment}}
-
-  - name: bats-ubuntu
-    serial: true
-    plan:
-    - aggregate:
-      - get: stemcell
-        trigger: true
-        tags:
-        - vsphere-v6.5
-        resource: vsphere-esxi-ubuntu-trusty
-        passed:
-          - build-vsphere-esxi-ubuntu-trusty
-      - get: bosh-cli
-      - get: bats
-      - get: bosh-deployment
-      - get: bosh-linux-stemcell-builder
-        passed:
-          - build-warden-boshlite-centos-7
-          - build-warden-boshlite-ubuntu-trusty
-          - build-aws-xen-hvm-ubuntu-trusty
-          - build-azure-hyperv-ubuntu-trusty
-          - build-google-kvm-ubuntu-trusty
-          - build-google-kvm-centos-7
-          - build-openstack-kvm-ubuntu-trusty
-          - build-vsphere-esxi-ubuntu-trusty
-          - build-vcloud-esxi-ubuntu-trusty
-          - build-aws-xen-hvm-centos-7
-          - build-azure-hyperv-centos-7
-          - build-openstack-kvm-centos-7
-          - build-vsphere-esxi-centos-7
-          - build-alicloud-kvm-ubuntu-trusty
-      - get: version
-        passed:
-          - build-warden-boshlite-centos-7
-          - build-warden-boshlite-ubuntu-trusty
-          - build-aws-xen-hvm-ubuntu-trusty
-          - build-azure-hyperv-ubuntu-trusty
-          - build-google-kvm-ubuntu-trusty
-          - build-google-kvm-centos-7
-          - build-openstack-kvm-ubuntu-trusty
-          - build-vsphere-esxi-ubuntu-trusty
-          - build-vcloud-esxi-ubuntu-trusty
-          - build-aws-xen-hvm-centos-7
-          - build-azure-hyperv-centos-7
-          - build-openstack-kvm-centos-7
-          - build-vsphere-esxi-centos-7
-          - build-alicloud-kvm-ubuntu-trusty
-    - do:
-      - {put: environment, params: {acquire: true}}
-
-      - do:
-        - <<: *deploy-director
-        - <<: *prepare-bats-config
-          params:
-            STEMCELL_NAME: bosh-vsphere-esxi-ubuntu-trusty-go_agent
-
-        - <<: *run-bats
-        ensure:
-          do:
-          - <<: *teardown
       ensure:
         do:
         - {put: environment, params: {release: environment}}
@@ -896,19 +498,12 @@ jobs:
         - get: bosh-linux-stemcell-builder
           trigger: true
           passed:
-          - bats-ubuntu
           - bats-centos
           - test-stemcells
       - put: tracker-output
         params:
           repos:
           - bosh-linux-stemcell-builder
-
-resource_types:
-- name: usn
-  type: docker-image
-  source:
-    repository: bosh/usn-resource
 
 resources:
   - name: bosh-linux-stemcell-builder
@@ -954,12 +549,6 @@ resources:
   # WARDEN
   #
 
-  - name: warden-boshlite-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: warden/bosh-stemcell-(.+)-warden-boshlite-ubuntu-trusty-go_agent.tgz
-
   - name: warden-boshlite-centos-7
     type: s3
     source:
@@ -969,12 +558,6 @@ resources:
   #
   # AWS
   #
-
-  - name: aws-xen-hvm-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: aws/bosh-stemcell-(.+)-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
 
   - name: aws-xen-hvm-centos-7
     type: s3
@@ -986,12 +569,6 @@ resources:
   # Azure
   #
 
-  - name: azure-hyperv-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: azure/bosh-stemcell-(.+)-azure-hyperv-ubuntu-trusty-go_agent.tgz
-
   - name: azure-hyperv-centos-7
     type: s3
     source:
@@ -1002,12 +579,6 @@ resources:
   # Google
   #
 
-  - name: google-kvm-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: google/bosh-stemcell-(.+)-google-kvm-ubuntu-trusty-go_agent.tgz
-
   - name: google-kvm-centos-7
     type: s3
     source:
@@ -1017,18 +588,6 @@ resources:
   #
   # OpenStack
   #
-
-  - name: openstack-kvm-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: openstack/bosh-stemcell-(.+)-openstack-kvm-ubuntu-trusty-go_agent.tgz
-
-  - name: openstack-kvm-ubuntu-trusty-raw
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: openstack/bosh-stemcell-(.+)-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz
 
   - name: openstack-kvm-centos-7
     type: s3
@@ -1046,12 +605,6 @@ resources:
   # vSphere
   #
 
-  - name: vsphere-esxi-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: vsphere/bosh-stemcell-(.+)-vsphere-esxi-ubuntu-trusty-go_agent.tgz
-
   - name: vsphere-esxi-centos-7
     type: s3
     source:
@@ -1059,24 +612,8 @@ resources:
       regexp: vsphere/bosh-stemcell-(.+)-vsphere-esxi-centos-7-go_agent.tgz
 
   #
-  # AliCloud
-  #
-
-  - name: alicloud-kvm-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: alicloud/bosh-stemcell-(.+)-alicloud-kvm-ubuntu-trusty-go_agent.tgz
-
-  #
   # vCloud
   #
-
-  - name: vcloud-esxi-ubuntu-trusty
-    type: s3
-    source:
-      <<: *stemcell_bucket
-      regexp: vcloud/bosh-stemcell-(.+)-vcloud-esxi-ubuntu-trusty-go_agent.tgz
 
   - name: bosh-deployment
     type: git
@@ -1113,17 +650,6 @@ resources:
       tracker_url: https://www.pivotaltracker.com
 
   #
-  # ubuntu-trusty
-  #
-
-  - name: ubuntu-trusty-tarball
-    type: s3
-    source:
-      bucket: ((osimage_bucket))
-      versioned_file: bosh-ubuntu-trusty-os-image.tgz
-      access_key_id: ((osimage_aws_access_key))
-      secret_access_key: ((osimage_aws_secret_key))
-  #
   # centos-7
   #
 
@@ -1143,9 +669,3 @@ resources:
       location: America/Los_Angeles
       days: [Monday]
       interval: 192h
-
-  - name: trusty-usn
-    type: usn
-    source:
-      os: ubuntu-14.04-lts
-      priorities: [high, critical, unknown]

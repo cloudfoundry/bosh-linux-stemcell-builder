@@ -61,9 +61,7 @@ enable-kernel-logging.conf
 
     configs = usrbin
 
-    configs += if ENV['OS_VERSION'] == 'trusty'
-                 upstart_configs
-               elsif ENV['OS_VERSION'] == 'xenial'
+    configs += if ENV['OS_VERSION'] == 'xenial'
                  systemd_configs.map do |config|
                    config.gsub('{lib_path}', '/lib')
                  end
