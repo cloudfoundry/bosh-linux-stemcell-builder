@@ -21,6 +21,7 @@ describe 'Azure Stemcell', stemcell_image: true do
   end
 
   context 'installed by bosh_azure_agent_settings', {
+    exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
