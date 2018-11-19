@@ -16,7 +16,6 @@ bison
 bsdmainutils
 bsdutils
 build-essential
-busybox-initramfs
 bzip2
 ca-certificates
 chrony
@@ -25,6 +24,7 @@ cmake
 cmake-data
 console-setup
 console-setup-linux
+console-setup-mini
 coreutils
 cpio
 cpp
@@ -44,9 +44,12 @@ dh-strip-nondeterminism
 diffutils
 distro-info-data
 dkms
+dmsetup
 dnsutils
 dpkg
 dpkg-dev
+dracut
+dracut-core
 e2fslibs:amd64
 e2fsprogs
 eject
@@ -77,9 +80,7 @@ icu-devtools
 ifupdown
 init
 init-system-helpers
-initramfs-tools
 initramfs-tools-bin
-initramfs-tools-core
 initscripts
 insserv
 install-info
@@ -98,6 +99,7 @@ kbd
 keyboard-configuration
 klibc-utils
 kmod
+kpartx
 less
 libacl1:amd64
 libaio1:amd64
@@ -339,6 +341,7 @@ patch
 perl
 perl-base
 perl-modules-5.22
+pkg-config
 po-debconf
 procps
 psmisc
@@ -381,9 +384,7 @@ tcpdump
 timelimit
 traceroute
 tzdata
-ubuntu-advantage-tools
 ubuntu-keyring
-ubuntu-minimal
 ucf
 udev
 unzip

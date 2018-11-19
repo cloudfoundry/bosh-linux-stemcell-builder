@@ -1,7 +1,7 @@
 require 'bosh/stemcell/definition'
 require 'forwardable'
 
-# rubocop:disable MethodLength
+# rubocop:disable ClassLength
 module Bosh::Stemcell
   class StageCollection
     extend Forwardable
@@ -12,16 +12,16 @@ module Bosh::Stemcell
 
     def operating_system_stages
       case operating_system
-        when OperatingSystem::Centos then
-          centos_os_stages
-        when OperatingSystem::Rhel then
-          rhel_os_stages
-        when OperatingSystem::Ubuntu then
-          ubuntu_os_stages
-        when OperatingSystem::Photonos then
-          photonos_os_stages
-        when OperatingSystem::Opensuse then
-          opensuse_os_stages
+      when OperatingSystem::Centos then
+        centos_os_stages
+      when OperatingSystem::Rhel then
+        rhel_os_stages
+      when OperatingSystem::Ubuntu then
+        ubuntu_os_stages
+      when OperatingSystem::Photonos then
+        photonos_os_stages
+      when OperatingSystem::Opensuse then
+        opensuse_os_stages
       end
     end
 
@@ -32,55 +32,55 @@ module Bosh::Stemcell
     end
 
     def agent_stages
-      [
-        :bosh_go_agent,
-        :aws_cli,
-        :google_gcscli,
-        :logrotate_config,
-        :dev_tools_config,
-        :static_libraries_config,
+      %i[
+        bosh_go_agent
+        aws_cli
+        google_gcscli
+        logrotate_config
+        dev_tools_config
+        static_libraries_config
       ]
     end
 
     def build_stemcell_image_stages
       stages = case infrastructure
-      when Infrastructure::Aws then
-        aws_stages
-      when Infrastructure::Alicloud then
-        alicloud_stages
-      when Infrastructure::Google then
-        google_stages
-      when Infrastructure::OpenStack then
-        openstack_stages
-      when Infrastructure::Vsphere then
-        vsphere_vcloud_stages
-      when Infrastructure::Vcloud then
-        vsphere_vcloud_stages
-      when Infrastructure::Warden then
-        warden_stages
-      when Infrastructure::Azure then
-        azure_stages
-      when Infrastructure::Softlayer then
-        softlayer_stages
-      end
+               when Infrastructure::Aws then
+                 aws_stages
+               when Infrastructure::Alicloud then
+                 alicloud_stages
+               when Infrastructure::Google then
+                 google_stages
+               when Infrastructure::OpenStack then
+                 openstack_stages
+               when Infrastructure::Vsphere then
+                 vsphere_vcloud_stages
+               when Infrastructure::Vcloud then
+                 vsphere_vcloud_stages
+               when Infrastructure::Warden then
+                 warden_stages
+               when Infrastructure::Azure then
+                 azure_stages
+               when Infrastructure::Softlayer then
+                 softlayer_stages
+               end
 
       stages.concat(finish_stemcell_stages)
     end
 
     def package_stemcell_stages(disk_format)
       case disk_format
-        when 'raw' then
-          raw_package_stages
-        when 'rawdisk' then
-          rawdisk_package_stages
-        when 'qcow2' then
-          qcow2_package_stages
-        when 'ovf' then
-          ovf_package_stages
-        when 'vhd' then
-          vhd_package_stages
-        when 'files' then
-          files_package_stages
+      when 'raw' then
+        raw_package_stages
+      when 'rawdisk' then
+        rawdisk_package_stages
+      when 'qcow2' then
+        qcow2_package_stages
+      when 'ovf' then
+        ovf_package_stages
+      when 'vhd' then
+        vhd_package_stages
+      when 'files' then
+        files_package_stages
       end
     end
 
@@ -90,25 +90,25 @@ module Bosh::Stemcell
 
     def openstack_stages
       stages = if is_centos? || is_rhel? || is_opensuse?
-        [
-          :system_network,
-        ]
-      else
-        [
-          :system_network,
-          :system_openstack_clock,
-          :system_openstack_modules,
-        ]
-      end
+                 [
+                   :system_network,
+                 ]
+               else
+                 %i[
+                   system_network
+                   system_openstack_clock
+                   system_openstack_modules
+                 ]
+               end
 
-      stages += [
-        :system_parameters,
-        :bosh_clean,
-        :bosh_harden,
-        :bosh_openstack_agent_settings,
-        :bosh_clean_ssh,
-        :image_create,
-        :image_install_grub,
+      stages + %i[
+        system_parameters
+        bosh_clean
+        bosh_harden
+        bosh_openstack_agent_settings
+        bosh_clean_ssh
+        image_create
+        image_install_grub
       ]
     end
 
@@ -151,15 +151,15 @@ module Bosh::Stemcell
     end
 
     def alicloud_stages
-      [
-        :system_network,
-        :system_parameters,
-        :bosh_clean,
-        :bosh_harden,
-        :bosh_alicloud_agent_settings,
-        :bosh_clean_ssh,
-        :image_create,
-        :image_install_grub,
+      %i[
+        system_network
+        system_parameters
+        bosh_clean
+        bosh_harden
+        bosh_alicloud_agent_settings
+        bosh_clean_ssh
+        image_create
+        image_install_grub
       ]
     end
 
@@ -236,7 +236,7 @@ module Bosh::Stemcell
 
     def finish_stemcell_stages
       [
-        :bosh_package_list
+        :bosh_package_list,
       ]
     end
 
@@ -307,7 +307,7 @@ module Bosh::Stemcell
         :system_users,
         :bosh_audit_ubuntu,
         :bosh_log_audit_start,
-      ].flatten.reject{ |s| Bosh::Stemcell::Arch.ppc64le? and s ==  :system_ixgbevf }
+      ].flatten.reject { |s| Bosh::Stemcell::Arch.ppc64le? && s == :system_ixgbevf }
     end
 
     def photonos_os_stages
@@ -347,13 +347,13 @@ module Bosh::Stemcell
     end
 
     def bosh_steps
-      [
-        :bosh_sysctl,
-        :bosh_limits,
-        :bosh_users,
-        :bosh_monit,
-        :bosh_ntp,
-        :bosh_sudoers,
+      %i[
+        bosh_sysctl
+        bosh_limits
+        bosh_users
+        bosh_monit
+        bosh_ntp
+        bosh_sudoers
       ].flatten
     end
 
@@ -376,10 +376,10 @@ module Bosh::Stemcell
     end
 
     def ovf_package_stages
-      [
-        :image_ovf_vmx,
-        :image_ovf_generate,
-        :prepare_ovf_image_stemcell,
+      %i[
+        image_ovf_vmx
+        image_ovf_generate
+        prepare_ovf_image_stemcell
       ]
     end
 
@@ -408,3 +408,4 @@ module Bosh::Stemcell
     end
   end
 end
+# rubocop:enable ClassLength

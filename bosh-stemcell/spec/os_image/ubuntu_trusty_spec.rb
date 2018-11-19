@@ -38,7 +38,6 @@ describe 'Ubuntu 14.04 OS image', os_image: true do
       gnupg
       gdisk
       ifupdown
-      initramfs-tools
       iproute2
       iputils-ping
       isc-dhcp-client
