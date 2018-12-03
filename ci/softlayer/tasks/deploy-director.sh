@@ -3,7 +3,7 @@
 set -e
 
 source /etc/profile.d/chruby.sh
-chruby 2.1.7
+chruby ruby
 
 function fromEnvironment() {
   local key="$1"
