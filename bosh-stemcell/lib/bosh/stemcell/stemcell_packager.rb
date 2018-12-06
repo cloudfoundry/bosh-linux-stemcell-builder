@@ -42,6 +42,7 @@ module Bosh
           'name' => stemcell_name,
           'version' => version.to_s,
           'bosh_protocol' => 1,
+          'api_version' => 2,
           'sha1' => image_checksum,
           'operating_system' => "#{definition.operating_system.name}-#{definition.operating_system.version}",
           'stemcell_formats' => infrastructure.stemcell_formats,
