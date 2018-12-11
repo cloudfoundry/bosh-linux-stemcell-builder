@@ -70,6 +70,7 @@ then
   fi
 elif [ -f $chroot/etc/redhat-release ] # Centos or RHEL
 then
+  sed -i "s@-/var/log/syslog@-/var/log/messages@g" $chroot/etc/rsyslog.d/50-default.conf
   mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
   cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
   mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
