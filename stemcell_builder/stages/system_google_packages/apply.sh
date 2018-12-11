@@ -60,5 +60,5 @@ else
 fi
 
 # See https://github.com/cloudfoundry/bosh/issues/1399 for context
-run_in_chroot $chroot "rm -f /etc/dhcp/dhclient-exit-hooks.d/set_hostname"
+run_in_chroot $chroot "rm -f /etc/dhcp/dhclient-exit-hooks.d/google_set_hostname"
 
