@@ -50,5 +50,11 @@ else
 fi
 
 # See https://github.com/cloudfoundry/bosh/issues/1399 for context
-run_in_chroot $chroot "rm -f /etc/dhcp/dhclient-exit-hooks.d/google_set_hostname"
+SET_HOSTNAME_PATH=/etc/dhcp/dhclient-exit-hooks.d/google_set_hostname
+if [[ ! -f $chroot/$SET_HOSTNAME_PATH ]]; then
+  echo "Could not find ${SET_HOSTNAME_PATH}, exiting"
+  exit 2
+fi
+
+run_in_chroot "${chroot}" "rm -f ${SET_HOSTNAME_PATH}"
 
