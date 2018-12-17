@@ -10,29 +10,31 @@ module ShelloutTypes
     end
 
     def file?
-      begin
-        stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
+      stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
 
-        !(stdout.strip.match(/\Aregular (empty )?file\z/).nil?)
-      rescue RuntimeError
-        return false
-      end
+      !stdout.strip.match(/\Aregular (empty )?file\z/).nil?
+    rescue RuntimeError
+      return false
     end
 
-    def owned_by?(username)
+    def owner
       stdout, stderr, status = @chroot.run('stat', '-c', '%u', @path)
       stdout.strip!
 
-      raise RuntimeError, stderr if status != 0
+      raise stderr if status != 0
 
       stdout, stderr, status = @chroot.run("getent passwd #{stdout}")
-      raise RuntimeError, "user for file #{filepath} does not exist" if status == 2
-      raise RuntimeError, stderr if status != 0
+      raise "user for file #{filepath} does not exist" if status == 2
+      raise stderr if status != 0
 
       passwd_split = stdout.split(':', -1)
-      raise RuntimeError, "passwd has an invalid format: #{stdout}" if passwd_split.size != 7
+      raise "passwd has an invalid format: #{stdout}" if passwd_split.size != 7
 
-      passwd_split.first == username
+      passwd_split.first
+    end
+
+    def owned_by?(username)
+      owner == username
     end
 
     def content

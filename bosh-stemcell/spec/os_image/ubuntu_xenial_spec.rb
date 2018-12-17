@@ -385,11 +385,9 @@ EOF
      [0o644, '/etc/default/auditd'],
      [0o644, '/lib/systemd/system/auditd.service']].each do |tuple|
       describe file(tuple[1]) do
-        it ('should be owned by root') { should be_owned_by('root') }
-        it ("should have mode #{tuple[0]}") { should be_mode(tuple[0]) }
-        context 'should be owned by root group' do
-          its(:group) { should eq('root') }
-        end
+        its(:owner) { should eq('root') }
+        its(:mode)  { should eq(tuple[0]) }
+        its(:group) { should eq('root') }
       end
     end
   end

@@ -232,21 +232,34 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'ensure audit package file have correct permissions (stig: V-38663)' do
-    describe command('rpm -V audit | grep ^.M') do
-      its (:stdout) { should be_empty }
-    end
-  end
-
-  context 'ensure audit package file have correct owners (stig: V-38664)' do
-    describe command("rpm -V audit | grep '^.....U'") do
-      its (:stdout) { should be_empty }
-    end
-  end
-
-  context 'ensure audit package file have correct groups (stig: V-38665)' do
-    describe command("rpm -V audit | grep '^......G'") do
-      its (:stdout) { should be_empty }
+  context 'ensure auditd file permissions and ownership (stig: V-38663) (stig: V-38664) (stig: V-38665)' do
+    [[0o755, '/usr/bin/auvirt'],
+     [0o755, '/usr/bin/ausyscall'],
+     [0o755, '/usr/bin/aulastlog'],
+     [0o755, '/usr/bin/aulast'],
+     [0o700, '/var/log/audit'],
+     [0o755, '/sbin/aureport'],
+     [0o755, '/sbin/auditd'],
+     [0o750, '/sbin/autrace'],
+     [0o755, '/sbin/ausearch'],
+     [0o755, '/sbin/augenrules'],
+     [0o755, '/sbin/auditctl'],
+     [0o755, '/sbin/audispd'],
+     [0o750, '/etc/audisp'],
+     [0o750, '/etc/audisp/plugins.d'],
+     [0o640, '/etc/audisp/plugins.d/af_unix.conf'],
+     [0o640, '/etc/audisp/plugins.d/syslog.conf'],
+     [0o640, '/etc/audisp/audispd.conf'],
+     [0o750, '/etc/audit'],
+     [0o750, '/etc/audit/rules.d'],
+     [0o640, '/etc/audit/rules.d/audit.rules'],
+     [0o640, '/etc/audit/auditd.conf'],
+     [0o644, '/lib/systemd/system/auditd.service']].each do |tuple|
+      describe file(tuple[1]) do
+        its(:owner) { should eq('root') }
+        its(:mode)  { should eq(tuple[0]) }
+        its(:group) { should eq('root') }
+      end
     end
   end
 
