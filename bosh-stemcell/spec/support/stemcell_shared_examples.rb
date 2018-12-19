@@ -104,21 +104,6 @@ enable-kernel-logging.conf
   end
 
   describe 'logrotate' do
-    describe command('/usr/bin/print-logrotate-cron.sh 1') do
-      its(:stdout) { should eq("1,16,31,46 * * * * root /usr/bin/logrotate-cron\n") }
-    end
-
-    describe file('/usr/bin/setup-logrotate.sh') do
-      its(:content) do
-        should eq('#!/bin/bash
-
-print-logrotate-cron.sh $RANDOM > /etc/cron.d/logrotate
-
-touch /etc/cron.d
-')
-      end
-    end
-
     describe command('grep ionice /usr/bin/logrotate-cron') do
       its(:stdout) { should match(%r{^\s*nice -n 19 ionice -c3 /usr/sbin/logrotate\b}) }
     end
