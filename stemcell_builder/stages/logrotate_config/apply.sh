@@ -40,7 +40,7 @@ install_setup_logrotate_script() {
 
 install_logrotate_cron_script() {
   mv "$chroot/etc/cron.daily/logrotate" "$chroot/usr/bin/logrotate-cron"
-  sed -i -e 's/^.*\(\/usr\/sbin\/logrotate \/etc\/logrotate.conf\)/nice -n 19 ionice -c3 \1/' "$chroot/usr/bin/logrotate-cron"
+  sed -i -e 's/^\s*\(\/usr\/sbin\/logrotate\)\b/nice -n 19 ionice -c3 \1/' "$chroot/usr/bin/logrotate-cron"
 }
 
 install_default_su_directive() {
