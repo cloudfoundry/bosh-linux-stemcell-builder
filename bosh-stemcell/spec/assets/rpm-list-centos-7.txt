@@ -24,7 +24,6 @@ attr
 audit
 audit-libs
 augeas-libs
-authconfig
 autoconf
 automake
 avahi-libs
@@ -42,6 +41,7 @@ blktrace
 boost-date-time
 boost-system
 boost-thread
+bpftool
 bridge-utils
 byacc
 bzip2
@@ -126,7 +126,6 @@ gcc-gfortran
 gdb
 gdbm
 gdisk
-gdk-pixbuf2
 gettext
 gettext-common-devel
 gettext-devel
@@ -172,8 +171,6 @@ iptables
 iputils
 iw
 jansson
-jasper-libs
-jbigkit-libs
 json-c
 kbd
 kbd-legacy
@@ -195,9 +192,6 @@ langtable-data
 langtable-python
 ledmon
 less
-libX11
-libX11-common
-libXau
 libacl
 libaio
 libarchive
@@ -226,13 +220,10 @@ libgcc
 libgcrypt
 libgcrypt-devel
 libgfortran
-libgnome-keyring
 libgomp
 libgpg-error
 libgpg-error-devel
-libicu
 libidn
-libjpeg-turbo
 libkadm5
 liblognorm5
 libmnl
@@ -267,10 +258,10 @@ libreport-web
 libseccomp
 libselinux
 libselinux-devel
-libselinux-utils
 libsemanage
 libsepol
 libsepol-devel
+libsmartcols
 libss
 libssh2
 libsss_idmap
@@ -284,7 +275,6 @@ libsysfs
 libtar
 libtasn1
 libteam
-libtiff
 libtirpc
 libtool
 libunistring
@@ -295,7 +285,6 @@ libuuid
 libuuid-devel
 libverto
 libverto-devel
-libxcb
 libxml2
 libxml2-devel
 libxml2-python
@@ -332,7 +321,6 @@ neon
 net-tools
 nettle
 newt
-newt-python
 nmap-ncat
 nspr
 nss
@@ -402,12 +390,12 @@ perl-threads
 perl-threads-shared
 pinentry
 pinfo
+pixman
 pkgconfig
 plymouth
 plymouth-core-libs
 plymouth-scripts
 pm-utils
-policycoreutils
 polkit
 polkit-pkla-compat
 popt
@@ -421,13 +409,13 @@ pyliblzma
 python
 python-augeas
 python-chardet
-python-dmidecode
 python-iniparse
 python-kitchen
 python-libs
 python-pycurl
 python-six
 python-urlgrabber
+python2-futures
 pyxattr
 qrencode-libs
 quota-nls

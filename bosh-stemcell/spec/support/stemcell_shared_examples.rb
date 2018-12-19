@@ -78,18 +78,23 @@ shared_examples_for 'All Stemcells' do
 
   context 'There must be no .netrc files on the system (stig: V-38619)' do
     describe command('sudo find /root /home /var/vcap -xdev -name .netrc') do
-      its (:stdout) { should eq('') }
+      # its (:stdout) { should eq('') }
+      it 'does not include .netrc' do
+        results = subject.stdout.split("\n").reject { |str| str.match(/^Last login/) }
+        expect(results).to eq []
+      end
     end
   end
 
-  context 'rsyslog conf directory only contains the builder-specified config files', {
-    exclude_on_google: true
-  } do
+  context 'rsyslog conf directory only contains the builder-specified config files', exclude_on_google: true do
     describe command('ls -A /etc/rsyslog.d') do
-      its (:stdout) { should eq(%q(50-default.conf
-avoid-startup-deadlock.conf
-enable-kernel-logging.conf
-))}
+      its (:stdout) do
+        should eq(<<~FILELIST)
+          50-default.conf
+          avoid-startup-deadlock.conf
+          enable-kernel-logging.conf
+        FILELIST
+      end
     end
   end
 
