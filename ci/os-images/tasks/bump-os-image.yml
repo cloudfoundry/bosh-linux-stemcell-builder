@@ -9,7 +9,6 @@ image_resource:
 inputs:
   - name: bosh-linux-stemcell-builder
   - name: ubuntu-trusty-tarball
-  - name: centos-7-tarball
 
 outputs:
   - name: bosh-linux-stemcell-builder-push
