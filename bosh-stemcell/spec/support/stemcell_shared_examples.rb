@@ -115,7 +115,7 @@ touch /etc/cron.d
     end
 
     describe command('grep ionice /usr/bin/logrotate-cron') do
-      its(:stdout) { should eq("nice -n 19 ionice -c3 /usr/sbin/logrotate /etc/logrotate.conf\n") }
+      its(:stdout) { should match(%r{^\s*nice -n 19 ionice -c3 /usr/sbin/logrotate\b}) }
     end
 
     describe 'should rotate every 15 minutes' do
