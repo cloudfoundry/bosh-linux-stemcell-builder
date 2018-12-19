@@ -21,9 +21,9 @@ if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "xenial" ]; then
   run_in_chroot "${chroot}" "curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"
 
   run_in_chroot "${chroot}" "tee /etc/apt/sources.list.d/google-cloud.list << EOM
-  deb http://packages.cloud.google.com/apt google-compute-engine-stretch-stable main
-  deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-stretch main
-  EOM"
+deb http://packages.cloud.google.com/apt google-compute-engine-stretch-stable main
+deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-stretch main
+EOM"
 
   pkg_mgr install "google-cloud-packages-archive-keyring"
   pkg_mgr install "--target-release google-compute-engine-stretch-stable python-google-compute-engine python3-google-compute-engine"
