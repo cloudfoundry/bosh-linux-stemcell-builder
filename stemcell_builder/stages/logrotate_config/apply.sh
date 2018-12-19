@@ -5,6 +5,7 @@ set -e
 base_dir="$(readlink -nf "$(dirname "$0")"/../..)"
 # shellcheck source=../../lib/prelude_apply.bash
 source "$base_dir/lib/prelude_apply.bash"
+source "$base_dir/lib/prelude_bosh.bash"
 
 install_logrotate_conf() {
   # The logrotate.conf supplied by the default image is about to be stomped.
@@ -23,19 +24,16 @@ install_logrotate_conf() {
   fi
 }
 
-install_logrotate_cron_printer() {
-  cp "${assets_dir}/print-logrotate-cron.sh" "$chroot/usr/bin/print-logrotate-cron.sh"
-  chmod 755 "$chroot/usr/bin/print-logrotate-cron.sh"
+install_setup_logrotate_script() {
+  # shellcheck disable=SC2154
+  cp "${assets_dir}/setup-logrotate.sh" "$chroot/$bosh_dir/bin/setup-logrotate.sh"
+  chmod 700 "$chroot/$bosh_dir/bin/setup-logrotate.sh"
 }
 
 seed_default_logrotate_cronjob() {
-  "$chroot/usr/bin/print-logrotate-cron.sh" 0 > "$chroot/etc/cron.d/logrotate" # seed it with a default value
+  # shellcheck disable=SC2154
+  run_in_chroot "$chroot" "firstMinute=0 $bosh_dir/bin/setup-logrotate.sh" # seed it with a default value
   chmod 0600 "$chroot/etc/cron.d/logrotate"
-}
-
-install_setup_logrotate_script() {
-  cp "${assets_dir}/setup-logrotate.sh" "$chroot/usr/bin/setup-logrotate.sh"
-  chmod 700 "$chroot/usr/bin/setup-logrotate.sh"
 }
 
 install_logrotate_cron_script() {
@@ -48,8 +46,7 @@ install_default_su_directive() {
 }
 
 install_logrotate_conf
-install_logrotate_cron_printer
-seed_default_logrotate_cronjob
 install_setup_logrotate_script
+seed_default_logrotate_cronjob
 install_logrotate_cron_script
 install_default_su_directive
