@@ -35,6 +35,13 @@ resources:
     private_key: ((github_deployment_key__bosh-cpi-environments))
     uri: git@github.com:pivotal-cf-experimental/bats-concourse-pool.git
   type: pool
+- name: gh-release
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: bosh-linux-stemcell-builder
+    access_token: ((github_bosh_linux_stemcell_builder_release_maker_token))
+    drafts: true
 - name: every-2-weeks-on-monday
   type: time
   source:
