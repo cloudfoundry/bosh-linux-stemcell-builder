@@ -40,7 +40,7 @@
       - task: create-story
         file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
         params:
-          BRANCH: centos-((branch))
+          BRANCH: centos-7/((group))
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
           DESCRIPTION: "periodic bump"
