@@ -45,7 +45,7 @@
       - task: create-story
         file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
         params:
-          BRANCH: xenial-((branch))
+          BRANCH: ubuntu-xenial/((group))
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
           DESCRIPTION: "periodic bump"
@@ -62,7 +62,7 @@
       - task: create-story
         file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
         params:
-          BRANCH: xenial-((branch))
+          BRANCH: ubuntu-xenial/((group))
           PROJECT_ID: ((story_creator_private_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
           DESCRIPTION: "ubuntu *security* notice"
