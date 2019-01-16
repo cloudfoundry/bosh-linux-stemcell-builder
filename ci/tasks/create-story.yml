@@ -9,6 +9,7 @@ params:
   BRANCH: ~
   PROJECT_ID: ~
   TOKEN: ~
+  DESCRIPTION: ~
 
 inputs:
   - name: bosh-linux-stemcell-builder
