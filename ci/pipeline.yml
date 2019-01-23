@@ -160,14 +160,10 @@ jobs:
     plan:
       - aggregate:
           - get: bosh-linux-stemcell-builder
-            trigger: true
-            passed:
-              - build-ubuntu-trusty-image
-          - get: every-2-weeks-on-monday
-            trigger: true
             passed:
               - build-ubuntu-trusty-image
           - get: ubuntu-trusty-tarball
+            trigger: true
             passed:
               - build-ubuntu-trusty-image
       - task: bump-os-image
@@ -724,8 +720,8 @@ resources:
   - name: tracker-output
     type: tracker
     source:
-      token: ((tracker_api_token))
-      project_id: ((tracker_project_id))
+      project_id: ((story_creator_tracker_project_id))
+      token: ((story_creator_tracker_token))
       tracker_url: https://www.pivotaltracker.com
 
   #

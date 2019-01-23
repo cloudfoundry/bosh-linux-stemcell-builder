@@ -21,11 +21,11 @@ if [ -n "${RELEASE_BRANCH:-}" ]; then
   "
 fi
 
+echo $pipeline
 fly -t production set-pipeline \
   -p "$pipeline" \
   -c <(bosh interpolate $args ${scripts_path}/pipeline.yml) \
   -l <(lpass show --note "concourse:production pipeline:bosh:stemcells") \
   -l <(lpass show --notes "concourse:production pipeline:os-images") \
   -l <(lpass show --note "bats-concourse-pool:vsphere secrets") \
-  -l <(lpass show --note "tracker-bot-story-delivery") \
   -l <(lpass show --note "stemcell-reminder-bot")
