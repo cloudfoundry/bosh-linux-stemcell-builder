@@ -101,12 +101,8 @@
         resource: bosh-linux-stemcell-builder-((group))
         passed:
         - build-os-image-((group))
-        trigger: true
-      - get: every-2-weeks-on-monday
-        trigger: true
-        passed:
-        - build-os-image-((group))
       - get: os-image-tarball-((group))
+        trigger: true
         passed:
         - build-os-image-((group))
     - task: bump-os-image
