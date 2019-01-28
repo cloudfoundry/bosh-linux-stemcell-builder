@@ -12,6 +12,7 @@ fi
 git fetch --all
 git branch --track ubuntu-xenial/97.x origin/ubuntu-xenial/97.x 2>/dev/null || true
 git branch --track ubuntu-xenial/170.x origin/ubuntu-xenial/170.x 2>/dev/null || true
+git branch --track ubuntu-xenial/250.x origin/ubuntu-xenial/250.x 2>/dev/null || true
 
 fly -t production set-pipeline \
   -p "bosh:stemcells:ubuntu-xenial" \
@@ -23,6 +24,8 @@ fly -t production set-pipeline \
       -o <( bosh int -v group=97.x -v branch=ubuntu-xenial/97.x -v initial_version=97.0.0 -v bump_version=minor <( git show ubuntu-xenial/97.x:ci/ubuntu-xenial/pipeline-branch-ops.yml ) ) \
       -o <( bosh int -v group=170.x -v branch=ubuntu-xenial/170.x -v initial_version=170.0.0 -v bump_version=minor <( git show ubuntu-xenial/170.x:ci/ubuntu-xenial/pipeline-base-ops.yml ) ) \
       -o <( bosh int -v group=170.x -v branch=ubuntu-xenial/170.x -v initial_version=170.0.0 -v bump_version=minor <( git show ubuntu-xenial/170.x:ci/ubuntu-xenial/pipeline-branch-ops.yml ) ) \
+      -o <( bosh int -v group=250.x -v branch=ubuntu-xenial/250.x -v initial_version=250.0.0 -v bump_version=minor <( git show ubuntu-xenial/250.x:ci/ubuntu-xenial/pipeline-base-ops.yml ) ) \
+      -o <( bosh int -v group=250.x -v branch=ubuntu-xenial/250.x -v initial_version=250.0.0 -v bump_version=minor <( git show ubuntu-xenial/250.x:ci/ubuntu-xenial/pipeline-branch-ops.yml ) ) \
       $dir/pipeline-base.yml
   ) \
   -l <( lpass show --notes "concourse:production pipeline:os-images" ) \
