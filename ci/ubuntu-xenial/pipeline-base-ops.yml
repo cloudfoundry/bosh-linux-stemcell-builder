@@ -253,14 +253,17 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*.tgz
         put: warden-boshlite-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 - path: /jobs/-
   type: replace
   value:
@@ -285,14 +288,17 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*.tgz
         put: aws-xen-hvm-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 - path: /jobs/-
   type: replace
   value:
@@ -317,14 +323,17 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*.tgz
         put: azure-hyperv-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 - path: /jobs/-
   type: replace
   value:
@@ -349,14 +358,17 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*-go_agent.tgz
         put: alicloud-kvm-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 - path: /jobs/-
   type: replace
   value:
@@ -381,14 +393,17 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*-go_agent.tgz
         put: google-kvm-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 - path: /jobs/-
   type: replace
   value:
@@ -413,17 +428,21 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*-raw.tgz
         put: openstack-kvm-raw-((group))
+        attempts: 3
       - params:
           file: stemcell/*-go_agent.tgz
         put: openstack-kvm-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 - path: /jobs/-
   type: replace
   value:
@@ -448,14 +467,17 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*.tgz
         put: vsphere-esxi-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 - path: /jobs/-
   type: replace
   value:
@@ -480,14 +502,17 @@
         OS_VERSION: xenial
       privileged: true
       task: create-stemcell
+      attempts: 3
     - aggregate:
       - params:
           file: stemcell/*.tgz
         put: vcloud-esxi-((group))
+        attempts: 3
     - params:
         rebase: true
         repository: stemcells-index
       put: stemcells-index
+      attempts: 3
 
 - path: /jobs/-
   type: replace
