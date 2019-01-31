@@ -5,6 +5,7 @@ groups:
       - start-job
       - create-story
       - create-story-usn
+      - notify-of-usn
       - build-ubuntu-trusty-image
       - bump-os-image
       - test-unit
@@ -120,6 +121,51 @@ jobs:
           PROJECT_ID: ((story_creator_tracker_project_id))
           TOKEN: ((story_creator_tracker_token))
           DESCRIPTION: "stemcell periodic bump"
+
+  - name: notify-of-usn
+    plan:
+      - get: trusty-usn
+        trigger: true
+      - task: build-slack-message
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: bosh/main
+          inputs: [{ name: trusty-usn }]
+          outputs: [{ name: slack-message }]
+          run:
+            path: /bin/bash
+            args:
+            - -c
+            - |
+              set -exu -o pipefail
+              cat <<EOF > template.json
+              {
+                "attachments": {
+                  "color": "#ff0000",
+                    "thumb_url": "http://www.free-icons-download.net/images/lock-icon-66412.png",
+                    "footer": "USN Notification",
+                    "footer_icon": "https://i.imgur.com/7H8ZIq1.png",
+                    "mrkdwn_in": ["fields"],
+                    "fields": [
+                    {"title": "Priorities", "short": true, "value": (.priorities | join(", "))},
+                    {"title": "Date", "short": true, "value": .date},
+                    {"title": "Description", "short": false, "value": .description},
+                    {"title": "CVEs", "short": false, "value": (.cves | join("\n"))}
+                    ]
+                }
+              }
+              EOF
+              cat trusty-usn/usn.json | jq -r "$(cat template.json)" | tee slack-message/attachments
+              cat trusty-usn/usn.json | jq -r '"New USN for Trusty: *<\(.url)|\(.title)>*"' | tee slack-message/message
+      - put: slack-alert
+        params:
+          channel: ((usn_notifications_slack_channel_name))
+          icon_url: https://i.imgur.com/A0Vlw5t.png
+          attachments_file: slack-message/attachments
+          text_file: slack-message/message
 
   - name: create-story-usn
     plan:
@@ -589,6 +635,11 @@ resource_types:
     repository: bosh/usn-resource
 
 resources:
+  - name: slack-alert
+    type: slack-notification
+    source:
+      url: ((slack_hook_url))
+
   - name: bosh-linux-stemcell-builder
     type: git
     source:
