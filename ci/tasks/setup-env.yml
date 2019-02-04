@@ -11,6 +11,7 @@ inputs:
   - name: bosh-deployment
   - name: bbl-state
   - name: stemcell
+  - name: bosh-linux-stemcell-builder
   - name: zookeeper-release
 
 outputs:
