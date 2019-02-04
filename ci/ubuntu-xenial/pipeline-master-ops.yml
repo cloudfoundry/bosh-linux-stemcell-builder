@@ -93,13 +93,14 @@
           - build-vcloud-esxi-master
           trigger: true
         - get: bosh-deployment
+        - get: bosh-linux-stemcell-builder
+          resource: bosh-linux-stemcell-builder-master
         - get: stemcell
           resource: google-kvm-master
-          trigger: true
           passed:
           - build-google-kvm-master
       - task: deploy-env
-        file: bosh-src/ci/tasks/setup-env.yml
+        file: bosh-linux-stemcell-builder/ci/tasks/setup-env.yml
         params:
           BBL_GCP_SERVICE_ACCOUNT_KEY: ((acceptance_gcp_service_account_key))
           BBL_GCP_REGION: us-west2

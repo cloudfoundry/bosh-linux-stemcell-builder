@@ -23,4 +23,4 @@ params:
   BBL_STATE_DIR: ""
 
 run:
-  path: bosh-src/ci/tasks/setup-env.sh
+  path: bosh-linux-stemcell-builder/ci/tasks/setup-env.sh
