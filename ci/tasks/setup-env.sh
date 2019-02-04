@@ -23,7 +23,7 @@ main() {
   local build_dir="${PWD}"
   local bbl_state_env_repo_dir=$PWD/bbl-state
   local output_dir="$PWD/updated-bbl-state/"
-  local env_assets="$PWD/bosh-src/ci/acceptance"
+  local env_assets="$PWD/bosh-linux-stemcell-builder/ci/acceptance"
   BBL_STATE_DIR=bosh-stemcell-acceptance-env
   export BBL_STATE_DIR
 
