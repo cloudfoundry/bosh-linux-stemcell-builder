@@ -1,8 +1,25 @@
 #!/bin/bash -exu
 
-main() {
-  source bosh-src/ci/tasks/utils.sh
+commit_bbl_state_dir() {
+  local input_dir=${1?'Input git repository absolute path is required.'}
+  local bbl_state_dir=${2?'BBL state relative path is required.'}
+  local output_dir=${3?'Output git repository absolute path is required.'}
+  local commit_message=${4:-'Update bbl state.'}
 
+  pushd "${input_dir}/${bbl_state_dir}"
+    if [[ -n $(git status --porcelain) ]]; then
+      git config user.name "CI Bot"
+      git config user.email "ci@localhost"
+      git add --all .
+      git commit -m "${commit_message}"
+    fi
+  popd
+
+  shopt -s dotglob
+  cp -R "${input_dir}/." "${output_dir}"
+}
+
+main() {
   local build_dir="${PWD}"
   local bbl_state_env_repo_dir=$PWD/bbl-state
   local output_dir="$PWD/updated-bbl-state/"
