@@ -28,7 +28,6 @@ fly -t production set-pipeline \
       -o <( bosh int -v group=250.x -v branch=ubuntu-xenial/250.x -v initial_version=250.0.0 -v bump_version=minor <( git show ubuntu-xenial/250.x:ci/ubuntu-xenial/pipeline-branch-ops.yml ) ) \
       $dir/pipeline-base.yml
   ) \
-  -l <(lpass show -G "bosh concourse secrets" --notes) \
   -l <( lpass show --notes "concourse:production pipeline:os-images" ) \
   -l <( lpass show --notes "concourse:production pipeline:bosh:stemcells" ) \
   -l <( lpass show --notes "bats-concourse-pool:vsphere secrets" ) \
