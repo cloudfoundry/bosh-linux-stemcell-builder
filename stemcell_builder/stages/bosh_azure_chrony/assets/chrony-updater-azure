@@ -1,0 +1,18 @@
+#!/bin/bash
+
+BOSH=/var/vcap/bosh
+
+exec > $BOSH/log/sync-time.out
+exec 2>&1
+
+new_file=/etc/chrony/chrony.conf.new
+cp /etc/chrony/chrony.conf.base $new_file
+
+echo "# appended by $0" >> $new_file
+
+echo "refclock PHC /dev/ptp0 poll 3 dpoll -2 offset 0" >> $new_file
+
+mv $new_file /etc/chrony/chrony.conf
+
+systemctl restart chrony.service
+chronyc waitsync 10
