@@ -256,7 +256,7 @@ jobs:
           OS_NAME:      ubuntu
           OS_VERSION:   trusty
           SWIFT_USERNAME:  {{swift-username}}
-          SWIFT_API_KEY: {{softlayer-api-key}}
+          SWIFT_API_KEY: {{swift-api-key}}
           SWIFT_CLUSTER:  {{swift-cluster}}
           SWIFT_CONTAINER: {{swift-container}}
         input_mapping:
@@ -280,7 +280,7 @@ jobs:
           SL_USERNAME: {{softlayer-username}}
           SL_API_KEY: {{softlayer-api-key}}
           SWIFT_USERNAME: {{swift-username}}
-          SWIFT_API_KEY: {{softlayer-api-key}}
+          SWIFT_API_KEY: {{swift-api-key}}
           SWIFT_CLUSTER: {{swift-cluster}}
           SWIFT_CONTAINER: {{swift-container}}
       - put: stemcell-info
