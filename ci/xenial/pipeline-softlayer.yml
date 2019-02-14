@@ -280,6 +280,7 @@ jobs:
       - put: light-softlayer-stemcell-prod
         params:
           file: light-softlayer-stemcell-prod/*.tgz
+          acl: public-read
       - put: bosh-linux-stemcell-builder
         params:
           only_tag: true
