@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 group :development, :test do
-  gem 'bosh-core'
   gem 'bosh-stemcell', path: 'bosh-stemcell'
   gem 'fakefs'
   gem 'logging'
