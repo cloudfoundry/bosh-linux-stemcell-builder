@@ -53,10 +53,5 @@ else
 fi
 
 # See https://github.com/cloudfoundry/bosh/issues/1399 for context
-if [[ ! -f $chroot/$set_hostname_path ]]; then
-  echo "Could not find ${set_hostname_path}, exiting"
-  exit 2
-fi
-
-run_in_chroot "${chroot}" "rm -f ${set_hostname_path}"
+run_in_chroot "${chroot}" "rm --interactive=never ${set_hostname_path}"
 
