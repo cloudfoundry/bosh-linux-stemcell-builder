@@ -370,8 +370,8 @@ resources:
   - name: bosh-deployment
     type: git
     source:
-      uri: https://github.com/edwardstudy/bosh-deployment
-      branch: master
+      uri: https://github.com/bluebosh/bosh-deployment
+      branch: new_softlayer_cpi
 
   - name: bosh-cli
     type: s3

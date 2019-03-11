@@ -57,7 +57,7 @@ export BOSH_CLIENT="admin"
 export BOSH_CLIENT_SECRET=`$bosh_cli int director-creds.yml --path /admin_password`
 
 $bosh_cli -n update-cloud-config bosh-deployment/softlayer/cloud-config.yml \
-          --ops-file bosh-linux-stemcell-builder/ci/assets/reserve-ips.yml \
+          --ops-file bosh-linux-stemcell-builder-master/ci/assets/reserve-ips.yml \
           -v sl_vm_name_prefix=$SL_VM_NAME_PREFIX_2 \
           -v sl_vm_domain=$SL_VM_DOMAIN \
           -v sl_public_ssh_key=$SL_PUBLIC_SSH_KEY \
