@@ -446,11 +446,11 @@ module Bosh::Stemcell
 
         let(:azure_build_stemcell_image_stages) {
           [
-            :bosh_azure_chrony,
             :system_azure_network,
             :system_azure_wala,
             :system_parameters,
             :enable_udf_module,
+            :bosh_azure_chrony,
             :bosh_clean,
             :bosh_harden,
             :bosh_azure_agent_settings,
