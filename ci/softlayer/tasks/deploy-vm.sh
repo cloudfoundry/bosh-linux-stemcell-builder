@@ -23,13 +23,13 @@ apt-get update
 apt-get install curl -y
 
 tar zxvf stemcell/*.tgz  -C ./
-virtual-disk-image-uuid=`grep "virtual-disk-image-uuid:" stemcell.MF| cut -d ":" -f2`
+image_id=`grep "virtual-disk-image-uuid:" stemcell.MF| cut -d ":" -f2 | sed 's/^[ \t]*//g' `
 
 curl -X POST -d '{ \
   "parameters":[ \
          "FORCE", \
          { \
-             "imageTemplateId": "$virtual-disk-image-uuid" \
+             "imageTemplateId": "$image_id" \
          } \
   ] \
  }' https://$SL_USERNAME:$SL_API_KEY@api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/74649319/reloadOperatingSystem.json
