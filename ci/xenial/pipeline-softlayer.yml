@@ -287,6 +287,28 @@ jobs:
           repository: bosh-linux-stemcell-builder
           tag: version-tag/tag
 
+ - name: build-stemcells
+    serial: true
+    plan:
+      - aggregate:
+          - get: version
+            passed:
+              - publish-stemcells
+          - get: stemcell
+            passed:
+              - publish-stemcells
+            resource: light-softlayer-stemcell-prod
+          - get: bosh-linux-stemcell-builder-master
+          - get: stemcells-index
+      - task: build-stemcell
+        file: bosh-linux-stemcell-builder-master/ci/softlayer/tasks/build-stemcell.yml
+        params:
+          OS_NAME: ubuntu
+          OS_VERSION: xenial
+          PUBLISHED_BUCKET_NAME: bosh-softlayer-cpi-stemcells
+          SL_API_KEY: {{softlayer-api-key}}
+          SL_USERNAME:  {{softlayer-username}}
+
   - name: post-stemcells
     serial: true
     plan:
@@ -315,7 +337,7 @@ resources:
     type: git
     source:
       uri: https://github.com/bluebosh/bosh-linux-stemcell-builder
-      branch: master
+      branch: create-vm
 
   - name: bosh-linux-stemcell-builder
     type: git
