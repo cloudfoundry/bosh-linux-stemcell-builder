@@ -13,7 +13,7 @@ inputs:
   - name: stemcell
   - name: stemcells-index
 run:
-  path: bosh-linux-stemcell-builder/ci/softlayer/tasks/post-stemcell.sh
+  path: bosh-linux-stemcell-builder/ci/softlayer/tasks/deploy-vm.sh
 
 params:
   PUBLISHED_BUCKET_NAME: required
