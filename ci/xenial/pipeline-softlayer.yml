@@ -287,7 +287,7 @@ jobs:
           repository: bosh-linux-stemcell-builder
           tag: version-tag/tag
 
- - name: build-stemcells
+  - name: build-stemcells
     serial: true
     plan:
       - aggregate:
