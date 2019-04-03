@@ -256,6 +256,17 @@ var _ = Describe("Stemcell", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 		})
+
+		It("can write log messages to the system log file", func() {
+			_, _, exitStatus, err := bosh.Run(
+				"--column=stdout",
+				"ssh", "default/0", "-r", "-c",
+				`sudo adduser --disabled-password --gecos "" --quiet testuser && sudo -u testuser logger syslog-line && sudo userdel testuser`,
+			)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+		})
 	})
 
 })

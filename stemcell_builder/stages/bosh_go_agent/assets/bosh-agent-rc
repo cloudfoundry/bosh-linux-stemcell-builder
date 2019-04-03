@@ -7,11 +7,6 @@ if [ -e /dev/sr0 ]; then
   chown root:root /dev/sr0
 fi
 
-if [ -e /dev/log ]; then
-  chmod 0660 /dev/log
-  chown root:vcap /dev/log
-fi
-
 if [ -e /dev/shm ]; then
   chmod 0770 /dev/shm
   chown root:vcap /dev/shm
