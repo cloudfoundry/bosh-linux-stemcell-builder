@@ -126,7 +126,7 @@ var _ = Describe("Stemcell", func() {
 		stdout, _, exitStatus, err := bosh.Run(
 			"--column=stdout",
 			"ssh", "default/0", "-r",
-			"-c", `logger story146390925 && sleep 1 && sudo grep story146390925 /var/log/messages`,
+			"-c", `logger story146390925 && sleep 1 && sudo grep story146390925 /var/log/syslog`,
 		)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
@@ -241,7 +241,7 @@ var _ = Describe("Stemcell", func() {
 			_, _, exitStatus, err := bosh.Run(
 				"--column=stdout",
 				"ssh", "default/0", "-r", "-c",
-				`logger -p daemon.error "Line in daemon.log"; sudo ls /var/log/{audit,auth.log,btmp,daemon.log,debug,kern.log,lastlog,messages,syslog,sysstat,user.log,wtmp}`,
+				`logger -p daemon.error "Line in daemon.log"; sudo ls /var/log/{audit,auth.log,btmp,daemon.log,kern.log,lastlog,syslog,sysstat,wtmp}`,
 			)
 
 			Expect(err).ToNot(HaveOccurred())
