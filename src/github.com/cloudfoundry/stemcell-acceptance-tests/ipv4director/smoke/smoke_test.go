@@ -178,7 +178,7 @@ var _ = Describe("Stemcell", func() {
 		opsFilePath, err := filepath.Abs("remove_dev_tools_and_static_libraries.yml")
 		Expect(err).NotTo(HaveOccurred())
 
-		bosh.Deploy("--recreate", "-o", opsFilePath)
+		bosh.SafeDeploy("--recreate", "-o", opsFilePath)
 		stdout, _, exitStatus, err := bosh.Run(
 			"--column=stdout",
 			"ssh", "default/0", "-r", "-c",

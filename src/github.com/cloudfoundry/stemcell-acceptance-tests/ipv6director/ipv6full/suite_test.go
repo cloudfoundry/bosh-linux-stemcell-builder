@@ -26,7 +26,7 @@ var _ = BeforeSuite(func() {
 	bosh = testhelpers.NewBOSH()
 	stemcellPath := testhelpers.RequireEnv("STEMCELL_PATH")
 	bosh.UploadStemcell(stemcellPath)
-	bosh.Deploy()
+	bosh.SafeDeploy()
 })
 
 var _ = AfterSuite(func() {

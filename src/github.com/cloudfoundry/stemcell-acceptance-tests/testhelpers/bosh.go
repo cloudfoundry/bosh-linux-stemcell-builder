@@ -53,7 +53,13 @@ func (b *BOSH) UploadRelease(releasePath string) {
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
 
-func (b *BOSH) Deploy(args ...string) {
+func (b *BOSH) SafeDeploy(args ...string) {
+	stdOut, stdErr, exitStatus, err := b.UnsafeDeploy(args...)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
+}
+
+func (b *BOSH) UnsafeDeploy(args ...string) (string, string, int, error) {
 	manifestPath, err := filepath.Abs("manifest.yml")
 	Expect(err).ToNot(HaveOccurred())
 
@@ -67,10 +73,7 @@ func (b *BOSH) Deploy(args ...string) {
 	stdOut, stdErr, exitStatus, err := b.Run("interpolate", "--vars-env=BOSH", "--var-errs", manifestPath)
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
-
-	stdOut, stdErr, exitStatus, err = b.Run(deployCmd...)
-	Expect(err).ToNot(HaveOccurred())
-	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
+	return b.Run(deployCmd...)
 }
 
 func (b *BOSH) Run(args ...string) (string, string, int, error) {

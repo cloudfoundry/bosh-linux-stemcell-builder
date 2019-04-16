@@ -25,7 +25,7 @@ var _ = BeforeSuite(func() {
 
 	bosh.UploadStemcell(stemcellPath)
 	bosh.UploadRelease(osConfReleasePath)
-	bosh.Deploy()
+	bosh.SafeDeploy()
 })
 
 var _ = AfterSuite(func() {
