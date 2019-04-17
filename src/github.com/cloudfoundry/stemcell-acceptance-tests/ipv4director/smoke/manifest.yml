@@ -1,7 +1,9 @@
 ---
 name: stemcell-acceptance-tests
 
-releases: []
+releases:
+- name: syslog
+  version: latest
 
 stemcells:
 - alias: default
@@ -22,4 +24,14 @@ instance_groups:
   networks:
   - {name: default}
   azs: [z1]
-  jobs: []
+  jobs:
+  - name: syslog_forwarder
+    release: syslog
+    consumes:
+      syslog_storer: { from: syslog_storer }
+  - name: syslog_storer
+    release: syslog
+    properties:
+      syslog:
+        transport: tcp
+        port: 514
