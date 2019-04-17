@@ -297,6 +297,10 @@ var _ = Describe("Stemcell", func() {
 			BlobstoreCaCertificate string `yaml:"blobstore_ca_certificate"`
 		}
 
+		AfterEach(func() {
+			bosh.SafeDeploy()
+		})
+
 		Context("when deploying with a invalid logs blobstore", func() {
 			It("should fail to get logs, but the deploy should succeed", func() {
 				config := agentSettings{}
