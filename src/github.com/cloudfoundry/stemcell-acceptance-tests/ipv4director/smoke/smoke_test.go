@@ -376,7 +376,7 @@ var _ = Describe("Stemcell", func() {
 				blobstoreVarFile.Close()
 
 				stdOut, stdErr, exitStatus, err := bosh.UnsafeDeploy("-o", opsFile,
-					"--vars-file", blobstoreVarFile.Name(),
+					"--vars-file", blobstoreVarFile.Name(), "--recreate",
 				)
 				Expect(err).To(HaveOccurred())
 				Expect(stdOut).To(MatchRegexp("bosh-blobstore-dav -c /var/vcap/bosh/etc/invalid/blobstore-dav.json"))
