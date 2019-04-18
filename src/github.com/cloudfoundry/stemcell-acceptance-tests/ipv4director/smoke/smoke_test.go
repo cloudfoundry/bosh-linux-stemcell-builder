@@ -20,7 +20,7 @@ var _ = Describe("Stemcell", func() {
 		It("should rotate the wtmp/btmp logs", func() {
 			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/wtmp" \
 		&& sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/btmp" \
-		&& sudo sed -i "s/0,15,30,45/\*/" /etc/cron.d/logrotate`)
+		&& sudo sed -E -i "s/[0-9,]+/\*/" /etc/cron.d/logrotate`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
@@ -46,7 +46,7 @@ var _ = Describe("Stemcell", func() {
 		It("should rotate the logs", func() {
 			_, _, exitStatus, err := bosh.Run("ssh", "default/0", `logger "old syslog content" \
 	&& sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/syslog" \
-	&& sudo sed -i "s/0,15,30,45/\*/" /etc/cron.d/logrotate`)
+	&& sudo sed -E -i "s/[0-9,]+/\*/" /etc/cron.d/logrotate`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 
