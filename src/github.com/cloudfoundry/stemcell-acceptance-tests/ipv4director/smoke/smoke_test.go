@@ -18,37 +18,45 @@ import (
 var _ = Describe("Stemcell", func() {
 	Context("when logrotate wtmp/btmp logs", func() {
 		It("should rotate the wtmp/btmp logs", func() {
-			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `sudo bash -c "dd if=/dev/urandom count=10000 bs=1024 >> /var/log/wtmp" \
-		&& sudo bash -c "dd if=/dev/urandom count=10000 bs=1024 >> /var/log/btmp" \
+			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/wtmp" \
+		&& sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/btmp" \
 		&& sudo sed -i "s/0,15,30,45/\*/" /etc/cron.d/logrotate`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-			time.Sleep(62 * time.Second)
+			Eventually(func() int {
+				stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/wtmp | cut -f1")
+				Expect(err).ToNot(HaveOccurred())
+				fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
+				Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
+				return fileSizeInKiloBytes
+			}, 2*time.Minute, 15*time.Second).Should(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
 
-			stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/wtmp | cut -f1")
-			Expect(err).ToNot(HaveOccurred())
-			fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
-			Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
-			Expect(fileSizeInKiloBytes).To(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
-
-			stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/btmp | cut -f1")
-			Expect(err).ToNot(HaveOccurred())
-			fileSizeInKiloBytes, err = strconv.Atoi(strings.TrimSpace(stdOut))
-			Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
-			Expect(fileSizeInKiloBytes).To(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
+			Eventually(func() int {
+				stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/btmp | cut -f1")
+				Expect(err).ToNot(HaveOccurred())
+				fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
+				Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
+				return fileSizeInKiloBytes
+			}, 2*time.Minute, 15*time.Second).Should(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
 		})
 	})
 
 	Context("when syslog threshold limit is reached", func() {
 		It("should rotate the logs", func() {
 			_, _, exitStatus, err := bosh.Run("ssh", "default/0", `logger "old syslog content" \
-	&& sudo bash -c "dd if=/dev/urandom count=10000 bs=1024 >> /var/log/syslog" \
+	&& sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/syslog" \
 	&& sudo sed -i "s/0,15,30,45/\*/" /etc/cron.d/logrotate`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 
-			time.Sleep(62 * time.Second)
+			Eventually(func() int {
+				stdOut, _, _, err := bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/vcap/data/root_log/syslog | cut -f1")
+				Expect(err).ToNot(HaveOccurred())
+				fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
+				Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
+				return fileSizeInKiloBytes
+			}, 2*time.Minute, 15*time.Second).Should(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
 
 			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `logger "new syslog content"`)
 			Expect(err).ToNot(HaveOccurred())
