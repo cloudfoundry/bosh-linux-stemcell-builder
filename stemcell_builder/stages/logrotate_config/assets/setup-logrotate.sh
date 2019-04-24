@@ -1,6 +1,6 @@
 #!/bin/bash
 
-firstMinute=$((RANDOM % 15))
+: "${firstMinute:=$((RANDOM % 15))}"
 secondMinute=$((firstMinute+15))
 thirdMinute=$((secondMinute+15))
 fourthMinute=$((thirdMinute+15))
