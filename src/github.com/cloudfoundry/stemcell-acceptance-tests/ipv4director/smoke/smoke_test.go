@@ -18,61 +18,57 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func fillUpFileWithRandomCharacters(filepath string) {
+	command := fmt.Sprintf(`sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> %s"`, filepath)
+	stdOut, stdErr, exitStatus, err := bosh.Run(
+		"ssh",
+		"default/0",
+		command,
+	)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
+}
+
 var _ = Describe("Stemcell", func() {
 	Context("when logrotate wtmp/btmp logs", func() {
 		It("should rotate the wtmp/btmp logs", func() {
-			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/wtmp" \
-		&& sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/btmp" \
-		&& sudo sed -E -i "s/[0-9,]+/\*/" /etc/cron.d/logrotate`)
+			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `sudo sed -E -i "s/[0-9,]+/\*/" /etc/cron.d/logrotate`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-			Eventually(func() int {
-				stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/wtmp | cut -f1")
-				Expect(err).ToNot(HaveOccurred())
-				fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
-				Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
-				return fileSizeInKiloBytes
-			}, 2*time.Minute, 15*time.Second).Should(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
+			fillUpFileWithRandomCharacters("/var/log/wtmp")
+			Eventually("/var/log/wtmp", 2*time.Minute, 15*time.Second).Should(BeLogRotated())
 
-			Eventually(func() int {
-				stdOut, _, _, err = bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/log/btmp | cut -f1")
-				Expect(err).ToNot(HaveOccurred())
-				fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
-				Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
-				return fileSizeInKiloBytes
-			}, 2*time.Minute, 15*time.Second).Should(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
+			fillUpFileWithRandomCharacters("/var/log/btmp")
+			Eventually("/var/log/btmp", 2*time.Minute, 15*time.Second).Should(BeLogRotated())
 		})
 	})
 
 	Context("when syslog threshold limit is reached", func() {
 		It("should rotate the logs", func() {
-			_, _, exitStatus, err := bosh.Run("ssh", "default/0", `logger "old syslog content" \
-	&& sudo bash -c "dd if=<(tr -cd '[:alnum:]' < /dev/urandom) count=10000 bs=1024 >> /var/log/syslog" \
-	&& sudo sed -E -i "s/[0-9,]+/\*/" /etc/cron.d/logrotate`)
+			_, _, exitStatus, err := bosh.Run("ssh", "default/0", `sudo sed -E -i "s/[0-9,]+/\*/" /etc/cron.d/logrotate`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 
-			Eventually(func() int {
-				stdOut, _, _, err := bosh.Run("ssh", "--column=stdout", "--results", "default/0", "sudo du /var/vcap/data/root_log/syslog | cut -f1")
-				Expect(err).ToNot(HaveOccurred())
-				fileSizeInKiloBytes, err := strconv.Atoi(strings.TrimSpace(stdOut))
-				Expect(err).ToNot(HaveOccurred(), "error converting kB file size to integer")
-				return fileSizeInKiloBytes
-			}, 2*time.Minute, 15*time.Second).Should(BeNumerically("<", 100), "Logfile was larger than expected. It should have been rotated.")
+			_, _, exitStatus, err = bosh.Run("ssh", "default/0", `logger "old syslog content"`)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(exitStatus).To(Equal(0))
+
+			fillUpFileWithRandomCharacters("/var/log/syslog")
+			Eventually("/var/vcap/data/root_log/syslog", 2*time.Minute, 15*time.Second).Should(BeLogRotated())
 
 			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `logger "new syslog content"`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not log using logger on the syslog forwarder! \n stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-			stdOut, _, exitStatus, err = bosh.Run("ssh", "default/0", `sudo cat /var/vcap/data/root_log/syslog`)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(exitStatus).To(Equal(0))
-			Expect(stdOut).To(ContainSubstring("new syslog content"))
-
-			stdOut, stdErr, exitStatus, err = bosh.Run("ssh", "default/0", `sudo cat /var/vcap/data/root_log/syslog`)
+			stdOut, stdErr, exitStatus, err = bosh.Run(
+				"ssh",
+				"default/0",
+				`sudo grep "[n]ew syslog content\|[o]ld syslog content" /var/vcap/data/root_log/syslog `,
+			)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not read from syslog stdOut: %s \n stdErr: %s", stdOut, stdErr))
+			Expect(stdOut).To(ContainSubstring("new syslog content"))
 			Expect(stdOut).NotTo(ContainSubstring("old syslog content"))
 		})
 	})

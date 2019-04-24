@@ -27,11 +27,8 @@ instance_groups:
   jobs:
   - name: syslog_forwarder
     release: syslog
-    consumes:
-      syslog_storer: { from: syslog_storer }
-  - name: syslog_storer
-    release: syslog
     properties:
       syslog:
-        transport: tcp
-        port: 514
+        address: 127.0.0.1
+        port: 5123
+        transport: udp
