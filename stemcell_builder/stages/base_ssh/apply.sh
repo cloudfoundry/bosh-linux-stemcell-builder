@@ -81,7 +81,7 @@ elif [ "$(get_os_type)" == "ubuntu" ]; then
 
   # Disallow Weak MACs
   sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
-  echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-ripemd160-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,hmac-ripemd160,hmac-sha1' >> $chroot/etc/ssh/sshd_config
+  echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' >> $chroot/etc/ssh/sshd_config
 
 elif [ "$(get_os_type)" == "opensuse" ]; then
   # Allow only 3DES and AES series ciphers

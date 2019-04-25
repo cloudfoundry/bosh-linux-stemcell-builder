@@ -53,8 +53,6 @@ shared_examples_for 'a openSUSE based OS image' do
       macs = %w(
         hmac-sha2-512
         hmac-sha2-256
-        hmac-ripemd160
-        hmac-sha1
       ).join(',')
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end

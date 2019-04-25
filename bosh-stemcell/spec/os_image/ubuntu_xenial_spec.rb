@@ -217,16 +217,14 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     end
 
     it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
-      macs = %w(
+      macs = %w[
         hmac-sha2-512-etm@openssh.com
         hmac-sha2-256-etm@openssh.com
-        hmac-ripemd160-etm@openssh.com
         umac-128-etm@openssh.com
         hmac-sha2-512
         hmac-sha2-256
-        hmac-ripemd160
-        hmac-sha1
-      ).join(',')
+        umac-128@openssh.com
+      ].join(',')
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
   end
