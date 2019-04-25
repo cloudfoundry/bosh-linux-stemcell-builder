@@ -4,7 +4,9 @@ shared_examples_for 'every OS image' do
 
   context 'etc_environment' do
     it 'should have /var/vcap/bosh/bin on the PATH' do
-      expect(etc_environment.content.split(':')).to include('/var/vcap/bosh/bin')
+      expect(etc_environment).to match(
+        %r{PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/var/vcap/bosh/bin"},
+      )
     end
   end
 
