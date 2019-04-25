@@ -349,6 +349,7 @@ module Bosh::Stemcell
 
     def bosh_steps
       %i[
+        bosh_environment
         bosh_sysctl
         bosh_limits
         bosh_users
