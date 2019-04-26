@@ -229,6 +229,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
         umac-128-etm@openssh.com
         hmac-sha2-512
         hmac-sha2-256
+        umac-128@openssh.com
       ].join(',')
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
