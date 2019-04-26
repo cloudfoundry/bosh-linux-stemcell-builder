@@ -72,7 +72,7 @@ if [ "$(get_os_type)" == "centos" -o "$(get_os_type)" == "rhel" -o "$(get_os_typ
 
   # Disallow Weak MACs
   sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
-  echo 'MACs hmac-sha2-512,hmac-sha2-256,hmac-ripemd160,hmac-sha1' >> $chroot/etc/ssh/sshd_config
+  echo 'MACs hmac-sha2-512,hmac-sha2-256' >> $chroot/etc/ssh/sshd_config
 
 elif [ "$(get_os_type)" == "ubuntu" ]; then
   #  Allow only 3DES and AES series ciphers
