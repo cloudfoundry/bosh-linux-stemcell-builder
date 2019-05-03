@@ -31,6 +31,7 @@ function write_shared_audit_rules {
 
 # Record changes to sudoers file
 -w /etc/sudoers -p wa -k scope
+-w /etc/sudoers.d -p wa -k scope
 
 # Record login and logout events
 -w /var/log/faillog -p wa -k logins
@@ -57,9 +58,11 @@ function write_shared_audit_rules {
 -w /etc/issue.net -p wa -k system-locale
 -w /etc/hosts -p wa -k system-locale
 -w /etc/network -p wa -k system-locale
+-w /etc/networks -p wa -k system-locale
 
 # Record events that modify systems mandatory access controls
--w /etc/selinux/ -p wa -k MAC-policy
+-w /etc/apparmor/ -p wa -k MAC-policy
+-w /etc/apparmor.d/ -p wa -k MAC-policy
 
 # Record system administrator actions
 -w /var/log/sudo.log -p wa -k actions
@@ -118,7 +121,7 @@ function override_default_audit_variables {
     sed -i 's/^space_left_action = .*$/space_left_action = SYSLOG/g' $chroot/etc/audit/auditd.conf
     sed -i 's/^num_logs = .*$/num_logs = 5/g' $chroot/etc/audit/auditd.conf
     sed -i 's/^max_log_file = .*$/max_log_file = 6/g' $chroot/etc/audit/auditd.conf
-    sed -i 's/^max_log_file_action = .*$/max_log_file_action = ROTATE/g' $chroot/etc/audit/auditd.conf
+    sed -i 's/^max_log_file_action = .*$/max_log_file_action = SYSLOG/g' $chroot/etc/audit/auditd.conf
     sed -i 's/^log_group = .*$/log_group = root/g' $chroot/etc/audit/auditd.conf
     sed -i 's/^space_left = .*$/space_left = 75/g' $chroot/etc/audit/auditd.conf
     sed -i 's/^admin_space_left = .*$/admin_space_left = 50/g' $chroot/etc/audit/auditd.conf
