@@ -1,6 +1,38 @@
 # bosh/os-image-stemcell-builder
 
-FROM bosh/main-ruby-go
+FROM ubuntu:bionic
+
+RUN apt-get update
+RUN apt-get -y upgrade && apt-get clean
+RUN apt-get install -y \
+	build-essential \
+	curl \
+	dnsutils \
+	git \
+	jq \
+	libreadline-dev \
+	libssl-dev \
+	tar \
+	wget \
+	xvfb \
+  locales \
+  sudo \
+	&& apt-get clean
+
+RUN locale-gen en_US.UTF-8
+RUN dpkg-reconfigure locales
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+# Nokogiri dependencies
+RUN apt-get install -y libxslt-dev libxml2-dev && apt-get clean
+
+ADD install-ruby.sh /tmp/install-ruby.sh
+RUN chmod a+x /tmp/install-ruby.sh
+RUN cd /tmp && ./install-ruby.sh && rm install-ruby.sh
+
+COPY --from=golang:1 /usr/local/go /usr/local/go
+ENV GOROOT=/usr/local/go PATH=/usr/local/go/bin:$PATH
 
 RUN groupadd -g 1000 ubuntu && useradd -u 1000 -g 1000 -m ubuntu && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 

@@ -14,7 +14,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.disksize.size = '50GB'
 
-  config.vm.box = 'ubuntu/xenial64'
+  config.vm.box = 'ubuntu/bionic64'
 
   config.vm.provider(:virtualbox) do |v|
     v.name = 'bosh-os-image-stemcell-docker-builder'
