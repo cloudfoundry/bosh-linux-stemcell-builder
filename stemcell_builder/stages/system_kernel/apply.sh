@@ -10,7 +10,9 @@ source $base_dir/lib/prelude_bosh.bash
 mkdir -p $chroot/tmp
 
 
-if [[ "${DISTRIB_CODENAME}" == "xenial" ]]; then
+if [[  "${DISTRIB_CODENAME}" == "bionic" ]]; then
+  pkg_mgr install linux-generic-hwe-18.04
+elif [[ "${DISTRIB_CODENAME}" == "xenial" ]]; then
   pkg_mgr install linux-generic-hwe-16.04
 else
   pkg_mgr install wireless-crda linux-generic-lts-xenial
