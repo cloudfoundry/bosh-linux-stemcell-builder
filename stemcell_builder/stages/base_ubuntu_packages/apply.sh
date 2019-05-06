@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
-curl wget libcurl3 libcurl3-dev bison libreadline6-dev \
+curl wget bison libreadline6-dev \
 libxml2 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
 flex psmisc apparmor-utils iptables sysstat \
 rsync openssh-server traceroute libncurses5-dev quota \
@@ -14,14 +14,14 @@ libaio1 gdb libcap2-bin libcap2-dev libbz2-dev \
 cmake uuid-dev libgcrypt-dev ca-certificates \
 scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
-xfsprogs gdisk libpam-cracklib"
-
-if [[ "${DISTRIB_CODENAME}" == 'trusty' ]]; then
-  debs="$debs nfs-common acpid"
-fi
+xfsprogs gdisk libpam-cracklib chrony module-init-tools dbus nvme-cli"
 
 if [[ "${DISTRIB_CODENAME}" == 'xenial' ]]; then
-  debs="$debs chrony module-init-tools dbus nvme-cli"
+  debs="$debs  libcurl3 libcurl3-dev"
+fi
+
+if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
+  debs="$debs libcurl4"
 fi
 
 if is_ppc64le; then
