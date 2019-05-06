@@ -113,14 +113,15 @@ else
   "
 fi
 
-if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
-  cp $(dirname $0)/assets/runit.service ${chroot}/lib/systemd/system/
-  run_in_chroot ${chroot} "systemctl enable runit"
-  run_in_chroot ${chroot} "systemctl enable systemd-logind"
-  pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
-  pkg_mgr purge --auto-remove $pkgs_to_purge
-  run_in_chroot ${chroot} "systemctl disable chrony"
-fi
+# Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
+# This should be idempotent for Xenial
+install -m0750 "${chroot}/etc/runit/2" "${chroot}/sbin/runsvdir-start"
+cp "$(dirname "$0")/assets/runit.service" "${chroot}/lib/systemd/system/"
+run_in_chroot "${chroot}" "systemctl enable runit"
+run_in_chroot "${chroot}" "systemctl enable systemd-logind"
+pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
+pkg_mgr purge --auto-remove "$pkgs_to_purge"
+run_in_chroot "${chroot}" "systemctl disable chrony"
 
 exclusions="postfix whoopsie apport"
 pkg_mgr purge --auto-remove $exclusions
