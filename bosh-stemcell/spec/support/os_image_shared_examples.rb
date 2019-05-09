@@ -572,8 +572,9 @@ shared_examples_for 'every OS image' do
         its (:content) { should match /^max_log_file = 6$/ }
       end
 
-      describe 'rotating the logs so the disk does not run out of space (stig: V-38634)' do
-        its (:content) { should match /^max_log_file_action = ROTATE$/ }
+      describe 'the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum)
+must be alerted when the audit storage volume is full. (stig: V-75627)' do
+        its (:content) { should match /^max_log_file_action = SYSLOG$/ }
       end
 
       describe 'keeping the logs around for a sensible retention period (stig: V-38636)' do
@@ -630,6 +631,7 @@ shared_examples_for 'every OS image' do
 
     describe 'record changes to sudoers file (CIS-8.1.15)' do
       its(:content) { should match /^-w \/etc\/sudoers -p wa -k scope$/ }
+      its(:content) { should match /^-w \/etc\/sudoers\.d -p wa -k scope$/ }
     end
 
     describe 'record login and logout events (CIS-8.1.8)' do
@@ -653,17 +655,19 @@ shared_examples_for 'every OS image' do
       its(:content) { should match /^-w \/etc\/security\/opasswd -p wa -k identity$/ }
     end
 
-    describe 'record events that modify system network environment (CIS-8.1.6)' do
+    describe 'record events that modify system network environment (CIS-4.1.6)' do
       its(:content) { should match /^-a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale$/ }
       its(:content) { should match /^-a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/issue -p wa -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/issue\.net -p wa -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/hosts -p wa -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/network -p wa -k system-locale$/ }
+      its(:content) { should match /^-w \/etc\/networks -p wa -k system-locale$/ }
     end
 
-    describe 'record events that modify systems mandatory access controls (CIS-8.1.7)' do
-      its(:content) { should match /^-w \/etc\/selinux\/ -p wa -k MAC-policy$/ }
+    describe 'record events that modify systems mandatory access controls (CIS-4.1.7)' do
+      its(:content) { should match /^-w \/etc\/apparmor\/ -p wa -k MAC-policy$/ }
+      its(:content) { should match /^-w \/etc\/apparmor\.d\/ -p wa -k MAC-policy$/ }
     end
 
     describe 'record system administrator actions (CIS-8.1.16)' do
