@@ -61,7 +61,7 @@ enable-kernel-logging.conf
 
     configs = usrbin
 
-    configs += if ENV['OS_VERSION'] == 'xenial'
+    configs += if ENV['OS_TYPE'] == 'ubuntu'
                  systemd_configs.map do |config|
                    config.gsub('{lib_path}', '/lib')
                  end

@@ -22,7 +22,7 @@ PACKAGES=( \
   po-debconf \
 )
 
-if [ "$1" == 'xenial' ]; then
+if [[ "$1" == 'ubuntu' ]]; then
   PACKAGES+=(cpp-5 g++-5 gcc-5 gcc-5-base gcc-6-base)
 else
   PACKAGES+=(cpp-4.8 g++-4.8 gcc-4.8)
