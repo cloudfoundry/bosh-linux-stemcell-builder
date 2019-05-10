@@ -12,20 +12,17 @@ source "$base_dir/lib/prelude_apply.bash"
 
 downloaded_file=$(mktemp)
 
-wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.78+nmu1ubuntu1_all.deb" -qO "$downloaded_file" &&
-  echo "92e4e8479b5c4adbe9f36ed68502df5483be211d27c5118fc3518376d138b825  $downloaded_file" | shasum -a 256 -c -
+wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.114ubuntu1_all.deb" -qO "$downloaded_file" &&
+  echo "b8a573f661d9354434a6f7f7bb393a64d6e58e4510c75f750fba89af1778e3c9  $downloaded_file" | shasum -a 256 -c -
 
 dpkg -i "$downloaded_file"
 rm "$downloaded_file"
 
-# If xenial, create symlink to gutsy
-if [ "${base_debootstrap_suite}" == 'xenial' ]; then
-  pushd /usr/share/debootstrap/scripts
-  sudo ln -sf gutsy xenial
-  popd
-fi
-
 # Bootstrap the base system
+pushd /usr/share/debootstrap/
+  echo "Patching debootstrap"
+  patch -p1 < "$assets_dir/debootstrap.patch"
+popd
 echo "Running debootstrap"
 debootstrap --arch="$base_debootstrap_arch" "$base_debootstrap_suite" "$chroot" ""
 
