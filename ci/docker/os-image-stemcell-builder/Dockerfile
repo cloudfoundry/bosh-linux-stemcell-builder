@@ -12,6 +12,7 @@ RUN apt-get install -y \
 	jq \
 	libreadline-dev \
 	libssl-dev \
+	rsync \
 	tar \
 	wget \
 	xvfb \
