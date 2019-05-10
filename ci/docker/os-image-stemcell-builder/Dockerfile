@@ -56,3 +56,6 @@ ADD scripts/unshare /usr/bin/unshare
 ADD scripts/ubuntu_bashrc /home/ubuntu/.bashrc
 
 RUN for GO_EXECUTABLE in $GOROOT/bin/*; do ln -s $GO_EXECUTABLE /usr/bin/; done
+
+# Source: https://stackoverflow.com/questions/28247427/strange-locale-issue-on-arch
+RUN sed -i '1 i\en_US.UTF-8 UTF-8' /etc/locale.gen && locale-gen
