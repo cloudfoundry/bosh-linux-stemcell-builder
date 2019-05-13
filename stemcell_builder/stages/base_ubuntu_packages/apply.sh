@@ -114,8 +114,10 @@ else
 fi
 
 # Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
-# This should be idempotent for Xenial
-install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
+if [ ${DISTRIB_CODENAME} == 'bionic' ]; then
+  install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
+fi
+
 cp "$(dirname "$0")/assets/runit.service" "${chroot}/lib/systemd/system/"
 run_in_chroot "${chroot}" "systemctl enable runit"
 run_in_chroot "${chroot}" "systemctl enable systemd-logind"
