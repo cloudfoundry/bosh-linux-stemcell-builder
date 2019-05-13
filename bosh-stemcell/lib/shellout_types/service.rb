@@ -27,7 +27,12 @@ module ShelloutTypes
       stdout, stderr, status = @chroot.run('cat', '/etc/*release')
       raise RuntimeError, stderr if status != 0
 
-      if stdout.match /CentOS|openSUSE|Ubuntu/
+      # Todo: Investigate whether this codepath ever runs under Xenial/Bionic
+      # See https://www.pivotaltracker.com/story/show/165516687
+			# We think production only runs inside the docker image: "main-ubuntu-chroot" which is trusty
+      if stdout.match(/Ubuntu/) && !stdout.match(/Xenial/)
+        check_upstart_links(runlevel) || check_init_conf(runlevel)
+      elsif stdout.match /CentOS|openSUSE|Xenial/
         check_is_enabled_systemctl
       else
         raise "Cannot determine Linux distribution: #{stdout}"
