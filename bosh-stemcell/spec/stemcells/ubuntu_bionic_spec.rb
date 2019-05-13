@@ -80,7 +80,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
       subject { command('find -L / -xdev -perm /ug=s -type f') }
 
       it ('includes the correct binaries') do
-        expect(subject.stdout.split).to match_array(%w(/bin/su /bin/sudo /bin/sudoedit /usr/bin/su /usr/bin/sudo /usr/bin/sudoedit))
+        expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit))
       end
     end
   end
