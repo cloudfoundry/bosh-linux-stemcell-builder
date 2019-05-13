@@ -9,5 +9,4 @@ group :development, :test do
   gem 'rspec-instafail'
   gem 'rspec-its'
   gem 'timecop'
-  gem 'pry'
 end
