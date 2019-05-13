@@ -11,7 +11,7 @@ pkg_mgr install open-iscsi
 # add 'service iscsid restart' in lib/systemd/system/open-iscsi.service ExecStartPre
 if [ -f $chroot/etc/debian_version ] # Ubuntu
 then
-  if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
+  if [[ "${OS_TYPE}" == "ubuntu" ]]; then
     if [ -f $chroot/etc/init.d/open-iscsi ]
     then
       sed "/ExecStartPre=\/bin\/systemctl/a ExecStart=\/etc\/init.d\/iscsid restart" $chroot/lib/systemd/system/open-iscsi.service

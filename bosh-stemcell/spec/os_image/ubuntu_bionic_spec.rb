@@ -2,7 +2,7 @@ require 'bosh/stemcell/arch'
 require 'spec_helper'
 require 'shellout_types/file'
 
-describe 'Ubuntu 16.04 OS image', os_image: true do
+describe 'Ubuntu 18.04 OS image', os_image: true do
   it_behaves_like 'every OS image'
   it_behaves_like 'an os with chrony'
   it_behaves_like 'a systemd-based OS image'
@@ -10,74 +10,12 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
   it_behaves_like 'a Linux kernel based OS image'
   it_behaves_like 'a Linux kernel module configured OS image'
 
-  describe package('apt') do
-    it { should be_installed }
-  end
-
   describe package('rpm') do
     it { should_not be_installed }
   end
 
   describe service('remount-rootdir-as-rprivate') do
     it { should be_enabled }
-  end
-
-  context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-16.04') do
-      it { should be_installed }
-    end
-  end
-
-  context 'installed by base_debootstrap' do
-    %w[
-      adduser
-      apt
-      apt-utils
-      bzip2
-      ca-certificates
-      console-setup
-      dash
-      debconf
-      eject
-      gnupg
-      ifupdown
-      iproute2
-      iputils-ping
-      isc-dhcp-client
-      kbd
-      less
-      locales
-      lsb-release
-      makedev
-      mawk
-      net-tools
-      netbase
-      netcat-openbsd
-      parted
-      passwd
-      procps
-      sudo
-      tzdata
-      ubuntu-keyring
-      udev
-      ureadahead
-      vim-tiny
-      whiptail
-    ].each do |pkg|
-      describe package(pkg) do
-        it { should be_installed }
-      end
-    end
-
-    describe file('/etc/lsb-release') do
-      it { should be_file }
-      its(:content) { should match 'DISTRIB_RELEASE=16.04' }
-      its(:content) { should match 'DISTRIB_CODENAME=xenial' }
-    end
-
-    describe command('locale -a') do
-      its(:stdout) { should include 'en_US.utf8' }
-    end
   end
 
   context 'The system must limit the ability of processes to have simultaneous write and execute access to memory. (stig: V-38597)' do
@@ -95,26 +33,22 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
       if Bosh::Stemcell::Arch.ppc64le?
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial multiverse' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-updates main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-updates universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-updates multiverse' }
 
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security multiverse' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-security main restricted' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-security universe' }
+        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-security multiverse' }
 
       else
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial main universe multiverse' }
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial-updates main universe multiverse' }
-        its(:content) { should match 'deb http://security.ubuntu.com/ubuntu xenial-security main universe multiverse' }
+        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu bionic main universe multiverse' }
+        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu bionic-updates main universe multiverse' }
+        its(:content) { should match 'deb http://security.ubuntu.com/ubuntu bionic-security main universe multiverse' }
       end
-    end
-
-    describe package('systemd') do
-      it { should be_installed }
     end
 
     describe file('/lib/systemd/system/runit.service') do
@@ -124,73 +58,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     end
   end
 
-  context 'installed by base_ubuntu_build_essential' do
-    describe package('build-essential') do
-      it { should be_installed }
-    end
-  end
-
   context 'installed by base_ubuntu_packages' do
-    # rsyslog-mmjsonparse is removed because of https://gist.github.com/allomov-altoros/cd579aa76f3049bee9c7
-    %w[
-      anacron
-      apparmor-utils
-      bind9-host
-      bison
-      cloud-guest-utils
-      cmake
-      curl
-      debhelper
-      dnsutils
-      flex
-      gdb
-      htop
-      iptables
-      iputils-arping
-      libaio1
-      libbz2-dev
-      libcap-dev
-      libcap2-bin
-      libcurl3
-      libcurl4-openssl-dev
-      libgcrypt20-dev
-      libncurses5-dev
-      libpam-cracklib
-      libreadline6-dev
-      libssl-dev
-      libxml2
-      libxml2-dev
-      libxslt1-dev
-      libxslt1.1
-      lsof
-      module-assistant
-      module-init-tools
-      nvme-cli
-      openssh-server
-      psmisc
-      quota
-      rsync
-      rsyslog
-      rsyslog-gnutls
-      rsyslog-mmjsonparse
-      rsyslog-relp
-      runit
-      scsitools
-      strace
-      sudo
-      sysstat
-      tcpdump
-      traceroute
-      unzip
-      uuid-dev
-      wget
-      zip
-    ].reject { |pkg| Bosh::Stemcell::Arch.ppc64le? && ((pkg == 'rsyslog-mmjsonparse') || (pkg == 'rsyslog-gnutls') || (pkg == 'rsyslog-relp')) }.each do |pkg|
-      describe package(pkg) do
-        it { should be_installed }
-      end
-    end
-
     describe file('/sbin/rescan-scsi-bus') do
       it { should be_file }
       it { should be_executable }
@@ -236,31 +104,16 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
   end
 
   context 'installed by system_grub' do
-    if Bosh::Stemcell::Arch.ppc64le?
-      %w[
-        grub2
-      ].each do |pkg|
-        describe package(pkg) do
-          it { should be_installed }
-        end
+    %w[
+      grub2
+    ].each do |pkg|
+      describe package(pkg) do
+        it { should be_installed }
       end
-      %w[grub grubenv grub.chrp].each do |grub_file|
-        describe file("/boot/grub/#{grub_file}") do
-          it { should be_file }
-        end
-      end
-    else
-      %w[
-        grub
-      ].each do |pkg|
-        describe package(pkg) do
-          it { should be_installed }
-        end
-      end
-      %w[e2fs_stage1_5 stage1 stage2].each do |grub_stage|
-        describe file("/boot/grub/#{grub_stage}") do
-          it { should be_file }
-        end
+    end
+    %w[unicode.pf2 menu.lst gfxblacklist.txt].each do |grub_stage|
+      describe file("/boot/grub/#{grub_stage}") do
+        it { should be_file }
       end
     end
   end
@@ -394,7 +247,6 @@ EOF
     describe file('/etc/systemd/system/auditd.service') do
       it { should be_file }
       its(:content) { should match(/^ExecStartPost=-\/sbin\/augenrules --load$/) }
-      its(:content) { should match(/^#ExecStartPost=-\/sbin\/auditctl -R \/etc\/audit\/audit\.rules$/) }
     end
   end
 
@@ -503,15 +355,13 @@ list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
 irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
 gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
 nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
-systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
-systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
-systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
-syslog:x:104:108::/home/syslog:/bin/false
-_apt:x:105:65534::/nonexistent:/bin/false
-messagebus:x:106:110::/var/run/dbus:/bin/false
-sshd:x:107:65534::/var/run/sshd:/usr/sbin/nologin
-_chrony:x:108:112:Chrony daemon,,,:/var/lib/chrony:/bin/false
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+_chrony:x:105:108:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
@@ -536,15 +386,13 @@ list:\*:(\d{5}):0:99999:7:::
 irc:\*:(\d{5}):0:99999:7:::
 gnats:\*:(\d{5}):0:99999:7:::
 nobody:\*:(\d{5}):0:99999:7:::
-systemd-timesync:\*:(\d{5}):0:99999:7:::
 systemd-network:\*:(\d{5}):0:99999:7:::
 systemd-resolve:\*:(\d{5}):0:99999:7:::
-systemd-bus-proxy:\*:(\d{5}):0:99999:7:::
 syslog:\*:(\d{5}):0:99999:7:::
-_apt:\*:(\d{5}):0:99999:7:::
 messagebus:\*:(\d{5}):0:99999:7:::
-sshd:\*:(\d{5}):0:99999:7:::
+_apt:\*:(\d{5}):0:99999:7:::
 _chrony:(.+):(\d{5}):0:99999:7:::
+sshd:\*:(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
 
@@ -593,17 +441,14 @@ games:x:60:
 users:x:100:
 nogroup:x:65534:
 systemd-journal:x:101:
-systemd-timesync:x:102:
-systemd-network:x:103:
-systemd-resolve:x:104:
-systemd-bus-proxy:x:105:
-input:x:106:
-crontab:x:107:
-syslog:x:108:
-netdev:x:109:
-messagebus:x:110:
-ssh:x:111:
-_chrony:x:112:
+systemd-network:x:102:
+systemd-resolve:x:103:
+input:x:104:
+crontab:x:105:
+syslog:x:106:
+messagebus:x:107:
+_chrony:x:108:
+ssh:x:109:
 admin:x:999:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
@@ -653,17 +498,14 @@ games:*::
 users:*::
 nogroup:*::
 systemd-journal:!::
-systemd-timesync:!::
 systemd-network:!::
 systemd-resolve:!::
-systemd-bus-proxy:!::
 input:!::
 crontab:!::
 syslog:!::
-netdev:!::
 messagebus:!::
-ssh:!::
 _chrony:!::
+ssh:!::
 admin:!::vcap
 vcap:!::syslog
 bosh_sshers:!::vcap

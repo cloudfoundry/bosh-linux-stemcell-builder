@@ -17,7 +17,7 @@ mkdir -p "$chroot/tmp/google"
 declare set_hostname_path
 
 os_type="$(get_os_type)"
-if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "xenial" ]; then
+if [[ "${os_type}" == "ubuntu" ]] ; then
   run_in_chroot "${chroot}" "curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"
 
   run_in_chroot "${chroot}" "tee /etc/apt/sources.list.d/google-cloud.list << EOM

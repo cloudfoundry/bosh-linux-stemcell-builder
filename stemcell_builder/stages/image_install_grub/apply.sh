@@ -108,6 +108,64 @@ EOF" >> ${image_mount_point}/etc/grub.d/00_header
 
     rm ${image_mount_point}/device.map
 
+  elif [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
+    # Since bionic seems to have grub2 utilities named without the version number in the filename (e.g. grub-mkconfig instead of grub2-mkconfig)
+    # it is a bit messy to try and reuse the logic that was introduced for
+    # centos/suse at present. Using the DISTRIB_CODENAME instead of the
+    # existence of a the grub2 utilities seems better for now? Not sure.
+    # alternative: elif [[ "$("${image_mount_point}/usr/sbin/grub-install" -V)" =~ \ 2\.[0-9]{2} ]]; then # GRUB 2
+    touch ${image_mount_point}${device}
+    mount --bind ${device} ${image_mount_point}${device}
+    add_on_exit "umount ${image_mount_point}${device}"
+
+    mkdir -p `dirname ${image_mount_point}${loopback_dev}`
+    touch ${image_mount_point}${loopback_dev}
+    mount --bind ${loopback_dev} ${image_mount_point}${loopback_dev}
+    add_on_exit "umount ${image_mount_point}${loopback_dev}"
+
+    # GRUB 2 needs /sys and /proc to do its job
+    mount -t proc none ${image_mount_point}/proc
+    add_on_exit "umount ${image_mount_point}/proc"
+
+    mount -t sysfs none ${image_mount_point}/sys
+    add_on_exit "umount ${image_mount_point}/sys"
+
+    echo "(hd0) ${device}" > ${image_mount_point}/device.map
+
+    # install bootsector into disk image file
+    run_in_chroot ${image_mount_point} "grub-install -v --no-floppy --grub-mkdevicemap=/device.map --target=i386-pc ${device}"
+
+    # Enable password-less booting in openSUSE, only editing the boot menu needs to be restricted
+    if [ -f ${image_mount_point}/etc/SuSE-release ]; then
+      run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
+
+      cat >${image_mount_point}/etc/default/grub <<EOF
+GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 audit=1 cgroup_enable=memory swapaccount=1"
+EOF
+    else
+      cat >${image_mount_point}/etc/default/grub <<EOF
+GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 audit=1"
+EOF
+    fi
+
+    # we use a random password to prevent user from editing the boot menu
+    pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
+    echo "\
+
+cat << EOF
+set superusers=vcap
+password_pbkdf2 vcap $pbkdf2_password
+EOF" >> ${image_mount_point}/etc/grub.d/00_header
+
+    # assemble config file that is read by grub2 at boot time
+    run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true grub-mkconfig -o /boot/grub/grub.cfg"
+
+    # set the correct root filesystem; use the ext2 filesystem's UUID
+    device_uuid=$(dumpe2fs $loopback_dev | grep UUID | awk '{print $3}')
+    sed -i s%root=${loopback_dev}%root=UUID=${device_uuid}%g ${image_mount_point}/boot/grub/grub.cfg
+
+    rm ${image_mount_point}/device.map
+
   else # Classic GRUB
 
     mkdir -p ${image_mount_point}/tmp/grub
@@ -167,8 +225,7 @@ if [ -f ${image_mount_point}/etc/debian_version ] # Ubuntu
 then
   initrd_file="initrd.img-${kernel_version}"
   os_name=$(source ${image_mount_point}/etc/lsb-release ; echo -n ${DISTRIB_DESCRIPTION})
-  if [ ${DISTRIB_CODENAME} == 'xenial' ]
-  then
+  if [[ "${OS_TYPE}" == "ubuntu" ]]; then
     cat > ${image_mount_point}/etc/fstab <<FSTAB
 # /etc/fstab Created by BOSH Stemcell Builder
 UUID=${uuid} / ext4 defaults 1 1

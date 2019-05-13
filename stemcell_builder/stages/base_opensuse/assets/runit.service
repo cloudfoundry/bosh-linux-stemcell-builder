@@ -2,7 +2,7 @@
 Description=Runit Process Supervisor
 
 [Service]
-ExecStart=/sbin/runsvdir-start
+ExecStart=/usr/sbin/runsvdir-start
 Restart=always
 TasksMax=infinity
 

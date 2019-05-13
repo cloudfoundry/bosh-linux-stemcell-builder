@@ -2,17 +2,21 @@
 
 set -e
 
-base_dir=$(readlink -nf $(dirname $0)/../..)
-source $base_dir/lib/prelude_apply.bash
-source $base_dir/lib/prelude_bosh.bash
+base_dir="$(readlink -nf "$(dirname "$0")"/../..)"
+# shellcheck source=../../lib/prelude_apply.bash
+source "$base_dir/lib/prelude_apply.bash"
+# shellcheck source=../../lib/prelude_bosh.bash
+source "$base_dir/lib/prelude_bosh.bash"
 
-if [ "${stemcell_operating_system}" == "ubuntu" -o "${stemcell_operating_system_version}" == "7" -o "${stemcell_operating_system}" == "photonos" -o "${stemcell_operating_system}" ==  "opensuse" ]; then
-  cp $dir/assets/60-bosh-sysctl.conf $chroot/etc/sysctl.d
-  chmod 0644 $chroot/etc/sysctl.d/60-bosh-sysctl.conf
-fi
+# shellcheck disable=SC2154
+if [ "${stemcell_operating_system}" == "ubuntu" ] || \
+   [ "${stemcell_operating_system_version}" == "7" ] || \
+   [ "${stemcell_operating_system}" == "photonos" ] || \
+   [ "${stemcell_operating_system}" ==  "opensuse" ]; then
 
-# this stuff is required for all systems based on the Linux 3.x kernel
-if [ "${stemcell_operating_system_version}" == "7" -o "${stemcell_operating_system}" == "photonos" -o "${stemcell_operating_system}" ==  "opensuse" -o "${stemcell_operating_system_version}" == "xenial"  ]; then
-  cp $dir/assets/60-bosh-sysctl-neigh-fix.conf $chroot/etc/sysctl.d
-  chmod 0644 $chroot/etc/sysctl.d/60-bosh-sysctl-neigh-fix.conf
+  cp "$dir/assets/60-bosh-sysctl.conf" "$chroot/etc/sysctl.d"
+  chmod 0644 "$chroot/etc/sysctl.d/60-bosh-sysctl.conf"
+
+  cp "$dir/assets/60-bosh-sysctl-neigh-fix.conf" "$chroot/etc/sysctl.d"
+  chmod 0644 "$chroot/etc/sysctl.d/60-bosh-sysctl-neigh-fix.conf"
 fi

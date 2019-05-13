@@ -3,6 +3,10 @@ require 'spec_helper'
 describe 'Warden Stemcell', stemcell_image: true do
   it_behaves_like 'udf module is disabled'
 
+  describe file('/usr/sbin/runsvdir-start') do
+    it { should be_file }
+  end
+
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/infrastructure') do
       its(:content) { should include('warden') }

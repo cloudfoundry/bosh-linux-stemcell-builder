@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
-if [ ${DISTRIB_CODENAME} == 'xenial' ]; then
+if [[ ${OS_TYPE} == 'ubuntu' ]]; then
   sed -i "/^pool /d" $chroot/etc/chrony/chrony.conf
   echo -e "\n# Steps the system time at boot if off by more than 3 seconds" >> $chroot/etc/chrony/chrony.conf
   echo -e "makestep 3 1" >> $chroot/etc/chrony/chrony.conf

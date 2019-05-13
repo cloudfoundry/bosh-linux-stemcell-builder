@@ -4,7 +4,7 @@ describe 'openSUSE leap OS image', os_image: true do
   it_behaves_like 'every OS image'
   it_behaves_like 'a openSUSE based OS image'
   it_behaves_like 'a systemd-based OS image'
-  it_behaves_like 'a Linux kernel 3.x based OS image'
+  it_behaves_like 'a Linux kernel based OS image'
   it_behaves_like 'a Linux kernel module configured OS image'
 
   context 'installed by base_opensuse' do

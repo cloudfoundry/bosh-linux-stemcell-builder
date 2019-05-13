@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/sbin/runsvdir-start
+ExecStart=/usr/sbin/runsvdir-start
 Restart=always
 KillMode=process
 
