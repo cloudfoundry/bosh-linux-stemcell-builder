@@ -61,7 +61,7 @@ enable-kernel-logging.conf
 
     configs = usrbin
 
-    configs += if ENV['OS_TYPE'] == 'ubuntu'
+    configs += if ENV['OS_NAME'] == 'ubuntu'
                  systemd_configs.map do |config|
                    config.gsub('{lib_path}', '/lib')
                  end
