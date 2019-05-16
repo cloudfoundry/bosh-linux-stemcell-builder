@@ -3,37 +3,36 @@
 set -ex
 
 cat > /etc/apt/sources.list <<EOS
-deb http://us.archive.ubuntu.com/ubuntu/ bionic main restricted
-deb-src http://us.archive.ubuntu.com/ubuntu/ bionic main restricted
+deb http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
+deb-src http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
 
-deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates main restricted
-deb-src http://us.archive.ubuntu.com/ubuntu/ bionic-updates main restricted
+deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
+deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
 
-deb http://security.ubuntu.com/ubuntu bionic-security main restricted
-deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted
-deb http://security.ubuntu.com/ubuntu bionic-security universe
-deb-src http://security.ubuntu.com/ubuntu bionic-security universe
-deb http://security.ubuntu.com/ubuntu bionic-security multiverse
-deb-src http://security.ubuntu.com/ubuntu bionic-security multiverse
+deb http://security.ubuntu.com/ubuntu trusty-security main restricted
+deb-src http://security.ubuntu.com/ubuntu trusty-security main restricted
+deb http://security.ubuntu.com/ubuntu trusty-security universe
+deb-src http://security.ubuntu.com/ubuntu trusty-security universe
+deb http://security.ubuntu.com/ubuntu trusty-security multiverse
+deb-src http://security.ubuntu.com/ubuntu trusty-security multiverse
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
-deb http://us.archive.ubuntu.com/ubuntu/ bionic universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ bionic universe
-deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ bionic-updates universe
-deb http://us.archive.ubuntu.com/ubuntu/ bionic multiverse
-deb-src http://us.archive.ubuntu.com/ubuntu/ bionic multiverse
-deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates multiverse
-deb-src http://us.archive.ubuntu.com/ubuntu/ bionic-updates multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ trusty universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ trusty universe
+deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe
+deb http://us.archive.ubuntu.com/ubuntu/ trusty multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ trusty multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
 EOS
 
 apt-get update
 apt-get -y upgrade; apt-get clean
-export DEBIAN_FRONTEND=noninteractive
 
-apt-get -y  -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -y  -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 apt-get -y install curl
 
 # sometimes the cached lists seem to get out of date around here
@@ -43,6 +42,10 @@ rm -rf /var/lib/apt/lists/*
 apt-get -y update --fix-missing
 apt-get -y install git
 apt-get -y install build-essential
+
+# ensure the correct kernel headers are installed
+apt-get -y install linux-headers-$(uname -r)
+
 
 
 # stemcell image creation
@@ -58,7 +61,7 @@ apt-get -y install g++ git-core make
 apt-get -y install libmysqlclient-dev libpq-dev libsqlite3-dev libxml2-dev libxslt-dev
 
 # vSphere requirements
-apt-get -y install open-vm-tools
+apt-get -y install open-vm-dkms
 
 # OpenStack requirement
 apt-get -y install qemu-utils
