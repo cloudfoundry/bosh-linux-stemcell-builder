@@ -21,7 +21,7 @@ if [[ "${DISTRIB_CODENAME}" == 'xenial' ]]; then
 fi
 
 if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
-  debs="$debs libcurl4 openresolv"
+  debs="$debs gpg-agent libcurl4 openresolv"
 fi
 
 if is_ppc64le; then
