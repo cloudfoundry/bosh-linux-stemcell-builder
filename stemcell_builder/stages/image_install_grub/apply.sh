@@ -135,18 +135,11 @@ EOF" >> ${image_mount_point}/etc/grub.d/00_header
     # install bootsector into disk image file
     run_in_chroot ${image_mount_point} "grub-install -v --no-floppy --grub-mkdevicemap=/device.map --target=i386-pc ${device}"
 
-    # Enable password-less booting in openSUSE, only editing the boot menu needs to be restricted
-    if [ -f ${image_mount_point}/etc/SuSE-release ]; then
-      run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
-
-      cat >${image_mount_point}/etc/default/grub <<EOF
-GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 audit=1 cgroup_enable=memory swapaccount=1"
-EOF
-    else
-      cat >${image_mount_point}/etc/default/grub <<EOF
+    # Enable password-less booting, only editing the boot menu needs to be restricted
+    run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
+    cat >${image_mount_point}/etc/default/grub <<EOF
 GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 audit=1"
 EOF
-    fi
 
     # we use a random password to prevent user from editing the boot menu
     pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
