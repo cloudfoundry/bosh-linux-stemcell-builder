@@ -7,4 +7,5 @@ source $base_dir/lib/prelude_apply.bash
 
 cp $assets_dir/etc/rc.local $chroot/etc/rc.local
 cp $assets_dir/root/firstboot.sh $chroot/root/firstboot.sh
+chmod u+x "${chroot}/etc/rc.local"
 chmod 0755 $chroot/root/firstboot.sh
