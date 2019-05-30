@@ -31,6 +31,7 @@ function write_shared_audit_rules {
 
 # Record changes to sudoers file
 -w /etc/sudoers -p wa -k scope
+-w /etc/sudoers.d -p wa -k scope
 
 # Record login and logout events
 -w /var/log/faillog -p wa -k logins
@@ -57,9 +58,11 @@ function write_shared_audit_rules {
 -w /etc/issue.net -p wa -k system-locale
 -w /etc/hosts -p wa -k system-locale
 -w /etc/network -p wa -k system-locale
+-w /etc/networks -p wa -k system-locale
 
 # Record events that modify systems mandatory access controls
--w /etc/selinux/ -p wa -k MAC-policy
+-w /etc/apparmor/ -p wa -k MAC-policy
+-w /etc/apparmor.d/ -p wa -k MAC-policy
 
 # Record system administrator actions
 -w /var/log/sudo.log -p wa -k actions
@@ -108,6 +111,29 @@ function write_shared_audit_rules {
 -a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/sbin/usernetctl -k privileged
 -a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/sbin/service -k privileged
 
+# Record execution of privileged function
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F key=execpriv
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F key=execpriv
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F key=execpriv
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F key=execpriv
+
+# Record execution of ssh-keysign
+-a always,exit -F path=/usr/lib/openssh/ssh-keysign -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged-ssh
+
+# Record execution of sudoedit
+-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=500 -F auid!=4294967295 -k priv_cmd
+
+# Record execution of apparmor_parser
+-a always,exit -F path=/sbin/apparmor_parser -F perm=x -F auid>=500 -F auid!=4294967295 -k perm_chng
+
+# Record execution of usermod
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged-usermod
+
+# Record execution of chcon
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=500 -F auid!=4294967295 -k perm_chng
+
+# Recorde execution of unix_update
+-a always,exit -F path=/sbin/unix_update -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged-unix-update
 ' >> $chroot/etc/audit/rules.d/audit.rules
 }
 
