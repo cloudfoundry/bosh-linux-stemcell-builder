@@ -621,6 +621,7 @@ shared_examples_for 'every OS image' do
 
     describe 'record changes to sudoers file (CIS-8.1.15)' do
       its(:content) { should match /^-w \/etc\/sudoers -p wa -k scope$/ }
+      its(:content) { should match /^-w \/etc\/sudoers\.d -p wa -k scope$/ }
     end
 
     describe 'record login and logout events (CIS-8.1.8)' do
@@ -644,17 +645,19 @@ shared_examples_for 'every OS image' do
       its(:content) { should match /^-w \/etc\/security\/opasswd -p wa -k identity$/ }
     end
 
-    describe 'record events that modify system network environment (CIS-8.1.6)' do
+    describe 'record events that modify system network environment (CIS-4.1.6)' do
       its(:content) { should match /^-a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale$/ }
       its(:content) { should match /^-a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/issue -p wa -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/issue\.net -p wa -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/hosts -p wa -k system-locale$/ }
       its(:content) { should match /^-w \/etc\/network -p wa -k system-locale$/ }
+      its(:content) { should match /^-w \/etc\/networks -p wa -k system-locale$/ }
     end
 
-    describe 'record events that modify systems mandatory access controls (CIS-8.1.7)' do
-      its(:content) { should match /^-w \/etc\/selinux\/ -p wa -k MAC-policy$/ }
+    describe 'record events that modify systems mandatory access controls (CIS-4.1.7)' do
+      its(:content) { should match /^-w \/etc\/apparmor\/ -p wa -k MAC-policy$/ }
+      its(:content) { should match /^-w \/etc\/apparmor\.d\/ -p wa -k MAC-policy$/ }
     end
 
     describe 'record system administrator actions (CIS-8.1.16)' do
@@ -710,6 +713,37 @@ shared_examples_for 'every OS image' do
       its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/sbin\/usernetctl -k privileged/ }
       its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/sbin\/service -k privileged/ }
     end
+
+    describe 'record execution of privileged functions (stig: V-75689)' do
+      its(:content) { should match /^-a always,exit -F arch=b64 -S execve -C uid!=euid -F key=execpriv/ }
+      its(:content) { should match /^-a always,exit -F arch=b64 -S execve -C gid!=egid -F key=execpriv/ }
+      its(:content) { should match /^-a always,exit -F arch=b32 -S execve -C uid!=euid -F key=execpriv/ }
+      its(:content) { should match /^-a always,exit -F arch=b32 -S execve -C gid!=egid -F key=execpriv/ }
+    end
+    describe 'record use of ssh-keysign (stig: V-75707)' do
+      its(:content) { should match /^-a always,exit -F path=\/usr\/lib\/openssh\/ssh-keysign -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged-ssh/ }
+    end
+
+    describe 'record use of sudoedit (stig: V-75757)' do
+      its(:content) { should match /^-a always,exit -F path=\/usr\/bin\/sudoedit -F perm=x -F auid>=500 -F auid!=4294967295 -k priv_cmd/ }
+    end
+
+    describe 'record use of apparmor_parser (stig: V-75765)' do
+      its(:content) { should match /^-a always,exit -F path=\/sbin\/apparmor_parser -F perm=x -F auid>=500 -F auid!=4294967295 -k perm_chng/ }
+    end
+
+    describe 'record use of usermod (stig: V-75785)' do
+      its(:content) { should match /^-a always,exit -F path=\/usr\/sbin\/usermod -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged-usermod/ }
+    end
+
+    describe 'record use of chcon (stig: V-80969)' do
+      its(:content) { should match /^-a always,exit -F path=\/usr\/bin\/chcon -F perm=x -F auid>=500 -F auid!=4294967295 -k perm_chng/ }
+    end
+
+    describe 'record use of unix_update (stig: V-75779)' do
+      its(:content) { should match /^-a always,exit -F path=\/sbin\/unix_update -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged-unix-update/ }
+    end
+
   end
 
   describe 'record use of privileged programs (CIS-8.1.12)' do
