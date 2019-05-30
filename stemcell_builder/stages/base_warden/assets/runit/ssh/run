@@ -2,6 +2,9 @@
 
 set -e
 
+# In non-Warden environments, Hostkey generation typically happens on firstboot.
+# Please see the base_ubuntu_firstboot stage.
+
 KEYGEN=/usr/bin/ssh-keygen
 SSHD=/usr/sbin/sshd
 RSA_KEY=/etc/ssh/ssh_host_rsa_key
