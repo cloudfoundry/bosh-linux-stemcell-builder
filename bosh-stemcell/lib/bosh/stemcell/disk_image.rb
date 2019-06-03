@@ -1,6 +1,5 @@
 require 'bosh/core/shell'
 require 'bosh/stemcell/arch'
-require 'tmpdir'
 
 module Bosh::Stemcell
   class DiskImage
