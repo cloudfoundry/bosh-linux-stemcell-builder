@@ -263,7 +263,7 @@ then
     grub-mkconfig -o /boot/grub/grub.cfg
     "
    else
-cat > ${image_mount_point}/boot/grub/grub.conf <<GRUB_CONF
+cat > ${image_mount_point}/boot/grub/grub.cfg <<GRUB_CONF
 default=0
 timeout=1
 title ${os_name} (${kernel_version})
@@ -275,7 +275,7 @@ fi
 
 elif [ -f ${image_mount_point}/etc/redhat-release ] # Centos or RHEL
 then
-  cat > ${image_mount_point}/boot/grub/grub.conf <<GRUB_CONF
+  cat > ${image_mount_point}/boot/grub/grub.cfg <<GRUB_CONF
 default=0
 timeout=1
 title ${os_name} (${kernel_version})
@@ -286,7 +286,7 @@ GRUB_CONF
 
 elif [ -f ${image_mount_point}/etc/photon-release ] # PhotonOS
 then
-  cat > ${image_mount_point}/boot/grub/grub.conf <<GRUB_CONF
+  cat > ${image_mount_point}/boot/grub/grub.cfg <<GRUB_CONF
 default=0
 timeout=1
 title ${os_name} (${kernel_version})
@@ -297,7 +297,7 @@ GRUB_CONF
 
 elif [ -f ${image_mount_point}/etc/SuSE-release ] # openSUSE
 then
-  cat > ${image_mount_point}/boot/grub/grub.conf <<GRUB_CONF
+  cat > ${image_mount_point}/boot/grub/grub.cfg <<GRUB_CONF
 default=0
 timeout=1
 title ${os_name} (${kernel_version})
@@ -316,11 +316,11 @@ if is_ppc64le; then
   umount ${image_mount_point}/proc
 fi
 
-# For grub.conf
-if [ -f ${image_mount_point}/boot/grub/grub.conf ];then
-  sed -i "/timeout=/a password --md5 *" ${image_mount_point}/boot/grub/grub.conf
-  chown -fLR root:root ${image_mount_point}/boot/grub/grub.conf
-  chmod 600 ${image_mount_point}/boot/grub/grub.conf
+# For grub.cfg
+if [ -f ${image_mount_point}/boot/grub/grub.cfg ];then
+  sed -i "/timeout=/a password --md5 *" ${image_mount_point}/boot/grub/grub.cfg
+  chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
+  chmod 600 ${image_mount_point}/boot/grub/grub.cfg
 fi
 
 # For CentOS, using grub 2, grub.cfg
@@ -334,5 +334,5 @@ run_in_chroot ${image_mount_point} "rm -f /boot/grub/menu.lst"
 if is_ppc64le; then
   run_in_chroot ${image_mount_point} "touch /boot/grub/menu.lst"
 else
-  run_in_chroot ${image_mount_point} "ln -s ./grub.conf /boot/grub/menu.lst"
+  run_in_chroot ${image_mount_point} "ln -s ./grub.cfg /boot/grub/menu.lst"
 fi

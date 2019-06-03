@@ -4,7 +4,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
 
   context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
-    describe file('/boot/grub/grub.conf') do
+    describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match 'default=0' }
       its(:content) { should match 'timeout=1' }
@@ -26,7 +26,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
 
     describe file('/boot/grub/menu.lst') do
       before { skip 'until alicloud/aws/openstack stop clobbering the symlink with "update-grub"' }
-      it { should be_linked_to('./grub.conf') }
+      it { should be_linked_to('./grub.cfg') }
     end
   end
 

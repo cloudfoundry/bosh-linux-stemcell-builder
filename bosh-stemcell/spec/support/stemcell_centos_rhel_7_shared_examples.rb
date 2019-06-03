@@ -36,7 +36,7 @@ shared_examples_for 'a CentOS 7 or RHEL 7 stemcell' do
     end
 
     # GRUB 0.97 configuration (used only on Amazon PV hosts) must have same kernel params as GRUB 2
-    describe file('/boot/grub/grub.conf') do
+    describe file('/boot/grub/grub.cfg') do
       its(:content) { should match 'net.ifnames=0' }
       its(:content) { should match 'selinux=0' }
       its(:content) { should match 'plymouth.enable=0' }
