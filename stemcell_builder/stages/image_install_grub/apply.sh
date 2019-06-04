@@ -305,10 +305,6 @@ title ${os_name} (${kernel_version})
   kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} net.ifnames=0 plymouth.enable=0 selinux=0 console=tty0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
   initrd /boot/${initrd_file}
 GRUB_CONF
-
-else
-  echo "Unknown OS, exiting"
-  exit 2
 fi
 
 if is_ppc64le; then
