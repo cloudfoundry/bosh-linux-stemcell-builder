@@ -253,7 +253,7 @@ else
   exit 2
 fi
 
-if [ -f ${image_mount_point}/etc/debian_version ] # Ubuntu
+if [[ "${DISTRIB_CODENAME}" == 'xenial'  ]] # Ubuntu
 then
   if is_ppc64le; then
     run_in_chroot ${image_mount_point} "
