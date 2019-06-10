@@ -1,6 +1,13 @@
 # bosh/os-image-stemcell-builder
 FROM ubuntu:bionic
 
+ARG USER_ID
+ARG GROUP_ID
+
+RUN groupadd -g ${GROUP_ID} ubuntu                  \
+  && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
+  && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
+
 RUN apt-get update
 RUN apt-get -y upgrade && apt-get clean
 RUN apt-get install -y \
@@ -33,8 +40,6 @@ RUN cd /tmp && ./install-ruby.sh && rm install-ruby.sh
 
 COPY --from=golang:1 /usr/local/go /usr/local/go
 ENV GOROOT=/usr/local/go PATH=/usr/local/go/bin:$PATH
-
-RUN groupadd -g 1000 ubuntu && useradd -u 1000 -g 1000 -m ubuntu && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 
 ADD scripts/update.sh /tmp/update.sh
 RUN /tmp/update.sh && rm /tmp/update.sh

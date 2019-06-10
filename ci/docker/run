@@ -11,10 +11,22 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 IMAGE_NAME="$1"
 DOCKER_IMAGE=${DOCKER_IMAGE:-bosh/$IMAGE_NAME}
 
-if [ "$IMAGE_NAME" == "os-image-stemcell-builder" ] ; then
-  USER_OPTION="--user ubuntu "
-elif [ "$IMAGE_NAME" == "suse-os-image-stemcell-builder" ] ; then
+# $UID is a readonly variable set by bash by default.
+GID="$(id -g)"
+
+if [[ "$IMAGE_NAME" == "os-image-stemcell-builder" || \
+      "$IMAGE_NAME" == "os-image-stemcell-builder-bionic" ]] ; then
+  USER_OPTION="--user=$UID:$GID"
+elif [[ "$IMAGE_NAME" == "suse-os-image-stemcell-builder" ]] ; then
   USER_OPTION="-e LOCAL_USER_ID=$(id -u "$USER")"
 fi
 
-exec docker run --privileged -v "$DIR/../..:/opt/bosh" --workdir /opt/bosh $USER_OPTION -t -i "$DOCKER_IMAGE"
+pushd "$IMAGE_NAME"
+  docker build                  \
+    --build-arg USER_ID="$UID"  \
+    --build-arg GROUP_ID="$GID" \
+    -t "$DOCKER_IMAGE"          \
+    .
+popd
+
+exec docker run --privileged -v "$DIR/../..:/opt/bosh" --workdir /opt/bosh "$USER_OPTION" -t -i "$DOCKER_IMAGE"

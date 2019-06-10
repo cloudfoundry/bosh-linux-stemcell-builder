@@ -2,7 +2,12 @@
 
 FROM bosh/main-ruby-go
 
-RUN groupadd -g 1000 ubuntu && useradd -u 1000 -g 1000 -m ubuntu && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
+ARG USER_ID
+ARG GROUP_ID
+
+RUN groupadd -g ${GROUP_ID} ubuntu                  \
+  && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
+  && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 
 ADD scripts/update.sh /tmp/update.sh
 RUN /tmp/update.sh && rm /tmp/update.sh
