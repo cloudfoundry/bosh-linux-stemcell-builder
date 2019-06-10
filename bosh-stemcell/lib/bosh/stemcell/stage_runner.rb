@@ -12,14 +12,7 @@ module Bosh::Stemcell
       @work_path = options.fetch(:work_path)
     end
 
-    def check_correct_uid
-      if Process.euid != REQUIRED_UID && !ENV['SKIP_UID_CHECK']
-        raise "You must build stemcells as a user with UID #{REQUIRED_UID}. Your effective UID now is #{Process.euid}."
-      end
-    end
-
     def configure_and_apply(stages, resume_from_stage = nil)
-      check_correct_uid()
       stages = resume_from(stages, resume_from_stage)
       configure(stages)
       apply(stages)

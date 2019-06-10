@@ -196,15 +196,6 @@ module Bosh::Stemcell
           }.to raise_error("Can't find stage 'this_stage_totally_doesnt_exist' to resume from. Aborting.")
         end
       end
-
-      context 'when effective UID is not 1000' do
-        it 'fails with an error message' do
-          allow(Process).to receive(:euid).and_return(999)
-          expect {
-            stage_runner.configure_and_apply(stages)
-          }.to raise_error("You must build stemcells as a user with UID 1000. Your effective UID now is 999.")
-        end
-      end
     end
   end
 end
