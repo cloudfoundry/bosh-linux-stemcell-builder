@@ -4,32 +4,28 @@ FROM ubuntu:bionic
 ARG USER_ID
 ARG GROUP_ID
 
+RUN apt-get update \
+  && apt-get -y upgrade \
+  && apt-get clean \
+  && apt-get install -y \
+    build-essential \
+    curl \
+    dnsutils \
+    git \
+    jq \
+    libreadline-dev \
+    libssl-dev \
+    rsync \
+    tar \
+    wget \
+    xvfb \
+    locales \
+    sudo \
+  && apt-get clean
+
 RUN groupadd -g ${GROUP_ID} ubuntu                  \
   && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
   && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
-
-RUN apt-get update
-RUN apt-get -y upgrade && apt-get clean
-RUN apt-get install -y \
-	build-essential \
-	curl \
-	dnsutils \
-	git \
-	jq \
-	libreadline-dev \
-	libssl-dev \
-	rsync \
-	tar \
-	wget \
-	xvfb \
-  locales \
-  sudo \
-	&& apt-get clean
-
-RUN locale-gen en_US.UTF-8
-RUN dpkg-reconfigure locales
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
 
 # Nokogiri dependencies
 RUN apt-get install -y libxslt-dev libxml2-dev && apt-get clean
@@ -62,4 +58,7 @@ ADD scripts/ubuntu_bashrc /home/ubuntu/.bashrc
 RUN for GO_EXECUTABLE in $GOROOT/bin/*; do ln -s $GO_EXECUTABLE /usr/bin/; done
 
 # Source: https://stackoverflow.com/questions/28247427/strange-locale-issue-on-arch
-RUN sed -i '1 i\en_US.UTF-8 UTF-8' /etc/locale.gen && locale-gen
+RUN locale-gen && sed -i '1 i\en_US.UTF-8 UTF-8' /etc/locale.gen && locale-gen
+
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
