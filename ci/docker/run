@@ -12,6 +12,7 @@ IMAGE_NAME="$1"
 DOCKER_IMAGE=${DOCKER_IMAGE:-bosh/$IMAGE_NAME}
 
 # $UID is a readonly variable set by bash by default.
+NEW_UID="$UID"
 NEW_GID="$(id -g)"
 
 if [[ "$UID" == 0 ]]; then
