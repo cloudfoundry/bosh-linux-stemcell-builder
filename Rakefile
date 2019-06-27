@@ -58,7 +58,7 @@ namespace :stemcell do
       )
 
       os_image_path = File.join(Dir.pwd, 'tmp', 'base_os_image.tgz')
-      `meta4 file-download --metalink #{metalink_path} #{os_image_path}`
+      `meta4 file-download --file bosh-#{args.operating_system_name}-#{args.operating_system_version}-os-image.tgz --metalink #{metalink_path} #{os_image_path}`
       raise 'Failed to download metalink' if $?.exitstatus != 0
 
       puts "Successfully downloaded OS image to #{os_image_path}"
