@@ -31,7 +31,14 @@ fi
 
 
 # unmap the loop device in case it's already mapped
-kpartx -dv ${disk_image}
+timeout 100 bash -c "
+until kpartx -dv ${disk_image}; do
+  echo 'Waiting for loop device to be free'
+  echo 'Running lsof'
+  lsof ${disk_image}
+  sleep 1
+done
+"
 
 # Map partition in image to loopback
 device=$(losetup --show --find ${disk_image})
