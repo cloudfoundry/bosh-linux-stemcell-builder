@@ -24,13 +24,24 @@ ln -s /etc/sv/monit /etc/service/monit
 # Alerts for monit config
 cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
 
-cd $assets_dir
-if is_ppc64le; then
-  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.117.8-linux-ppc64le"
-  echo "13081c34b32e13ea8ada25abea546269697869e20a684056d379ff027cef6e05  bosh-agent" | shasum -a 256 -c -
+wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/v0.2.0/meta4-0.2.0-linux-amd64 \
+  && echo "81a592eaf647358563f296aced845ac60d9061a45b30b852d1c3f3674720fe19  /usr/bin/meta4" | shasum -a 256 -c \
+  && chmod +x /usr/bin/meta4
+
+os_type="$(get_os_type)"
+bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
+if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "trusty" ]; then
+  if is_ppc64le; then
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-go-1.8-linux-ppc64le bosh-agent
+  else
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-go-1.8-linux-amd64 bosh-agent
+  fi
 else
-  curl -L -o bosh-agent "https://s3.amazonaws.com/bosh-agent-binaries/bosh-agent-2.117.8-linux-amd64"
-  echo "0a03698c5b3d8ccb0713e6d202f0c6fe5ad9174fce948307f59adc0046eacac9  bosh-agent" | shasum -a 256 -c -
+  if is_ppc64le; then
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-ppc64le bosh-agent
+  else
+    /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
+  fi
 fi
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 
