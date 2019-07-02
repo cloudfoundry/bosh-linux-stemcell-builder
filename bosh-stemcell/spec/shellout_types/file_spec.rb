@@ -78,7 +78,6 @@ module ShelloutTypes
 
     after do
       delete_user_and_group(ephemeral_user_name, ephemeral_group_name)
-      chroot.run('rm', '-rf', regular_system_filename, tmp_dirname, link_path)
     end
 
     describe '#file?' do
