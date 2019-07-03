@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="bosh-ubuntu-xenial-os-image.tgz">
-    <hash type="md5">7e22094476663b1554c4118ccdf41408</hash>
-    <hash type="sha-1">843e8fe77a25d90cfbdcda844c0f38f43581e792</hash>
-    <hash type="sha-256">db76dea1089692fe47e503c032090eb8086d55833fb7509a6fa30bebf7cc7b98</hash>
-    <hash type="sha-512">99ce9dcbfc05a9a93765797ccc27fe758bc7ab9f5645792508d64113cc545a3e86c755e7db285b52a2738a03ac0bb312c096d80028c9e7476f5d887172ac9b17</hash>
-    <size>503342201</size>
-    <url>https://s3.amazonaws.com/bosh-os-images/bosh-ubuntu-xenial-os-image.tgz?versionId=cQ3ogyETmhH10ikp7UUmsVUi2YX9LGOw</url>
+    <hash type="md5">4038719798a8a51f1b0060f41eba00c0</hash>
+    <hash type="sha-1">99576573388fa42847ded7c5abc11ac9fb20754c</hash>
+    <hash type="sha-256">17454790d866d54697f84b524cc25481c63e738abc0348a81edf90d4ef6dfc92</hash>
+    <hash type="sha-512">19f2d14f2fd83b862e603d72061c400ac861bff68c51ff2aa07ebaeb84a056a9cd6fc021bdbc160931aa318bce45c156cadb17a8ef6e2315f54833a458e6c427</hash>
+    <size>503323974</size>
+    <url>https://s3.amazonaws.com/bosh-os-images/bosh-ubuntu-xenial-os-image.tgz?versionId=UvyDOmyQnTkiyBPisH6j0SIC8sHfbY8P</url>
   </file>
   <file name="usn-log.json">
-    <hash type="md5">41457b94e17d3ed197601cb41e59f830</hash>
-    <hash type="sha-1">7a9dc99ae8fbf872199a7670210c6b175cea49b0</hash>
-    <hash type="sha-256">00e881babbb6fce51cf8abccb37a871f0387cce7b6e329195d9710f57f75ef4b</hash>
-    <hash type="sha-512">26959d3ece4db861e30979a930acf8db1789bff0dd2d4aabcf5144ddd771ab8ddfd1d89568e294c83e28860cc52832a3006bdf17984db33676679f6025cc7b72</hash>
-    <size>803</size>
-    <url>https://s3.amazonaws.com/bosh-stemcell-triggers/315.x/usn-log.json?versionId=kW0ge4og7qnU15IoVBWv2PWVYThQiYLB</url>
+    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
+    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
+    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
+    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
+    <size>1</size>
+    <url>https://s3.amazonaws.com/bosh-stemcell-triggers/315.x/usn-log.json?versionId=lNDN60B1xWypQlJySnXeBvackCBRAR0Z</url>
   </file>
   <generator>metalink.dpb587.github.io/0.0.0</generator>
 </metalink>
