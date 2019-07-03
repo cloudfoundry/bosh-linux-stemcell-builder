@@ -21,6 +21,7 @@ RUN apt-get update \
     xvfb \
     locales \
     sudo \
+    lsof \
   && apt-get clean
 
 RUN groupadd -g ${GROUP_ID} ubuntu                  \

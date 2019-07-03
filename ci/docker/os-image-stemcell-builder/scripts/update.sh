@@ -70,6 +70,8 @@ apt-get -y install yum
 # needed by stemcell building
 apt-get -y install parted
 
+# needed by stemcell building to debug issue in kpartx/parted
+apt-get -y install lsof
 
 
 mkdir -p /mnt/tmp
