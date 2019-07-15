@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="bosh-ubuntu-bionic-os-image.tgz">
-    <hash type="md5">4f04643b7e0dde7e59d380041ac6300d</hash>
-    <hash type="sha-1">a59f463948e363b8d5dbfc0c8e2c99d2abbf5c6b</hash>
-    <hash type="sha-256">2296af6f0ee4c887835bd405593c88ce4649b57a897b89040b656fe4cdbe1903</hash>
-    <hash type="sha-512">3239e5f09c3876ea0c6c26e9b1ade513f4d1376af131a604e1f3ef8f83e787b658cfc6dee5c669b341c7a0eb329343ac7e2fc5d825e02fa5595fd793d1bde6a0</hash>
-    <size>574502532</size>
-    <url>https://s3.amazonaws.com/bosh-os-images/bosh-ubuntu-bionic-os-image.tgz?versionId=FVg0gPnB5_WBQfivgaCBamQDOtXZ3zUu</url>
+    <hash type="md5">55491ef761b728746588667c6a9c89b2</hash>
+    <hash type="sha-1">1d123def0feb24679a46fdfa6e3df07bd5941bb7</hash>
+    <hash type="sha-256">a628c99c6042dea0ca9d249b3c9e7f1f9becf1c7c477665dc72d34d2671551ce</hash>
+    <hash type="sha-512">be953e3dfe3ee2b1f1997f4eebc2026a20e0572bd714e16f6f499e6334e3720e713588da30548c92f96a10d511f717c480ee20e298fa29a22a827bf66811ca0c</hash>
+    <size>574494317</size>
+    <url>https://s3.amazonaws.com/bosh-os-images/bosh-ubuntu-bionic-os-image.tgz?versionId=eZ98MqImn4CrdmW94p1iOBTN89E64Z1C</url>
   </file>
   <file name="usn-log.json">
-    <hash type="md5">d41d8cd98f00b204e9800998ecf8427e</hash>
-    <hash type="sha-1">da39a3ee5e6b4b0d3255bfef95601890afd80709</hash>
-    <hash type="sha-256">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</hash>
-    <hash type="sha-512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
-    <url></url>
+    <hash type="md5">54f28a1e1fd7bb33f701a1843d23b891</hash>
+    <hash type="sha-1">9354e1a0fd28cc42920028c59e73a79f58a63bc8</hash>
+    <hash type="sha-256">ff80f5ee31ab766deb6083a05821747e7b74925cc8b9638fc8bb424e92fbb753</hash>
+    <hash type="sha-512">031add0983d3dc62770a41b3941e320e04c8184daef6678c26f8d2ab0f6a79f553cf44169b905ecaee4f6c0114c932a27623f8a0f6ecdf51b83c782bd54ab6ac</hash>
+    <size>557</size>
+    <url>https://s3.amazonaws.com/bosh-stemcell-triggers/bionic-master/usn-log.json?versionId=McDKwdczhVE5YvOwo9wGtQFV0wnxfmNh</url>
   </file>
   <generator>metalink.dpb587.github.io/0.0.0</generator>
 </metalink>
