@@ -58,6 +58,13 @@ cat > $chroot/var/vcap/bosh/bin/bosh-start-logging-and-auditing <<BASH
 # "service auditd start" because there is no upstart in containers
 BASH
 
+cat > $chroot/var/vcap/bosh/bin/restart_networking <<EOF
+#!/bin/bash
+
+echo "skip network restart: network is already preconfigured"
+EOF
+chmod +x $chroot/var/vcap/bosh/bin/restart_networking
+
 # Configure go agent specifically for warden
 cat > $chroot/var/vcap/bosh/agent.json <<JSON
 {

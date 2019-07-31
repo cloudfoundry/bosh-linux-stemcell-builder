@@ -98,6 +98,38 @@ shared_examples_for 'All Stemcells' do
     end
   end
 
+  describe file('/var/vcap/bosh/bin/restart_networking') do
+    it { should be_file }
+    it { should be_executable }
+    it { should be_owned_by('root') }
+    its(:group) { should eq('root') }
+
+    context 'restarts systemd-networkd on non-warden images', {
+      exclude_on_warden: true,
+    } do
+      its(:content) { should eql(<<HERE) }
+#!/bin/bash
+systemctl restart systemd-networkd
+HERE
+    end
+
+    context 'does nothing on warden', {
+      exclude_on_alicloud: true,
+      exclude_on_aws: true,
+      exclude_on_google: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+    } do
+      its(:content) { should eql(<<HERE) }
+#!/bin/bash
+
+echo "skip network restart: network is already preconfigured"
+HERE
+    end
+  end
+
   describe 'logrotate' do
     describe command('grep ionice /usr/bin/logrotate-cron') do
       its(:stdout) { should match(%r{^\s*nice -n 19 ionice -c3 /usr/sbin/logrotate\b}) }

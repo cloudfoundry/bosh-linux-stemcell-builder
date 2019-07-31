@@ -51,6 +51,11 @@ echo "cd75e886b4f5d27ce41841d5cc902fe64bab7b78 davcli/davcli" | sha1sum -c -
 mv davcli/davcli $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 
+cat > $chroot/var/vcap/bosh/bin/restart_networking <<EOF
+#!/bin/bash
+systemctl restart systemd-networkd
+EOF
+chmod +x $chroot/var/vcap/bosh/bin/restart_networking
 
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent-rc
