@@ -114,7 +114,7 @@ shared_examples_for 'every OS image' do
           # filter commented directives
           "grep -v '^#'",
           # remove leading characters
-          "sed 's%^[ \t]*%%' | awk '{ print $2 }' | tr -d '-'",
+          "sed 's%^[ \t]*%%' | rev | awk '{ print $1 }' | rev | sed 's%^-%%'",
           # unique tests
           'sort | uniq',
         ].join('|')
