@@ -5,11 +5,19 @@ describe 'Google Stemcell', stemcell_image: true do
 
   context 'rsyslog conf directory only contains files installed by rsyslog_config stage and google-compute-engine package' do
     describe command('ls -A /etc/rsyslog.d') do
-      its (:stdout) { should eq(%q(50-default.conf
-90-google.conf
-avoid-startup-deadlock.conf
-enable-kernel-logging.conf
-))}
+      its (:stdout) do
+        expected_rsyslog_confs = %(50-default.conf
+  90-google.conf
+  avoid-startup-deadlock.conf
+  enable-kernel-logging.conf
+  )
+
+        if ENV['OS_NAME'] == 'ubuntu'
+            expected_rsyslog_confs = ['21-cloudinit.conf'] + expected_rsyslog_confs
+        end
+
+        should eq(expected_rsyslog_confs)
+      end
     end
   end
 
