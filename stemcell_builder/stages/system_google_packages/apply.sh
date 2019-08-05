@@ -18,7 +18,7 @@ declare set_hostname_path
 
 os_type="$(get_os_type)"
 if [[ "${os_type}" == "ubuntu" ]] ; then
-  pkg_mgr install "gce-compute-image-packages google-cloud-sdk google-compute-engine-oslogin python-google-compute-engine python3-google-compute-engine"
+  pkg_mgr install "gce-compute-image-packages google-compute-engine-oslogin python-google-compute-engine python3-google-compute-engine"
 
 
   # Hack: replace google metadata hostname with ip address (bosh agent might set a dns that it's unable to resolve the hostname)
