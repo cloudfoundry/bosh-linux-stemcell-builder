@@ -18,20 +18,10 @@ declare set_hostname_path
 
 os_type="$(get_os_type)"
 if [ "${os_type}" == "ubuntu" ] && [ "${DISTRIB_CODENAME}" == "xenial" ]; then
-  run_in_chroot "${chroot}" "curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"
-
-  run_in_chroot "${chroot}" "tee /etc/apt/sources.list.d/google-cloud.list << EOM
-deb http://packages.cloud.google.com/apt google-compute-engine-stretch-stable main
-deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-stretch main
-EOM"
-
-  pkg_mgr install "google-cloud-packages-archive-keyring"
-  pkg_mgr install "--target-release google-compute-engine-stretch-stable python-google-compute-engine python3-google-compute-engine"
-  pkg_mgr install "google-compute-engine-oslogin google-compute-engine"
-
-  run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python3/dist-packages/google_compute_engine/metadata_watcher.py"
+  pkg_mgr install "gce-compute-image-packages google-compute-engine-oslogin python-google-compute-engine python3-google-compute-engine"
 
   # Hack: replace google metadata hostname with ip address (bosh agent might set a dns that it's unable to resolve the hostname)
+  run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python3/dist-packages/google_compute_engine/metadata_watcher.py"
   run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python2.7/dist-packages/google_compute_engine/metadata_watcher.py"
 
   set_hostname_path=/etc/dhcp/dhclient-exit-hooks.d/google_set_hostname
