@@ -30,6 +30,10 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
     end
   end
 
+  describe service('systemd-networkd') do
+    it { should be_enabled }
+  end
+
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
       if Bosh::Stemcell::Arch.ppc64le?

@@ -83,6 +83,10 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
+  describe service('NetworkManager') do
+    it { should be_enabled }
+  end
+
   context 'installed by system_grub' do
     describe package('grub2-tools') do
       it { should be_installed, -> { "Message: #{subject.last_message} #{subject.last_error}" } }
