@@ -14,7 +14,7 @@ shared_examples_for 'a systemd-based OS image' do
     end
 
     describe service('systemd-networkd') do
-      it { should_not be_enabled }
+      it { should be_enabled }
     end
 
     describe file('/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf') do
