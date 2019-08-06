@@ -7,10 +7,10 @@ describe 'Google Stemcell', stemcell_image: true do
     describe command('ls -A /etc/rsyslog.d') do
       its (:stdout) do
         expected_rsyslog_confs = %(50-default.conf
-  90-google.conf
-  avoid-startup-deadlock.conf
-  enable-kernel-logging.conf
-  )
+90-google.conf
+avoid-startup-deadlock.conf
+enable-kernel-logging.conf
+)
 
         if ENV['OS_NAME'] == 'ubuntu'
             expected_rsyslog_confs = ['21-cloudinit.conf'] + expected_rsyslog_confs
