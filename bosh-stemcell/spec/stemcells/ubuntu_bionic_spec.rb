@@ -3,6 +3,8 @@ require 'spec_helper'
 describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
 
+  let(:linux_version_regex) { 's/linux-(.+)-([0-9]+).([0-9]+).([0-9]+)-([0-9]+)/linux-\1-\2.\3/' }
+
   context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
@@ -66,7 +68,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
 
       it 'should be a proper superset of the installed static libraries' do
         libraries_to_remove = subject.content.split("\n")
-        found_libraries = command("find / -iname '*.a' | sort | uniq | sed -E 's/(linux.*5.0).*-generic/\\1/'").stdout.split("\n")
+        found_libraries = command("find / -iname '*.a' | sort | uniq | sed -E #{linux_version_regex}").stdout.split("\n")
 
         expect(libraries_to_remove).to include(*found_libraries)
       end
@@ -322,7 +324,7 @@ HERE
   end
 
   describe 'installed packages' do
-    dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E 's/(linux.*5.0).*/\\1/'"
+    dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E #{linux_version_regex}"
 
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-bionic.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-bionic-google-additions.txt')).map(&:chop) }
