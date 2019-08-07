@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
 
-  let(:linux_version_regex) { 's/linux-(.+)-([0-9]+).([0-9]+).([0-9]+)-([0-9]+)/linux-\1-\2.\3/' }
+  linux_version_regex = 's/linux-(.+)-([0-9]+).([0-9]+).([0-9]+)-([0-9]+)/linux-\1-\2.\3/'
 
   context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
     describe file('/boot/grub/grub.cfg') do
