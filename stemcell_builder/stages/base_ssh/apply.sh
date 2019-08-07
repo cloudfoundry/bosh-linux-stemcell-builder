@@ -38,9 +38,6 @@ echo 'Banner /etc/issue.net' >> $chroot/etc/ssh/sshd_config
 sed "/^ *IgnoreRhosts/d" -i $chroot/etc/ssh/sshd_config
 echo 'IgnoreRhosts yes' >> $chroot/etc/ssh/sshd_config
 
-sed "/^ *ClientAliveInterval/d" -i $chroot/etc/ssh/sshd_config
-echo 'ClientAliveInterval 900' >> $chroot/etc/ssh/sshd_config
-
 sed "/^ *PermitUserEnvironment/d" -i $chroot/etc/ssh/sshd_config
 echo 'PermitUserEnvironment no' >> $chroot/etc/ssh/sshd_config
 
