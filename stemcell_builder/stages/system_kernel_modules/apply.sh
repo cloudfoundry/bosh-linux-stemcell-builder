@@ -21,6 +21,13 @@ install udf /bin/true
 install rds /bin/true
 options ipv6 disable=1' >> $chroot/etc/modprobe.d/blacklist.conf
 
+echo '# prevent nouveau from loading
+blacklist nouveau
+blacklist lbm-nouveau
+options nouveau modeset=0
+alias nouveau off
+alias lbm-nouveau off' >> $chroot/etc/modprobe.d/blacklist-nouveau.conf
+
 if [[ $OS_TYPE == 'ubuntu' ]]; then
   rm -rf $chroot/lib/modules/*/kernel/zfs $chroot/usr/src/linux-headers-*/zfs
 fi
