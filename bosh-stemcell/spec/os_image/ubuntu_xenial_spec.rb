@@ -44,7 +44,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       debconf
       eject
       gnupg
-      ifupdown
       iproute2
       iputils-ping
       isc-dhcp-client
