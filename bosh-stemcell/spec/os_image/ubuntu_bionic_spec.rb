@@ -364,7 +364,7 @@ systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nol
 syslog:x:102:106::/home/syslog:/usr/sbin/nologin
 messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
 _apt:x:104:65534::/nonexistent:/usr/sbin/nologin
-_chrony:x:105:109:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+_chrony:x:105:108:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
 sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
@@ -451,8 +451,7 @@ input:x:104:
 crontab:x:105:
 syslog:x:106:
 messagebus:x:107:
-netdev:x:108:
-_chrony:x:109:
+_chrony:x:108:
 ssh:x:110:
 admin:x:999:vcap
 vcap:x:1000:syslog
@@ -509,7 +508,6 @@ input:!::
 crontab:!::
 syslog:!::
 messagebus:!::
-netdev:!::
 _chrony:!::
 ssh:!::
 admin:!::vcap
