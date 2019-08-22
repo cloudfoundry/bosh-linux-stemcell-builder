@@ -1,7 +1,6 @@
 package smoke_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,8 +10,6 @@ import (
 	"time"
 
 	"strconv"
-
-	yaml "gopkg.in/yaml.v2"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -277,119 +274,6 @@ var _ = Describe("Stemcell", func() {
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
-		})
-	})
-
-	Context("#164749230, when using targeted blobstores", func() {
-		type agentSettings struct {
-			Env struct {
-				BoshEnv struct {
-					Blobstores []struct {
-						Options struct {
-							Endpoint string `json:"endpoint"`
-							Password string `json:"password"`
-							Tls      struct {
-								Cert struct {
-									Ca string `json:"ca"`
-								} `json:"cert"`
-							} `json:"tls"`
-						} `json:"options"`
-					} `json:"blobstores"`
-				} `json:"bosh"`
-			} `json:"env"`
-		}
-
-		type blobStoreVars struct {
-			Endpoint               string `yaml:"endpoint"`
-			BlobstoreAgentPassword string `yaml:"blobstore_agent_password"`
-			BlobstoreCaCertificate string `yaml:"blobstore_ca_certificate"`
-		}
-
-		AfterEach(func() {
-			bosh.SafeDeploy()
-		})
-
-		Context("when deploying with a invalid logs blobstore", func() {
-			It("should fail to get logs, but the deploy should succeed", func() {
-				config := agentSettings{}
-				stdout, _, exitStatus, err := bosh.Run(
-					"--column=stdout",
-					"ssh", "default/0", "-r", "-c",
-					`sudo cat /var/vcap/bosh/settings.json`,
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(exitStatus).To(Equal(0))
-
-				err = json.Unmarshal([]byte(stdout), &config)
-				Expect(err).NotTo(HaveOccurred())
-
-				opsFile, err := filepath.Abs("add-invalid-logs-blobstore.yml")
-				Expect(err).ToNot(HaveOccurred())
-
-				blobstoreVarFile, err := ioutil.TempFile("", "blobstore_config")
-				Expect(err).NotTo(HaveOccurred())
-				bsv := blobStoreVars{
-					Endpoint:               config.Env.BoshEnv.Blobstores[0].Options.Endpoint,
-					BlobstoreAgentPassword: config.Env.BoshEnv.Blobstores[0].Options.Password,
-					BlobstoreCaCertificate: config.Env.BoshEnv.Blobstores[0].Options.Tls.Cert.Ca,
-				}
-				yamlBytes, err := yaml.Marshal(bsv)
-				Expect(err).NotTo(HaveOccurred())
-				blobstoreVarFile.Write(yamlBytes)
-				blobstoreVarFile.Close()
-
-				bosh.SafeDeploy("-o", opsFile,
-					"--vars-file", blobstoreVarFile.Name(),
-				)
-
-				name, err := ioutil.TempDir("", "bosh-logs")
-				Expect(err).ToNot(HaveOccurred())
-
-				stdout, _, exitStatus, err = bosh.Run(
-					"logs", "default/0", fmt.Sprintf("--dir=%s", name),
-				)
-				Expect(err).To(HaveOccurred())
-				Expect(exitStatus).To(Equal(1))
-				Expect(strings.TrimSpace(stdout)).To(MatchRegexp("bosh-blobstore-dav -c /var/vcap/bosh/etc/invalid/blobstore-dav.json"))
-			})
-		})
-
-		Context("when deploying with an invalid packages blobstore", func() {
-			It("should fail to deploy", func() {
-				config := agentSettings{}
-				stdout, _, exitStatus, err := bosh.Run(
-					"--column=stdout",
-					"ssh", "default/0", "-r", "-c",
-					`sudo cat /var/vcap/bosh/settings.json`,
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(exitStatus).To(Equal(0))
-
-				err = json.Unmarshal([]byte(stdout), &config)
-				Expect(err).NotTo(HaveOccurred())
-
-				opsFile, err := filepath.Abs("add-invalid-packages-blobstore.yml")
-				Expect(err).ToNot(HaveOccurred())
-
-				blobstoreVarFile, err := ioutil.TempFile("", "blobstore_config")
-				Expect(err).NotTo(HaveOccurred())
-				bsv := blobStoreVars{
-					Endpoint:               config.Env.BoshEnv.Blobstores[0].Options.Endpoint,
-					BlobstoreAgentPassword: config.Env.BoshEnv.Blobstores[0].Options.Password,
-					BlobstoreCaCertificate: config.Env.BoshEnv.Blobstores[0].Options.Tls.Cert.Ca,
-				}
-				yamlBytes, err := yaml.Marshal(bsv)
-				Expect(err).NotTo(HaveOccurred())
-				blobstoreVarFile.Write(yamlBytes)
-				blobstoreVarFile.Close()
-
-				stdOut, stdErr, exitStatus, err := bosh.UnsafeDeploy("-o", opsFile,
-					"--vars-file", blobstoreVarFile.Name(),
-				)
-				Expect(err).To(HaveOccurred())
-				Expect(stdOut).To(MatchRegexp("bosh-blobstore-dav -c /var/vcap/bosh/etc/invalid/blobstore-dav.json"))
-				Expect(exitStatus).To(Equal(1), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
-			})
 		})
 	})
 })
