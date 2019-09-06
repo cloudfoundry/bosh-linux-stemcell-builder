@@ -19,10 +19,6 @@ dpkg -i "$downloaded_file"
 rm "$downloaded_file"
 
 # Bootstrap the base system
-pushd /usr/share/debootstrap/
-  echo "Patching debootstrap"
-  patch -p1 < "$assets_dir/debootstrap.patch"
-popd
 echo "Running debootstrap"
 debootstrap --arch="$base_debootstrap_arch" "$base_debootstrap_suite" "$chroot" ""
 
