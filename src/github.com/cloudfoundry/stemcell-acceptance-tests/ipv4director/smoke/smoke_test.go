@@ -34,10 +34,10 @@ var _ = Describe("Stemcell", func() {
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
 			fillUpFileWithRandomCharacters("/var/log/wtmp")
-			Eventually("/var/log/wtmp", 2*time.Minute, 15*time.Second).Should(BeLogRotated())
+			Eventually("/var/log/wtmp", 2*time.Minute, 5*time.Second).Should(BeLogRotated())
 
 			fillUpFileWithRandomCharacters("/var/log/btmp")
-			Eventually("/var/log/btmp", 2*time.Minute, 15*time.Second).Should(BeLogRotated())
+			Eventually("/var/log/btmp", 2*time.Minute, 5*time.Second).Should(BeLogRotated())
 		})
 	})
 
@@ -52,7 +52,7 @@ var _ = Describe("Stemcell", func() {
 			Expect(exitStatus).To(Equal(0))
 
 			fillUpFileWithRandomCharacters("/var/log/syslog")
-			Eventually("/var/vcap/data/root_log/syslog", 2*time.Minute, 15*time.Second).Should(BeLogRotated())
+			Eventually("/var/vcap/data/root_log/syslog", 2*time.Minute, 5*time.Second).Should(BeLogRotated())
 
 			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `logger "new syslog content"`)
 			Expect(err).ToNot(HaveOccurred())

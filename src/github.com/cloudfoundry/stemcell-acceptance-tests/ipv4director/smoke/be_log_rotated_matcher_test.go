@@ -46,7 +46,7 @@ func (matcher *beLogRotatedMatcher) Match(actual interface{}) (success bool, err
 	matcher.previousFileSize = matcher.currentFileSize
 	matcher.currentFileSize = getFileSize(filepath)
 
-	return matcher.currentFileSize < matcher.previousFileSize, nil
+	return matcher.currentFileSize < matcher.previousFileSize || matcher.currentFileSize < 5000, nil
 }
 
 func (matcher *beLogRotatedMatcher) FailureMessage(actual interface{}) (message string) {
