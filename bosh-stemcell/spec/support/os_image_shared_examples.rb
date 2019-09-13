@@ -755,4 +755,9 @@ shared_examples_for 'every OS image' do
       it { should be_executable }
     end
   end
+  describe 'Cron logging must be implemented. (stig: V-75865)' do
+    context file('/etc/rsyslog.d/50-default.conf') do
+      its (:content) { should match /^cron\.\*\s+\/var\/log\/cron\.log$/ }
+    end
+  end
 end
