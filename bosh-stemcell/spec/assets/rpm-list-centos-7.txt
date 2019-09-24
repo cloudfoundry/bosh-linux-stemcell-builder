@@ -31,6 +31,7 @@ basesystem
 bash
 bash-completion
 bc
+bind-export-libs
 bind-libs
 bind-libs-lite
 bind-license
@@ -126,6 +127,7 @@ gcc-gfortran
 gdb
 gdbm
 gdisk
+geoipupdate
 gettext
 gettext-common-devel
 gettext-devel
@@ -414,6 +416,7 @@ python-kitchen
 python-libs
 python-pycurl
 python-six
+python-srpm-macros
 python-urlgrabber
 python2-futures
 pyxattr
