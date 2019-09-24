@@ -14,8 +14,10 @@ case "${stemcell_operating_system_version}" in
     echo "The repository from which we download CentOS below tracks the latest minor release."
     echo "It will fail when a minor version is put out since the previous one is deleted."
     echo "You may be tempted to pin this to the latest minor release we previously supported. Don't."
+    echo "If the previous one was deleted, you can look in the following place for the next centos-release"
+    echo "http://mirror.centos.org/centos/7/os/x86_64/Packages/"
 
-    centos_release_package_url="http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-6.1810.2.el7.centos.x86_64.rpm"
+    centos_release_package_url="http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-7.1908.0.el7.centos.x86_64.rpm"
     epel_package_url="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
     ;;
   *)
