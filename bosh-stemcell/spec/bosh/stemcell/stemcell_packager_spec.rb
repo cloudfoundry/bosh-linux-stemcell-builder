@@ -104,7 +104,7 @@ describe Bosh::Stemcell::StemcellPackager do
         'name' => 'bosh-fake_infra-fake_hypervisor-centos-7-go_agent-raw',
         'version' => '1234',
         'bosh_protocol' => 1,
-        'api_version' => 2,
+        'api_version' => 3,
         'sha1' => 'c1ebdefc3f8282a9d7d47803fb5030b61ffc793d', # SHA-1 of image above
         'operating_system' => 'centos-7',
         'stemcell_formats' => ['stemcell-format-a', 'stemcell-format-b'],
