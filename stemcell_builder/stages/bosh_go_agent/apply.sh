@@ -35,10 +35,6 @@ if is_ppc64le; then
   /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-ppc64le bosh-agent
 else
   /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
-
-  /usr/bin/meta4 file-download --metalink=${assets_dir}/resolvconf-manager.meta4 resolvconf-manager
-  mv resolvconf-manager $chroot/var/vcap/bosh/bin/
-  chmod +x $chroot/var/vcap/bosh/bin/resolvconf-manager
 fi
 
 mv bosh-agent $chroot/var/vcap/bosh/bin/
