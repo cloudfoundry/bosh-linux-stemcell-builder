@@ -55,6 +55,9 @@ elif [ "$(get_os_type)" == "ubuntu" ]; then
 
   strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
   patch $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
+
+  strip_trailing_whitespace_from $chroot/etc/pam.d/login
+  patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch
 fi
 
 
