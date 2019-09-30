@@ -8,7 +8,7 @@ fi
 image_path=$(cat)
 chroot=$(mktemp -d)
 
-sudo losetup -fP ${image_path}/disk.raw
+sudo losetup --show --find ${image_path}/disk.raw
 loopback=$(losetup -a | grep ${image_path}/disk.raw | cut -d ':' -f1)
 sudo mount -o loop,rw ${loopback}p1 ${chroot}
 echo $chroot
