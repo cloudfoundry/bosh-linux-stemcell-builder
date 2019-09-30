@@ -3,30 +3,30 @@
 set -ex
 
 cat > /etc/apt/sources.list <<EOS
-deb http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
-deb-src http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
+deb http://us.archive.ubuntu.com/ubuntu/ xenial main restricted
+deb-src http://us.archive.ubuntu.com/ubuntu/ xenial main restricted
 
-deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
-deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
+deb http://us.archive.ubuntu.com/ubuntu/ xenial-updates main restricted
+deb-src http://us.archive.ubuntu.com/ubuntu/ xenial-updates main restricted
 
-deb http://security.ubuntu.com/ubuntu trusty-security main restricted
-deb-src http://security.ubuntu.com/ubuntu trusty-security main restricted
-deb http://security.ubuntu.com/ubuntu trusty-security universe
-deb-src http://security.ubuntu.com/ubuntu trusty-security universe
-deb http://security.ubuntu.com/ubuntu trusty-security multiverse
-deb-src http://security.ubuntu.com/ubuntu trusty-security multiverse
+deb http://security.ubuntu.com/ubuntu xenial-security main restricted
+deb-src http://security.ubuntu.com/ubuntu xenial-security main restricted
+deb http://security.ubuntu.com/ubuntu xenial-security universe
+deb-src http://security.ubuntu.com/ubuntu xenial-security universe
+deb http://security.ubuntu.com/ubuntu xenial-security multiverse
+deb-src http://security.ubuntu.com/ubuntu xenial-security multiverse
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
-deb http://us.archive.ubuntu.com/ubuntu/ trusty universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ trusty universe
-deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe
-deb http://us.archive.ubuntu.com/ubuntu/ trusty multiverse
-deb-src http://us.archive.ubuntu.com/ubuntu/ trusty multiverse
-deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
-deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ xenial universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ xenial universe
+deb http://us.archive.ubuntu.com/ubuntu/ xenial-updates universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ xenial-updates universe
+deb http://us.archive.ubuntu.com/ubuntu/ xenial multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ xenial multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ xenial-updates multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ xenial-updates multiverse
 EOS
 
 apt-get update
@@ -47,7 +47,7 @@ apt-get -y install build-essential
 apt-get -y install linux-headers-generic
 
 # stemcell image creation
-apt-get -y install debootstrap kpartx
+apt-get -y install udev dmsetup debootstrap kpartx
 
 # stemcell uploading
 apt-get -y install s3cmd
@@ -59,7 +59,7 @@ apt-get -y install g++ git-core make
 apt-get -y install libmysqlclient-dev libpq-dev libsqlite3-dev libxml2-dev libxslt-dev
 
 # vSphere requirements
-apt-get -y install open-vm-dkms
+apt-get -y install open-vm-tools
 
 # OpenStack requirement
 apt-get -y install qemu-utils
