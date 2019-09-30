@@ -18,5 +18,4 @@ pushd ${extracted_stemcell_path}
   tar czf ${output_stemcell}/stemcell.tgz *
 popd
 
-echo "DONE..."
-echo "Your stemcell can be found at: ${output_stemcell}/stemcell.tgz"
+echo ${output_stemcell}
