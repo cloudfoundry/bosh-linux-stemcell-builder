@@ -73,6 +73,7 @@ apt-get -y install parted
 # needed by stemcell building to debug issue in kpartx/parted
 apt-get -y install lsof
 
+apt-get -y install sudo
 
 mkdir -p /mnt/tmp
 chown -R ubuntu:ubuntu /mnt/tmp
