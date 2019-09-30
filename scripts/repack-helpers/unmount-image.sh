@@ -8,6 +8,6 @@ fi
 mounted_image_directory=$(cat)
 mounted_loopback=$(mount | grep $mounted_image_directory | cut -f1 -d' ' | sed 's/p[[:digit:]]*$//')
 raw_disk=$(losetup -l | awk "\$1 == \"$mounted_loopback\" { print \$6 }")
-sudo umount $mounted_image_directory
-sudo losetup -d $mounted_loopback
+umount $mounted_image_directory
+losetup -d $mounted_loopback
 echo $raw_disk

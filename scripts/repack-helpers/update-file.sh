@@ -5,5 +5,5 @@ if [ -t 0 ];then
 fi
 
 mountpoint=$(cat)
-sudo cp $1 $mountpoint/$2
+cp $1 $mountpoint/$2
 echo $mountpoint
