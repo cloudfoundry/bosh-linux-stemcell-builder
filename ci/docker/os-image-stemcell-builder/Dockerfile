@@ -33,7 +33,8 @@ ARG GROUP_ID=1000
 
 RUN groupadd -g ${GROUP_ID} ubuntu                  \
   && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
-  && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
+  && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers \
+  && echo 'root ALL=NOPASSWD:ALL' >> /etc/sudoers
 
 ADD scripts/update.sh /tmp/update.sh
 RUN /tmp/update.sh && rm /tmp/update.sh
