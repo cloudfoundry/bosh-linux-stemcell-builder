@@ -9,5 +9,5 @@ image_path=$(cat)
 chroot=$(mktemp -d)
 
 device=$(kpartx -sav ${image_path}/disk.raw | grep '^add' | cut -d' ' -f3)
-sudo mount -o loop,rw "/dev/mapper/${device}" ${chroot}
+mount -o loop,rw "/dev/mapper/${device}" ${chroot}
 echo $chroot
