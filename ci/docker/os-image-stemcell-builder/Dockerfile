@@ -2,10 +2,12 @@ FROM ubuntu:16.04
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
 
-RUN locale-gen en_US.UTF-8
-RUN dpkg-reconfigure locales
+ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
+RUN localedef -i en_US -f UTF-8 en_US.UTF-8 \
+ && locale-gen en_US.UTF-8 \
+ && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 
 RUN apt-get update
 RUN apt-get -y upgrade && apt-get clean
