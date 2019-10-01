@@ -12,10 +12,10 @@ VERSION=$3
 output_stemcell=$(mktemp -d)
 
 cp ${image_path}/image ${extracted_stemcell_path}/image
-pushd ${extracted_stemcell_path}
+pushd ${extracted_stemcell_path} >/dev/null
   sed -i -e "/version:/d" stemcell.MF
   echo "version: $VERSION" >> stemcell.MF
   tar czf ${output_stemcell}/stemcell.tgz *
-popd
+popd >/dev/null
 
 echo ${output_stemcell}
