@@ -8,7 +8,10 @@ fi
 
 mounted_image_directory=$(cat)
 mounted_loopback=$(mount | grep $mounted_image_directory | cut -f1 -d' ' | sed 's/p[[:digit:]]*$//')
-raw_disk=$(losetup -l | awk "\$1 == \"$mounted_loopback\" { print \$6 }")
+
+# extract loopN from /path/to/device/loopN
+device=$(basename $mounted_loopback)
+raw_disk=$(losetup -l | awk "\$1 == \"/dev/${device}\" { print \$6 }")
 umount $mounted_image_directory
 kpartx -d $raw_disk
 echo $raw_disk
