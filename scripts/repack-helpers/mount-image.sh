@@ -8,7 +8,6 @@ fi
 image_path=$(cat)
 chroot=$(mktemp -d)
 
-losetup -fP ${image_path}/disk.raw
-loopback=$(losetup -a | grep ${image_path}/disk.raw | cut -d ':' -f1)
-mount -o loop,rw ${loopback}p1 ${chroot}
+device=$(kpartx -sav ${image_path}/disk.raw | grep '^add' | cut -d' ' -f3)
+sudo mount -o loop,rw "/dev/mapper/${device}" ${chroot}
 echo $chroot
