@@ -162,7 +162,6 @@ module Bosh::Stemcell
             :udev_aws_rules,
             :image_create,
             :image_install_grub,
-            :image_aws_update_grub,
             :bosh_package_list,
           ]
         }
