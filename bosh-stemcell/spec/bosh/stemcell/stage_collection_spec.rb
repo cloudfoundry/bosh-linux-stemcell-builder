@@ -162,8 +162,7 @@ module Bosh::Stemcell
             :bosh_clean_ssh,
             :image_create,
             :image_install_grub,
-            :image_aws_update_grub,
-            :bosh_package_list
+            :bosh_package_list,
           ]
         }
 
