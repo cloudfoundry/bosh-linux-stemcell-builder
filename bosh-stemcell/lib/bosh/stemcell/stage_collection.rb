@@ -144,7 +144,6 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
-        :image_aws_update_grub,
       ]
     end
 
