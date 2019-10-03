@@ -10,6 +10,6 @@ disk_raw_path=$(cat)
 
 root_img_path=$(mktemp -d)
 
-ln $disk_raw_path/disk.raw $root_img_path/root.img 
+ln $disk_raw_path $root_img_path/root.img
 
-echo $disk_raw_path/disk.raw
+echo $root_img_path/root.img
