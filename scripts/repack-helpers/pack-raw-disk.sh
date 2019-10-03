@@ -9,8 +9,8 @@ raw_disk_path=$(cat)
 
 output_image=$(mktemp -d)
 
-pushd ${raw_disk_path%disk.raw} > /dev/null
-  tar czf ${output_image}/image disk.raw
+pushd $(dirname ${raw_disk_path}) > /dev/null
+tar czf ${output_image}/image $(basename ${raw_disk_path})
 popd > /dev/null
 
-echo ${output_image}
+echo ${output_image}/image

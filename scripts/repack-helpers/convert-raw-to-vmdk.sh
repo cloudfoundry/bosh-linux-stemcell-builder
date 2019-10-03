@@ -110,4 +110,4 @@ pushd $ovf > /dev/null
   tar zcf $output_image/image image.ovf image.mf image-disk1.vmdk
 popd > /dev/null
 
-echo $output_image
+echo $output_image/image

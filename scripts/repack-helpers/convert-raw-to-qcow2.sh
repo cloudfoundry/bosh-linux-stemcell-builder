@@ -12,4 +12,4 @@ converted_raw_path=$(mktemp -d)
 
 qemu-img convert -c -O qcow2 -o compat=0.10 $extracted_image_path $converted_raw_path/root.img
 
-echo $converted_raw_path
+echo $converted_raw_path/root.img

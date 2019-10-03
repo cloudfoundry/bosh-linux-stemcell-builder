@@ -12,4 +12,4 @@ converted_raw_path=$(mktemp -d)
 
 qemu-img convert -O raw $extracted_image_path/root.img $converted_raw_path/disk.raw
 
-echo $converted_raw_path
+echo $converted_raw_path/disk.raw
