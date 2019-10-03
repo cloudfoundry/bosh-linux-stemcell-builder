@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
 if [ -t 0 ]; then
   echo 'USAGE: $0 <<< extracted-image-directory'
