@@ -8,6 +8,6 @@ fi
 image_path=$(cat)
 chroot=$(mktemp -d)
 
-device=$(kpartx -sav $(basename ${image_path})/disk.raw | grep '^add' | cut -d' ' -f3)
+device=$(kpartx -sav $(dirname ${image_path})/disk.raw | grep '^add' | cut -d' ' -f3)
 mount -o loop,rw "/dev/mapper/${device}" ${chroot}
 echo $chroot
