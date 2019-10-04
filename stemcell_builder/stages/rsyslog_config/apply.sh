@@ -41,7 +41,6 @@ filenames=( auth.log cloud-init.log daemon.log debug kern.log lpr.log mail.err m
               mail.log mail.warn messages news/news.crit news/news.err \
               news/news.notice syslog user.log cron.log )
 
-
 run_in_bosh_chroot $chroot "
   mkdir -p /var/log/news
 "
@@ -71,6 +70,7 @@ then
 elif [ -f $chroot/etc/redhat-release ] # Centos or RHEL
 then
   sed -i "s@-/var/log/syslog@-/var/log/messages@g" $chroot/etc/rsyslog.d/50-default.conf
+  sed -i "s@/var/log/syslog@/var/log/messages@g" $chroot/etc/logrotate.d/rsyslog
   mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
   cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
   mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
