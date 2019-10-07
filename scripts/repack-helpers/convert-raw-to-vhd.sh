@@ -11,6 +11,6 @@ extracted_image_path=$(cat)
 converted_raw_path=$(mktemp -d)
 
 # The size of the VHD for Azure must be a whole number in megabytes.
-qemu-img convert -O vpc -o subformat=fixed $extracted_image_path $converted_raw_path/root.vhd
+qemu-img convert -O vpc -o subformat=fixed,force_size $extracted_image_path $converted_raw_path/root.vhd
 
 echo $converted_raw_path/root.vhd
