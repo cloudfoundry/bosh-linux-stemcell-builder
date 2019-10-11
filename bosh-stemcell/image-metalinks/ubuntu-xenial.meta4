@@ -1,20 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
-  <file name="bosh-ubuntu-xenial-os-image.tgz">
-    <hash type="md5">af307ca03e38df86187fa78853e210d0</hash>
-    <hash type="sha-1">cc6024bcc27688845020a6b662feb5ac1147a063</hash>
-    <hash type="sha-256">e068b5f22b62c85cb6dbc29a302f7a3fd3e35caf4c1f3f6ccc6183ce4a73fbdb</hash>
-    <hash type="sha-512">b54fe77e9c4367ed2ca41d72e54c1d3e81dab9134c10a511558d10d146abb0d2b4752f71630d5616f9c6a58b32af0f9841804a406b081d348c34bce2ab569647</hash>
-    <size>504262528</size>
-    <url>https://s3.amazonaws.com/bosh-os-images/bosh-ubuntu-xenial-os-image.tgz?versionId=QrQ7BQ.q5oiv8fmnt3Ga_kmuPo934vXA</url>
+  <file name="ubuntu-xenial.tgz">
+    <hash type="sha-512">cac2d16c28b94a0489a18eb4e7687b8efa52124a560ae61b2c477357a8f09e4c25b02853b3c8706675f9ebc01d32a9f5185f22c62e7665d4a13f7b4353467369</hash>
+    <hash type="sha-256">c25606a5fccda397fff982caf89755fc86b7f409fd1f2e419523dabce44589ba</hash>
+    <hash type="sha-1">1e6a737a3c9fc7213e6021c0ac82dd9c5f118351</hash>
+    <hash type="md5">a6e8399fa160a6b6b6d9375854213bf1</hash>
+    <size>504377455</size>
+    <url>https://s3.amazonaws.com/bosh-os-images/3.0.0/.ubuntu-xenial.tgz</url>
+    <version>3.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
-    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
-    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
-    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
-    <size>1</size>
-    <url>https://s3.amazonaws.com/bosh-stemcell-triggers/170.x/usn-log.json?versionId=8jZ3lTLXm4cf3g.nwGUwNxixPplRHDac</url>
+    <hash type="sha-512">d9534c7cc9d950191501de4bfdddf1ebf3b24d20c777f5ce3d8bd271b4de25ce854664187585a73cff45fad2e280913d4dc247ed5374d67c3d8695444496b3d4</hash>
+    <hash type="sha-256">5578b339fe8d215c27cf095bf318118b261b7a826acbe071da8fe9d5e9766dc8</hash>
+    <hash type="sha-1">61913350fbc5313b6b13803260051999f0cd7f08</hash>
+    <hash type="md5">8b4b8e76286fb995fcd370243b8f1337</hash>
+    <size>1944</size>
+    <url>https://s3.amazonaws.com/bosh-os-images/3.0.0/.usn-log.json</url>
+    <version>3.0.0</version>
   </file>
-  <generator>metalink.dpb587.github.io/0.0.0</generator>
+  <generator>metalink-repository-resource/0.0.0</generator>
+  <published>2019-10-11T23:08:32.691637763Z</published>
 </metalink>
