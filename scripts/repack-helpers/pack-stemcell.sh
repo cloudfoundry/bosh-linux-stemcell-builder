@@ -13,7 +13,7 @@ output_stemcell=$(mktemp -d)
 
 cp ${image_path} ${extracted_stemcell_path}/image
 pushd ${extracted_stemcell_path} >/dev/null
-  sed -i -e "/version:/d" stemcell.MF
+  sed -i -e "/^version:/d" stemcell.MF
   echo "version: $VERSION" >> stemcell.MF
   tar czf ${output_stemcell}/stemcell.tgz *
 popd >/dev/null
