@@ -133,6 +133,11 @@ shared_examples_for 'every OS image' do
         expect(subject.content).not_to match 'restart rsyslog'
       end
 
+      it 'should configure the news services' do
+        expect(subject.content).to match '/var/log/news/news.crit'
+        expect(subject.content).to match '/var/log/news/news.err'
+        expect(subject.content).to match '/var/log/news/news.notice'
+      end
     end
   end
 
