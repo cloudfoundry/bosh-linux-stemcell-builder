@@ -22,7 +22,6 @@ type stemcellManifest struct {
 	OperatingSystem string   `yaml:"operating_system"`
 	StemcellFormats []string `yaml:"stemcell_formats"`
 	BoshProtocol    int      `yaml:"bosh_protocol"`
-	ApiVersion      int      `yaml:"api_version"`
 }
 
 func loadStemcellManifest(manifestPath string) (stemcellManifest, error) {
@@ -76,7 +75,6 @@ var _ = Describe("stemcell.tgz", func() {
 			Expect(stemcellManifest.StemcellFormats).NotTo(Equal([]string{}))
 
 			Expect(stemcellManifest.BoshProtocol).To(Equal(1))
-			Expect(stemcellManifest.ApiVersion).To(Equal(2))
 		})
 	})
 })
