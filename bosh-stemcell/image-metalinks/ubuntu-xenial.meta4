@@ -1,10 +1,10 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">d58b616c69b03de0aeaa804edb1abdf681d7e278cf305ed446e052fc7e9127db6b04fad7f423be7302da3fdc7e120267dd0d985042fe6290d64194cc695cc955</hash>
-    <hash type="sha-256">c1a325377ac0a97951b458ef2f52d29b93087cb1be894c20d8b4f6ef8985135b</hash>
-    <hash type="sha-1">ba78e7770cccde1673e160e3978bb44fbd59b25a</hash>
-    <hash type="md5">c75caea72ee88d0dfa84d0bbfd5f6278</hash>
-    <size>504546374</size>
+    <hash type="sha-512">7dbc5da1b5379f819d0b56647f24a0e1c177499d99a85adb45f83378f7708751ad05be735da2ae81d9fe89df3ace861f2bc3c62cb78014a83bafd97cd9279805</hash>
+    <hash type="sha-256">6b1ecc5c4b9ec5e3d1f9853bd7d3b5974785e5d8499a8e17ea8273d1c2807c2b</hash>
+    <hash type="sha-1">cf9a9740dbbca82c85fa252674085c723d843895</hash>
+    <hash type="md5">61b1f8ac50c9cc9487d265c0d3aaf559</hash>
+    <size>504530113</size>
     <url>https://s3.amazonaws.com/bosh-os-images/master/ubuntu-xenial.tgz</url>
     <version>6.0.0</version>
   </file>
@@ -18,5 +18,5 @@
     <version>6.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2019-10-23T18:32:12.630272824Z</published>
+  <published>2019-10-23T18:36:15.117125751Z</published>
 </metalink>
