@@ -31,6 +31,7 @@ function write_shared_audit_rules {
 
 # Record changes to sudoers file
 -w /etc/sudoers -p wa -k scope
+-w /etc/sudoers.d -p wa -k scope
 
 # Record login and logout events
 -w /var/log/faillog -p wa -k logins
