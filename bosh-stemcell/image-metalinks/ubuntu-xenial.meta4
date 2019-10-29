@@ -1,21 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">76a161b760e30f6a3de7a689a8b2a76bdf4c4ee22225cca4b3c982ce83eb8abef18eae1f0485172c317560bc113191af5d26b6dcacdd3fe6ac1e4ac47f7e89c4</hash>
-    <hash type="sha-256">86cbf51dcd1aaa44bcf2192c2c21371bdd2b1b6b15e1abce51554ee68bfa16aa</hash>
-    <hash type="sha-1">f86f5a9cf80548d621ac7de02b060fe3701989be</hash>
-    <hash type="md5">14b423d82f0d6570725d6d526c77454d</hash>
-    <size>504515814</size>
+    <hash type="sha-512">64568da65f362fe8d2250d640ccf254a5a154a3109e5e14cc6e34edd0ccda26b4e38d48fffe5bcbd39d359a2e6076d3d0155aebab1e323a8c430abd0c1a3ec64</hash>
+    <hash type="sha-256">cac7ab1fb54b9bcbecb097792cab3cd484613dbbf2b0a57337ef6952b1c49a9a</hash>
+    <hash type="sha-1">8b1ba1d69d24a64a1e5adb6d80a7a1ac66577ceb</hash>
+    <hash type="md5">4ecbe43d0cd11c7ac8907c7be4a23d73</hash>
+    <size>504547862</size>
     <url>https://s3.amazonaws.com/bosh-os-images/621.x/ubuntu-xenial.tgz</url>
     <version>1.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
-    <hash type="sha-256">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</hash>
-    <hash type="sha-1">da39a3ee5e6b4b0d3255bfef95601890afd80709</hash>
-    <hash type="md5">d41d8cd98f00b204e9800998ecf8427e</hash>
+    <hash type="sha-512">05a7a9e19abd540c4664a601034a36fa2d67122b378bc6e759969f38bbe2596d48cc568a66dd88c4d018e90098251afa09cdf77ccc6bd770fb5c14890fef1caf</hash>
+    <hash type="sha-256">e8a888cee3f196751430145b26f32b3f4e687698d696040d35972863054f8d4b</hash>
+    <hash type="sha-1">3b6c361b6891e885246397c5428fc751ee3ef4b4</hash>
+    <hash type="md5">16bc14ce4680d40352459aee8132280e</hash>
+    <size>1607</size>
     <url>https://s3.amazonaws.com/bosh-os-images/621.x/usn-log.json</url>
     <version>1.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2019-10-29T19:29:16.540508497Z</published>
+  <published>2019-10-29T19:29:54.426312143Z</published>
 </metalink>
