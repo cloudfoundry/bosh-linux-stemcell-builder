@@ -172,8 +172,8 @@ shared_examples_for 'a CentOS 7 or RHEL 7 stemcell' do
       it { should be_valid_json_file }
       its(:content) { should match '"Type": "File"' }
       its(:content) { should match '"MetaDataPath": ""' }
-      its(:content) { should match '"UserDataPath": "/var/lib/waagent/CustomData"' }
-      its(:content) { should match '"SettingsPath": "/var/lib/waagent/CustomData"' }
+      its(:content) { should match '"UserDataPath": "/var/vcap/data/waagent/CustomData"' }
+      its(:content) { should match '"SettingsPath": "/var/vcap/data/waagent/CustomData"' }
       its(:content) { should match '"UseServerName": true' }
       its(:content) { should match '"UseRegistry": true' }
     end
