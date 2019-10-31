@@ -15,7 +15,7 @@ size=$(qemu-img info -f raw --output json "$extracted_image_path" | \
      jq '.["virtual-size"]')
 
 rounded_size=$((($size/$MB + 1)*$MB))
-qemu-img resize $extracted_image_path $rounded_size
+qemu-img resize $extracted_image_path $rounded_size > /dev/null
 
 # The size of the VHD for Azure must be a whole number in megabytes.
 qemu-img convert -O vpc -o subformat=fixed,force_size $extracted_image_path $converted_raw_path/root.vhd
