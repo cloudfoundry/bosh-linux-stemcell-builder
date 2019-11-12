@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">0c633b3ea5f8e1e13777cc7164d5a496b39b45c10e1aeb6eb248c2bd0cb3309f82415f61224680e0c634edfa1f7ddc21c4e49137b109515a68d6869225805424</hash>
-    <hash type="sha-256">faa276c376a23e9b6e50b3b6fba08964b4bc369147bdc218521f1b1e01821814</hash>
-    <hash type="sha-1">bf7092d9cc76ca8dae53c29375be3447851a6db6</hash>
-    <hash type="md5">f3f76b3d9fd50739d440a0061eedd526</hash>
-    <size>505255722</size>
+    <hash type="sha-512">1824489b683408151447bb52c28cd9f22c87f4b0edd697900e13b0da01c8851d37cf002f048483b9ff76daec05e50c6c9d8d92aed74a63d3419b80b6d885d474</hash>
+    <hash type="sha-256">0cb889254e8c8a1443644da2e82fdc0e97a3ff2a0847bdb07ec05b1135d354b6</hash>
+    <hash type="sha-1">f6c51eb68c4a0c65e67d833573446e295d53cf84</hash>
+    <hash type="md5">c31003e2443018b4a4939534b5d5f68d</hash>
+    <size>506372157</size>
     <url>https://s3.amazonaws.com/bosh-os-images/97.x/ubuntu-xenial.tgz</url>
-    <version>9.0.0</version>
+    <version>10.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">14ad06956522aa4e4c20e0f61c0d9096f34c22461ff3f8d2ecd053c6da36def277eb5a455216d530d0e25c57d07a2cca29a08900659a62600bf9f2b851cd4a1c</hash>
-    <hash type="sha-256">5b4f45b5757ff89d76b8e501ab567424f0271736d1da66a1580e9841886c332d</hash>
-    <hash type="sha-1">43e57363258fb142ff02dfa6c6c74430d19d33af</hash>
-    <hash type="md5">3d5600eb0306621fe9e3c666e4456d3c</hash>
-    <size>4339</size>
+    <hash type="sha-512">c78f1eeb4ea2684016af145a222b64bc3b538f75c14c25ab35eff1c4729c4236db404759ef0d8a81819f6737371f3ad6d1723c14c52492546b17a5d30daf29f0</hash>
+    <hash type="sha-256">d5f19bc05e1f1f4d93918987415030abfc344d03b8524832f15b5ca99721d627</hash>
+    <hash type="sha-1">4a8ccb22c5a65031ff4884a56b3acd0dfa4024f1</hash>
+    <hash type="md5">fb6a01128905414e2964b9dc57cac956</hash>
+    <size>803</size>
     <url>https://s3.amazonaws.com/bosh-os-images/97.x/usn-log.json</url>
-    <version>9.0.0</version>
+    <version>10.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2019-11-11T14:20:20.554025995Z</published>
+  <published>2019-11-12T23:08:39.841150388Z</published>
 </metalink>
