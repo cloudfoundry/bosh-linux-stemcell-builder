@@ -86,11 +86,11 @@ shared_examples_for 'a Linux kernel based OS image' do
     end
 
     context 'installed by system_ixgbevf' do
-      describe package('dkms'), exclude_on_ppc64le: true do
+      describe package('dkms') do
         it { should be_installed }
       end
 
-      describe 'the ixgbevf kernel module', exclude_on_ppc64le: true  do
+      describe 'the ixgbevf kernel module' do
         it 'is installed with the right version' do
           prefix = "/var/lib/dkms/ixgbevf/4.6.1/#{kernel_version}/x86_64/module"
           uncompressed = "#{prefix}/ixgbevf.ko"

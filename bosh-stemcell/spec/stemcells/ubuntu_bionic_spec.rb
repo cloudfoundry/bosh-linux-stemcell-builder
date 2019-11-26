@@ -5,7 +5,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
 
   linux_version_regex = 's/linux-(.+)-([0-9]+).([0-9]+).([0-9]+)-([0-9]+)/linux-\1-\2.\3/'
 
-  context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
+  context 'installed by image_install_grub' do
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match 'set default="0"' }

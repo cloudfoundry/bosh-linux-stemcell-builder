@@ -36,23 +36,9 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
 
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
-      if Bosh::Stemcell::Arch.ppc64le?
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-updates main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-updates universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic multiverse' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-updates multiverse' }
-
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-security main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-security universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ bionic-security multiverse' }
-
-      else
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu bionic main universe multiverse' }
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu bionic-updates main universe multiverse' }
-        its(:content) { should match 'deb http://security.ubuntu.com/ubuntu bionic-security main universe multiverse' }
-      end
+      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu bionic main universe multiverse' }
+      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu bionic-updates main universe multiverse' }
+      its(:content) { should match 'deb http://security.ubuntu.com/ubuntu bionic-security main universe multiverse' }
     end
 
     describe file('/lib/systemd/system/runit.service') do

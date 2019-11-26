@@ -36,9 +36,8 @@ module Bosh::Stemcell
     end
 
     describe '#to_s' do
-      let(:arch) { Bosh::Stemcell::Arch.ppc64le? ? 'ppc64le-' : '' }
       it 'includes name, version, stemcell name' do
-        expect(archive_filename.to_s).to eq ("FAKE_NAME-#{arch}007-fake-stemcell-name.tgz")
+        expect(archive_filename.to_s).to eq ("FAKE_NAME-007-fake-stemcell-name.tgz")
       end
     end
   end

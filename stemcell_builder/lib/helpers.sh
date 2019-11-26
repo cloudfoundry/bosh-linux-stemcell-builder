@@ -68,14 +68,6 @@ function add_on_exit {
   fi
 }
 
-function is_ppc64le() {
-  if [ `uname -m` == "ppc64le" ]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
 curl_five_times() {
   output_filename="${1}"
   address="${2}"

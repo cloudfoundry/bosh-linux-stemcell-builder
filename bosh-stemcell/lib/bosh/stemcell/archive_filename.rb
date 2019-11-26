@@ -14,7 +14,7 @@ module Bosh::Stemcell
 
     def to_s
       stemcell_filename_parts = [
-        name,
+        base_name,
         version,
         definition.stemcell_name(disk_format)
       ]
@@ -23,14 +23,6 @@ module Bosh::Stemcell
     end
 
     private
-
-    def name
-      if Bosh::Stemcell::Arch.ppc64le?
-        "#{base_name}-ppc64le"
-      else
-        base_name
-      end
-    end
 
     attr_reader(
       :base_name,

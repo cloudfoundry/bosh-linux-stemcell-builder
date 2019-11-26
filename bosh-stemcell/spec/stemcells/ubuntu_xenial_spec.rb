@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
 
-  context 'installed by image_install_grub', {exclude_on_ppc64le: true} do
+  context 'installed by image_install_grub' do
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match 'default=0' }

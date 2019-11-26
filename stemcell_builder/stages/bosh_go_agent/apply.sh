@@ -31,11 +31,7 @@ wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/v0.2
 
 os_type="$(get_os_type)"
 bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
-if is_ppc64le; then
-  /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-ppc64le bosh-agent
-else
-  /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
-fi
+/usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
 
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 

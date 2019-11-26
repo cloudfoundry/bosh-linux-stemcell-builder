@@ -98,23 +98,9 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
 
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
-      if Bosh::Stemcell::Arch.ppc64le?
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial multiverse' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates multiverse' }
-
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security main restricted' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security universe' }
-        its(:content) { should match 'deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security multiverse' }
-
-      else
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial main universe multiverse' }
-        its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial-updates main universe multiverse' }
-        its(:content) { should match 'deb http://security.ubuntu.com/ubuntu xenial-security main universe multiverse' }
-      end
+      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial main universe multiverse' }
+      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu xenial-updates main universe multiverse' }
+      its(:content) { should match 'deb http://security.ubuntu.com/ubuntu xenial-security main universe multiverse' }
     end
 
     describe package('systemd') do
@@ -189,7 +175,7 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
       uuid-dev
       wget
       zip
-    ].reject { |pkg| Bosh::Stemcell::Arch.ppc64le? && ((pkg == 'rsyslog-mmjsonparse') || (pkg == 'rsyslog-gnutls') || (pkg == 'rsyslog-relp')) }.each do |pkg|
+    ].each do |pkg|
       describe package(pkg) do
         it { should be_installed }
       end
@@ -240,31 +226,13 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
   end
 
   context 'installed by system_grub' do
-    if Bosh::Stemcell::Arch.ppc64le?
-      %w[
-        grub2
-      ].each do |pkg|
-        describe package(pkg) do
-          it { should be_installed }
-        end
-      end
-      %w[grub grubenv grub.chrp].each do |grub_file|
-        describe file("/boot/grub/#{grub_file}") do
-          it { should be_file }
-        end
-      end
-    else
-      %w[
-        grub
-      ].each do |pkg|
-        describe package(pkg) do
-          it { should be_installed }
-        end
-      end
-      %w[e2fs_stage1_5 stage1 stage2].each do |grub_stage|
-        describe file("/boot/grub/#{grub_stage}") do
-          it { should be_file }
-        end
+    describe package("grub") do
+      it { should be_installed }
+    end
+
+    %w[e2fs_stage1_5 stage1 stage2].each do |grub_stage|
+      describe file("/boot/grub/#{grub_stage}") do
+        it { should be_file }
       end
     end
   end

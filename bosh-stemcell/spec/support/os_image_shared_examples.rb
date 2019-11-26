@@ -184,7 +184,7 @@ shared_examples_for 'every OS image' do
       it { should exist }
     end
 
-    describe command('rsyslogd -N 1'), exclude_on_ppc64le: true do
+    describe command('rsyslogd -N 1') do
       it('has exit status of 0') { expect(subject.exit_status).to eq 0 }
       it('reports its version number as 8') { expect(subject.stderr).to match /version 8/ }
     end
