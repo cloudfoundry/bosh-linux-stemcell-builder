@@ -11,18 +11,7 @@ module Bosh::Stemcell
     end
 
     def operating_system_stages
-      case operating_system
-      when OperatingSystem::Centos then
-        centos_os_stages
-      when OperatingSystem::Rhel then
-        rhel_os_stages
-      when OperatingSystem::Ubuntu then
-        ubuntu_os_stages
-      when OperatingSystem::Photonos then
-        photonos_os_stages
-      when OperatingSystem::Opensuse then
-        opensuse_os_stages
-      end
+      ubuntu_os_stages
     end
 
     def extract_operating_system_stages
@@ -89,19 +78,10 @@ module Bosh::Stemcell
     def_delegators :@definition, :infrastructure, :operating_system, :agent
 
     def openstack_stages
-      stages = if is_centos? || is_rhel? || is_opensuse?
-                 [
-                   :system_network,
-                 ]
-               else
-                 %i[
-                   system_network
-                   system_openstack_clock
-                   system_openstack_modules
-                 ]
-               end
-
-      stages + %i[
+      %i[
+        system_network
+        system_openstack_clock
+        system_openstack_modules
         system_parameters
         bosh_clean
         bosh_harden
@@ -241,46 +221,6 @@ module Bosh::Stemcell
       ]
     end
 
-    def centos_os_stages
-      [
-        :base_centos,
-        :base_runsvdir,
-        :base_centos_packages,
-        :base_file_permission,
-        :base_ssh,
-        :system_kernel_modules,
-        :system_ixgbevf,
-        bosh_steps,
-        :password_policies,
-        :restrict_su_command,
-        :tty_config,
-        :rsyslog_config,
-        :delay_monit_start,
-        :system_grub,
-        :cron_config,
-        :escape_ctrl_alt_del,
-        :bosh_audit_centos,
-        :bosh_log_audit_start,
-      ].flatten
-    end
-
-    def rhel_os_stages
-      [
-        :base_rhel,
-        :base_runsvdir,
-        :base_centos_packages,
-        :base_file_permission,
-        :base_ssh,
-        :system_kernel_modules,
-        bosh_steps,
-        :rsyslog_config,
-        :delay_monit_start,
-        :system_grub,
-        :rhel_unsubscribe,
-        :cron_config,
-      ].flatten
-    end
-
     def ubuntu_os_stages
       [
         :base_debootstrap,
@@ -305,44 +245,7 @@ module Bosh::Stemcell
         :vim_tiny,
         :cron_config,
         :escape_ctrl_alt_del,
-        :system_users,
         :bosh_audit_ubuntu,
-        :bosh_log_audit_start,
-      ].flatten
-    end
-
-    def photonos_os_stages
-      [
-        :base_photonos,
-        :base_file_permission,
-        bosh_steps,
-        :base_ssh,
-        :rsyslog_config,
-        :delay_monit_start,
-        :system_grub,
-        :cron_config,
-      ].flatten
-    end
-
-    def opensuse_os_stages
-      [
-        :base_opensuse,
-        :base_runsvdir,
-        :base_file_permission,
-        :base_ssh,
-        :system_kernel_modules,
-        :system_ixgbevf,
-        bosh_steps,
-        :password_policies,
-        :restrict_su_command,
-        :tty_config,
-        :rsyslog_config,
-        :delay_monit_start,
-        :system_grub,
-        :cron_config,
-        :escape_ctrl_alt_del,
-        :system_users,
-        :bosh_audit_centos,
         :bosh_log_audit_start,
       ].flatten
     end
@@ -395,18 +298,6 @@ module Bosh::Stemcell
       [
         :prepare_files_image_stemcell,
       ]
-    end
-
-    def is_centos?
-      operating_system.instance_of?(OperatingSystem::Centos)
-    end
-
-    def is_rhel?
-      operating_system.instance_of?(OperatingSystem::Rhel)
-    end
-
-    def is_opensuse?
-      operating_system.instance_of?(OperatingSystem::Opensuse)
     end
   end
 end

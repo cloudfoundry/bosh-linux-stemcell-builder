@@ -27,11 +27,6 @@ then
 
   rsync -a $chroot/usr/lib/grub/x86*/ $chroot/boot/grub/
 
-elif [ -d $chroot/etc/grub.d ] # GRUB 2 on CentOS 7 or Ubuntu
-then
-
-  echo "Found grub2; grub-legacy bootloader stages not needed"
-
 else
 
   echo "Can't find GRUB or GRUB 2 files, exiting"

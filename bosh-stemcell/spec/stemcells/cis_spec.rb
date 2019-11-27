@@ -48,24 +48,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
 
   context "For all infrastructure except Azure", {exclude_on_azure:true} do
     it 'confirms that all CIS test cases ran' do
-      expected_base_cis_test_cases = base_cis_test_cases
-      expected_base_cis_test_cases << 'CIS-2.24'
-
-      expected_cis_test_cases = expected_base_cis_test_cases
-      case ENV['OS_NAME']
-        when 'ubuntu'
-          expected_cis_test_cases = expected_base_cis_test_cases + [
-          ]
-        when 'centos'
-          expected_cis_test_cases = expected_base_cis_test_cases + [
-            'CIS-6.7'
-          ]
-        when 'rhel'
-          expected_cis_test_cases = expected_base_cis_test_cases + [
-          ]
-      end
-
-      expect($cis_test_cases.to_a).to match_array expected_cis_test_cases
+      expect($cis_test_cases.to_a).to match_array(base_cis_test_cases + ['CIS-2.24'])
     end
   end
 
@@ -80,23 +63,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
     exclude_on_softlayer: true,
   } do
     it 'confirms that all CIS test cases ran' do
-      expected_base_cis_test_cases = base_cis_test_cases
-
-      expected_cis_test_cases = expected_base_cis_test_cases
-      case ENV['OS_NAME']
-        when 'ubuntu'
-          expected_cis_test_cases = expected_base_cis_test_cases + [
-          ]
-        when 'centos'
-          expected_cis_test_cases = expected_base_cis_test_cases + [
-            'CIS-6.7'
-          ]
-        when 'rhel'
-          expected_cis_test_cases = expected_base_cis_test_cases + [
-          ]
-      end
-
-      expect($cis_test_cases.to_a).to match_array expected_cis_test_cases
+      expect($cis_test_cases.to_a).to match_array(base_cis_test_cases)
     end
   end
 end

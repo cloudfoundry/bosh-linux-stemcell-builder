@@ -7,16 +7,7 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
 # Set up users/groups
-vcap_user_groups='admin,adm,audio,cdrom,dialout,floppy,video,bosh_sshers'
-
-if [ "${stemcell_operating_system}" != "centos" ] && [ "${stemcell_operating_system}" != "rhel" ] ; then
-  vcap_user_groups="${vcap_user_groups},dip"
-fi
-
-if [ -f $chroot/etc/debian_version ] # Ubuntu
-then
-  vcap_user_groups+=",plugdev"
-fi
+vcap_user_groups='admin,adm,audio,cdrom,dialout,floppy,video,bosh_sshers,dip,plugdev'
 
 run_in_chroot $chroot "
 groupadd --system admin
@@ -38,20 +29,6 @@ cp $assets_dir/sudoers $chroot/etc/sudoers
 # Add $bosh_dir/bin to $PATH
 echo "export PATH=$bosh_dir/bin:\$PATH" >> $chroot/root/.bashrc
 echo "export PATH=$bosh_dir/bin:\$PATH" >> $chroot/home/vcap/.bashrc
-
-if [ "${stemcell_operating_system}" == "opensuse" ] ; then
-  echo "export PATH=\$PATH:/sbin" >> $chroot/home/vcap/.bashrc
-fi
-
-if [ "${stemcell_operating_system}" == "centos" ] || [ "${stemcell_operating_system}" == "photonos" ] || [ "${stemcell_operating_system}" == "opensuse" ] ; then
-  cat > $chroot/root/.profile <<EOS
-if [ "\$BASH" ]; then
-  if [ -f ~/.bashrc ]; then
-    . ~/.bashrc
-  fi
-fi
-EOS
-fi
 
 # install custom command prompt
 # due to differences in ordering between OSes, explicitly source it last

@@ -12,26 +12,7 @@ rm -fr $chroot/etc/udev/rules.d/70-persistent-net.rules
 # https://github.com/cloudfoundry/bosh/issues/1399
 echo -n "bosh-stemcell" > $chroot/etc/hostname
 
-if [ -e "$chroot/etc/network/interfaces" ]; then # ubuntu
-  cat >> $chroot/etc/network/interfaces <<EOS
+cat >> $chroot/etc/network/interfaces <<EOS
 auto lo
 iface lo inet loopback
 EOS
-
-elif [ -d "$chroot/etc/sysconfig/network" ]; then # openSUSE
-  :
-elif [ -e "$chroot/etc/sysconfig/network" ]; then # centos
-  cat >> $chroot/etc/sysconfig/network <<EOS
-NETWORKING=yes
-NETWORKING_IPV6=no
-HOSTNAME=bosh-stemcell
-NOZEROCONF=yes
-EOS
-
-  cat >> $chroot/etc/NetworkManager/NetworkManager.conf <<EOS
-[main]
-plugins=ifcfg-rh
-no-auto-default=*
-EOS
-
-fi

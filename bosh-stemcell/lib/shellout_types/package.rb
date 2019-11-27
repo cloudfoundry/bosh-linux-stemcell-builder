@@ -22,8 +22,6 @@ module ShelloutTypes
       stdout, _, _ = @chroot_cmd_runner.run('cat /etc/*release')
       if stdout.match /Ubuntu/
         return 'dpkg -s'
-      elsif stdout.match /CentOS|openSUSE/
-        return 'rpm -q'
       else
         raise "Cannot determine Linux distribution: #{stdout}"
       end

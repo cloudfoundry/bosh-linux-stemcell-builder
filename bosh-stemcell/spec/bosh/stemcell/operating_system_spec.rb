@@ -5,7 +5,6 @@ module Bosh::Stemcell
   describe OperatingSystem do
     describe '.for' do
       it 'returns the correct infrastrcture' do
-        expect(OperatingSystem.for('centos', '99')).to be_a(OperatingSystem::Centos)
         expect(OperatingSystem.for('ubuntu', 'penguin')).to be_a(OperatingSystem::Ubuntu)
       end
 
@@ -45,31 +44,12 @@ module Bosh::Stemcell
     end
   end
 
-  describe OperatingSystem::Centos do
-    subject { OperatingSystem::Centos.new('99') }
-
-    its(:name) { should eq('centos') }
-    it { should eq OperatingSystem.for('centos', '99') }
-    it { should_not eq OperatingSystem.for('rhel', '99') }
-    it { should_not eq OperatingSystem.for('ubuntu', 'penguin') }
-  end
-
   describe OperatingSystem::Ubuntu do
     subject { OperatingSystem::Ubuntu.new('penguin') }
 
     its(:name) { should eq('ubuntu') }
     its(:version) { should eq('penguin') }
     it { should eq OperatingSystem.for('ubuntu', 'penguin') }
-    it { should_not eq OperatingSystem.for('rhel', '99') }
-    it { should_not eq OperatingSystem.for('centos', '99') }
-  end
-
-  describe OperatingSystem::Rhel do
-    subject { OperatingSystem::Rhel.new('99') }
-
-    its(:name) { should eq('rhel') }
-    it { should eq OperatingSystem.for('rhel', '99') }
-    it { should_not eq OperatingSystem.for('centos', '99') }
-    it { should_not eq OperatingSystem.for('ubuntu', 'penguin') }
+    it { should_not eq OperatingSystem.for('foo', '99') }
   end
 end

@@ -27,7 +27,7 @@ describe Bosh::Stemcell::StemcellBuilder do
       stemcell_formats: ['stemcell-format-a', 'stemcell-format-b'],
     )
   end
-  let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('centos') }
+  let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('ubuntu') }
 
   let(:definition) do
     Bosh::Stemcell::Definition.new(

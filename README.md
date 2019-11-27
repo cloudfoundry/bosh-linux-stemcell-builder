@@ -67,55 +67,9 @@ The OS Image should be rebuilt when you are making changes to which packages we 
 
 The arguments to `stemcell:build_os_image` are:
 
-0. *`operating_system_name`* identifies which type of OS to fetch. Determines which package repository and packaging tool will be used to download and assemble the files. Must match a value recognized by the  [OperatingSystem](bosh-stemcell/lib/bosh/stemcell/operating_system.rb) module. Currently, `ubuntu` `centos` and `rhel` are recognized.
-0. *`operating_system_version`* an identifier that the system may use to decide which release of the OS to download. Acceptable values depend on the operating system. For `ubuntu`, use `xenial`. For `centos` or `rhel`, use `7`.
+0. *`operating_system_name`* identifies which type of OS to fetch. Determines which package repository and packaging tool will be used to download and assemble the files. Must match a value recognized by the  [OperatingSystem](bosh-stemcell/lib/bosh/stemcell/operating_system.rb) module. Currently, only `ubuntu` is recognized.
+0. *`operating_system_version`* an identifier that the system may use to decide which release of the OS to download. Acceptable values depend on the operating system. For `ubuntu`, use `xenial`.
 0. *`os_image_path`* the path to write the finished OS image tarball to. If a file exists at this path already, it will be overwritten without warning.
-
-
-#### Special requirements for building a RHEL OS image
-
-There are a few extra steps you need to do before building a RHEL OS image:
-
-0. Start up or re-provision the stemcell building machine (run `vagrant up` or `vagrant provision` from this directory)
-0. Download the [RHEL 7.0 Binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.0/x86_64/product-downloads) image and use `scp` to copy it to the stemcell building machine. Note that RHEL 7.1 does not yet build correctly.
-0. On the stemcell building machine, mount the RHEL 7 DVD at `/mnt/rhel`:
-
-        $ mkdir -p /mnt/rhel
-        $ mount rhel-server-7.0-x86_64-dvd.iso /mnt/rhel
-
-0. On the stemcell building machine, put your Red Hat Account username and password into environment variables:
-
-        $ export RHN_USERNAME=my-rh-username@company.com
-        $ export RHN_PASSWORD=my-password
-
-0. On the stemcell building machine, run the stemcell building rake task:
-
-        $ bundle exec rake stemcell:build_os_image[rhel,7,$PWD/tmp/rhel_7_base_image.tgz]
-
-See below [Building the stemcell with local OS image](#with-local-os-image) on how to build stemcell with the new OS image.
-
-
-#### Special requirements for building a PhotonOS image
-
-There are a few extra steps you need to do before building a PhotonOS image:
-
-0. Start up or re-provision the stemcell building machine (run `vagrant up` or `vagrant provision` from this directory)
-0. Download the [latest PhotonOS ISO image](https://vmware.bintray.com/photon/iso/) and use `scp` to copy it to the stemcell building machine. The version must be TP2-dev or newer.
-0. On the stemcell building machine, mount the PhotonOS ISO at `/mnt/photonos`:
-
-        $ mkdir -p /mnt/photonos
-        $ mount photon.iso /mnt/photonos
-
-0. On the stemcell building machine, run the stemcell building rake task:
-
-        $ bundle exec rake stemcell:build_os_image[photonos,TP2,$PWD/tmp/photon_TP2_base_image.tgz]
-
-See below [Building the stemcell with local OS image](#with-local-os-image) on how to build stemcell with the new OS image.
-
-
-#### Special requirements for building an openSUSE image
-
-The openSUSE image is built using [Kiwi](http://opensuse.github.io/kiwi/) which is not available in the normal builder container. For that reason a special container has to be used. All required steps are described in the [documentation](./ci/docker/suse-os-image-stemcell-builder/README.md).
 
 #### How to run tests for OS Images
 
