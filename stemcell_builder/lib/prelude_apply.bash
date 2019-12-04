@@ -19,21 +19,6 @@ else
   export DISTRIB_CODENAME="no-distrib-codename"
 fi
 
-function get_os_type {
-  ubuntu_file=$chroot/etc/lsb-release
-
-  os_type=''
-  if [ -f $ubuntu_file ]
-  then
-    os_type='ubuntu'
-  fi
-
-  echo $os_type
-}
-
-os_type=$(get_os_type)
-export OS_TYPE=$os_type
-
 function pkg_mgr {
   run_in_chroot $chroot "apt-get update"
   run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive;apt-get -f -y --force-yes --no-install-recommends $*"

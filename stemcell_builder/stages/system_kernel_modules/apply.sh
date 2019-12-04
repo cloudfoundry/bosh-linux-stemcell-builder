@@ -28,6 +28,4 @@ options nouveau modeset=0
 alias nouveau off
 alias lbm-nouveau off' >> $chroot/etc/modprobe.d/blacklist-nouveau.conf
 
-if [[ $OS_TYPE == 'ubuntu' ]]; then
-  rm -rf $chroot/lib/modules/*/kernel/zfs $chroot/usr/src/linux-headers-*/zfs
-fi
+rm -rf $chroot/lib/modules/*/kernel/zfs $chroot/usr/src/linux-headers-*/zfs
