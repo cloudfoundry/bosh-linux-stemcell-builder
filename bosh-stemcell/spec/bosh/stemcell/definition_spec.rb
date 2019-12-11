@@ -70,7 +70,6 @@ module Bosh::Stemcell
 
         expect_not_equal = [
           [['aws', 'xen', 'ubuntu', 'version'], ['vsphere', 'xen', 'ubuntu', 'version']],
-          [['aws', 'xen', 'not-ubuntu', 'version'], ['aws', 'xen', 'ubuntu', 'version']],
         ]
         expect_not_equal.each do |left, right|
           expect(Definition.for(*left)).to_not eq(Definition.for(*right))

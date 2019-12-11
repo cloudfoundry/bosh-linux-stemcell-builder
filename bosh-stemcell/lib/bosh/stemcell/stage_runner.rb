@@ -9,7 +9,7 @@ module Bosh::Stemcell
     def measure_configure(name, &block)
       start = Time.now.utc
 
-      puts "== Started configuring #{name} at #{start.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
+      puts "== Started configuring '#{name}' at #{start.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
       yield
       @stats << {type: "configure", name: name, duration: Time.now.utc - start}
     end
@@ -17,7 +17,7 @@ module Bosh::Stemcell
     def measure_apply(name, &block)
       start = Time.now.utc
 
-      puts "== Started applying #{name} at #{start.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
+      puts "== Started applying '#{name}' at #{start.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
       yield
       @stats << {type: "apply", name: name, duration: Time.now.utc - start}
     end

@@ -67,15 +67,6 @@ module Bosh::Stemcell
         allow(File).to receive(:executable?).and_return(true) # because FakeFs does not support :executable?
       end
 
-      it 'prints the expected messages' do
-        allow(stage_runner).to receive(:puts).with("=== Configuring 'stage_0' stage ===")
-        allow(stage_runner).to receive(:puts).with("== Started #{Time.now.strftime('%a %b %e %H:%M:%S %Z %Y')} ==")
-        allow(stage_runner).to receive(:puts).with("=== Configuring 'stage_1' stage ===")
-        allow(stage_runner).to receive(:puts).with("== Started #{Time.now.strftime('%a %b %e %H:%M:%S %Z %Y')} ==")
-
-        stage_runner.configure(stages)
-      end
-
       it 'runs the configure script for each stage in order' do
         expect(shell).to receive(:run).
           with('sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/config.sh /fake/path/to/settings.bash 2>&1',
@@ -124,17 +115,6 @@ module Bosh::Stemcell
     end
 
     describe '#apply' do
-      it 'prints the expected messages' do
-        Timecop.freeze do
-          expect(stage_runner).to receive(:puts).with("=== Applying 'stage_0' stage ===")
-          expect(stage_runner).to receive(:puts).with("== Started #{Time.now.strftime('%a %b %e %H:%M:%S %Z %Y')} ==")
-          expect(stage_runner).to receive(:puts).with("=== Applying 'stage_1' stage ===")
-          expect(stage_runner).to receive(:puts).with("== Started #{Time.now.strftime('%a %b %e %H:%M:%S %Z %Y')} ==")
-
-          stage_runner.apply(stages)
-        end
-      end
-
       it 'runs the apply script for each stage in order' do
         expect(FileUtils).to receive(:mkdir_p).with(work_path).exactly(2).times
 
@@ -164,26 +144,25 @@ module Bosh::Stemcell
 
         # stage_runner requires that we're running as uid 1000 (usually 'ubuntu' user in the aws build env)
         allow(Process).to receive(:euid).and_return(1000)
-
-      end
-
-      context 'when resume_from is unset' do
-        it 'runs all stages' do
-          expect(stage_runner).to receive(:puts).with("=== Configuring 'stage_0' stage ===")
-          expect(stage_runner).to receive(:puts).with("=== Configuring 'stage_1' stage ===")
-          expect(stage_runner).to receive(:puts).with("=== Applying 'stage_0' stage ===")
-          expect(stage_runner).to receive(:puts).with("=== Applying 'stage_1' stage ===")
-
-          stage_runner.configure_and_apply(stages)
-        end
       end
 
       context 'when resume_from is set' do
         it 'skips stages before resume_from ' do
-          expect(stage_runner).to_not receive(:puts).with("=== Configuring 'stage_0' stage ===")
-          expect(stage_runner).to receive(:puts).with("=== Configuring 'stage_1' stage ===")
-          expect(stage_runner).to_not receive(:puts).with("=== Applying 'stage_0' stage ===")
-          expect(stage_runner).to receive(:puts).with("=== Applying 'stage_1' stage ===")
+          expect(FileUtils).to receive(:mkdir_p).with(work_path).exactly(1).times
+
+          expect(shell).to_not receive(:run).
+            with('sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/config.sh /fake/path/to/settings.bash 2>&1',
+                 { output_command: true })
+          expect(shell).to receive(:run).
+            with('sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/config.sh /fake/path/to/settings.bash 2>&1',
+                 { output_command: true })
+
+          expect(shell).to_not receive(:run).
+            with('sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/apply.sh /fake/path/to/work_dir/work 2>&1',
+                 { output_command: true })
+          expect(shell).to receive(:run).
+            with('sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/apply.sh /fake/path/to/work_dir/work 2>&1',
+                 { output_command: true })
 
           stage_runner.configure_and_apply(stages, 'stage_1')
         end

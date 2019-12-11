@@ -50,6 +50,5 @@ module Bosh::Stemcell
     its(:name) { should eq('ubuntu') }
     its(:version) { should eq('penguin') }
     it { should eq OperatingSystem.for('ubuntu', 'penguin') }
-    it { should_not eq OperatingSystem.for('foo', '99') }
   end
 end
