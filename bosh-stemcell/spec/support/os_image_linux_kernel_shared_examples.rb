@@ -48,6 +48,14 @@ shared_examples_for 'a Linux kernel based OS image' do
         expect(subject.content).to match /^net.ipv4.conf.default.rp_filter=1$/
       end
 
+      it 'must log suspicious packets on all interfaces (CIS-3.2.4)' do
+        expect(subject.content).to match /^net.ipv4.conf.all.log_martians=1$/
+      end
+
+      it 'must log suspicious packets by default (CIS-3.2.4)' do
+        expect(subject.content).to match /^net.ipv4.conf.default.log_martians=1$/
+      end
+
       it 'should disable ipv6 router advertisements on all interfaces (CIS-7.3.1)' do
         expect(subject.content).to match /^net.ipv6.conf.all.accept_ra=0$/
       end

@@ -33,6 +33,8 @@ patch $chroot/etc/pam.d/common-auth < $assets_dir/ubuntu/common-auth.patch
 strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
 patch $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
 
+strip_trailing_whitespace_from $chroot/etc/pam.d/login
+patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch
 
 # /etc/login.defs are only effective for new users
 sed -i -r 's/^PASS_MIN_DAYS.+/PASS_MIN_DAYS 1/' $chroot/etc/login.defs

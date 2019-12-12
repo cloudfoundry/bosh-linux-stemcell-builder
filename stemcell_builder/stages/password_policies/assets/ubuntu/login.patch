@@ -1,0 +1,5 @@
+6c6
+< auth       optional   pam_faildelay.so  delay=3000000
+---
+> auth       optional   pam_faildelay.so  delay=4000000
+
