@@ -28,3 +28,6 @@ else
 fi
 
 chmod 0755 $chroot/$bosh_dir/bin/sync-time
+
+mkdir -p "${chroot}/etc/systemd/system/chrony.service.d"
+cp $dir/assets/restart.conf "${chroot}/etc/systemd/system/chrony.service.d"
