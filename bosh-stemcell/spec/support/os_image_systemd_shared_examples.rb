@@ -1,9 +1,4 @@
 shared_examples_for 'a systemd-based OS image' do
-
-  context 'installed by rsyslog_config' do
-    # systemd startup may not be needed: see https://www.pivotaltracker.com/story/show/90100234
-  end
-
   context 'systemd services' do
     describe service('runit') do
       it { should be_enabled }
@@ -11,6 +6,15 @@ shared_examples_for 'a systemd-based OS image' do
 
     describe service('rsyslog') do
       it { should_not be_enabled }
+    end
+
+    describe service('chrony') do
+      it { should_not be_enabled }
+    end
+
+    describe file('/etc/systemd/system/chrony.service.d/restart.conf') do
+      it { should be_file }
+      its(:content) { should match /^Restart=always/ }
     end
 
     describe file('/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf') do
