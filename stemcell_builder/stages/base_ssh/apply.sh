@@ -85,3 +85,6 @@ for file in $chroot/etc/{issue,issue.net,motd}; do
     chown root:root $file
     chmod 644 $file
 done
+
+# Disable Ubuntu motd
+sudo sed -i 's/^ENABLED=.*/ENABLED=0/' /etc/default/motd-news
