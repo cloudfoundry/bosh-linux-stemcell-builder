@@ -279,6 +279,11 @@ shared_examples_for 'every OS image' do
       expect(banner.group).to eq('root')
     end
 
+    it 'disables motd' do
+      banner = file('/etc/default/motd-news')
+      expect(banner.content).to match('ENABLED=0')
+    end
+
     it 'sets IgnoreRhosts to yes (stig: V-38611)' do
       expect(sshd_config.content).to match(/^IgnoreRhosts yes$/)
     end
