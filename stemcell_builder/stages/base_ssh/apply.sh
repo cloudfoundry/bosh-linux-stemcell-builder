@@ -87,4 +87,4 @@ for file in $chroot/etc/{issue,issue.net,motd}; do
 done
 
 # Disable Ubuntu motd
-sudo sed -i 's/^ENABLED=.*/ENABLED=0/' /etc/default/motd-news
+sudo sed -i 's/^ENABLED=.*/ENABLED=0/' $chroot/etc/default/motd-news
