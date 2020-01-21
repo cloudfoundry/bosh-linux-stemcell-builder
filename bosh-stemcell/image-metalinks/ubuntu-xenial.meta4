@@ -1,12 +1,12 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">272f7a9564248c6a3b461ca665aecd29380d0ec18f06caa168096a254dd885038fbd26ddcce940840199034e44cd4de824e69f36c1d9573d3fe4cd2fc6a66900</hash>
-    <hash type="sha-256">d57b57a0be465de9928fd64b1d30eedf721db3cddd9b663e75e6b1bd28d702bf</hash>
-    <hash type="sha-1">b498fac9f0a6229f6abd132362fe18c665ee5d7a</hash>
-    <hash type="md5">b3497231737eefb0af64c89d15e51b59</hash>
-    <size>504423572</size>
+    <hash type="sha-512">f5ab982ce028c2bb02c664014b3bf926466ca266a74af5000dd1dd9f4b95c221afe77cc2dd20cfe8d8aa4c0db8e4c100af75dfdceef034d4fa05cac31b689ff4</hash>
+    <hash type="sha-256">677c63e536a3318b01324b9e68d96fb0419afd10d45d86b2989e1a5b64e762ef</hash>
+    <hash type="sha-1">552ed2f175b8683a6dcd18618347b3e0d1a3b195</hash>
+    <hash type="md5">2c21ac568825f2debafa6298dd3cb4db</hash>
+    <size>504441128</size>
     <url>https://s3.amazonaws.com/bosh-os-images/170.x/ubuntu-xenial.tgz</url>
-    <version>23.0.0</version>
+    <version>24.0.0</version>
   </file>
   <file name="usn-log.json">
     <hash type="sha-512">bce19010c347f4bf98ba4f1dcea8fdb0dec6396a880662a83b96cc4000b352b4a23c553a3996c7b6b7a97fe85ecc7588a5646a657f78185951cc43cdafa8aac9</hash>
@@ -15,8 +15,8 @@
     <hash type="md5">8360064ca930462326c8a12c9cc6261d</hash>
     <size>11204</size>
     <url>https://s3.amazonaws.com/bosh-os-images/170.x/usn-log.json</url>
-    <version>23.0.0</version>
+    <version>24.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-01-21T23:01:41.929683224Z</published>
+  <published>2020-01-21T23:17:11.764852832Z</published>
 </metalink>
