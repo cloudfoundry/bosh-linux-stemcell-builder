@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">b105b8d3fbe5d873556be1534b62eb242e30d7fb3f9754e4138bad77ac2db1d836831f6ca399724941e3bc7762757750354870b358510595c672eec3643caac3</hash>
-    <hash type="sha-256">b7a15c96da1b39fdb2619717d849b2292343a84aea61cff5eeb3c450c50b0672</hash>
-    <hash type="sha-1">e0128c70baa977065007b29c7fdcee01df3fc39b</hash>
-    <hash type="md5">08b5dc918fdeb3a598bc8f6bebfd9cab</hash>
-    <size>504445946</size>
+    <hash type="sha-512">c0192244bc9eb57145cdcad1088af2af3975b8982621ee3c6c000d4c9bcbd2b41ba5feb188c3edf2618f41d63abf727bb95ca7049b5a9ab3956fdbfe9387e5a8</hash>
+    <hash type="sha-256">161466155b4710c2cb144ef50b4a532d68ce508f3f58e605380eeed25bd5a75b</hash>
+    <hash type="sha-1">b39f294deec2773279f5da3573a483924c6ed606</hash>
+    <hash type="md5">7a5fcea6589d953702a5985518adfd64</hash>
+    <size>504443961</size>
     <url>https://s3.amazonaws.com/bosh-os-images/456.x/ubuntu-xenial.tgz</url>
     <version>26.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">bce19010c347f4bf98ba4f1dcea8fdb0dec6396a880662a83b96cc4000b352b4a23c553a3996c7b6b7a97fe85ecc7588a5646a657f78185951cc43cdafa8aac9</hash>
-    <hash type="sha-256">986a408a721b98fcfd5217ec2e293e35ede6deaf930472c492b8d79eb18fe345</hash>
-    <hash type="sha-1">eedafc2c19b7194c07f3913f0bf2dc1a117171ed</hash>
-    <hash type="md5">8360064ca930462326c8a12c9cc6261d</hash>
-    <size>11204</size>
+    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
+    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
+    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
+    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
+    <size>1</size>
     <url>https://s3.amazonaws.com/bosh-os-images/456.x/usn-log.json</url>
     <version>26.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-01-21T23:57:11.101831971Z</published>
+  <published>2020-01-22T00:20:58.844828249Z</published>
 </metalink>
