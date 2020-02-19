@@ -100,7 +100,7 @@ shared_examples_for 'a Linux kernel based OS image' do
 
       describe 'the ixgbevf kernel module' do
         it 'is installed with the right version' do
-          prefix = "/var/lib/dkms/ixgbevf/4.6.1/#{kernel_version}/x86_64/module"
+          prefix = "/var/lib/dkms/ixgbevf/4.6.3/#{kernel_version}/x86_64/module"
           uncompressed = "#{prefix}/ixgbevf.ko"
           compressed = "#{uncompressed}.xz"
 
