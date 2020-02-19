@@ -27,6 +27,11 @@ then
 
   rsync -a $chroot/usr/lib/grub/x86*/ $chroot/boot/grub/
 
+elif [ -d $chroot/usr/lib/grub/i386* ] # grub-pc on bionic
+then
+
+  rsync -a $chroot/usr/lib/grub/i386*/ $chroot/boot/grub/
+
 else
 
   echo "Can't find GRUB or GRUB 2 files, exiting"
