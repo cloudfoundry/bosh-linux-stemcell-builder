@@ -10,11 +10,6 @@ source "$base_dir/lib/prelude_apply.bash"
 : "${base_debootstrap_arch:?}"
 : "${assets_dir:?}"
 
-downloaded_file=$(mktemp)
-
-dpkg -i "$downloaded_file"
-rm "$downloaded_file"
-
 # Bootstrap the base system
 echo "Running debootstrap"
 debootstrap --arch="$base_debootstrap_arch" "$base_debootstrap_suite" "$chroot" ""
