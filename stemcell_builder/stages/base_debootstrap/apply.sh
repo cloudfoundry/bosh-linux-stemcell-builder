@@ -12,9 +12,6 @@ source "$base_dir/lib/prelude_apply.bash"
 
 downloaded_file=$(mktemp)
 
-wget "http://archive.ubuntu.com/ubuntu/pool/main/d/debootstrap/debootstrap_1.0.78+nmu1ubuntu1_all.deb" -qO "$downloaded_file" &&
-  echo "92e4e8479b5c4adbe9f36ed68502df5483be211d27c5118fc3518376d138b825  $downloaded_file" | shasum -a 256 -c -
-
 dpkg -i "$downloaded_file"
 rm "$downloaded_file"
 
