@@ -314,7 +314,7 @@ EOF
     end
 
     describe file('/etc/pam.d/common-auth') do
-      it'must restrict a user account after 5 failed login attempts (stig: V-38573)' do
+      it'must restrict a user account after 3 failed login attempts (stig: V-38573)' do
         expect(subject.content).to match /auth.*pam_tally2\.so.*deny=3/
       end
     end
