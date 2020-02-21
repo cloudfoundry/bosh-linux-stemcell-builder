@@ -9,7 +9,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match 'set default="0"' }
-      its(:content) { should match 'set root=(hd0,0)' }
+      its(:content) { should match(/^set root=\(hd0,0\)$/) }
       its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
       its(:content) { should match ' selinux=0' }
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
