@@ -106,21 +106,8 @@ cat > ${image_mount_point}/etc/fstab <<FSTAB
 UUID=${uuid} / ext4 defaults 1 1
 FSTAB
 
-cat > ${image_mount_point}/boot/grub/grub.cfg <<GRUB_CONF
-default=0
-timeout=1
-title ${os_name} (${kernel_version})
-  root (hd0,0)
-  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} net.ifnames=0 biosdevname=0 selinux=0 cgroup_enable=memory swapaccount=1 console=ttyS0,115200n8 console=tty0 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
-  initrd /boot/${initrd_file}
-GRUB_CONF
-
-# For grub.cfg
-if [ -f ${image_mount_point}/boot/grub/grub.cfg ];then
-  sed -i "/timeout=/a password --md5 *" ${image_mount_point}/boot/grub/grub.cfg
-  chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
-  chmod 600 ${image_mount_point}/boot/grub/grub.cfg
-fi
+chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
+chmod 600 ${image_mount_point}/boot/grub/grub.cfg
 
 run_in_chroot ${image_mount_point} "rm -f /boot/grub/menu.lst"
 run_in_chroot ${image_mount_point} "ln -s ./grub.cfg /boot/grub/menu.lst"
