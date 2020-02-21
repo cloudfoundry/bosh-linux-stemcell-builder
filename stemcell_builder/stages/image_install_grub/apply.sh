@@ -50,25 +50,50 @@ add_on_exit "umount ${image_mount_point}"
 # Generate random password
 random_password=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 16)
 
-mkdir -p ${image_mount_point}/tmp/grub
-add_on_exit "rm -rf ${image_mount_point}/tmp/grub"
+touch ${image_mount_point}${device}
+mount --bind ${device} ${image_mount_point}${device}
+add_on_exit "umount ${image_mount_point}${device}"
 
-touch ${image_mount_point}/tmp/grub/${stemcell_image_name}
+mkdir -p `dirname ${image_mount_point}${loopback_dev}`
+touch ${image_mount_point}${loopback_dev}
+mount --bind ${loopback_dev} ${image_mount_point}${loopback_dev}
+add_on_exit "umount ${image_mount_point}${loopback_dev}"
 
-mount --bind $work/${stemcell_image_name} ${image_mount_point}/tmp/grub/${stemcell_image_name}
-add_on_exit "umount ${image_mount_point}/tmp/grub/${stemcell_image_name}"
+# GRUB 2 needs /sys and /proc to do its job
+mount -t proc none ${image_mount_point}/proc
+add_on_exit "umount ${image_mount_point}/proc"
 
-cat > ${image_mount_point}/tmp/grub/device.map <<EOS
-(hd0) ${stemcell_image_name}
-EOS
+mount -t sysfs none ${image_mount_point}/sys
+add_on_exit "umount ${image_mount_point}/sys"
 
-run_in_chroot ${image_mount_point} "
-cd /tmp/grub
-grub --device-map=device.map --batch <<EOF
-root (hd0,0)
-setup (hd0)
+echo "(hd0) ${device}" > ${image_mount_point}/device.map
+
+# install bootsector into disk image file
+run_in_chroot ${image_mount_point} "grub-install -v --no-floppy --grub-mkdevicemap=/device.map --target=i386-pc ${device}"
+
+# Enable password-less booting in openSUSE, only editing the boot menu needs to be restricted
+run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
+cat >${image_mount_point}/etc/default/grub <<EOF
+GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1 cgroup_enable=memory swapaccount=1"
 EOF
-"
+
+# we use a random password to prevent user from editing the boot menu
+pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
+echo "\
+cat << EOF
+set superusers=vcap
+set root=(hd0,0)
+password_pbkdf2 vcap $pbkdf2_password
+EOF" >> ${image_mount_point}/etc/grub.d/00_header
+
+# assemble config file that is read by grub2 at boot time
+run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true grub-mkconfig -o /boot/grub/grub.cfg"
+
+# set the correct root filesystem; use the ext2 filesystem's UUID
+device_uuid=$(dumpe2fs $loopback_dev | grep UUID | awk '{print $3}')
+sed -i s%root=${loopback_dev}%root=UUID=${device_uuid}%g ${image_mount_point}/boot/grub/grub.cfg
+
+rm ${image_mount_point}/device.map
 
 # Figure out uuid of partition
 uuid=$(blkid -c /dev/null -sUUID -ovalue ${loopback_dev})
