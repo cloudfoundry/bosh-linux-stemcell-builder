@@ -1,12 +1,12 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">143c84a41bbe78a38a39ab29717c3024a5ffc43612e0177073eb73c252d3c3ffb759e3fce94c1b35bb8a41ba4ddfb0fd6f3cab2af09534b07bcc2cd64d302a74</hash>
-    <hash type="sha-256">02597d750e8c7412585fdd9d222880f728997c49b84c5ab5b3b4cf42d2136acd</hash>
-    <hash type="sha-1">e9daa615746ce0f59b2552c1f882a9b7e126cda8</hash>
-    <hash type="md5">cab5b633ba55ee04b4c57bcb03368806</hash>
-    <size>598632673</size>
+    <hash type="sha-512">a4202c8a31e788343a461acbfd7f003c166059cf466954f4e4ccae516a9918b6de7329c3ffa766799c75a1aa8a42322d6719c262c405872ece66ec9c060f3c05</hash>
+    <hash type="sha-256">fa4ae9d62368e17caaad128cc42f1685a34149d4f2c788d353dbd3041d27866d</hash>
+    <hash type="sha-1">0458497f46aa1373d9ffed71fecfb8adccb44376</hash>
+    <hash type="md5">6e6538ad31f5aff793e632a967d7eea4</hash>
+    <size>598641476</size>
     <url>https://s3.amazonaws.com/bosh-os-images/bionic-master/ubuntu-bionic.tgz</url>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
   </file>
   <file name="usn-log.json">
     <hash type="sha-512">cfe0236ae231093184e0907a610b9941642de38d66c5adf645375abe91e558968b097fb22fd858b8654fba2db0aad14106562bb4bdfcaf0491797839d06d5b0e</hash>
@@ -15,8 +15,8 @@
     <hash type="md5">ec4b635a88de75542da0ab06384658b5</hash>
     <size>2313</size>
     <url>https://s3.amazonaws.com/bosh-os-images/bionic-master/usn-log.json</url>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-02-21T20:53:48.128922249Z</published>
+  <published>2020-02-21T22:20:16.359493985Z</published>
 </metalink>
