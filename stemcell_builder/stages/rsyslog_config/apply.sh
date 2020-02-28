@@ -37,13 +37,7 @@ run_in_bosh_chroot $chroot "
 "
 
 # Configure /var/log directory
-filenames=( auth.log cloud-init.log daemon.log debug kern.log lpr.log mail.err mail.info \
-              mail.log mail.warn messages news/news.crit news/news.err \
-              news/news.notice syslog user.log cron.log )
-
-run_in_bosh_chroot $chroot "
-  mkdir -p /var/log/news
-"
+filenames=( auth.log cloud-init.log daemon.log kern.log syslog cron.log )
 
 for filename in ${filenames[@]}
 do
