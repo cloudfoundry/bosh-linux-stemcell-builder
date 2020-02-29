@@ -39,13 +39,19 @@ sed "/^ *IgnoreRhosts/d" -i $chroot/etc/ssh/sshd_config
 echo 'IgnoreRhosts yes' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *ClientAliveInterval/d" -i $chroot/etc/ssh/sshd_config
-echo 'ClientAliveInterval 900' >> $chroot/etc/ssh/sshd_config
+echo 'ClientAliveInterval 300' >> $chroot/etc/ssh/sshd_config
+
+sed "/^ *LoginGraceTime/d" -i $chroot/etc/ssh/sshd_config
+echo 'LoginGraceTime 60' >> $chroot/etc/ssh/sshd_config
+
+sed "/^ *Compression/d" -i $chroot/etc/ssh/sshd_config
+echo 'Compression delayed' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *PermitUserEnvironment/d" -i $chroot/etc/ssh/sshd_config
 echo 'PermitUserEnvironment no' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *ClientAliveCountMax/d" -i $chroot/etc/ssh/sshd_config
-echo 'ClientAliveCountMax 0' >> $chroot/etc/ssh/sshd_config
+echo 'ClientAliveCountMax 1' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *PasswordAuthentication/d" -i $chroot/etc/ssh/sshd_config
 echo 'PasswordAuthentication no' >> $chroot/etc/ssh/sshd_config
