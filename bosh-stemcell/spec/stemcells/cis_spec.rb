@@ -43,6 +43,8 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
         CIS-9.4
         CIS-9.5
         CIS-10.2
+        CIS-5.2.12
+        CIS-5.2.13
       }
   end
 
