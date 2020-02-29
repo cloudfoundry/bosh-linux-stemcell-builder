@@ -279,16 +279,24 @@ shared_examples_for 'every OS image' do
       expect(sshd_config.content).to match(/^IgnoreRhosts yes$/)
     end
 
-    it 'sets ClientAliveInterval to 900 seconds (stig: V-38608)' do
-      expect(sshd_config.content).to match(/^ClientAliveInterval 900$/)
+    it 'sets ClientAliveInterval to 900 seconds (CIS-5.2.12)' do
+      expect(sshd_config.content).to match(/^ClientAliveInterval 300$/)
+    end
+
+    it 'sets LoginGraceTime to 60 seconds (CIS-5.2.13)' do
+      expect(sshd_config.content).to match(/^LoginGraceTime 60$/)
+    end
+
+    it 'sets Compression to delayed seconds (stig: V-75851)' do
+      expect(sshd_config.content).to match(/^Compression delayed$/)
     end
 
     it 'sets PermitUserEnvironment to no (stig: V-38616)' do
       expect(sshd_config.content).to match(/^PermitUserEnvironment no$/)
     end
 
-    it 'sets ClientAliveCountMax to 0 (stig: V-38610)' do
-      expect(sshd_config.content).to match(/^ClientAliveCountMax 0$/)
+    it 'sets ClientAliveCountMax to 1 (stig: V-75837)' do
+      expect(sshd_config.content).to match(/^ClientAliveCountMax 1$/)
     end
 
     it 'sets Protocol to 2 (stig: V-38607)' do
