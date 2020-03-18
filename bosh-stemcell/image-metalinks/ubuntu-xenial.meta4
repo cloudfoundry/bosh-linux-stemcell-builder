@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">e0239797e78dbabc6b5a70badd6407e22b23c834eadce401b1b62e0d98f2bc22511105e59451f5cba06bc04f3a2e7d3ac46ca1a6c06ab8cfd6801263e42fd82e</hash>
-    <hash type="sha-256">a16e0a51c37ae3ec803b13e941ddd748b7dbda78148c6000a59879e7f7eb3e81</hash>
-    <hash type="sha-1">54e72cb0d80556bccd7884aab9bae2ac151efbfa</hash>
-    <hash type="md5">4d359a2c38c598e5e112c39228b41081</hash>
-    <size>504674378</size>
+    <hash type="sha-512">312c44ddba4217c831d11741f9c5a39472c07b92a8ce7a27f21454bb050f52df2da6d44b97de2cac66e15b1d30425a00a464e71c16cb52bffc00999e74c3f9b4</hash>
+    <hash type="sha-256">3fdc77e743b40288da1acf59f12a978fb497ce6e0d82780fa147af958a4413e8</hash>
+    <hash type="sha-1">23104a606ae634c87113f841570d7438f4dca69b</hash>
+    <hash type="md5">b43751ce7c741c75cabbec086e303339</hash>
+    <size>504721485</size>
     <url>https://s3.amazonaws.com/bosh-os-images/master/ubuntu-xenial.tgz</url>
-    <version>46.0.0</version>
+    <version>47.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">a5e38240742a977ab84bd6e1f038f2d845fa63927c57014f0c7de48f346ecd2b14e885fd963565b4e0b929cc4e8b2a94dfdde8e796ac85db164fcbac72f83043</hash>
-    <hash type="sha-256">1beadaf58defcaa70fb44ddf84aecaa59c3349167df628f47f207eeedcf487a1</hash>
-    <hash type="sha-1">164099503bd5509cfffb981f2630df7be2df583c</hash>
-    <hash type="md5">8d0221f53b68290e03b9d946f0862fd9</hash>
-    <size>117994</size>
+    <hash type="sha-512">4249e57163e6c6119f64b30813ec2c2869a439ac0ff10e10ad65fee9d462012312b7ecb184afc1848a8be086a178007c39ca98b81883efb5e1de5d55f6f075a5</hash>
+    <hash type="sha-256">7befd4971ae1196ade5a1c24c1375b1a126bad33c611dd7754bcf27a813c82a4</hash>
+    <hash type="sha-1">0b032a1dcc0f9132aacb91ab3c4fd95cb40ecae5</hash>
+    <hash type="md5">6a3e7cf4f13b5618b7a964d99f278695</hash>
+    <size>119839</size>
     <url>https://s3.amazonaws.com/bosh-os-images/master/usn-log.json</url>
-    <version>46.0.0</version>
+    <version>47.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-03-16T13:16:37.461757677Z</published>
+  <published>2020-03-18T21:03:20.975866663Z</published>
 </metalink>
