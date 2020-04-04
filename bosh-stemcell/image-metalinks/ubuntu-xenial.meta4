@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">457dbe3f830f473dbce103162ebbe73537f81f331282dc900238f71bdc79be15330a28be7c7687c7fb995e05465713d708c3ae005dd436625c35ec4d7222fa65</hash>
-    <hash type="sha-256">e789c781a14913a62f60243b74ac2cea5ed7bbe1e6c8a09030e40b7facbcfc81</hash>
-    <hash type="sha-1">18382b81c9f399009fb9a4fa9427ca1df5b1b5c3</hash>
-    <hash type="md5">7a8db227ec4b21b6c86e652e1f9c0d8c</hash>
-    <size>506158528</size>
+    <hash type="sha-512">17763ea921d2e722f3f11d9018d99b78e817046e276ffd380281e5e722382189f7c16dbdbc156128c58758be996db24d1a144f8072233745652cbb8b1f005e4c</hash>
+    <hash type="sha-256">4e20d76cc2b10c8e144f0042a0fc18944fdb3a7e1eb1a2e59009b2fbc4f8c45f</hash>
+    <hash type="sha-1">47557e9f1c65e5e1913fefc58fd8a4c84615dc16</hash>
+    <hash type="md5">bab253fbeef22a30d4615fb70e062025</hash>
+    <size>506145165</size>
     <url>https://s3.amazonaws.com/bosh-os-images/97.x/ubuntu-xenial.tgz</url>
-    <version>39.0.0</version>
+    <version>40.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">e240bbb653cbae67e0af9edd1a602016cb3e0f66e928d495c11e99a4dd56400ef1f5d091ff6496a7afd41762588208aa212e4238e09fb74c50ec4491bfd363cb</hash>
-    <hash type="sha-256">809ee17c3f6010252046170313220d535dd9b63b724200fe404768b0a8497b74</hash>
-    <hash type="sha-1">aae39f84e6872d925a5399cc6ccb8bef821555ca</hash>
-    <hash type="md5">bda21ef143989bad51d446eaf4a225a0</hash>
-    <size>2120</size>
+    <hash type="sha-512">37ed6d9fee86873adf4df177b478f30699ddbea5de8f014c8abc2b57dede40ee333b4caf38e13b7dee2e89cca0a0f9fe8e257a533280c4cea82b4417b2562b73</hash>
+    <hash type="sha-256">1be22532c0c72f2020c81c33d7ed5de0317cdfc42c1b069dca78a475304228cc</hash>
+    <hash type="sha-1">fd9eae2d86e461702a1cdef5ab877af8f58221aa</hash>
+    <hash type="md5">8b7836a919f4029bd8b0603de65a0b6a</hash>
+    <size>3619</size>
     <url>https://s3.amazonaws.com/bosh-os-images/97.x/usn-log.json</url>
-    <version>39.0.0</version>
+    <version>40.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-04-02T03:15:08.050821708Z</published>
+  <published>2020-04-04T13:32:55.681954579Z</published>
 </metalink>
