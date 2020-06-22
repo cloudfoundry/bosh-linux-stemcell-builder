@@ -65,6 +65,18 @@ echo 'AllowGroups bosh_sshers' >> $chroot/etc/ssh/sshd_config
 sed "/^ *DenyUsers/d" -i $chroot/etc/ssh/sshd_config
 echo 'DenyUsers root' >> $chroot/etc/ssh/sshd_config
 
+sed "/^ *AllowTcpForwarding/d" -i $chroot/etc/ssh/sshd_config
+echo 'AllowTcpForwarding no' >> $chroot/etc/ssh/sshd_config
+
+sed "/^ *AllowStreamLocalForwarding/d" -i $chroot/etc/ssh/sshd_config
+echo 'AllowStreamLocalForwarding no' >> $chroot/etc/ssh/sshd_config
+
+sed "/^ *GatewayPorts/d" -i $chroot/etc/ssh/sshd_config
+echo 'GatewayPorts no' >> $chroot/etc/ssh/sshd_config
+
+sed "/^ *PermitTunnel/d" -i $chroot/etc/ssh/sshd_config
+echo 'PermitTunnel no' >> $chroot/etc/ssh/sshd_config
+
 sed "/^[ #]*HostKey \/etc\/ssh\/ssh_host_dsa_key/d" -i $chroot/etc/ssh/sshd_config
 for type in {rsa,ecdsa,ed25519}; do
   sed "s/^[ #]*HostKey \/etc\/ssh\/ssh_host_${type}_key/HostKey \/etc\/ssh\/ssh_host_${type}_key/" -i $chroot/etc/ssh/sshd_config
