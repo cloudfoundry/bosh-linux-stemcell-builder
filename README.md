@@ -51,6 +51,11 @@ dependencies before continuing to a specific build task...
     $ bundle install --local
 
 
+If you receive an Bundle error you need to install the bundler version specified in the error message
+
+    $ gem install bundler -v 1.17.3
+    $ bundle install --local
+
 ### Build an OS image
 
 An OS image is a tarball that contains a snapshot of an entire OS filesystem
@@ -217,6 +222,11 @@ If you find yourself debugging any of the above processes, here is what you need
 
 The ovftool installer from VMWare can be found at
 [my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL410&productId=489).
+
+The ovftool installer must be copied into the [ci/docker/os-image-stemcell-builder](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile or you will receive the error
+
+    Step 24/30 : ADD ${OVF_TOOL_INSTALLER} /tmp/ovftool_installer.bundle
+    ADD failed: stat /var/lib/docker/tmp/docker-builder389354746/VMware-ovftool-4.1.0-2459827-lin.x86_64.bundle: no such file or directory
 
 ## Rebuilding the docker image
 
