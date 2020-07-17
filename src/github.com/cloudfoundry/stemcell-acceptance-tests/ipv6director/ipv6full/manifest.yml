@@ -18,7 +18,7 @@ instance_groups:
 - name: test
   stemcell: default
   vm_type: default
-  instances: 1
+  instances: 3
   networks:
   - name: ipv6
   azs: [z1]
