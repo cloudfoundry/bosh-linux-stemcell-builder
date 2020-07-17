@@ -203,8 +203,23 @@ If you find yourself debugging any of the above processes, here is what you need
 
    Example usage:
 
+    ```shell
     $ bundle exec rake stemcell:build_os_image[ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
+    ```
+0. `Directory renamed before its status could be extracted`
 
+    If you run into the following error whilst builing an image with Docker: 
+    ```shell
+    ubuntu@98b2a2aed0e6:/opt/bosh$ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz,705]
+    cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_xenial_spec.rb
+    All stemcell_tarball tests are being skipped. STEMCELL_WORKDIR needs to be set
+    All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set
+    Run options: exclude {:stemcell_image=>true, :stemcell_tarball=>true, :shellout_types=>true}
+
+    Ubuntu 16.04 OS image
+    tar: ./var/log: Directory renamed before its status could be extracted
+    ```
+    You can convert Docker's storage driver to `aufs` as described [here](https://github.com/docker/hub-feedback/issues/727#issuecomment-312498015).
 
 ## Pro Tips
 
