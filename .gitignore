@@ -11,6 +11,8 @@ stemcell_builder/public_stemcell_config.yml
 src/github.com/cloudfoundry/stemcell-acceptance-tests/stemcell
 src/github.com/cloudfoundry/stemcell-acceptance-tests/syslog-release
 
+**/*.log
+
 tags
 cscope.out
 
