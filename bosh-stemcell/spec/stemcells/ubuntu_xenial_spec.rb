@@ -15,6 +15,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
       its(:content) { should match ' console=ttyS0,115200n8 console=tty0' }
       its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
+      its(:content) { should match ' nvme_core.io_timeout=255 nvme_core.max_retries=10' }
       its(:content) { should match %r{initrd /boot/initrd.img-\S+-generic} }
 
       it('should set the grub menu password (stig: V-38585)') { expect(subject.content).to match /^password --md5 \*/ }
