@@ -1,12 +1,12 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">7ff305fc963a573a8d62de88262561896aa1ab6877dab9546ba35569a9000c6c638500dee96ab62e29214689b1d685f8f6ea79db0faa53d645b5ab8135a5ba48</hash>
-    <hash type="sha-256">c99425ad065f442b1666e5ac8b3141f686ad397bf09b89b31f991bef68d06464</hash>
-    <hash type="sha-1">15c869594b5648fecb9c13801b494309791c4c59</hash>
-    <hash type="md5">34abcb6f332b02c04431d561a9f16973</hash>
-    <size>505174449</size>
+    <hash type="sha-512">26b58c829542c12ec0fd52fe31a04eed735f61d839e912fb09701a451016c42b968820001a84b2843615048a76340e6045b82d72d6e9fc732c6812c79f3cc4ea</hash>
+    <hash type="sha-256">e8c95d2517a77616b23008ce9a2e0dbe9472f35614101880de0a2c1bcc09302b</hash>
+    <hash type="sha-1">b187c38136e0eb06daf6931527b110e27edde9e0</hash>
+    <hash type="md5">6d8dd033370159c4037e781675047f66</hash>
+    <size>505156609</size>
     <url>https://s3.amazonaws.com/bosh-os-images/master/ubuntu-xenial.tgz</url>
-    <version>79.0.0</version>
+    <version>80.0.0</version>
   </file>
   <file name="usn-log.json">
     <hash type="sha-512">8d409eabd433bbaf3d81c21b2127bcb10995cc6179a4cc2974203e673619463df3b702ff1cf8f9226b94bc0fa974c0556f697e13ccea305ae37f1d8a0fd2a2e9</hash>
@@ -15,8 +15,8 @@
     <hash type="md5">ba770420d1479304b7faba182c8676c3</hash>
     <size>175167</size>
     <url>https://s3.amazonaws.com/bosh-os-images/master/usn-log.json</url>
-    <version>79.0.0</version>
+    <version>80.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-07-25T12:21:57.696544835Z</published>
+  <published>2020-07-27T13:18:21.22514643Z</published>
 </metalink>
