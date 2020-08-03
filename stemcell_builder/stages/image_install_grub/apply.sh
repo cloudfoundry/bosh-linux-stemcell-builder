@@ -92,7 +92,7 @@ GRUB_CONF
 
 # For grub.cfg
 if [ -f ${image_mount_point}/boot/grub/grub.cfg ];then
-  sed -i "/timeout=/a password --md5 *" ${image_mount_point}/boot/grub/grub.cfg
+  sed -i "/^timeout=/a password --md5 *" ${image_mount_point}/boot/grub/grub.cfg
   chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
   chmod 600 ${image_mount_point}/boot/grub/grub.cfg
 fi
