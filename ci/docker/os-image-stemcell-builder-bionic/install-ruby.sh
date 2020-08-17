@@ -38,7 +38,7 @@ install_ruby() {
     chruby "ruby-$version"
     ruby -v
     gem update --system
-
+    gem install bundler:1.17.3  # gem update --system now installs bundler v2.x, but we're still using 1.x in our lockfile for now
 }
 
 install_ruby 2.4.5 276c8e73e51e4ba6a0fe81fb92669734e741ccea86f01c45e99f2c7ef7bcd1e3
