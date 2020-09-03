@@ -121,5 +121,10 @@ for file in $chroot/etc/{issue,issue.net,motd}; do
     chmod 644 $file
 done
 
-# Disable Ubuntu motd
-sudo sed -i 's/^ENABLED=.*/ENABLED=0/' $chroot/etc/default/motd-news
+# Disable Ubuntu motd (and create file if missing)
+if [[ -e $chroot/etc/default/motd-news ]]
+then
+  sudo sed -i 's/^ENABLED=.*/ENABLED=0/' $chroot/etc/default/motd-news
+else
+  sudo echo "ENABLED=0" >$chroot/etc/default/motd-news
+fi
