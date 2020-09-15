@@ -1,5 +1,4 @@
 adduser
-amd64-microcode
 anacron
 apparmor
 apparmor-utils
@@ -30,7 +29,6 @@ cpio
 cpp
 cpp-5
 cracklib-runtime
-crda
 cron
 curl
 dash
@@ -43,7 +41,6 @@ dh-python
 dh-strip-nondeterminism
 diffutils
 distro-info-data
-dkms
 dmsetup
 dnsutils
 dpkg
@@ -84,7 +81,6 @@ initramfs-tools-bin
 initscripts
 insserv
 install-info
-intel-microcode
 intltool-debian
 iproute2
 iptables
@@ -93,8 +89,6 @@ iputils-ping
 isc-dhcp-client
 isc-dhcp-common
 iso-codes
-iucode-tool
-iw
 kbd
 keyboard-configuration
 klibc-utils
@@ -298,16 +292,7 @@ libxslt1-dev:amd64
 libxslt1.1:amd64
 libxtables11:amd64
 linux-base
-linux-firmware
-linux-generic-hwe-16.04
-linux-headers-4.15
-linux-headers-4.15
-linux-headers-generic-hwe-16.04
-linux-image-4.15
-linux-image-generic-hwe-16.04
 linux-libc-dev:amd64
-linux-modules-4.15
-linux-modules-extra-4.15
 locales
 login
 logrotate
@@ -395,7 +380,6 @@ vim-tiny
 wamerican
 wget
 whiptail
-wireless-regdb
 xfsprogs
 xkb-data
 xz-utils

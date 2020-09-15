@@ -26,11 +26,11 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     it { should be_enabled }
   end
 
-  context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-16.04') do
-      it { should be_installed }
-    end
-  end
+  # context 'installed by system_kernel' do
+  #   describe package('linux-generic-hwe-16.04') do
+  #     it { should be_installed }
+  #   end
+  # end
 
   context 'installed by base_debootstrap' do
     %w[
@@ -184,17 +184,6 @@ describe 'Ubuntu 16.04 OS image', os_image: true do
     describe file('/sbin/rescan-scsi-bus') do
       it { should be_file }
       it { should be_executable }
-    end
-
-    context 'zfs' do
-      %w[
-       /lib/modules/*/kernel/zfs/
-        /usr/src/linux-headers-*/zfs
-      ].each do |folder|
-        describe file(folder) do
-          it { should_not be_directory }
-        end
-      end
     end
   end
 
