@@ -33,7 +33,6 @@ module Bosh::Stemcell
               :bosh_sysstat,
               :system_kernel,
               :system_kernel_modules,
-              :system_ixgbevf,
               :bosh_environment,
               :bosh_sysctl,
               :bosh_limits,
