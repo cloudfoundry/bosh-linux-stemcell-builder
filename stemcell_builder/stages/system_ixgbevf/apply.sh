@@ -6,6 +6,10 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source "$base_dir/lib/prelude_apply.bash"
 source "$base_dir/etc/settings.bash"
 
+if [[  "${DISTRIB_CODENAME}" == "bionic" ]]; then
+    exit 0
+fi
+
 mkdir "$chroot/usr/src/ixgbevf-4.6.3"
 
 tar -xzf "$assets_dir/ixgbevf-4.6.3.tar.gz" \
