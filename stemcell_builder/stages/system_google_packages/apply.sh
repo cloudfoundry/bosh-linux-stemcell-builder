@@ -12,19 +12,16 @@ source "$base_dir/lib/prelude_apply.bash"
 # https://github.com/GoogleCloudPlatform/compute-image-packages#configuration
 cp "$assets_dir/instance_configs.cfg.template" "$chroot/etc/default/"
 
-mkdir -p "$chroot/tmp/google"
-
-declare set_hostname_path
+# See https://www.pivotaltracker.com/n/projects/956238/stories/175098267 for context
+echo "" > "$chroot/etc/growroot-disabled"
 
 pkg_mgr install "gce-compute-image-packages google-compute-engine-oslogin python-google-compute-engine python3-google-compute-engine"
 
+# See https://github.com/cloudfoundry/bosh/issues/1399 for context
+set_hostname_path=/etc/dhcp/dhclient-exit-hooks.d/google_set_hostname
+run_in_chroot "${chroot}" "rm --interactive=never ${set_hostname_path}"
 
 # Hack: replace google metadata hostname with ip address (bosh agent might set a dns that it's unable to resolve the hostname)
 run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python3/dist-packages/google_compute_engine/metadata_watcher.py"
 run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python2.7/dist-packages/google_compute_engine/metadata_watcher.py"
-
-set_hostname_path=/etc/dhcp/dhclient-exit-hooks.d/google_set_hostname
-
-# See https://github.com/cloudfoundry/bosh/issues/1399 for context
-run_in_chroot "${chroot}" "rm --interactive=never ${set_hostname_path}"
 

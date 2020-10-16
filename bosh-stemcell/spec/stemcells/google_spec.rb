@@ -27,6 +27,14 @@ enable-kernel-logging.conf
     end
   end
 
+  context 'growroot should be disabled by create file' do
+    describe file('/etc/growroot-disabled') do
+      it { should be_file }
+      it { should be_owned_by('root') }
+      its(:group) { should eq('root') }
+    end
+  end
+
   context 'installed by bosh_disable_password_authentication' do
     describe 'disallows password authentication' do
       subject { file('/etc/ssh/sshd_config') }
