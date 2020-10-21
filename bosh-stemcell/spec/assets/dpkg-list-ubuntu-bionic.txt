@@ -87,6 +87,7 @@ gzip
 hostname
 htop
 icu-devtools
+ifupdown
 init
 init-system-helpers
 initramfs-tools-bin
@@ -246,7 +247,6 @@ libncurses5:amd64
 libncurses5-dev:amd64
 libncursesw5:amd64
 libnetfilter-conntrack3:amd64
-libnetplan0:amd64
 libnettle6:amd64
 libnewt0.52:amd64
 libnfnetlink0:amd64
@@ -365,10 +365,8 @@ ncurses-base
 ncurses-bin
 netbase
 netcat-openbsd
-netplan.io
 networkd-dispatcher
 net-tools
-nplan
 nvme-cli
 openssh-client
 openssh-server
@@ -395,7 +393,6 @@ python3-gi
 python3-lib2to3
 python3-libapparmor
 python3-minimal
-python3-netifaces
 python3-software-properties
 python3-yaml
 python3.6
