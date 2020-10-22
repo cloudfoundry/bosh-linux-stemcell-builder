@@ -68,7 +68,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
 
       it 'should be a proper superset of the installed static libraries' do
         libraries_to_remove = subject.content.split("\n")
-        found_libraries = command('find / -iname "*.a" | sort | uniq | sed -E "s/(linux.*5.4).*-generic/\1.*-generic"/' ).stdout.split("\n")
+        found_libraries = command('find / -iname "*.a" | sort | uniq' ).stdout.split("\n")
 
         expect(libraries_to_remove).to include(*found_libraries)
       end
