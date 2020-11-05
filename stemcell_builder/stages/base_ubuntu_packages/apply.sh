@@ -28,6 +28,11 @@ if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
     rm -rf /usr/share/netplan
     rm -rf /etc/netplan
   "
+
+  cp "$(dirname "$0")/assets/systemd-networkd-resolvconf-update.path" "${chroot}/lib/systemd/system/"
+  cp "$(dirname "$0")/assets/systemd-networkd-resolvconf-update.service" "${chroot}/lib/systemd/system/"
+  run_in_chroot "${chroot}" "systemctl enable systemd-networkd-resolvconf-update.path"
+  run_in_chroot "${chroot}" "systemctl enable systemd-networkd-resolvconf-update.service"
 fi
 
 pkg_mgr install $debs
