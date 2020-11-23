@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
-curl wget bison libreadline6-dev \
+curl wget bison libreadline6-dev rng-tools \
 libxml2 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
 flex psmisc apparmor-utils iptables sysstat \
 rsync openssh-server traceroute libncurses5-dev quota \
