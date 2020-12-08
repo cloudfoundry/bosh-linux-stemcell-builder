@@ -350,8 +350,9 @@ systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nol
 syslog:x:102:106::/home/syslog:/usr/sbin/nologin
 messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
 _apt:x:104:65534::/nonexistent:/usr/sbin/nologin
-_chrony:x:105:109:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
-sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
+uuidd:x:105:109::/run/uuidd:/usr/sbin/nologin
+_chrony:x:106:110:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+sshd:x:107:65534::/run/sshd:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
@@ -381,6 +382,7 @@ systemd-resolve:\*:(\d{5}):0:99999:7:::
 syslog:\*:(\d{5}):0:99999:7:::
 messagebus:\*:(\d{5}):0:99999:7:::
 _apt:\*:(\d{5}):0:99999:7:::
+uuidd:(.+):(\d{5}):0:99999:7:::
 _chrony:(.+):(\d{5}):0:99999:7:::
 sshd:\*:(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
@@ -438,8 +440,9 @@ crontab:x:105:
 syslog:x:106:
 messagebus:x:107:
 netdev:x:108:
-_chrony:x:109:
-ssh:x:110:
+uuidd:x:109:
+_chrony:x:110:
+ssh:x:111:
 admin:x:999:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
@@ -496,6 +499,7 @@ crontab:!::
 syslog:!::
 messagebus:!::
 netdev:!::
+uuidd:!::
 _chrony:!::
 ssh:!::
 admin:!::vcap
