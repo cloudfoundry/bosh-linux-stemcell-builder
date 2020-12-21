@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">727a7233a588aa80a2e581c1457a14f5af71871364e51bb1184d3804add279d1b009c9b9190fe84c1d772b3fdf027a6da5cac9a93e4f24c1b2c36473f3be8d6a</hash>
-    <hash type="sha-256">0a64bf531ff4e526df96ba9e85d8a26712d2828c197e542efa0cd79b0d9386c8</hash>
-    <hash type="sha-1">d9e4bd552cc71250e294deb013a2d036ff39d470</hash>
-    <hash type="md5">8909dde92c6b98341d1bee6b3e88c72f</hash>
-    <size>580455294</size>
-    <url>https://s3.amazonaws.com/bosh-os-images/0.x/ubuntu-bionic.tgz</url>
-    <version>5.0.0</version>
+    <hash type="sha-512">716d51f43d7dafc2a4718d9cb542e115d0f1f0cd9bccb972a0c8c7922292ac64cfe4768ac01bd0d14265bec405f39d810e228f1a32c31831e3c2a89d61610954</hash>
+    <hash type="sha-256">0c515f98eadb92aabed253f904a8dd860051d316e6870748848fa675401a22b0</hash>
+    <hash type="sha-1">e777e9c197c328b839014751d8f92f1d2a9e0451</hash>
+    <hash type="md5">85821900ae78c76db23e083cf1380a1d</hash>
+    <size>580468594</size>
+    <url>https://s3.amazonaws.com/bosh-os-images/master/ubuntu-bionic.tgz</url>
+    <version>20.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
-    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
-    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
-    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
-    <size>1</size>
-    <url>https://s3.amazonaws.com/bosh-os-images/0.x/usn-log.json</url>
-    <version>5.0.0</version>
+    <hash type="sha-512">9a224f1140093587eb42826f72b817862d447185cfe56f14cf2a36c3954f50be44f9e7d293f624157f5aba76e8bce4bc71038aac30b71ff4b2c2e45ee380b40c</hash>
+    <hash type="sha-256">e1f0fe1bea07c39e5474707538578d358f3ee92250ba285c770c5d990f93dd59</hash>
+    <hash type="sha-1">53de25b0127186e910f0303f78c2e1b38696b090</hash>
+    <hash type="md5">bf2142c8402ddee46023e5555a7e8ddb</hash>
+    <size>257753</size>
+    <url>https://s3.amazonaws.com/bosh-os-images/master/usn-log.json</url>
+    <version>20.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-12-15T23:37:25.078711648Z</published>
+  <published>2020-12-21T14:18:45.432670497Z</published>
 </metalink>
