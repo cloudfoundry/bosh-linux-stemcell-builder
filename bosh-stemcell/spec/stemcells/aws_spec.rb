@@ -17,6 +17,13 @@ describe 'AWS Stemcell', stemcell_image: true do
     end
   end
 
+  context 'installed by image_aws_install_grub' do
+    describe file('/boot/grub/grub.cfg') do
+      it { should be_file }
+      its(:content) { should match ' nvme_core.io_timeout=4294967295' }
+    end
+  end
+
   describe 'nvme' do
     describe 'nvme-id finder' do
       subject { file('/sbin/nvme-id') }
