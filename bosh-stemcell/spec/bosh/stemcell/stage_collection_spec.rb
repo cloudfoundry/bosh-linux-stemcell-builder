@@ -311,8 +311,8 @@ module Bosh::Stemcell
                 :bosh_softlayer_agent_settings,
                 :bosh_config_root_ssh_login,
                 :bosh_clean_ssh,
-                :image_create,
-                :image_install_grub,
+                :image_create_two_partitions,
+                :image_install_grub_two_partitions,
                 :bosh_package_list
               ]
             )
