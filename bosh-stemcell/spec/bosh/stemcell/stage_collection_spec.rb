@@ -303,6 +303,7 @@ module Bosh::Stemcell
                 :system_network,
                 :system_softlayer_open_iscsi,
                 :system_softlayer_multipath_tools,
+                :system_softlayer_netplan,
                 :system_parameters,
                 :bosh_clean,
                 :bosh_harden,
