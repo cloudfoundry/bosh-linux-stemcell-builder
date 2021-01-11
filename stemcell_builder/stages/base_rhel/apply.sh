@@ -11,8 +11,8 @@ rpm --root $chroot --initdb
 
 case "${stemcell_operating_system_version}" in
   "7")
-    release_package_url="/mnt/rhel/Packages/redhat-release-server-7.0-1.el7.x86_64.rpm"
-    epel_package_url="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm"
+    release_package_url="/mnt/rhel/Packages/redhat-release-server-*.el7.x86_64.rpm"
+    epel_package_url="https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-13.noarch.rpm"
     ;;
   *)
     echo "Unknown RHEL version: ${stemcell_operating_system_version}"
@@ -57,6 +57,7 @@ fi
 run_in_chroot $chroot "yum -c /custom_rhel_yum.conf update --assumeyes"
 run_in_chroot $chroot "yum -c /custom_rhel_yum.conf --verbose --assumeyes groupinstall Base"
 run_in_chroot $chroot "yum -c /custom_rhel_yum.conf --verbose --assumeyes groupinstall 'Development Tools'"
+run_in_chroot $chroot "yum -c /custom_rhel_yum.conf --verbose --assumeyes install subscription-manager"
 run_in_chroot $chroot "yum -c /custom_rhel_yum.conf clean all"
 
 
@@ -97,7 +98,7 @@ echo 'READAHEAD_COLLECT="no"' >> ${chroot}/etc/sysconfig/readahead
 echo 'READAHEAD_COLLECT_ON_RPM="no"' >> ${chroot}/etc/sysconfig/readahead
 
 # Setting timezone
-cp ${chroot}/usr/share/zoneinfo/UTC ${chroot}/etc/localtime
+cp ${chroot}/usr/share/zoneinfo/UTC ${chroot}/etc/localtime || true
 
 # Setting locale
 echo "LANG=\"en_US.UTF-8\"" >> ${chroot}/etc/locale.conf
