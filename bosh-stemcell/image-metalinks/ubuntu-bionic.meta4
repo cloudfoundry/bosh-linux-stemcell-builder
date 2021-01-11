@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">2716e027e8fb7d44268c7c037c00c8d52b0bba94079628bfcfeb567a1c17f596ebb137807e21ef26e5fc37c6c0114c1c8d690b7042c72edbd54bc924e6d28f59</hash>
-    <hash type="sha-256">f8e6871203cfb83b468ba999aba704178691102acef7954fdba977efad201166</hash>
-    <hash type="sha-1">57a38ab6a2ca5b960b087617e1882be42ff527a3</hash>
-    <hash type="md5">1dd93e24bfed6a05d50559d4f583ecf3</hash>
-    <size>580457956</size>
+    <hash type="sha-512">72d0079671c98043387958a8ff445cd54f9a3095c45b1b85d85edcf1669bb323d6b54fac4ac710953d73862d3faa4115c4e82787fbdeeec22d41214a997dbc7c</hash>
+    <hash type="sha-256">00769c96a12bef6497c4f58a1cf1ea0cb925f59d0122d38bc51c99abc69e95e5</hash>
+    <hash type="sha-1">11b697dbc4dc1e4a77cb10f5d05a4d2438a6f4ba</hash>
+    <hash type="md5">a22d5f5c9b3c279c71d0cee3dbb3f6aa</hash>
+    <size>580543382</size>
     <url>https://s3.amazonaws.com/bosh-os-images/master/ubuntu-bionic.tgz</url>
-    <version>21.0.0</version>
+    <version>22.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">9a224f1140093587eb42826f72b817862d447185cfe56f14cf2a36c3954f50be44f9e7d293f624157f5aba76e8bce4bc71038aac30b71ff4b2c2e45ee380b40c</hash>
-    <hash type="sha-256">e1f0fe1bea07c39e5474707538578d358f3ee92250ba285c770c5d990f93dd59</hash>
-    <hash type="sha-1">53de25b0127186e910f0303f78c2e1b38696b090</hash>
-    <hash type="md5">bf2142c8402ddee46023e5555a7e8ddb</hash>
-    <size>257753</size>
+    <hash type="sha-512">6fc6a8d6f2f75c16162368fe500729edb9e45a36a2ff699b8ca18f8063cf998541fb188bc6d68de63364237f4c3e16cdf492ffca9ab5bc2ab5069e1f0edd2193</hash>
+    <hash type="sha-256">123cf56944e06c5f673a7656405736afdf1dbf6ec4a0e135846cd7aa9873f5c6</hash>
+    <hash type="sha-1">e5d1d3949382c63454590746b1af5a7fac44eadd</hash>
+    <hash type="md5">f240bc6128abd92ea07cf1f79c3d16d8</hash>
+    <size>270269</size>
     <url>https://s3.amazonaws.com/bosh-os-images/master/usn-log.json</url>
-    <version>21.0.0</version>
+    <version>22.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2020-12-21T18:38:02.205862003Z</published>
+  <published>2021-01-11T14:20:36.803506613Z</published>
 </metalink>
