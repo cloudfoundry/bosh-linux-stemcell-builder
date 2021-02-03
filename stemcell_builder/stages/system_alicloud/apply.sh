@@ -11,5 +11,5 @@ fi
 
 # Alicloud does not support ext4 feature 'metadata_csum'.
 # Remove it from root image and also disable it inside image for all ext4 filesystems created afterwards.
-sed -i "s/metadata_1csum,//g" /etc/mke2fs.conf
+sed -i "s/metadata_csum,//g" /etc/mke2fs.conf
 sed -i "s/metadata_csum,//g" $chroot/etc/mke2fs.conf
