@@ -32,7 +32,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
     end
   end
 
-  context 'installed by image_install_grub_two_partitions', {
+  context 'installed by image_install_grub_softlayer_two_partitions', {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
