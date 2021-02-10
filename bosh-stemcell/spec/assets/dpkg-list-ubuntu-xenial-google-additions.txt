@@ -1,6 +1,5 @@
 cloud-init
 gce-compute-image-packages
-google-compute-engine-oslogin
 libboost-regex1.58.0:amd64
 libpython-stdlib:amd64
 libpython2.7-minimal:amd64
@@ -9,7 +8,6 @@ libyaml-0-2:amd64
 python
 python-boto
 python-chardet
-python-google-compute-engine
 python-minimal
 python-pkg-resources
 python-requests
@@ -27,7 +25,6 @@ python3-jinja2
 python3-jsonpatch
 python3-json-pointer
 python3-jwt
-python3-google-compute-engine
 python3-markupsafe
 python3-oauthlib
 python3-pyasn1
