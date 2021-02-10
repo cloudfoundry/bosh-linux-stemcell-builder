@@ -16,7 +16,7 @@ mkdir -p "$chroot/tmp/google"
 
 declare set_hostname_path
 
-pkg_mgr install "gce-compute-image-packages google-compute-engine-oslogin python-google-compute-engine python3-google-compute-engine"
+pkg_mgr install "gce-compute-image-packages"
 
 
 # Hack: replace google metadata hostname with ip address (bosh agent might set a dns that it's unable to resolve the hostname)
