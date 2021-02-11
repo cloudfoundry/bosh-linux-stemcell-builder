@@ -21,10 +21,6 @@ if [[ "${os_type}" == "ubuntu" ]] ; then
   pkg_mgr install "gce-compute-image-packages google-compute-engine-oslogin python-google-compute-engine python3-google-compute-engine"
   pkg_mgr install "gce-compute-image-packages"
 
-  # Hack: replace google metadata hostname with ip address (bosh agent might set a dns that it's unable to resolve the hostname)
-  run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python3/dist-packages/google_compute_engine/metadata_watcher.py"
-  run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python2.7/dist-packages/google_compute_engine/metadata_watcher.py"
-
   set_hostname_path=/etc/dhcp/dhclient-exit-hooks.d/google_set_hostname
 elif [ "${os_type}" == "rhel"  ] || [ "${os_type}" == "centos" ]; then # http://tldp.org/LDP/abs/html/ops.html#ANDOR TURN AND FACE THE STRANGE (ch-ch-changes)
   # Copy google daemon packages into chroot
@@ -33,9 +29,6 @@ elif [ "${os_type}" == "rhel"  ] || [ "${os_type}" == "centos" ]; then # http://
   run_in_chroot "${chroot}" "yum install -y python-setuptools python-boto"
 
   run_in_chroot "${chroot}" "yum --nogpgcheck install -y /tmp/google/*.rpm"
-
-  # Hack: replace google metadata hostname with ip address (bosh agent might set a dns that it's unable to resolve the hostname)
-  run_in_chroot "${chroot}" "sed -i 's/metadata.google.internal/169.254.169.254/g' /usr/lib/python2.7/site-packages/google_compute_engine/metadata_watcher.py"
 
   set_hostname_path=/etc/dhcp/dhclient.d/google_hostname.sh
 else
