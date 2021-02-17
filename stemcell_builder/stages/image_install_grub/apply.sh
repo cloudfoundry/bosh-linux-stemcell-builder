@@ -75,9 +75,14 @@ run_in_chroot ${image_mount_point} "grub-install -v --no-floppy --grub-mkdevicem
 run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
 
 grub_suffix=""
-if [ "${stemcell_infrastructure}" == "aws" ]; then
+case "${stemcell_infrastructure}" in
+aws)
   grub_suffix="nvme_core.io_timeout=4294967295"
-fi
+  ;;
+cloudstack)
+  grub_suffix="console=hvc0"
+  ;;
+esac
 
 cat >${image_mount_point}/etc/default/grub <<EOF
 GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1 cgroup_enable=memory swapaccount=1 ${grub_suffix}"
