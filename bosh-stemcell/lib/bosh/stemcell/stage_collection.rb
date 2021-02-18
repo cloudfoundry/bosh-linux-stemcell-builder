@@ -132,7 +132,7 @@ module Bosh::Stemcell
     def alicloud_stages
       %i[
         system_network
-        system_alicloud_modules
+        system_alicloud
         system_parameters
         bosh_clean
         bosh_harden
