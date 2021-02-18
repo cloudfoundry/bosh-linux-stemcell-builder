@@ -12,9 +12,6 @@ avoid-startup-deadlock.conf
 enable-kernel-logging.conf
 )
 
-        if ENV['OS_NAME'] == 'ubuntu'
-            expected_rsyslog_confs = ['21-cloudinit.conf'] + expected_rsyslog_confs
-        end
 
         expect(subject.stdout.split("\n")).to match_array(expected_rsyslog_confs)
       end
@@ -45,9 +42,6 @@ enable-kernel-logging.conf
     end
 
     usrbin = [
-      '/usr/bin/google_instance_setup',
-      '/usr/bin/google_accounts_daemon',
-      '/usr/bin/google_clock_skew_daemon',
       '/usr/bin/google_metadata_script_runner'
     ]
 
@@ -60,9 +54,6 @@ enable-kernel-logging.conf
     ]
 
     systemd_configs = [
-      '{lib_path}/systemd/system/google-accounts-daemon.service',
-      '{lib_path}/systemd/system/google-clock-skew-daemon.service',
-      '{lib_path}/systemd/system/google-instance-setup.service',
       '{lib_path}/systemd/system/google-shutdown-scripts.service',
       '{lib_path}/systemd/system/google-startup-scripts.service'
     ]
