@@ -18,7 +18,6 @@ declare set_hostname_path
 
 os_type="$(get_os_type)"
 if [[ "${os_type}" == "ubuntu" ]] ; then
-  pkg_mgr install "gce-compute-image-packages google-compute-engine-oslogin python-google-compute-engine python3-google-compute-engine"
   pkg_mgr install "gce-compute-image-packages"
 
   set_hostname_path=/etc/dhcp/dhclient-exit-hooks.d/google_set_hostname
