@@ -24,4 +24,18 @@ describe 'AliCloud Stemcell', stemcell_image: true do
       its(:content) { should_not match /metadata_csum/ }
     end
   end
+
+  context 'default grub configuration' do
+    describe file('/etc/default/grub') do
+      it { should be_file }
+      its(:content) { should match '^GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1"' }
+    end
+  end
+
+  context 'installed by image_install_grub' do
+    describe file('/boot/grub/grub.cfg') do
+      it { should be_file }
+      its(:content) { should match ' ipv6.disable=1' }
+    end
+  end
 end

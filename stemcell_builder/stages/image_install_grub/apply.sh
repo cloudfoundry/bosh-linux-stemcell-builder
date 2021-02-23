@@ -75,6 +75,10 @@ run_in_chroot ${image_mount_point} "grub-install -v --no-floppy --grub-mkdevicem
 run_in_chroot ${image_mount_point} "sed -i 's/CLASS=\\\"--class gnu-linux --class gnu --class os\\\"/CLASS=\\\"--class gnu-linux --class gnu --class os --unrestricted\\\"/' /etc/grub.d/10_linux"
 
 grub_suffix=""
+if [ "${stemcell_infrastructure}" == "alicloud" ]; then
+  grub_suffix="\""$'\n'"GRUB_CMDLINE_LINUX_DEFAULT=\"ipv6.disable=1"
+fi
+
 if [ "${stemcell_infrastructure}" == "aws" ]; then
   grub_suffix="nvme_core.io_timeout=4294967295"
 fi
