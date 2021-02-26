@@ -34,6 +34,18 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
     it { should be_enabled }
   end
 
+  context 'installed by system_kernel' do
+    describe package('linux-generic-hwe-18.04') do
+      it { should be_installed }
+    end
+  end
+
+  context 'installed by system_kernel' do
+    describe file('/etc/dracut.conf.d/10-debian.conf') do
+      its(:content) { should_not match '^add_drivers.*' }
+    end
+  end
+
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
       its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu bionic main universe multiverse' }
