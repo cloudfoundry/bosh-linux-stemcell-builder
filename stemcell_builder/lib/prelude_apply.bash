@@ -21,7 +21,7 @@ fi
 
 function pkg_mgr {
   run_in_chroot $chroot "apt-get update"
-  run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive;apt-get -f -y --force-yes --no-install-recommends $*"
+  run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive;apt-get -f -y --no-install-recommends $*"
   run_in_chroot $chroot "apt-get clean"
 }
 
