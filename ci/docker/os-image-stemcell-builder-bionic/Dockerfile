@@ -24,7 +24,7 @@ RUN apt-get update \
     lsof \
   && apt-get clean
 
-RUN groupadd -g ${GROUP_ID} ubuntu                  \
+RUN groupadd -o -g ${GROUP_ID} ubuntu                  \
   && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
   && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 

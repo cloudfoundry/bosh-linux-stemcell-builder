@@ -12,9 +12,6 @@ avoid-startup-deadlock.conf
 enable-kernel-logging.conf
 )
 
-        if ENV['OS_NAME'] == 'ubuntu'
-            expected_rsyslog_confs = ['21-cloudinit.conf'] + expected_rsyslog_confs
-        end
 
         expect(subject.stdout.split("\n")).to match_array(expected_rsyslog_confs)
       end
@@ -53,10 +50,14 @@ enable-kernel-logging.conf
     end
 
     usrbin = [
-      '/usr/bin/google_instance_setup',
-      '/usr/bin/google_accounts_daemon',
-      '/usr/bin/google_clock_skew_daemon',
-      '/usr/bin/google_metadata_script_runner'
+      '/usr/bin/google_authorized_keys',
+      '/usr/bin/google_guest_agent',
+      '/usr/bin/google_metadata_script_runner',
+      '/usr/bin/google_optimize_local_ssd',
+      '/usr/bin/google_oslogin_control',
+      '/usr/bin/google_oslogin_nss_cache',
+      '/usr/bin/google_set_hostname',
+      '/usr/bin/google_set_multiqueue'
     ]
 
     upstart_configs = [
@@ -68,9 +69,10 @@ enable-kernel-logging.conf
     ]
 
     systemd_configs = [
-      '{lib_path}/systemd/system/google-accounts-daemon.service',
-      '{lib_path}/systemd/system/google-clock-skew-daemon.service',
-      '{lib_path}/systemd/system/google-instance-setup.service',
+      '{lib_path}/systemd/system-preset/90-google-compute-engine-oslogin.preset',
+      '{lib_path}/systemd/system/google-guest-agent.service',
+      '{lib_path}/systemd/system/google-oslogin-cache.service',
+      '{lib_path}/systemd/system/google-oslogin-cache.timer',
       '{lib_path}/systemd/system/google-shutdown-scripts.service',
       '{lib_path}/systemd/system/google-startup-scripts.service'
     ]
