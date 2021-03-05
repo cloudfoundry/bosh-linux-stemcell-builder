@@ -48,6 +48,12 @@ do
 done
 
 # init.d configuration is different for each OS
+mkdir -p $chroot/usr/local/bin
+cp -f $assets_dir/wait_for_var_log_to_be_mounted $chroot/usr/local/bin/wait_for_var_log_to_be_mounted
+chmod 755 $chroot/usr/local/bin/wait_for_var_log_to_be_mounted
+grep -q "ExecStart=" $chroot/lib/systemd/system/rsyslog.service || (echo "Unable to find ExecStart key in $chroot/lib/systemd/system/rsyslog.service"; exit 1)
+sed "s@ExecStart=@ExecStartPre=/usr/local/bin/wait_for_var_log_to_be_mounted\nExecStart=@g" $chroot/lib/systemd/system/rsyslog.service > $chroot/etc/systemd/system/rsyslog.service
+
 mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
 cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
 mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
