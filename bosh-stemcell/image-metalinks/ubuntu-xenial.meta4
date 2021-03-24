@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-xenial.tgz">
-    <hash type="sha-512">3a005dce5ae29e1a10527fab62383afe45eccf464b9675a69af3bd29a4168e61b84a24e3539647902915a688690631d53b89bc4e3aeb6607c8ff89cf39e33167</hash>
-    <hash type="sha-256">d0ba3b79582438e40958d494bec28827afce35ba2401b9b3279072b2fc41a66d</hash>
-    <hash type="sha-1">3feea39644fa25856e864a211f2a5bc02df75522</hash>
-    <hash type="md5">96186eb6565ed6fd60c4d717dd91b607</hash>
-    <size>508614720</size>
+    <hash type="sha-512">21fd849d81fd7608fdb472fb9d2c94a8e7e54eaa126ca11e2aa38d3058f404ce4cb4c025117d55a034fac2394fc45df0709ed61e096aa36dd7090f522835070f</hash>
+    <hash type="sha-256">42ad726d3115db16f54893c9a7e34dd694a3a924c4858d06039214c202634d68</hash>
+    <hash type="sha-1">c6cd464e92593cdfc4759e98e8ceee9ecfe17ed6</hash>
+    <hash type="md5">534fea48ff6da64b8bbc93eea9a3bd17</hash>
+    <size>508634602</size>
     <url>https://s3.amazonaws.com/bosh-os-images/621.x/ubuntu-xenial.tgz</url>
-    <version>87.0.0</version>
+    <version>88.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">72398565ad755b4855df47bf5578999df9c96630485ed5473c0c885b74061ac0e7c855f76e11756affea31f43178872dff6550923f31ba3f9b84a2a95d72dff3</hash>
-    <hash type="sha-256">66fd3c621051ba8ce8c454c47b8e077f5b76ac346644d7211176f4f2cf855a7d</hash>
-    <hash type="sha-1">c7ae67ac8b6b497b671029dfb67e7e6f2800496c</hash>
-    <hash type="md5">379a5619405c990eef5bb678b98d2edb</hash>
-    <size>5353</size>
+    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
+    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
+    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
+    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
+    <size>1</size>
     <url>https://s3.amazonaws.com/bosh-os-images/621.x/usn-log.json</url>
-    <version>87.0.0</version>
+    <version>88.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2021-03-20T01:09:04.14736508Z</published>
+  <published>2021-03-24T21:28:09.144246892Z</published>
 </metalink>
