@@ -4,16 +4,8 @@ require_relative 'shellout_type_assertions'
 
 RSpec.configure do |config|
   if ENV['STEMCELL_IMAGE']
+    # if `config.filter[exclude_on_softlayer]` is set, it means you're building the SoftLayer stemcell.
     if config.filter[:exclude_on_softlayer]
-      disk_image = Bosh::Stemcell::DiskImage.new(image_file_path: ENV['STEMCELL_IMAGE'])
-      config.before(:suite) do |example|
-        disk_image.mount
-        ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
-      end
-      config.after(:suite) do |example|
-        disk_image.unmount
-      end
-    else
       shell = Bosh::Core::Shell.new
       verbose = true
       image_file_path = ENV['STEMCELL_IMAGE']
@@ -33,6 +25,15 @@ RSpec.configure do |config|
       config.after(:suite) do |example|
         shell.run("sudo umount #{image_mount_point}/boot", output_command: verbose)
         shell.run("sudo umount #{image_mount_point}", output_command: verbose)
+      end
+    else
+      disk_image = Bosh::Stemcell::DiskImage.new(image_file_path: ENV['STEMCELL_IMAGE'])
+      config.before(:suite) do |example|
+        disk_image.mount
+        ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
+      end
+      config.after(:suite) do |example|
+        disk_image.unmount
       end
     end
   else
