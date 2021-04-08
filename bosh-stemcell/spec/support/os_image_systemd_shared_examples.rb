@@ -15,6 +15,7 @@ shared_examples_for 'a systemd-based OS image' do
     describe file('/etc/systemd/system/chrony.service.d/restart.conf') do
       it { should be_file }
       its(:content) { should match /^Restart=always/ }
+      its(:content) { should match /^InaccessiblePaths=\/var\/vcap\/store/ }
     end
 
     describe file('/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf') do
