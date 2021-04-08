@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">3210ea879ac6bcf0d4ed44ba0a81550e2408d70f4602b5e4c5db9c7b1b4109758ead53c95faaaa483aaa8dae14bde38a5527fa76b364488d0d94fa09f41d85c0</hash>
-    <hash type="sha-256">5416ab01b28b31152cd6c5a33be65a1db99d40f304f30b26b26a1520fa202088</hash>
-    <hash type="sha-1">6607bf0a732c72014599cb7076a0fdf28fc76e1b</hash>
-    <hash type="md5">b3d9bea385894c7d7fb8464a15439901</hash>
-    <size>584795377</size>
+    <hash type="sha-512">2bb59e9f44b552bf1e958fc028d92614ba370c632f4fd3dcee7215da7f2f5d60590b4dd63bf53ad1642a7bc18bb745d2af67f3fd8e5eba03f3269af5af0c7f72</hash>
+    <hash type="sha-256">9256dfdb631098608ce486d01754c430192981fe6a211aa7c6e55d03b59f910f</hash>
+    <hash type="sha-1">f5b7c9f6722dd2b3e7afd389f13789f17064c8f7</hash>
+    <hash type="md5">7a08edde6936be33e8179e668a36d1f9</hash>
+    <size>584817267</size>
     <url>https://s3.amazonaws.com/bosh-os-images/0.x/ubuntu-bionic.tgz</url>
-    <version>19.0.0</version>
+    <version>20.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">d64e0e3a36cf231ee4cf0f6e3ec287561d10f557d446cb7cf7510714a7c0c31ead6499a3d22d2d975082a6c30896c88fb635c6040af8616ccb39367ed2d75e50</hash>
-    <hash type="sha-256">71e0f0551b13afc401dcea338ef53a5b22e13750c7ce4852f4aeb596af3676dd</hash>
-    <hash type="sha-1">c3ec553cd78af0adf6fdd68628a890a5ec43cee1</hash>
-    <hash type="md5">a90c020c14eb156847a4892117cee0ca</hash>
-    <size>12385</size>
+    <hash type="sha-512">3202bbd661a94f858d12794e52e7bb41399738d0ed36ffca4cd804209998c13a4ad1b90326ac23facf883defae63b110331949d629f95cf72a76cd9586988905</hash>
+    <hash type="sha-256">6b6620152661d363444e6bf46873aede59d3e29ca08e79b542d83b35c6f250db</hash>
+    <hash type="sha-1">d265f29b9d9cbeb4e39e95c3bda3e7f2dcbd19de</hash>
+    <hash type="md5">6bb8a29aaeeb7063b6eed1da46abf1d9</hash>
+    <size>3843</size>
     <url>https://s3.amazonaws.com/bosh-os-images/0.x/usn-log.json</url>
-    <version>19.0.0</version>
+    <version>20.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2021-03-29T13:18:26.314740408Z</published>
+  <published>2021-04-08T13:55:25.430145108Z</published>
 </metalink>
