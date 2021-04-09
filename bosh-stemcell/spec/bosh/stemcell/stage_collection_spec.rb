@@ -54,6 +54,7 @@ module Bosh::Stemcell
               :system_users,
               :bosh_audit_ubuntu,
               :bosh_log_audit_start,
+              :clean_machine_id,
             ].reject{ |s| Bosh::Stemcell::Arch.ppc64le? and s ==  :system_ixgbevf }
           )
         end

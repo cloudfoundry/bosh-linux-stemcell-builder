@@ -300,6 +300,17 @@ EOF
     end
   end
 
+  context 'created image should not contain machine id' do
+    describe file('/etc/machine-id') do
+      it { should be_file}
+      its(:content) { should match '' }
+    end
+
+    describe file('/var/lib/dbus/machine-id') do
+      it { should_not be_file }
+    end
+  end
+
   context 'overriding control alt delete (stig: V-38668)' do
     describe file('/etc/init/control-alt-delete.override') do
       it { should be_file }
