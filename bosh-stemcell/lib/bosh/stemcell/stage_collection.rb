@@ -248,6 +248,7 @@ module Bosh::Stemcell
         :escape_ctrl_alt_del,
         :bosh_audit_ubuntu,
         :bosh_log_audit_start,
+        :clean_machine_id,
       ].flatten
     end
 

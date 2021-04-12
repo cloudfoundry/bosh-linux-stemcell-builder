@@ -4,6 +4,7 @@ require_relative 'shellout_type_assertions'
 
 RSpec.configure do |config|
   if ENV['STEMCELL_IMAGE']
+    # if `config.filter[exclude_on_softlayer]` is set, it means you're building the SoftLayer stemcell.
     if config.filter[:exclude_on_softlayer]
       shell = Bosh::Core::Shell.new
       verbose = true
