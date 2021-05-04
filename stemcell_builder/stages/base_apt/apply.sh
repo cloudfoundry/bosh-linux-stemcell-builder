@@ -33,6 +33,8 @@ fi
 # Upgrade systemd/upstart first, to prevent it from messing up our stubs and starting daemons anyway
 pkg_mgr install systemd
 
+esm_enable
+
 # Normalize initramfs so that all distos can use dracut
 pkg_mgr purge busybox-initramfs
 pkg_mgr install dracut

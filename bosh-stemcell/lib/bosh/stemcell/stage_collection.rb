@@ -63,8 +63,11 @@ module Bosh::Stemcell
                when Infrastructure::Softlayer then
                  softlayer_stages
                end
-
-      stages.concat(finish_stemcell_stages)
+      [
+        start_stemcell_stages,
+        stages,
+        finish_stemcell_stages
+      ].flatten
     end
 
     def package_stemcell_stages(disk_format)
@@ -235,8 +238,15 @@ module Bosh::Stemcell
       ]
     end
 
+    def start_stemcell_stages
+      [
+        :esm_enable
+      ]
+    end
+
     def finish_stemcell_stages
       [
+        :esm_disable,
         :bosh_package_list,
       ]
     end
@@ -309,6 +319,7 @@ module Bosh::Stemcell
         :bosh_audit_ubuntu,
         :bosh_log_audit_start,
         :clean_machine_id,
+        :esm_disable,
       ].flatten.reject { |s| Bosh::Stemcell::Arch.ppc64le? && s == :system_ixgbevf }
     end
 

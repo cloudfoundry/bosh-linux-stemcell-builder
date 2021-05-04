@@ -106,3 +106,14 @@ function pkg_exists {
     exit 2
   fi
 }
+
+function esm_enable {
+  pkg_mgr install ubuntu-advantage-tools
+  run_in_chroot $chroot "ua attach ${ESM_TOKEN}"
+}
+
+function esm_disable {
+  run_in_chroot $chroot "ua detach --assume-yes"
+  pkg_mgr remove ubuntu-advantage-tools
+  pkg_mgr autoremove
+}

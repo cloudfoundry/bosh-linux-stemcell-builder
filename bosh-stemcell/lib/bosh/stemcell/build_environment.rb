@@ -96,7 +96,17 @@ module Bosh::Stemcell
     end
 
     def command_env
-      "env #{hash_as_bash_env(proxy_settings_from_environment)}"
+      "env #{hash_as_bash_env(environment_settings)}"
+    end
+
+    def environment_settings
+      proxy_settings_from_environment.merge(esm_settings_from_environment)
+    end
+
+    def esm_settings_from_environment
+      keep = %w[ESM_TOKEN]
+
+      environment.select { |k| keep.include?(k.upcase) }
     end
 
     private
