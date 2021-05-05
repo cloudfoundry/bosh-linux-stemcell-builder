@@ -108,6 +108,7 @@ function pkg_exists {
 }
 
 function esm_enable {
+  pkg_mgr install ca-certificates
   pkg_mgr install ubuntu-advantage-tools
   run_in_chroot $chroot "ua attach ${ESM_TOKEN}"
 }
