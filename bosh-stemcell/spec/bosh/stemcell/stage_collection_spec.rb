@@ -304,6 +304,7 @@ module Bosh::Stemcell
                 :esm_enable,
                 :system_network,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_openstack_agent_settings,
@@ -365,6 +366,7 @@ module Bosh::Stemcell
                 :system_open_vm_tools,
                 :system_vsphere_cdrom,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_enable_password_authentication,
@@ -441,10 +443,12 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_open_vm_tools,
                 :system_vsphere_cdrom,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_enable_password_authentication,
