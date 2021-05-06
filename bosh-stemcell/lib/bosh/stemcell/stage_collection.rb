@@ -63,8 +63,11 @@ module Bosh::Stemcell
                when Infrastructure::Softlayer then
                  softlayer_stages
                end
-
-      stages.concat(finish_stemcell_stages)
+      [
+        start_stemcell_stages,
+        stages,
+        finish_stemcell_stages
+      ].flatten
     end
 
     def package_stemcell_stages(disk_format)
@@ -106,9 +109,6 @@ module Bosh::Stemcell
         bosh_clean
         bosh_harden
         bosh_openstack_agent_settings
-        bosh_clean_ssh
-        image_create
-        image_install_grub
       ]
     end
 
@@ -122,12 +122,6 @@ module Bosh::Stemcell
         :bosh_harden,
         :bosh_enable_password_authentication,
         :bosh_vsphere_agent_settings,
-        :bosh_clean_ssh,
-        # when adding a stage that changes files in the image, do so before
-        # this line.  Image create will make the image so any changes to the
-        # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
       ]
     end
 
@@ -139,13 +133,7 @@ module Bosh::Stemcell
         :bosh_clean,
         :bosh_harden,
         :bosh_aws_agent_settings,
-        :bosh_clean_ssh,
         :udev_aws_rules,
-        # when adding a stage that changes files in the image, do so before
-        # this line.  Image create will make the image so any changes to the
-        # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
       ]
     end
 
@@ -157,9 +145,6 @@ module Bosh::Stemcell
         bosh_clean
         bosh_harden
         bosh_alicloud_agent_settings
-        bosh_clean_ssh
-        image_create
-        image_install_grub
       ]
     end
 
@@ -172,12 +157,6 @@ module Bosh::Stemcell
         :bosh_clean,
         :bosh_harden,
         :bosh_google_agent_settings,
-        :bosh_clean_ssh,
-        # when adding a stage that changes files in the image, do so before
-        # this line.  Image create will make the image so any changes to the
-        # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
       ]
     end
 
@@ -187,12 +166,6 @@ module Bosh::Stemcell
         :base_warden,
         :bosh_clean,
         :bosh_harden,
-        :bosh_clean_ssh,
-        # when adding a stage that changes files in the image, do so before
-        # this line.  Image create will make the image so any changes to the
-        # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
       ]
     end
 
@@ -206,12 +179,6 @@ module Bosh::Stemcell
         :bosh_clean,
         :bosh_harden,
         :bosh_azure_agent_settings,
-        :bosh_clean_ssh,
-        # when adding a stage that changes files in the image, do so before
-        # this line.  Image create will make the image so any changes to the
-        # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
       ]
     end
 
@@ -226,17 +193,24 @@ module Bosh::Stemcell
         :bosh_enable_password_authentication,
         :bosh_softlayer_agent_settings,
         :bosh_config_root_ssh_login,
+      ]
+    end
+
+    def start_stemcell_stages
+      [
+        :esm_enable
+      ]
+    end
+
+    def finish_stemcell_stages
+      [
+        :esm_disable,
         :bosh_clean_ssh,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
-      ]
-    end
-
-    def finish_stemcell_stages
-      [
         :bosh_package_list,
       ]
     end
@@ -309,6 +283,7 @@ module Bosh::Stemcell
         :bosh_audit_ubuntu,
         :bosh_log_audit_start,
         :clean_machine_id,
+        :esm_disable,
       ].flatten.reject { |s| Bosh::Stemcell::Arch.ppc64le? && s == :system_ixgbevf }
     end
 
