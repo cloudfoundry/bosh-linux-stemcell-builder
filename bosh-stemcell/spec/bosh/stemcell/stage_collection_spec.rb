@@ -55,6 +55,7 @@ module Bosh::Stemcell
               :bosh_audit_ubuntu,
               :bosh_log_audit_start,
               :clean_machine_id,
+              :esm_disable,
             ].reject{ |s| Bosh::Stemcell::Arch.ppc64le? and s ==  :system_ixgbevf }
           )
         end
@@ -156,14 +157,16 @@ module Bosh::Stemcell
 
         let(:aws_build_stemcell_image_stages) {
           [
+            :esm_enable,
             :system_network,
             :system_aws_modules,
             :system_parameters,
+            :esm_disable,
             :bosh_clean,
             :bosh_harden,
             :bosh_aws_agent_settings,
-            :bosh_clean_ssh,
             :udev_aws_rules,
+            :bosh_clean_ssh,
             :image_create,
             :image_install_grub,
             :bosh_package_list,
@@ -201,8 +204,10 @@ module Bosh::Stemcell
 
         let(:alicloud_build_stemcell_image_stages) {
           [
+            :esm_enable,
             :system_network,
             :system_parameters,
+            :esm_disable,
             :bosh_clean,
             :bosh_harden,
             :bosh_alicloud_agent_settings,
@@ -244,10 +249,12 @@ module Bosh::Stemcell
 
         let(:google_build_stemcell_image_stages) {
           [
+            :esm_enable,
             :system_network,
             :system_google_modules,
             :system_google_packages,
             :system_parameters,
+            :esm_disable,
             :bosh_clean,
             :bosh_harden,
             :bosh_google_agent_settings,
@@ -293,8 +300,10 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_openstack_agent_settings,
@@ -318,10 +327,12 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_openstack_clock,
                 :system_openstack_modules,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_openstack_agent_settings,
@@ -349,10 +360,12 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_open_vm_tools,
                 :system_vsphere_cdrom,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_enable_password_authentication,
@@ -373,10 +386,12 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_open_vm_tools,
                 :system_vsphere_cdrom,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_enable_password_authentication,
@@ -401,10 +416,12 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_open_vm_tools,
                 :system_vsphere_cdrom,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_enable_password_authentication,
@@ -425,10 +442,12 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_open_vm_tools,
                 :system_vsphere_cdrom,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_enable_password_authentication,
@@ -449,11 +468,13 @@ module Bosh::Stemcell
 
         let(:azure_build_stemcell_image_stages) {
           [
+            :esm_enable,
             :system_azure_network,
             :system_azure_wala,
             :system_parameters,
             :enable_udf_module,
             :bosh_azure_chrony,
+            :esm_disable,
             :bosh_clean,
             :bosh_harden,
             :bosh_azure_agent_settings,
@@ -498,10 +519,12 @@ module Bosh::Stemcell
           it 'has the correct stages' do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
+                :esm_enable,
                 :system_network,
                 :system_softlayer_open_iscsi,
                 :system_softlayer_multipath_tools,
                 :system_parameters,
+                :esm_disable,
                 :bosh_clean,
                 :bosh_harden,
                 :bosh_enable_password_authentication,
@@ -523,8 +546,10 @@ module Bosh::Stemcell
 
         let(:build_stemcell_image_stages) {
           [
+            :esm_enable,
             :system_parameters,
             :base_warden,
+            :esm_disable,
             :bosh_clean,
             :bosh_harden,
             :bosh_clean_ssh,
