@@ -4,8 +4,6 @@ set -e
 
 bin=$(dirname $0)
 
-export GO111MODULE=off
-
 echo -e "\n Installing ginkgo..."
 $bin/go install ./vendor/github.com/onsi/ginkgo/ginkgo
 
