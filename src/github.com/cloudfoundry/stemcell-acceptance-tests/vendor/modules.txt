@@ -9,25 +9,27 @@ github.com/charlievieth/fs
 github.com/cloudfoundry/bosh-utils/errors
 github.com/cloudfoundry/bosh-utils/logger
 github.com/cloudfoundry/bosh-utils/system
-# github.com/fsnotify/fsnotify v1.4.7
+# github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
 # github.com/golang/protobuf v1.5.2
 ## explicit
 # github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 ## explicit
-# github.com/nxadm/tail v1.4.4
+# github.com/nxadm/tail v1.4.8
 github.com/nxadm/tail
 github.com/nxadm/tail/ratelimiter
 github.com/nxadm/tail/util
 github.com/nxadm/tail/watch
 github.com/nxadm/tail/winfile
-# github.com/onsi/ginkgo v1.12.1
+# github.com/onsi/ginkgo v1.16.3
 ## explicit
 github.com/onsi/ginkgo
 github.com/onsi/ginkgo/config
+github.com/onsi/ginkgo/formatter
 github.com/onsi/ginkgo/internal/codelocation
 github.com/onsi/ginkgo/internal/containernode
 github.com/onsi/ginkgo/internal/failer
+github.com/onsi/ginkgo/internal/global
 github.com/onsi/ginkgo/internal/leafnodes
 github.com/onsi/ginkgo/internal/remote
 github.com/onsi/ginkgo/internal/spec
@@ -57,13 +59,14 @@ github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
 # github.com/stretchr/testify v1.7.0
 ## explicit
-# golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7
+# golang.org/x/net v0.0.0-20201021035429-f5854403a974
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
+# golang.org/x/sys v0.0.0-20210112080510-489259a85091
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.0
+# golang.org/x/text v0.3.3
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
 golang.org/x/text/encoding/htmlindex
@@ -74,12 +77,14 @@ golang.org/x/text/encoding/korean
 golang.org/x/text/encoding/simplifiedchinese
 golang.org/x/text/encoding/traditionalchinese
 golang.org/x/text/encoding/unicode
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
 golang.org/x/text/internal/tag
 golang.org/x/text/internal/utf8internal
 golang.org/x/text/language
 golang.org/x/text/runes
 golang.org/x/text/transform
-# golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
+# golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
 # gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
