@@ -47,7 +47,7 @@ module ShelloutTypes
     end
 
     let(:chroot) { ShelloutTypes::Chroot.new }
-    let(:chroot_dir) { ENV['SHELLOUT_CHROOT_DIR'] }
+    let(:chroot_dir) { chroot.chroot_dir }
 
     let(:regular_system_file) { Tempfile.new('a-file', chroot_dir) }
     let(:regular_system_filename) { ::File.basename(regular_system_file) }

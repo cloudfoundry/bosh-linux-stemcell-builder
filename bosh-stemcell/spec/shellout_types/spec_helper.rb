@@ -1,5 +1,32 @@
+require 'bosh/core/shell'
 require 'rspec'
-require 'rspec/its'
 require 'shellout_types/chroot'
+require 'tmpdir'
 
-ShelloutTypes::Chroot.chroot_dir = '/tmp/ubuntu-chroot'
+
+RSpec.configure do |config|
+  if config.inclusion_filter[:shellout_types]
+    if ENV['OS_IMAGE']
+      @os_image_dir = Dir.mktmpdir('os-image-rspec')
+      ShelloutTypes::Chroot.chroot_dir = @os_image_dir
+      config.add_setting(:os_image_dir, default: @os_image_dir)
+
+      config.before(:suite) do
+        Bosh::Core::Shell.new.run("sudo tar xf #{ENV['OS_IMAGE']} -C #{config.os_image_dir}")
+        Bosh::Core::Shell.new.run("sudo chgrp dialout #{config.os_image_dir}")
+        Bosh::Core::Shell.new.run("sudo chmod 775 #{config.os_image_dir}")
+        Bosh::Core::Shell.new.run("sudo chroot #{config.os_image_dir} /bin/bash -c 'useradd ubuntu --uid 501 -g dialout'")
+      end
+
+      config.after(:suite) do
+        Bosh::Core::Shell.new.run("sudo rm -rf #{config.os_image_dir}")
+      end
+    elsif ENV['SHELLOUT_CHROOT_DIR']
+      ShelloutTypes::Chroot.chroot_dir = ENV['SHELLOUT_CHROOT_DIR']
+    else
+      warning = 'Both ENV["OS_IMAGE"] and ENV["SHELLOUT_CHROOT_DIR"] are not set, shellout types test cases are being skipped.'
+      puts RSpec::Core::Formatters::ConsoleCodes.wrap(warning, :yellow)
+      config.filter_run_excluding shellout_types: true
+    end
+  end
+end
