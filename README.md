@@ -189,11 +189,11 @@ Then run the following:
     spec/stemcells/cis_spec.rb
 ```
 
-## ShelloutTypes
+### How to run tests for ShelloutTypes
 
 In pursuit of more robustly testing, we wrote our testing library for stemcell contents, called ShelloutTypes.
 
-The ShelloutTypes code has its own unit tests, but require root privileges and an ubuntu chroot environment to run. For this reason, we use the `bosh/main-ubuntu-chroot` docker imagefor unit tests. To run these unit tests locally, run:
+The ShelloutTypes code has its own unit tests, but require root privileges and an ubuntu chroot environment to run. For this reason, we use the `bosh/main-ubuntu-chroot` docker image for unit tests. To run these unit tests locally, run:
 
 ```
 $ docker run bosh/main-ubuntu-chroot    # now in /opt/bosh
@@ -208,8 +208,27 @@ $ cd bosh-stemcell
 $ bundle exec rspec spec/ --tag shellout_types
 
 ```
-
 The above strategy is derived from our CI unit testing job's script.
+
+
+Instead of using a different docker image for testing shellout types it is also possible to use the previously created os image for the tests, run:
+
+```
+$ bundle install --local
+$ cd /opt/bosh/bosh-stemcell
+$ OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
+```
+
+### How to run tests for Bosh Linux Stemcell Builder
+
+The Bosh Linux Stemcell Builder code itself can be tested with the following command's:
+
+```
+$ bundle install --local
+$ cd /opt/bosh/bosh-stemcell
+$ bundle exec rspec spec/
+```
+
 
 ## Troubleshooting
 
