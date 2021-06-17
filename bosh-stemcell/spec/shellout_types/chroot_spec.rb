@@ -1,9 +1,9 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 require 'shellout_types/chroot'
 
 module ShelloutTypes
   describe Chroot, shellout_types: true do
-    let(:chroot_dir) { ENV['SHELLOUT_CHROOT_DIR'] }
+    let(:chroot_dir) { ShelloutTypes::Chroot.new.chroot_dir }
 
     before do
       described_class.chroot_dir = chroot_dir
