@@ -184,7 +184,7 @@ shared_examples_for 'every OS image' do
       it('reports its version number as 8') { expect(subject.stderr).to match /version 8/ }
     end
 
-    describe file('/etc/rsyslog.d/enable-kernel-logging.conf') do
+    describe file('/etc/rsyslog.conf') do
       it { should be_file }
       its(:content) { should match('ModLoad imklog') }
     end
