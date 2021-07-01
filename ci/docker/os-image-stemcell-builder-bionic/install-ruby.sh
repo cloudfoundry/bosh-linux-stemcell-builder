@@ -5,7 +5,7 @@ set -x
 
 CHRUBY_VER="0.3.9"
 CHRUBY_URL=https://github.com/postmodern/chruby/archive/v${CHRUBY_VER}.tar.gz
-RUBY_INSTALL_VER="0.5.0"
+RUBY_INSTALL_VER="0.8.1"
 RUBY_INSTALL_URL=https://github.com/postmodern/ruby-install/archive/v${RUBY_INSTALL_VER}.tar.gz
 
 echo "Installing chruby v${CHRUBY_VER}..."
@@ -38,7 +38,6 @@ install_ruby() {
     chruby "ruby-$version"
     ruby -v
     gem update --system
-    gem install bundler:1.17.3  # gem update --system now installs bundler v2.x, but we're still using 1.x in our lockfile for now
 }
 
-install_ruby 2.4.5 276c8e73e51e4ba6a0fe81fb92669734e741ccea86f01c45e99f2c7ef7bcd1e3
+install_ruby 2.7.3 5e91d1650857d43cd6852e05ac54683351e9c301811ee0bef43a67c4605e7db1
