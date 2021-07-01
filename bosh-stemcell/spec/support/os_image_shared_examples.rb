@@ -184,7 +184,7 @@ shared_examples_for 'every OS image' do
       it('reports its version number as 8') { expect(subject.stderr).to match /version 8/ }
     end
 
-    describe file('/etc/rsyslog.d/enable-kernel-logging.conf') do
+    describe file('/etc/rsyslog.conf') do
       it { should be_file }
       its(:content) { should match('ModLoad imklog') }
     end
@@ -673,7 +673,8 @@ shared_examples_for 'every OS image' do
     end
 
     describe 'record system administrator actions (CIS-8.1.16)' do
-      its(:content) { should match /^-w \/var\/log\/sudo\.log -p wa -k actions$/ }
+      its(:content) { should match /^-a always,exit -F arch=b64 -S execve -F euid=0 -F auid>=1000 -F auid!=4294967295 -F key=sudo_log$/ }
+      its(:content) { should match /^-a always,exit -F arch=b32 -S execve -F euid=0 -F auid>=1000 -F auid!=4294967295 -F key=sudo_log$/ }
     end
 
     describe 'record file system mounts (CIS-8.1.13)' do

@@ -65,7 +65,8 @@ function write_shared_audit_rules {
 -w /etc/apparmor.d/ -p wa -k MAC-policy
 
 # Record system administrator actions
--w /var/log/sudo.log -p wa -k actions
+-a always,exit -F arch=b64 -S execve -F euid=0 -F auid>=1000 -F auid!=4294967295 -F key=sudo_log
+-a always,exit -F arch=b32 -S execve -F euid=0 -F auid>=1000 -F auid!=4294967295 -F key=sudo_log
 
 # Record file system mounts
 -a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts

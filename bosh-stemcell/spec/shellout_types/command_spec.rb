@@ -4,7 +4,7 @@ require 'shellout_types/command'
 module ShelloutTypes
   describe Command, shellout_types: true do
     let(:chroot) { ShelloutTypes::Chroot.new }
-    let(:chroot_dir) { ENV['SHELLOUT_CHROOT_DIR'] }
+    let(:chroot_dir) { chroot.chroot_dir }
 
     let(:echo) { described_class.new("echo $PWD", chroot) }
     let(:errorful) { described_class.new("potato", chroot) }
