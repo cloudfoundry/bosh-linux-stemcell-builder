@@ -19,8 +19,6 @@ else
   mkdir -p $chroot/etc/rsyslog.d
 fi
 
-cp $assets_dir/enable-kernel-logging.conf $chroot/etc/rsyslog.d/enable-kernel-logging.conf
-
 cp -f $assets_dir/rsyslog_50-default.conf $chroot/etc/rsyslog.d/50-default.conf
 
 # Add user/group
