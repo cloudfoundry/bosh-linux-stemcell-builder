@@ -8,7 +8,7 @@ describe 'Google Stemcell', stemcell_image: true do
       it 'match expected list of rsyslog configs' do
         expected_rsyslog_confs = %w(50-default.conf
 90-google.conf
-avoid-startup-deadlock.conf
+enable-kernel-logging.conf
 )
 
 

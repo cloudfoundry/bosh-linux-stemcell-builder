@@ -9,11 +9,6 @@ source $base_dir/lib/prelude_bosh.bash
 # Add configuration files
 cp $assets_dir/rsyslog.conf $chroot/etc/rsyslog.conf
 
-# configure upstart to start rsyslog if its config dir exists
-if [ -d $chroot/etc/init ]; then
-  cp $assets_dir/rsyslog_upstart.conf $chroot/etc/init/rsyslog.conf
-fi
-
 cp $assets_dir/rsyslog_logrotate.conf $chroot/etc/logrotate.d/rsyslog
 
 # erase default rsyslog.d contents in case it was populated by an OS package;
@@ -24,7 +19,7 @@ else
   mkdir -p $chroot/etc/rsyslog.d
 fi
 
-cp $assets_dir/avoid-startup-deadlock.conf $chroot/etc/rsyslog.d/avoid-startup-deadlock.conf
+cp $assets_dir/enable-kernel-logging.conf $chroot/etc/rsyslog.d/enable-kernel-logging.conf
 
 cp -f $assets_dir/rsyslog_50-default.conf $chroot/etc/rsyslog.d/50-default.conf
 
