@@ -91,7 +91,6 @@ shared_examples_for 'All Stemcells' do
       its (:stdout) do
         should eq(<<~FILELIST)
           50-default.conf
-          avoid-startup-deadlock.conf
         FILELIST
       end
     end
