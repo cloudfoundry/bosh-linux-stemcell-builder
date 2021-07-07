@@ -25,10 +25,10 @@ module Bosh::Stemcell
   end
 
   describe Infrastructure::Base do
-    it 'requires a name, hypervisor, disk_formats, default_disk_size' do
+    it 'requires a name, hypervisor, disk_formats, default_disk_size, stemcell_formats' do
       expect {
         Infrastructure::Base.new
-      }.to raise_error ArgumentError, 'missing keywords: name, hypervisor, disk_formats, default_disk_size, stemcell_formats'
+      }.to raise_error ArgumentError, 'missing keywords: :name, :hypervisor, :disk_formats, :default_disk_size, :stemcell_formats'
     end
 
     it 'defaults to no additional cloud properties' do
