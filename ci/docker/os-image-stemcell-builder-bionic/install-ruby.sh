@@ -40,4 +40,4 @@ install_ruby() {
     gem update --system
 }
 
-install_ruby 2.7.3 5e91d1650857d43cd6852e05ac54683351e9c301811ee0bef43a67c4605e7db1
+install_ruby 3.0.1 d06bccd382d03724b69f674bc46cd6957ba08ed07522694ce44b9e8ffc9c48e2
