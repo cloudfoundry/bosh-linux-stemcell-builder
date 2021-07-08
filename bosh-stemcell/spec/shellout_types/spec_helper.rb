@@ -12,10 +12,14 @@ RSpec.configure do |config|
       config.add_setting(:os_image_dir, default: @os_image_dir)
 
       config.before(:suite) do
-        Bosh::Core::Shell.new.run("sudo tar xf #{ENV['OS_IMAGE']} -C #{config.os_image_dir}")
-        Bosh::Core::Shell.new.run("sudo chgrp dialout #{config.os_image_dir}")
+        Bosh::Core::Shell.new.run("sudo tar zxf #{ENV['OS_IMAGE']} -C #{config.os_image_dir}")
+        Bosh::Core::Shell.new.run("sudo chgrp -Rh $(id -g) #{config.os_image_dir}")
         Bosh::Core::Shell.new.run("sudo chmod 775 #{config.os_image_dir}")
-        Bosh::Core::Shell.new.run("sudo chroot #{config.os_image_dir} /bin/bash -c 'useradd ubuntu --uid 501 -g dialout'")
+        if ENV['OSX']
+          Bosh::Core::Shell.new.run("sudo chroot #{config.os_image_dir} /bin/bash -c \"useradd  --uid $(id -u) -G nogroup shellout\"")
+        else
+          Bosh::Core::Shell.new.run("sudo chroot #{config.os_image_dir} /bin/bash -c 'useradd -G nogroup shellout'")
+        end
       end
 
       config.after(:suite) do
