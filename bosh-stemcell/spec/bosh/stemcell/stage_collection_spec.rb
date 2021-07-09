@@ -206,6 +206,34 @@ module Bosh::Stemcell
         end
       end
 
+      context 'when using CloudStack' do
+        let(:infrastructure) { Infrastructure.for('cloudstack') }
+        let(:operating_system) { OperatingSystem.for('ubuntu') }
+
+        it 'has the correct stages' do
+          expect(stage_collection.build_stemcell_image_stages).to eq(
+            [
+              :system_network,
+              :system_openstack_clock,
+              :system_openstack_modules,
+              :system_parameters,
+              :bosh_clean,
+              :bosh_harden,
+              :bosh_openstack_agent_settings,
+              :bosh_clean_ssh,
+              :image_create,
+              :image_install_grub,
+              :bosh_package_list
+            ]
+          )
+          expect(stage_collection.package_stemcell_stages('qcow2')).to eq(
+              [
+                :prepare_qcow2_image_stemcell,
+              ]
+          )
+        end
+      end
+
       context 'when using vSphere' do
         let(:infrastructure) { Infrastructure.for('vsphere') }
         let(:operating_system) { OperatingSystem.for('ubuntu') }
