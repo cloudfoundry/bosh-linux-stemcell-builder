@@ -21,10 +21,15 @@ PACKAGES=( \
   patch \
   po-debconf \
   cpp-5 \
+  cpp-7 \
   g++-5 \
+  g++-7 \
   gcc-5 \
+  gcc-6 \
+  gcc-7 \
   gcc-5-base \
-  gcc-6-base
+  gcc-6-base \
+  gcc-7-base
 )
 
 for package_name in ${PACKAGES[*]} ; do
