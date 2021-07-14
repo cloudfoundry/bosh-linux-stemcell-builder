@@ -8,6 +8,19 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by image_install_grub', {
     exclude_on_softlayer: true
   } do
+    context 'for cloudstack infrastructure and xen hypervisor', {
+        exclude_on_aws: true,
+        exclude_on_vcloud: true,
+        exclude_on_vsphere: true,
+        exclude_on_google: true,
+        exclude_on_warden: true,
+        exclude_on_azure: true,
+        exclude_on_openstack: true,
+    } do
+      describe file('/boot/grub/grub.cfg') do
+        its(:content) { should match ' console=hvc0' }
+      end
+    end
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match 'set default="0"' }
@@ -35,6 +48,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by image_install_grub_softlayer_two_partitions', {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
       exclude_on_vcloud: true,
@@ -70,6 +84,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
     exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_azure: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
     exclude_on_vsphere: true,
@@ -147,6 +162,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by system-azure-network', {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
     exclude_on_vsphere: true,
@@ -164,6 +180,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by system_open_vm_tools', {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
     exclude_on_warden: true,
@@ -179,6 +196,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by system_softlayer_open_iscsi', {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
       exclude_on_vcloud: true,
@@ -194,6 +212,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by system_softlayer_multipath_tools', {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
       exclude_on_vcloud: true,
@@ -209,6 +228,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by system_softlayer_netplan', {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
       exclude_on_vcloud: true,
@@ -224,6 +244,7 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   context 'installed by image_vsphere_cdrom stage', {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
     exclude_on_warden: true,
@@ -261,6 +282,7 @@ HERE
 
   context 'installed by bosh_alicloud_agent_settings', {
     exclude_on_aws: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_openstack: true,
     exclude_on_vcloud: true,
@@ -277,6 +299,7 @@ HERE
 
   context 'installed by bosh_aws_agent_settings', {
     exclude_on_alicloud: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_openstack: true,
     exclude_on_vcloud: true,
@@ -294,6 +317,7 @@ HERE
   context 'installed by bosh_google_agent_settings', {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
+    exclude_on_cloudstack: true,
     exclude_on_openstack: true,
     exclude_on_vcloud: true,
     exclude_on_vsphere: true,
@@ -310,6 +334,7 @@ HERE
   context 'installed by bosh_openstack_agent_settings', {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
     exclude_on_vsphere: true,
@@ -328,6 +353,7 @@ HERE
   context 'installed by bosh_vsphere_agent_settings', {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
+    exclude_on_cloudstack: true,
     exclude_on_google: true,
     exclude_on_vcloud: true,
     exclude_on_openstack: true,
@@ -344,6 +370,7 @@ HERE
   context 'installed by bosh_softlayer_agent_settings', {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
@@ -356,6 +383,23 @@ HERE
       its(:content) { should match('"Type": "HTTP"') }
       its(:content) { should match('"UserDataPath": "/rest/v3.1/SoftLayer_Resource_Metadata/getUserMetadata.json"') }
       its(:content) { should match('"UseRegistry": true') }
+    end
+  end
+
+  context 'installed by bosh_cloudstack_agent_settings', {
+      exclude_on_aws: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+      exclude_on_google: true,
+      exclude_on_softlayer: true,
+  } do
+    describe file('/var/vcap/bosh/agent.json') do
+      it { should be_valid_json_file }
+      its(:content) { should match('"CreatePartitionIfNoEphemeralDisk": true') }
+      its(:content) { should match('"Type": "HTTP"') }
     end
   end
 
@@ -381,9 +425,11 @@ HERE
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-bionic-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-bionic-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-bionic-azure-additions.txt')).map(&:chop) }
+    let(:dpkg_list_cloudstack_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-bionic-cloudstack-additions.txt')).map(&:chop) }
     let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-bionic-softlayer-additions.txt')).map(&:chop) }
 
     describe command(dpkg_list_packages), {
+      exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
@@ -398,6 +444,7 @@ HERE
     describe command(dpkg_list_packages), {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
       exclude_on_warden: true,
@@ -413,6 +460,7 @@ HERE
     describe command(dpkg_list_packages), {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
@@ -427,6 +475,7 @@ HERE
     describe command(dpkg_list_packages), {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,
@@ -440,8 +489,23 @@ HERE
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_aws: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_google: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+    } do
+      it 'contains only the base set of packages plus cloudstack-specific packages' do
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_cloudstack_ubuntu))
+      end
+    end
+
+    describe command(dpkg_list_packages), {
       exclude_on_alicloud: true,
       exclude_on_aws: true,
+      exclude_on_cloudstack: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,

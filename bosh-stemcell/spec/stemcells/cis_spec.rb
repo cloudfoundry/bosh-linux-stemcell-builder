@@ -49,7 +49,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
   end
 
 
-  context "For all infrastructure except Azure", {exclude_on_azure:true} do
+  context "For all infrastructure except Azure and Cloudstack", {exclude_on_azure:true, exclude_on_cloudstack:true} do
     it 'confirms that all CIS test cases ran' do
       expect($cis_test_cases.to_a).to match_array(base_cis_test_cases + ['CIS-2.24'])
     end
@@ -63,6 +63,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
     exclude_on_vsphere: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
+    exclude_on_cloudstack: true,
     exclude_on_softlayer: true,
   } do
     it 'confirms that all CIS test cases ran' do

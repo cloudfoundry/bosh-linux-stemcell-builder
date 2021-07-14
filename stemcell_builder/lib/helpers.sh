@@ -34,7 +34,7 @@ function run_in_chroot {
     mkdir -p $chroot/proc
     mount -n --bind /proc $chroot/proc
 
-    chroot $chroot env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin http_proxy=${http_proxy:-} bash -e -c "$script"
+    chroot $chroot env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin http_proxy=${http_proxy:-} https_proxy=${https_proxy:-} no_proxy=${no_proxy:-} bash -e -c "$script"
 EOS
 
   # Enable daemon startup
@@ -85,3 +85,12 @@ curl_five_times() {
   fi
   set -e
 }
+
+function is_x86_64() {
+  if [ `uname -m` == "x86_64" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
