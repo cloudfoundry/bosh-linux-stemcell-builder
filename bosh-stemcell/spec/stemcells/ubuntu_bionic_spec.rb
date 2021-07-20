@@ -191,6 +191,11 @@ describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
     describe package('open-vm-tools') do
       it { should be_installed }
     end
+    describe file('/etc/vmware-tools/tools.conf') do
+      it { should be_file }
+      its(:content) { should match '\[guestinfo\]' }
+      its(:content) { should match 'exclude-nics=veth\*,docker\*,virbr\*,silk-vtep,s-\*,ovs\*,erspan\*,nsx-container,\?\?\?\?\?\?\?\?-\?\?\?\?-\*' }
+    end
   end
 
   context 'installed by system_softlayer_open_iscsi', {
