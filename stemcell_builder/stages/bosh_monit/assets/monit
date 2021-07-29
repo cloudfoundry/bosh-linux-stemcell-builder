@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+source /var/vcap/bosh/etc/monit-access-helper.sh
+
+permit_monit_access
+
+exec monit-actual $@
