@@ -15,7 +15,7 @@ run_in_chroot $chroot "rm -f /usr/bin/fusermount"
 # exclude container interface IPs preventing VM interface IPs displaying on vCenter UI
 cat >> $chroot/etc/vmware-tools/tools.conf <<EOF
 [guestinfo]
-exclude-nics=veth*,docker*,virbr*,silk-vtep,s-*,ovs*,erspan*,nsx-container,????????-????-*
+exclude-nics=veth*,docker*,virbr*,silk-vtep,s-*,ovs*,erspan*,nsx-container,antrea*,???????????????
 EOF
 
 # The above installation adds a PAM configuration with 'nullok' values in it.
