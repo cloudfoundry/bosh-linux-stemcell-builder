@@ -9,7 +9,15 @@ ENV{DEVTYPE}!="disk", GOTO="cdrom_end"
 KERNEL=="sr[0-9]*", ENV{ID_CDROM}="1"
 
 # media eject button pressed
-ENV{DISK_EJECT_REQUEST}=="?*", RUN+="cdrom_id --eject-media $devnode", GOTO="cdrom_end"
+# NOTE: As of Stemcell versions 621.151 and 456.186, ejecting the media in response to an eject request event results in
+#       a storm of media change events from the kernel for several minutes. During this event storm, any media
+#       reinserted will not be recognized. After the storm is over, inserted media will be correctly recognized again.
+#       (Both affected stemcell versions are using kernel version 4.15.0-156)
+#       Testing has revealed that -because we do not lock the drive door- we can simply do nothing in reponse to an eject
+#       request, and everything works as required.
+#       So, because Canonical will likely take some time to figure out what's going wrong and release a patch, and because
+#       fixing this is high-priority, we're just going to not do anything in response to an eject request.
+# ENV{DISK_EJECT_REQUEST}=="?*", RUN+="cdrom_id --eject-media $devnode", GOTO="cdrom_end"
 
 # Do not lock CDROM drive when cdrom is inserted
 # because vSphere will start asking questions via API.
