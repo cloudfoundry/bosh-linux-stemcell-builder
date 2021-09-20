@@ -139,7 +139,7 @@ describe 'Ubuntu 16.04 stemcell image', stemcell_image: true do
     describe file('/etc/vmware-tools/tools.conf') do
       it { should be_file }
       its(:content) { should match '\[guestinfo\]' }
-      its(:content) { should match 'exclude-nics=veth\*,docker\*,virbr\*,silk-vtep,s-\*,ovs\*,erspan\*,nsx-container,\?\?\?\?\?\?\?\?-\?\?\?\?-\*' }
+      its(:content) { should match 'exclude-nics=veth\*,docker\*,virbr\*,silk-vtep,s-\*,ovs\*,erspan\*,nsx-container,antrea\*,\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?' }
     end
   end
 
