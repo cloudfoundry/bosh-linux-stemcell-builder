@@ -130,6 +130,7 @@ module Bosh::Stemcell
     its(:hypervisor)        { should eq('xen') }
     its(:default_disk_size) { should eq(3072) }
     its(:disk_formats) {should eq(['vhdx'])}
+    its(:stemcell_formats)  { should eq(['cloudstack-vhdx']) }
 
     it { should eq Infrastructure.for('cloudstack') }
     it { should_not eq Infrastructure.for('vsphere') }
