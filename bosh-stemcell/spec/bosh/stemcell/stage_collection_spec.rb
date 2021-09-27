@@ -214,12 +214,14 @@ module Bosh::Stemcell
           expect(stage_collection.build_stemcell_image_stages).to eq(
             [
               :system_network,
-              :system_openstack_clock,
               :system_openstack_modules,
+              :bosh_cloudstack_ubuntu_vr_metadata,
+              :system_ubuntu_xen_tools,
               :system_parameters,
+              :system_vhd_utils_tools,
               :bosh_clean,
               :bosh_harden,
-              :bosh_openstack_agent_settings,
+              :bosh_cloudstack_agent_settings,
               :bosh_clean_ssh,
               :image_create,
               :image_install_grub,
