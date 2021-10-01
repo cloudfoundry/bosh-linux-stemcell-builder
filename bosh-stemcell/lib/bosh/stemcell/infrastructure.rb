@@ -85,7 +85,13 @@ module Bosh::Stemcell
 
     class CloudStack < Base
       def initialize
-        super(name: 'cloudstack', hypervisor: 'xen', default_disk_size: 3072, disk_formats: ['vhdx'], stemcell_formats: ['cloudstack-vhdx'])
+        super(
+          name: 'cloudstack',
+          hypervisor: 'xen',
+          default_disk_size: 3072,
+          disk_formats: ['vhdx'],
+          stemcell_formats: ['cloudstack-vhdx']
+        )
       end
 
       def additional_cloud_properties
@@ -158,7 +164,12 @@ module Bosh::Stemcell
 
     class Google < Base
       def initialize
-        super(name: 'google', hypervisor: 'kvm', default_disk_size: 3072, disk_formats: ['rawdisk'], stemcell_formats: ['google-rawdisk'])
+        super(name: 'google',
+        hypervisor: 'kvm',
+        default_disk_size: 3072,
+        disk_formats: ['rawdisk'],
+        stemcell_formats: ['google-rawdisk']
+      )
       end
 
       def additional_cloud_properties
@@ -168,7 +179,13 @@ module Bosh::Stemcell
 
     class Warden < Base
       def initialize
-        super(name: 'warden', hypervisor: 'boshlite', default_disk_size: 2048, disk_formats: ['files'], stemcell_formats: ['warden-tar'])
+        super(
+          name: 'warden',
+          hypervisor: 'boshlite',
+          default_disk_size: 2048,
+          disk_formats: ['files'],
+          stemcell_formats: ['warden-tar']
+        )
       end
 
       def additional_cloud_properties
