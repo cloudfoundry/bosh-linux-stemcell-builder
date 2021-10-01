@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">8a6fc46bec58ddfcb5874c03a4d686034ecbbfede418e4577cdaf2263069f8cfe5b3a2745c149f84d987578bba494d4ca37d9f0d2ba45099a23da6049a1ed671</hash>
-    <hash type="sha-256">cc4831d88bed789ad1dfdffadc9e84b1ede606da7162688916a5cf4307c0ddd7</hash>
-    <hash type="sha-1">71854fa418355710d200836aac84557745464939</hash>
-    <hash type="md5">ee7bab8df2a75cb2b5a6d50cf2055656</hash>
-    <size>592269789</size>
+    <hash type="sha-512">df84619772670f2673da854896b6a1dbae0ed8c4181f836d33f0904bef78ef99151b6c7934f16bea90f3098a457b2f42bee3d023c656815111693007b10d0eb7</hash>
+    <hash type="sha-256">e3fe9840d7a5f82d1342b7eaa09472cda7ac0e520028ce7f3bb9c98188451917</hash>
+    <hash type="sha-1">ce3e25f676d7e49519ed021119b55661c6e289ec</hash>
+    <hash type="md5">9bb80648fa09065713ca4a4f15b80820</hash>
+    <size>592253552</size>
     <url>https://storage.googleapis.com/bosh-os-images/1.x/ubuntu-bionic.tgz</url>
-    <version>34.0.0</version>
+    <version>35.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
-    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
-    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
-    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
-    <size>1</size>
+    <hash type="sha-512">3af97b213137d97f100e1002d2262d98bebc9cd7614ef02eb0e0989c8cd768c14de0b49a7877f376b813c27e267ab1be1aaa6fd313a4a99f0194d2ec002e0b2a</hash>
+    <hash type="sha-256">6de778c92e50d75ff5f3f3d6a44f63639d9fcfedcd2267a192955201dd76f399</hash>
+    <hash type="sha-1">1320b0f42d8eedf328897a0c7e8f9684c388f2e5</hash>
+    <hash type="md5">1d64e64cefd72b716da29dce6d98622d</hash>
+    <size>8718</size>
     <url>https://storage.googleapis.com/bosh-os-images/1.x/usn-log.json</url>
-    <version>34.0.0</version>
+    <version>35.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2021-09-27T10:32:00.549100296Z</published>
+  <published>2021-10-01T10:44:07.983045715Z</published>
 </metalink>
