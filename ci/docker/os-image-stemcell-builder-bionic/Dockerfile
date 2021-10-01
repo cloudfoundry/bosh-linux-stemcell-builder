@@ -54,8 +54,6 @@ RUN wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/
 # this is unshare from ubuntu 15.10 so we can use the newer -fp flags
 ADD scripts/unshare /usr/bin/unshare
 
-ADD scripts/ubuntu_bashrc /home/ubuntu/.bashrc
-
 RUN for GO_EXECUTABLE in $GOROOT/bin/*; do ln -s $GO_EXECUTABLE /usr/bin/; done
 
 # Source: https://stackoverflow.com/questions/28247427/strange-locale-issue-on-arch
