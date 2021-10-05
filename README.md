@@ -2,172 +2,122 @@
 
 Tools for creating stemcells.
 
+## Building a stemcell locally
 
-## Concourse workflow
+First make sure you have a local copy of this repository. Additionally, you must
+download an external asset - `VMware-ovftool-*.bundle`. See **External Assets**
+for instructions on where to download it from. Please place that asset in
+`ci/docker/os-image-stemcell-builder/` directory.
 
-To create a stemcell on concourse instead of locally on virtualbox, you can execute the build-stemcell task.
-```
-mkdir /tmp/version
-cat <<EOF >/tmp/version/number
-0.0
-EOF
-cd /tmp/version
-git init
+If you already have a stemcell-building environment set up and ready, skip to
+the **Build Steps** section. Otherwise, follow one of these two methods before
+trying to run the commands in **Build Steps**.
 
-pushd ~/workspace/bosh-linux-stemcell-builder
-fly -t production login
-IAAS=vsphere HYPERVISOR=esxi OS_NAME=ubuntu OS_VERSION=xenial time fly -t production execute -p -x -i version=/tmp/version -i bosh-linux-stemcell-builder=. -c ./ci/tasks/build.yml -o stemcell=/tmp/vsphere/dev/
-popd
-```
+**If you have docker installed**,
 
-## Setup
-
-First make sure you have a local copy of this repository. If you already have a stemcell-building environment set up and ready, skip to the **Build Steps** section. Otherwise, follow one of these two methods before trying to run the commands in **Build Steps**.
-
-The Docker-based environment files are located in `ci/docker/os-image-stemcell-builder`...
-
-    host$ cd ci/docker/os-image-stemcell-builder
-
-If you are not running on Linux or you do not have Docker installed, use `vagrant` to start a new VM which has Docker, and then change back into the `./docker` directory...
-
-    host$ vagrant up
-    host$ vagrant ssh
-
-Once you have Docker running, run `./run`...
-
-    vagrant$ /opt/bosh/ci/docker/run os-image-stemcell-builder
-    container$ whoami
-    ubuntu
-
-*You're now ready to continue from the **Build Steps** section.*
-
-**Troubleshooting**: if you run into issues, try destroying any existing VM, update your box, and try again...
-
-    host$ vagrant destroy
-    host$ vagrant box update
-
+    host$ cd ci/docker
+    host$ ./run os-image-stemcell-builder
 
 ## Build Steps
 
-At this point, you should be ssh'd and running within your container in the `bosh-linux-stemcell-builder` directory. Start by installing the latest dependencies before continuing to a specific build task...
+At this point, you should be ssh'd and running within a docker container in the
+`bosh-linux-stemcell-builder` directory. Start by installing the latest
+dependencies before continuing to a specific build task...
 
     $ echo $PWD
     /opt/bosh
     $ bundle install --local
 
 
+If you receive an Bundle error you need to install the bundler version specified in the error message
+
+    $ gem install bundler -v 1.17.3
+    $ bundle install --local
+
 ### Build an OS image
 
-An OS image is a tarball that contains a snapshot of an entire OS filesystem that contains all the libraries and system utilities that the BOSH agent depends on. It does not contain the BOSH agent or the virtualization tools: there is [a separate Rake task](#with-local-os-image) that adds the BOSH agent and a chosen set of virtualization tools to any base OS image, thereby producing a stemcell.
-
-The OS Image should be rebuilt when you are making changes to which packages we install in the operating system, or when making changes to how we configure those packages, or if you need to pull in and test an updated package from upstream.
+An OS image is a tarball that contains a snapshot of an entire OS filesystem
+that contains all the libraries and system utilities that the BOSH agent depends
+on. It does not contain the BOSH agent or the virtualization tools: there is [a
+separate Rake task](#with-local-os-image) that adds the BOSH agent and a chosen
+set of virtualization tools to any base OS image, thereby producing a stemcell.
+The OS Image should be rebuilt when you are making changes to packages we
+install in the operating system, or when making changes to how we configure
+those packages, or if you need to pull in and test an updated package from
+upstream.
 
     $ mkdir -p $PWD/tmp
+    $ export ESM_TOKEN=xxxxx # retrieve from LastPass
     $ bundle exec rake stemcell:build_os_image[ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz]
 
 The arguments to `stemcell:build_os_image` are:
 
-0. *`operating_system_name`* identifies which type of OS to fetch. Determines which package repository and packaging tool will be used to download and assemble the files. Must match a value recognized by the  [OperatingSystem](bosh-stemcell/lib/bosh/stemcell/operating_system.rb) module. Currently, `ubuntu` `centos` and `rhel` are recognized.
-0. *`operating_system_version`* an identifier that the system may use to decide which release of the OS to download. Acceptable values depend on the operating system. For `ubuntu`, use `xenial`. For `centos` or `rhel`, use `7`.
-0. *`os_image_path`* the path to write the finished OS image tarball to. If a file exists at this path already, it will be overwritten without warning.
-
-
-#### Special requirements for building a RHEL OS image
-
-There are a few extra steps you need to do before building a RHEL OS image:
-
-0. Start up or re-provision the stemcell building machine (run `vagrant up` or `vagrant provision` from this directory)
-0. Download the [RHEL 7.0 Binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.0/x86_64/product-downloads) image and use `scp` to copy it to the stemcell building machine. Note that RHEL 7.1 does not yet build correctly.
-0. On the stemcell building machine, mount the RHEL 7 DVD at `/mnt/rhel`:
-
-        $ mkdir -p /mnt/rhel
-        $ mount rhel-server-7.0-x86_64-dvd.iso /mnt/rhel
-
-0. On the stemcell building machine, put your Red Hat Account username and password into environment variables:
-
-        $ export RHN_USERNAME=my-rh-username@company.com
-        $ export RHN_PASSWORD=my-password
-
-0. On the stemcell building machine, run the stemcell building rake task:
-
-        $ bundle exec rake stemcell:build_os_image[rhel,7,$PWD/tmp/rhel_7_base_image.tgz]
-
-See below [Building the stemcell with local OS image](#with-local-os-image) on how to build stemcell with the new OS image.
-
-
-#### Special requirements for building a PhotonOS image
-
-There are a few extra steps you need to do before building a PhotonOS image:
-
-0. Start up or re-provision the stemcell building machine (run `vagrant up` or `vagrant provision` from this directory)
-0. Download the [latest PhotonOS ISO image](https://vmware.bintray.com/photon/iso/) and use `scp` to copy it to the stemcell building machine. The version must be TP2-dev or newer.
-0. On the stemcell building machine, mount the PhotonOS ISO at `/mnt/photonos`:
-
-        $ mkdir -p /mnt/photonos
-        $ mount photon.iso /mnt/photonos
-
-0. On the stemcell building machine, run the stemcell building rake task:
-
-        $ bundle exec rake stemcell:build_os_image[photonos,TP2,$PWD/tmp/photon_TP2_base_image.tgz]
-
-See below [Building the stemcell with local OS image](#with-local-os-image) on how to build stemcell with the new OS image.
-
-
-#### Special requirements for building an openSUSE image
-
-The openSUSE image is built using [Kiwi](http://opensuse.github.io/kiwi/) which is not available in the normal builder container. For that reason a special container has to be used. All required steps are described in the [documentation](./ci/docker/suse-os-image-stemcell-builder/README.md).
-
-#### How to run tests for OS Images
-
-The OS tests are meant to be run agains the OS environment to which they belong. When you run the `stemcell:build_os_image` rake task, it will create a .raw OS image that it runs the OS specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests.
-
-To run the `centos_7_spec.rb` tests for example you will need to:
-
-* `bundle exec rake stemcell:build_os_image[centos,7,$PWD/tmp/centos_base_image.tgz]`
-* -make changes-
-
-Then run the following:
-
-    cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/centos_base_image.tgz bundle exec rspec -fd spec/os_image/centos_7_spec.rb
-
+0. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
+   Determines which package repository and packaging tool will be used to
+   download and assemble the files. Currently, only `ubuntu` is recognized.
+0. *`operating_system_version`* (`xenial`): an identifier that the system may use
+   to decide which release of the OS to download. Acceptable values depend on
+   the operating system. For `ubuntu`, use `xenial`.
+0. *`os_image_path`* (`$PWD/tmp/ubuntu_base_image.tgz`): the path to write the
+   finished OS image tarball to. If a file exists at this path already, it will
+   be overwritten without warning.
 
 ### Building a Stemcell
 
-The stemcell should be rebuilt when you are making and testing BOSH-specific changes on top of the base OS image such as new bosh-agent versions, or updating security configuration, or changing user settings.
+The stemcell should be rebuilt when you are making and testing BOSH-specific
+changes on top of the base OS image such as new bosh-agent versions, or updating
+security configuration, or changing user settings.
 
-#### with published OS image
+    $ mkdir -p $PWD/tmp
+    $ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz,"1.23"]
 
-The last two arguments to the rake command are the S3 bucket and key of the OS image to use (i.e. in the example below, the .tgz will be downloaded from [http://bosh-os-images.s3.amazonaws.com/bosh-centos-7-os-image.tgz](http://bosh-os-images.s3.amazonaws.com/bosh-centos-7-os-image.tgz)). More info at OS\_IMAGES.
+The arguments to `stemcell:build_with_local_os_image` are:
 
-    $ bundle exec rake stemcell:build[aws,xen,ubuntu,xenial,"1.23"]
+0. `infrastructure_name`: Which IaaS you are producing the stemcell for.
+   Determines which virtualization tools to package on top of the stemcell.
+0. `hypervisor_name`: Depending on what the IAAS supports, which hypervisor to
+   target: `aws` → `xen`, `azure` → `hyperv`, `google` → `kvm`, `openstack` →
+   `kvm`, `vsphere` → `esxi`
+0. `operating_system_name` (`ubuntu`): Type of OS. Same as
+   `stemcell:build_os_image`
+0. `operating_system_version` (`xenial`): OS release. Same as
+   `stemcell:build_os_image`
+0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
+   produced in `stemcell:build_os_image`
+0. `build_number` (`621.999`): Stemcell version.
 
-The final argument, which specifies the build number, is optional and will default to '0000'
+The final argument, which specifies the build number, is optional and will
+default to '0000'
 
-#### with local OS image
 
-If you want to use an OS Image that you just created, use the `stemcell:build_with_local_os_image` task, specifying the OS image tarball.
+## Testing
 
-    $ bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz,"1.23"]
+### How to run tests for OS Images
 
-The final argument, which specifies the build number, is optional and will default to '0000'
+The OS tests are meant to be run against the OS environment to which they
+belong. When you run the `stemcell:build_os_image` rake task, it will create a
+.raw OS image that it runs the OS specific tests against. You will need to run
+the rake task the first time you create your docker container, but everytime
+after, as long as you do not destroy the container, you should be able to just
+run the specific tests.
 
-You can also download OS Images from the public S3 bucket.  Download information
-and metadata can be found in the corresponding [metalink files](./bosh-stemcell/image-metalinks).
-Public OS images can be obtained by:
+To run the `ubuntu_xenial_spec.rb` tests for example you will need to:
 
-```
-# latest ubuntu-xenial
-$ bundle exec rake stemcell:download_os_image[ubuntu,xenial]
+* `bundle exec rake stemcell:build_os_image[ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz]`
+* -update tests-
 
-# latest centos-7
-$ bundle exec rake stemcell:download_os_image[centos,7]
-```
+Then run the following:
 
-**NOTE**: The `download_os_image` rake task has a dependency on the
-[meta4 binary](https://github.com/dpb587/metalink/releases).
+    cd /opt/bosh/bosh-stemcell
+    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_xenial_spec.rb
 
-#### How to run tests for Stemcell
-When you run the `stemcell:build_with_local_os_image` or `stemcell:build` rake task, it will create a stemcell that it runs the stemcell specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests.
+### How to run tests for Stemcell
+
+When you run the `stemcell:build_with_local_os_image` or `stemcell:build` rake
+task, it will create a stemcell that it runs the stemcell specific tests
+against. You will need to run the rake task the first time you create your
+docker container, but everytime after, as long as you do not destroy the
+container, you should be able to just run the specific tests.
 
 To run the stemcell tests when building against local OS image you will need to:
 
@@ -191,23 +141,27 @@ Then run the following:
 
 ### How to run tests for ShelloutTypes
 
-In pursuit of more robustly testing, we wrote our testing library for stemcell contents, called ShelloutTypes.
+In pursuit of more robustly testing, we wrote our testing library for stemcell
+contents, called ShelloutTypes.
 
-The ShelloutTypes code has its own unit tests, but require root privileges and an ubuntu chroot environment to run. For this reason, we use the `bosh/main-ubuntu-chroot` docker image for unit tests. To run these unit tests locally, run:
+The ShelloutTypes code has its own unit tests, but require root privileges and
+an ubuntu chroot environment to run. For this reason, we use the
+`bosh/main-ubuntu-chroot` docker image for unit tests. To run these unit tests
+locally, run:
 
 ```
 $ bundle install --local
 $ cd /opt/bosh/bosh-stemcell
 $ OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
 ```
-if on osx use
+if on macOS use
 ```
 OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
 ```
 
 ### How to run tests for Bosh Linux Stemcell Builder
 
-The Bosh Linux Stemcell Builder code itself can be tested with the following command's:
+The Bosh Linux Stemcell Builder code itself can be tested with the following commands:
 
 ```
 $ bundle install --local
@@ -220,32 +174,64 @@ $ bundle exec rspec spec/
 
 If you find yourself debugging any of the above processes, here is what you need to know:
 
-0. Most of the action happens in Bash scripts, which are referred to as _stages_, and can be found in `stemcell_builder/stages/<stage_name>/apply.sh`.
-0. You should make all changes on your local machine, and sync them over to the AWS stemcell building machine using `vagrant provision remote` as explained earlier on this page.
-0. While debugging a particular stage that is failing, you can resume the process from that stage by adding `resume_from=<stage_name>` to the end of your `bundle exec rake` command. When a stage's `apply.sh` fails, you should see a message of the form `Can't find stage '<stage>' to resume from. Aborting.` so you know which stage failed and where you can resume from after fixing the problem.
+0. Most of the action happens in Bash scripts, which are referred to as
+   _stages_, and can be found in
+   `stemcell_builder/stages/<stage_name>/apply.sh`.
+0. While debugging a particular stage that is failing, you can resume the
+   process from that stage by adding `resume_from=<stage_name>` to the end of
+   your `bundle exec rake` command. When a stage's `apply.sh` fails, you should
+   see a message of the form `Can't find stage '<stage>' to resume from.
+   Aborting.` so you know which stage failed and where you can resume from after
+   fixing the problem. Please use caution as stages are not guaranteed to be
+   idempotent.
 
-For example:
+   Example usage:
 
+    ```shell
     $ bundle exec rake stemcell:build_os_image[ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
+    ```
+0. `Directory renamed before its status could be extracted`
 
+    If you run into the following error whilst builing an image with Docker:
+    ```shell
+    ubuntu@98b2a2aed0e6:/opt/bosh$ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,xenial,$PWD/tmp/ubuntu_base_image.tgz,705]
+    cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_xenial_spec.rb
+    All stemcell_tarball tests are being skipped. STEMCELL_WORKDIR needs to be set
+    All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set
+    Run options: exclude {:stemcell_image=>true, :stemcell_tarball=>true, :shellout_types=>true}
+
+    Ubuntu 16.04 OS image
+    tar: ./var/log: Directory renamed before its status could be extracted
+    ```
+    You can convert Docker's storage driver to `aufs` as described [here](https://github.com/docker/hub-feedback/issues/727#issuecomment-312498015).
 
 ## Pro Tips
 
-* If the OS image has been built and so long as you only make test case modifications you can just rerun the tests (without rebuilding OS image). Details in section `How to run tests for OS Images`
+* If the OS image has been built and so long as you only make test case
+  modifications you can just rerun the tests (without rebuilding OS image).
+  Details in section `How to run tests for OS Images`
+* If the Stemcell has been built and you are only updating tests, you do not
+  need to re-build the stemcell. You can simply rerun the tests (without
+  rebuilding Stemcell. Details in section `How to run tests for Stemcell`
+* It's possible to verify OS/Stemcell changes without making a deployment using
+  the stemcell. For an AWS specific ubuntu stemcell, the filesytem is available
+  at `/mnt/stemcells/aws/xen/ubuntu/work/work/chroot`
 
-* If the Stemcell has been built and so long as you only make test case modifications you can rerun the tests (without rebuilding Stemcell. Details in section `How to run tests for Stemcell`
+## External Assets
 
-* It's possible to verify OS/Stemcell changes without making adeployment using the stemcell. For an AWS specific ubuntu stemcell, the filesytem is available at `/mnt/stemcells/aws/xen/ubuntu/work/work/chroot`
+The ovftool installer from VMWare can be found at
+[my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL410&productId=489).
 
+The ovftool installer must be copied into the [ci/docker/os-image-stemcell-builder](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile or you will receive the error
 
-## Rebuilding the Image
+    Step 24/30 : ADD ${OVF_TOOL_INSTALLER} /tmp/ovftool_installer.bundle
+    ADD failed: stat /var/lib/docker/tmp/docker-builder389354746/VMware-ovftool-4.1.0-2459827-lin.x86_64.bundle: no such file or directory
 
-The Docker image is published to [`bosh/os-image-stemcell-builder`](https://hub.docker.com/r/bosh/os-image-stemcell-builder/).
+## Rebuilding the docker image
 
-If you need to rebuild the image, first download the ovftool installer from VMWare. Details about this can be found at [my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL410&productId=489). Specifically...
-
-0. Download the `*.bundle` file to the docker image directory (`ci/docker/os-image-stemcell-builder`)
-0. When upgrading versions, update `Dockerfile` with the new file path and SHA
+The Docker image is published to
+[`bosh/os-image-stemcell-builder`](https://hub.docker.com/r/bosh/os-image-stemcell-builder/).
+You will need the ovftool installer present on your filesystem.
 
 Rebuild the container with the `build` script...
 
