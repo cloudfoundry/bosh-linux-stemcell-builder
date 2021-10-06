@@ -4,7 +4,7 @@ group :development, :test do
   gem 'bosh-stemcell', path: 'bosh-stemcell'
   gem 'fakefs'
   gem 'logging'
-  gem 'rake', '~>10.0'
+  gem 'rake'
   gem 'rspec'
   gem 'rspec-instafail'
   gem 'rspec-its'
