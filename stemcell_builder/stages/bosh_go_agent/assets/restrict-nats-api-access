@@ -1,0 +1,34 @@
+#!/bin/bash
+# THESE SCRIPTS ARE EXECUTED IN LEXICAL ORDER. MAKE SURE TO CHECK IF ANYTHING ELSE (CURRENTLY MONIT) WRITES OTHER CGROUP BASED RULES TO AVOID INTERFERENCE. IT'S PROBABLY AGOOD IDEA TO -A DROPS AND -I ACCEPTS
+
+source /var/vcap/bosh/etc/nats-access-helper.sh
+BOSH_IP_PORT=$(cat /var/vcap/bosh/settings.json | sed 's#.*nats://nats.*@\([0-9 \. :]*\).*#\1#')
+BOSH_IP=$( cut -f1 -d: <<< ${BOSH_IP_PORT} )
+BOSH_PORT=$( cut -f2 -d: <<< ${BOSH_IP_PORT} )
+
+if iptables -t mangle -C POSTROUTING -d ${BOSH_IP} -p tcp --dport ${BOSH_PORT} \
+      -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+then
+  /bin/true
+else
+    iptables -t mangle -I POSTROUTING -d ${BOSH_IP} -p tcp --dport ${BOSH_PORT} \
+       -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+fi
+
+if iptables -t mangle -C POSTROUTING -d ${BOSH_IP} -p tcp --dport ${BOSH_PORT} \
+      -m cgroup \! --cgroup "${nats_isolation_classid}" -j DROP
+then
+  /bin/true
+else
+    iptables -t mangle -A POSTROUTING -d ${BOSH_IP} -p tcp --dport ${BOSH_PORT} \
+       -m cgroup \! --cgroup "${nats_isolation_classid}" -j DROP
+fi
+
+if iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+            -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+then
+  /bin/true
+else
+    iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+             -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+fi
