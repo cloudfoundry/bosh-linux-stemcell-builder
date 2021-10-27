@@ -9,11 +9,11 @@ mkdir -p $chroot/etc/sv
 mkdir -p $chroot/var/vcap/monit/svlog
 
 cp -a $assets_dir/nats-access-helper.sh $chroot/$bosh_dir/etc/nats-access-helper.sh
-cp -a $assets_dir/restrict-nats-api-access $chroot/etc/network/if-up.d/restrict-nats-api-access
+cp -a $assets_dir/restrict-nats-api-access-allow-monit-api $chroot/etc/network/if-up.d/restrict-nats-api-access-allow-monit-api
 cp -a $assets_dir/runit/agent $chroot/etc/sv/agent
 cp -a $assets_dir/runit/monit $chroot/etc/sv/monit
 
-chmod +x $chroot/$bosh_dir/etc/nats-access-helper.sh $chroot/etc/network/if-up.d/restrict-nats-api-access
+chmod +x $chroot/$bosh_dir/etc/nats-access-helper.sh $chroot/etc/network/if-up.d/restrict-nats-api-access-allow-monit-api
 
 # Set up agent and monit with runit
 run_in_bosh_chroot $chroot "
@@ -42,10 +42,7 @@ else
   /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
 fi
 
-# Add Agent wrapper script
-mv bosh-agent $chroot/var/vcap/bosh/bin/bosh-agent-actual
-chmod +x $chroot/var/vcap/bosh/bin/bosh-agent-actual
-cp -a $assets_dir/agent-wrapper $chroot/var/vcap/bosh/bin/bosh-agent
+mv bosh-agent $chroot/var/vcap/bosh/bin/bosh-agent
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
