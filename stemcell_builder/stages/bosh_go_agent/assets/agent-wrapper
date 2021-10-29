@@ -1,9 +1,0 @@
-#!/bin/bash
-
-set -e
-
-source /var/vcap/bosh/etc/nats-access-helper.sh
-
-permit_nats_access
-
-exec /var/vcap/bosh/bin/bosh-agent-actual "$@"
