@@ -5,11 +5,8 @@ source /var/vcap/bosh/etc/nats-access-helper.sh
 
 
 # Give the agent access to Monit right away
-if iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+if ! iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
             -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
-then
-  /bin/true
-else
     iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
              -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
 fi
