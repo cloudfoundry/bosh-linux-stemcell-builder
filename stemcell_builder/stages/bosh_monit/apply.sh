@@ -6,17 +6,20 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
-monit_basename=monit-5.2.5
+monit_basename=monit-5.29.0
 monit_archive=$monit_basename.tar.gz
 
 mkdir -p $chroot/$bosh_dir/src
 cp -r $dir/assets/$monit_archive $chroot/$bosh_dir/src
 
+
+pkg_mgr install "zlib1g-dev"
+
 run_in_bosh_chroot $chroot "
 cd src
 tar zxvf $monit_archive
 cd $monit_basename
-./configure --prefix=$bosh_dir --without-ssl
+./configure --prefix=$bosh_dir --without-ssl --without-pam
 make -j4 && make install
 "
 
