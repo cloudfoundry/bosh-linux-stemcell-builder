@@ -99,7 +99,7 @@ evcCompatibilityMode = "FALSE"
 EOS
 
 pushd $ovf > /dev/null
-  ovftool *.vmx image.ovf > /dev/stderr
+  ovftool --shaAlgorithm=sha1 *.vmx image.ovf > /dev/stderr
   OLD_OVF_SHA=$(sha1sum image.ovf | cut -d ' ' -f 1)
   sed 's/useGlobal/manual/' -i image.ovf
   NEW_OVF_SHA=$(sha1sum image.ovf | cut -d ' ' -f 1)
