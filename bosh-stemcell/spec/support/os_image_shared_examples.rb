@@ -1,6 +1,7 @@
 shared_examples_for 'every OS image' do
   let(:sshd_config) { file('/etc/ssh/sshd_config') }
   let(:etc_environment) { file('/etc/environment') }
+  let(:syslog_config) { file('/etc/audisp/plugins.d/syslog.conf') }
 
   context 'etc_environment' do
     it 'should have /var/vcap/bosh/bin on the PATH' do
@@ -596,9 +597,9 @@ shared_examples_for 'every OS image' do
       end
     end
 
-    describe file('/etc/audisp/plugins.d/syslog.conf') do
-      describe 'auditd logs to syslog' do
-        its (:content) { should match /^active = yes$/ }
+    context ("plugins.d/syslog.conf") do
+      it 'auditd logs to syslog' do
+        expect(syslog_config.content).to match ( /^active = yes$/ )
       end
     end
   end

@@ -150,7 +150,11 @@ function override_default_audit_variables {
     sed -i 's/^space_left = .*$/space_left = 75/g' $chroot/etc/audit/auditd.conf
     sed -i 's/^admin_space_left = .*$/admin_space_left = 50/g' $chroot/etc/audit/auditd.conf
 
-    sed -i 's/^active = .*$/active = yes/g' $chroot/etc/audisp/plugins.d/syslog.conf
+    if [[ "${DISTRIB_CODENAME}" == 'impish' ]]; then
+        sed -i 's/^active = .*$/active = yes/g' $chroot/etc/audit/plugins.d/syslog.conf
+    else
+        sed -i 's/^active = .*$/active = yes/g' $chroot/etc/audisp/plugins.d/syslog.conf
+    fi
 }
 
 function record_use_of_privileged_binaries {
