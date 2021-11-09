@@ -182,7 +182,7 @@ module Bosh::Stemcell
         super(
           name: 'warden',
           hypervisor: 'boshlite',
-          default_disk_size: 2048,
+          default_disk_size: 3072,
           disk_formats: ['files'],
           stemcell_formats: ['warden-tar']
         )
