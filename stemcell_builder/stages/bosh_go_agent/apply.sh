@@ -9,11 +9,11 @@ mkdir -p $chroot/etc/sv
 mkdir -p $chroot/var/vcap/monit/svlog
 
 cp -a $assets_dir/nats-access-helper.sh $chroot/$bosh_dir/etc/nats-access-helper.sh
-cp -a $assets_dir/restrict-nats-api-access-allow-monit-api $chroot/etc/network/if-up.d/restrict-nats-api-access-allow-monit-api
+cp -a $assets_dir/02-restrict-nats-api-access-allow-monit-api $chroot/etc/network/if-up.d/02-restrict-nats-api-access-allow-monit-api
 cp -a $assets_dir/runit/agent $chroot/etc/sv/agent
 cp -a $assets_dir/runit/monit $chroot/etc/sv/monit
 
-chmod +x $chroot/$bosh_dir/etc/nats-access-helper.sh $chroot/etc/network/if-up.d/restrict-nats-api-access-allow-monit-api
+chmod +x $chroot/$bosh_dir/etc/nats-access-helper.sh $chroot/etc/network/if-up.d/02-restrict-nats-api-access-allow-monit-api
 
 # Set up agent and monit with runit
 run_in_bosh_chroot $chroot "
