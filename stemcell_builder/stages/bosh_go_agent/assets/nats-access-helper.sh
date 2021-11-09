@@ -1,7 +1,7 @@
-# This is the integer value of the argument "0xb0540001", which is
-# b054:0001 . The major number (the left-hand side) is "BOSH", leet-ified.
-# The minor number (the right-hand side) is 1, indicating that this is the
-# first thing in our "BOSH" classid namespace.
+# This is the integer value of the argument "0xb0540002", which is
+# b054:0002 . The major number (the left-hand side) is "BOSH", leet-ified.
+# The minor number (the right-hand side) is 2, indicating that this is the
+# second thing in our "BOSH" classid namespace.
 #
 # _Hopefully_ noone uses a major number of "b054", and we avoid collisions _forever_!
 # If you need to select new classids for firewall rules or traffic control rules, keep
