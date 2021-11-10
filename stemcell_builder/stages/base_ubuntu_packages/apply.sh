@@ -14,13 +14,17 @@ libaio1 gdb libcap2-bin libcap2-dev libbz2-dev \
 cmake uuid-dev libgcrypt-dev ca-certificates \
 scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
-xfsprogs gdisk libpam-cracklib chrony module-init-tools dbus nvme-cli rng-tools"
+xfsprogs gdisk libpam-cracklib chrony dbus nvme-cli rng-tools fdisk"
 
 if [[ "${DISTRIB_CODENAME}" == 'xenial' ]]; then
-  debs="$debs  libcurl3 libcurl3-dev"
+  debs="$debs libcurl3 libcurl3-dev module-init-tools"
 fi
 
 if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
+  debs="$debs  module-init-tools"
+fi
+
+if [[ "${DISTRIB_CODENAME}" == 'bionic' || ${DISTRIB_CODENAME} == 'impish' ]]; then
   debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
   pkg_mgr purge netplan.io
@@ -47,9 +51,10 @@ if [[ "${DISTRIB_CODENAME}" == 'trusty' ]]; then
     rm -f nvme-cli_0.5-1_amd64.deb
   "
 fi
-
-run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
-pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
+# TODO: adiscon does not have impish repo need to wait for jj
+# run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
+# pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
+pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-relp"
 run_in_chroot $chroot "
   cd /tmp
 
@@ -68,7 +73,7 @@ run_in_chroot $chroot "
 "
 
 # Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
-if [ ${DISTRIB_CODENAME} == 'bionic' ]; then
+if [[ ${DISTRIB_CODENAME} == 'bionic' || ${DISTRIB_CODENAME} == 'impish' ]]; then
   install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
 fi
 
