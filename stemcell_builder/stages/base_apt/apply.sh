@@ -33,13 +33,16 @@ fi
 # Upgrade systemd/upstart first, to prevent it from messing up our stubs and starting daemons anyway
 pkg_mgr install systemd
 
-esm_enable
-
 # Normalize initramfs so that all distos can use dracut
 pkg_mgr purge busybox-initramfs
 pkg_mgr install dracut
 
 pkg_mgr dist-upgrade
+
+esm_enable
+
+pkg_mgr dist-upgrade
+
 
 # initscripts messes with /dev/shm -> /run/shm and can create self-referencing symbolic links
 # revert /run/shm back to a regular directory (symlinked to by /dev/shm)
