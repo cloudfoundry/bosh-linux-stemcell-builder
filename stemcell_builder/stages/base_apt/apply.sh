@@ -33,6 +33,8 @@ fi
 # Upgrade systemd/upstart first, to prevent it from messing up our stubs and starting daemons anyway
 pkg_mgr install systemd
 
+pkg_mgr dist-upgrade
+
 esm_enable
 
 # Normalize initramfs so that all distos can use dracut
