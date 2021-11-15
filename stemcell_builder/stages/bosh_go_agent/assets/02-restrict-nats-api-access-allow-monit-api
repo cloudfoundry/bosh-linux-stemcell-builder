@@ -46,7 +46,8 @@ wait_for_agent_settings() {
                  -m cgroup \! --cgroup "${nats_isolation_classid}" -j DROP
       fi
     else
-      echo "no nats protocol connection found. assuming create-env"
+      echo "Nats Address couldn't be parsed into IP:PORT, this script is failing to interpret the /var/vcap/bosh/settings.json"
+      exit 1
     fi
   fi
 }
