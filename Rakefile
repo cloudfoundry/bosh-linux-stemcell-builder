@@ -1,5 +1,6 @@
 require 'json'
 require 'logging'
+require 'fileutils'
 
 namespace :stemcell do
   desc 'Build a base OS image for use in stemcells'
@@ -48,7 +49,7 @@ namespace :stemcell do
     begin
       puts "Using OS image #{args.operating_system_name}-#{args.operating_system_version}"
 
-      mkdir_p('tmp')
+      FileUtils.mkdir_p('tmp')
 
       metalink_path = File.join(
         Dir.pwd,
@@ -145,7 +146,7 @@ namespace :stemcell do
 
       builder.build
 
-      mkdir_p('tmp')
+      FileUtils.mkdir_p('tmp')
       definition.disk_formats.each do |disk_format|
         puts "Packaging #{disk_format}..."
         stemcell_tarball = packager.package(disk_format)
