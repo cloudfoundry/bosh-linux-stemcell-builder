@@ -16,29 +16,7 @@ trying to run the commands in **Build Steps**.
 **If you have docker installed**,
 
     host$ cd ci/docker
-    host$ ./run os-image-stemcell-builder
-
-**If you are not running on Linux or you do not have Docker installed**, use
-`vagrant` to start a new VM which has Docker, and then change back into the
-`./docker` directory...
-
-    host$ vagrant up
-    host$ vagrant ssh
-
-Once you have Docker running, run `./run`...
-
-    vagrant$ cd /opt/bosh/ci/docker
-    vagrant$ ./run os-image-stemcell-builder
-    container$ whoami
-    ubuntu
-
-*You're now ready to continue from the **Build Steps** section.*
-
-**Troubleshooting**: if you run into issues, try destroying any existing VM,
-update your box, and try again...
-
-    host$ vagrant destroy
-    host$ vagrant box update
+    host$ ./run os-image-stemcell-builder-impish
 
 ## Build Steps
 
@@ -48,12 +26,6 @@ dependencies before continuing to a specific build task...
 
     $ echo $PWD
     /opt/bosh
-    $ bundle install --local
-
-
-If you receive an Bundle error you need to install the bundler version specified in the error message
-
-    $ gem install bundler -v 1.17.3
     $ bundle install --local
 
 ### Build an OS image
@@ -69,20 +41,19 @@ those packages, or if you need to pull in and test an updated package from
 upstream.
 
     $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz]
+    $ bundle exec rake stemcell:build_os_image[ubuntu,impish,$PWD/tmp/ubuntu_base_image.tgz]
 
 The arguments to `stemcell:build_os_image` are:
 
 0. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
    Determines which package repository and packaging tool will be used to
    download and assemble the files. Currently, only `ubuntu` is recognized.
-0. *`operating_system_version`* (`bionic`): an identifier that the system may use
+0. *`operating_system_version`* (`impish`): an identifier that the system may use
    to decide which release of the OS to download. Acceptable values depend on
    the operating system. For `ubuntu`, use `bionic`.
 0. *`os_image_path`* (`$PWD/tmp/ubuntu_base_image.tgz`): the path to write the
    finished OS image tarball to. If a file exists at this path already, it will
    be overwritten without warning.
-
 
 ### Building a Stemcell
 
@@ -91,27 +62,30 @@ changes on top of the base OS image such as new bosh-agent versions, or updating
 security configuration, or changing user settings.
 
     $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz,"1.23"]
+    $ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,impish,$PWD/tmp/ubuntu_base_image.tgz,"0.1"]
 
 The arguments to `stemcell:build_with_local_os_image` are:
 
-0. `infrastructure_name` (`aws`): Which IAAS you are producing the stemcell for.
+0. `infrastructure_name`: Which IaaS you are producing the stemcell for.
    Determines which virtualization tools to package on top of the stemcell.
-0. `hypervisor_name` (`xen`): Depending on what the IAAS supports, which
-   hypervisor to target.
+0. `hypervisor_name`: Depending on what the IAAS supports, which hypervisor to
+   target: `aws` → `xen`, `azure` → `hyperv`, `google` → `kvm`, `openstack` →
+   `kvm`, `vsphere` → `esxi`
 0. `operating_system_name` (`ubuntu`): Type of OS. Same as
    `stemcell:build_os_image`
-0. `operating_system_version` (`bionic`): OS release. Same as
+0. `operating_system_version` (`impish`): OS release. Same as
    `stemcell:build_os_image`
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
-0. `build_number` (`1.23`): Stemcell version.
+0. `build_number` (`0.1`): Stemcell version.
 
 The final argument, which specifies the build number, is optional and will
 default to '0000'
 
 
 ## Testing
+
+_[Fixme: update Testing section to Impish/Jammy]
 
 ### How to run tests for OS Images
 
