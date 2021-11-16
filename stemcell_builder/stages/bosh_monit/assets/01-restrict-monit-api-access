@@ -1,0 +1,9 @@
+#!/bin/bash
+# THESE SCRIPTS ARE EXECUTED IN LEXICAL ORDER. MAKE SURE TO CHECK IF ANYTHING ELSE (CURRENTLY BOSH FOR NATS) WRITES OTHER CGROUP BASED RULES TO AVOID INTERFERENCE. IT'S PROBABLY A GOOD IDEA TO -A DROPS AND -I ACCEPTS
+source /var/vcap/bosh/etc/monit-access-helper.sh
+
+if ! iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+	    -m cgroup \! --cgroup "${monit_isolation_classid}" -j DROP
+    iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+	     -m cgroup \! --cgroup "${monit_isolation_classid}" -j DROP
+fi
