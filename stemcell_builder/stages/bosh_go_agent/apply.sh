@@ -6,9 +6,14 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
 mkdir -p $chroot/etc/sv
+mkdir -p $chroot/var/vcap/monit/svlog
+
+cp -a $assets_dir/nats-access-helper.sh $chroot/$bosh_dir/etc/nats-access-helper.sh
+cp -a $assets_dir/02-restrict-nats-api-access-allow-monit-api $chroot/etc/network/if-up.d/02-restrict-nats-api-access-allow-monit-api
 cp -a $assets_dir/runit/agent $chroot/etc/sv/agent
 cp -a $assets_dir/runit/monit $chroot/etc/sv/monit
-mkdir -p $chroot/var/vcap/monit/svlog
+
+chmod +x $chroot/$bosh_dir/etc/nats-access-helper.sh $chroot/etc/network/if-up.d/02-restrict-nats-api-access-allow-monit-api
 
 # Set up agent and monit with runit
 run_in_bosh_chroot $chroot "
@@ -34,7 +39,8 @@ wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/v0.2
 bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
 /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
 
-mv bosh-agent $chroot/var/vcap/bosh/bin/
+mv bosh-agent $chroot/var/vcap/bosh/bin/bosh-agent
+chmod +x $chroot/var/vcap/bosh/bin/bosh-agent
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
 
@@ -54,7 +60,7 @@ systemctl restart systemd-networkd
 EOF
 chmod +x $chroot/var/vcap/bosh/bin/restart_networking
 
-chmod +x $chroot/var/vcap/bosh/bin/bosh-agent
+
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent-rc
 chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 
