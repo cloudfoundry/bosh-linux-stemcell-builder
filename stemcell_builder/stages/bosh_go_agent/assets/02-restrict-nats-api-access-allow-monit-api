@@ -1,0 +1,55 @@
+#!/bin/bash
+# THESE SCRIPTS ARE EXECUTED IN LEXICAL ORDER. MAKE SURE TO CHECK IF ANYTHING ELSE (CURRENTLY MONIT) WRITES OTHER CGROUP BASED RULES TO AVOID INTERFERENCE. IT'S PROBABLY AGOOD IDEA TO -A DROPS AND -I ACCEPTS
+
+source /var/vcap/bosh/etc/nats-access-helper.sh
+
+
+# Give the agent access to Monit right away
+if ! iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+            -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+    iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+             -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+fi
+
+wait_for_agent_settings() {
+  until [[ -f /var/vcap/bosh/settings.json ]]; do
+    echo 'waiting for /var/vcap/bosh/settings.json';
+    sleep 10;
+  done
+
+  NATS_URL=$(cat /var/vcap/bosh/settings.json | sed 's#.*\("mbus"\):"\(.*\)",.*#\2#g' )
+
+  # CHECK IF THIS IS A CREATE ENV.
+  if grep -q '^https' <<< ${NATS_URL}; then
+    echo "create-env, skipping iptables for nats"
+  else
+    # NATS URL DIDN'T START WITH `https`, PROCEED WITH PARSING OUT VALUE `nats://...@IP:PORT`
+    # GET SECOND FIELD WITH DELIMITER `@` LEAVING `IP:PORT`
+    BOSH_IP_PORT=$( cut -f2 -d@ <<< "${NATS_URL}" )
+    # GET FIRST FIELD WITH DELIMITER `:` LEAVING `IP`
+    BOSH_IP=$( cut -f1 -d: <<< "${BOSH_IP_PORT} )"
+    # GET SECOND FIELD WITH DELIMITER `:` LEAVING `PORT`
+    BOSH_PORT=$( cut -f2 -d: <<< "${BOSH_IP_PORT}" )
+
+    #CHECK IF PARSED OUT IP:PORT COMBINATION IS NOT NIL OR EMPTY
+    if [[ -n ${BOSH_IP_PORT} ]]; then
+      if ! iptables -t mangle -C POSTROUTING -d "${BOSH_IP}" -p tcp --dport "${BOSH_PORT}" \
+                    -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+      then
+        iptables -t mangle -I POSTROUTING -d "${BOSH_IP}" -p tcp --dport "${BOSH_PORT}" \
+                 -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+      fi
+      if ! iptables -t mangle -C POSTROUTING -d "${BOSH_IP}" -p tcp --dport "${BOSH_PORT}" \
+                    -m cgroup \! --cgroup "${nats_isolation_classid}" -j DROP
+      then
+        iptables -t mangle -A POSTROUTING -d "${BOSH_IP}" -p tcp --dport "${BOSH_PORT}" \
+                 -m cgroup \! --cgroup "${nats_isolation_classid}" -j DROP
+      fi
+    else
+      echo "Nats Address couldn't be parsed into IP:PORT, this script is failing to interpret the /var/vcap/bosh/settings.json"
+      exit 1
+    fi
+  fi
+}
+
+wait_for_agent_settings &2> /var/vcap/sys/log/nats-iptables.log &

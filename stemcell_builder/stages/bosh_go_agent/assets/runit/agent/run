@@ -4,9 +4,9 @@ set -e
 export PATH=/var/vcap/bosh/bin:$PATH
 exec 2>&1
 
-source /var/vcap/bosh/etc/monit-access-helper.sh
+source /var/vcap/bosh/etc/nats-access-helper.sh
 
-permit_monit_access
+permit_nats_access
 
 cd /var/vcap/bosh
 
