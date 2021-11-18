@@ -25,6 +25,7 @@ module Bosh::Stemcell
             :base_debootstrap,
             :base_ubuntu_firstboot,
             :base_apt,
+            *(:base_apt_fips if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")),
             :base_ubuntu_build_essential,
             :base_ubuntu_packages,
             :base_file_permission,
