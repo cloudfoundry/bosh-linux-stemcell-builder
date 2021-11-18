@@ -62,6 +62,7 @@ module Bosh::Stemcell
       {
         'UBUNTU_ISO' => environment['UBUNTU_ISO'],
         'UBUNTU_MIRROR' => environment['UBUNTU_MIRROR'],
+        'UBUNTU_ADVANTAGE_TOKEN' => environment['UBUNTU_ADVANTAGE_TOKEN'],
       }
     end
 

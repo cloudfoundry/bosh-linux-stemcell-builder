@@ -35,8 +35,10 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
   end
 
   context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-18.04') do
-      it { should be_installed }
+    if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+      kernel_pkg_name = 'linux-aws-fips'
+    else
+      kernel_pkg_name = 'linux-generic-hwe-18.04'
     end
   end
 
@@ -86,15 +88,24 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
       expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
-    it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
-      macs = %w[
-        hmac-sha2-512-etm@openssh.com
-        hmac-sha2-256-etm@openssh.com
-        umac-128-etm@openssh.com
-        hmac-sha2-512
-        hmac-sha2-256
-        umac-128@openssh.com
+    it 'allows only secure HMACs' do
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        macs = %w[
+          hmac-sha2-512-etm@openssh.com
+          hmac-sha2-256-etm@openssh.com
+          hmac-sha2-512
+          hmac-sha2-256
       ].join(',')
+      else
+        macs = %w[
+          hmac-sha2-512-etm@openssh.com
+          hmac-sha2-256-etm@openssh.com
+          umac-128-etm@openssh.com
+          hmac-sha2-512
+          hmac-sha2-256
+          umac-128@openssh.com
+      ].join(',')
+      end
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
   end
@@ -360,7 +371,38 @@ EOF
 
   describe 'allowed user accounts' do
     describe file('/etc/passwd') do
-      its(:content) { should eql(<<HERE) }
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        its(:content) { should eql(<<HERE) }
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+sshd:x:105:65534::/run/sshd:/usr/sbin/nologin
+uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin
+_chrony:x:107:111:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
+HERE
+      else
+        its(:content) { should eql(<<HERE) }
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -389,10 +431,42 @@ _chrony:x:106:110:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
 sshd:x:107:65534::/run/sshd:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
+      end
     end
 
     describe file('/etc/shadow') do
-      shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
+\Aroot:(.+):(\d{5}):0:99999:7:::
+daemon:\*:(\d{5}):0:99999:7:::
+bin:\*:(\d{5}):0:99999:7:::
+sys:\*:(\d{5}):0:99999:7:::
+sync:\*:(\d{5}):0:99999:7:::
+games:\*:(\d{5}):0:99999:7:::
+man:\*:(\d{5}):0:99999:7:::
+lp:\*:(\d{5}):0:99999:7:::
+mail:\*:(\d{5}):0:99999:7:::
+news:\*:(\d{5}):0:99999:7:::
+uucp:\*:(\d{5}):0:99999:7:::
+proxy:\*:(\d{5}):0:99999:7:::
+www-data:\*:(\d{5}):0:99999:7:::
+backup:\*:(\d{5}):0:99999:7:::
+list:\*:(\d{5}):0:99999:7:::
+irc:\*:(\d{5}):0:99999:7:::
+gnats:\*:(\d{5}):0:99999:7:::
+nobody:\*:(\d{5}):0:99999:7:::
+systemd-network:\*:(\d{5}):0:99999:7:::
+systemd-resolve:\*:(\d{5}):0:99999:7:::
+syslog:\*:(\d{5}):0:99999:7:::
+messagebus:\*:(\d{5}):0:99999:7:::
+_apt:\*:(\d{5}):0:99999:7:::
+sshd:\*:(\d{5}):0:99999:7:::
+uuidd:(.+):(\d{5}):0:99999:7:::
+_chrony:(.+):(\d{5}):0:99999:7:::
+vcap:(.+):(\d{5}):1:99999:7:::\Z
+END_SHADOW
+      else
+        shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
 \Aroot:(.+):(\d{5}):0:99999:7:::
 daemon:\*:(\d{5}):0:99999:7:::
 bin:\*:(\d{5}):0:99999:7:::
@@ -421,12 +495,70 @@ _chrony:(.+):(\d{5}):0:99999:7:::
 sshd:\*:(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
-
+      end
       its(:content) { should match(shadow_match) }
     end
 
     describe file('/etc/group') do
-      its(:content) { should eql(<<HERE) }
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        its(:content) { should eql(<<HERE) }
+root:x:0:
+daemon:x:1:
+bin:x:2:
+sys:x:3:
+adm:x:4:vcap
+tty:x:5:
+disk:x:6:
+lp:x:7:
+mail:x:8:
+news:x:9:
+uucp:x:10:
+man:x:12:
+proxy:x:13:
+kmem:x:15:
+dialout:x:20:vcap
+fax:x:21:
+voice:x:22:
+cdrom:x:24:vcap
+floppy:x:25:vcap
+tape:x:26:
+sudo:x:27:vcap
+audio:x:29:vcap
+dip:x:30:vcap
+www-data:x:33:
+backup:x:34:
+operator:x:37:
+list:x:38:
+irc:x:39:
+src:x:40:
+gnats:x:41:
+shadow:x:42:
+utmp:x:43:
+video:x:44:vcap
+sasl:x:45:
+plugdev:x:46:vcap
+staff:x:50:
+games:x:60:
+users:x:100:
+nogroup:x:65534:
+systemd-journal:x:101:
+systemd-network:x:102:
+systemd-resolve:x:103:
+input:x:104:
+crontab:x:105:
+syslog:x:106:
+messagebus:x:107:
+ssh:x:108:
+netdev:x:109:
+uuidd:x:110:
+_chrony:x:111:
+admin:x:999:vcap
+vcap:x:1000:syslog
+bosh_sshers:x:1001:vcap
+bosh_sudoers:x:1002:
+HERE
+      else
+                its(:content) { should eql(<<HERE) }
 root:x:0:
 daemon:x:1:
 bin:x:2:
@@ -482,10 +614,69 @@ vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
 bosh_sudoers:x:1002:
 HERE
+      end
     end
 
     describe file('/etc/gshadow') do
-      its(:content) { should eql(<<HERE) }
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        its(:content) { should eql(<<HERE) }
+root:*::
+daemon:*::
+bin:*::
+sys:*::
+adm:*::vcap
+tty:*::
+disk:*::
+lp:*::
+mail:*::
+news:*::
+uucp:*::
+man:*::
+proxy:*::
+kmem:*::
+dialout:*::vcap
+fax:*::
+voice:*::
+cdrom:*::vcap
+floppy:*::vcap
+tape:*::
+sudo:*::vcap
+audio:*::vcap
+dip:*::vcap
+www-data:*::
+backup:*::
+operator:*::
+list:*::
+irc:*::
+src:*::
+gnats:*::
+shadow:*::
+utmp:*::
+video:*::vcap
+sasl:*::
+plugdev:*::vcap
+staff:*::
+games:*::
+users:*::
+nogroup:*::
+systemd-journal:!::
+systemd-network:!::
+systemd-resolve:!::
+input:!::
+crontab:!::
+syslog:!::
+messagebus:!::
+ssh:!::
+netdev:!::
+uuidd:!::
+_chrony:!::
+admin:!::vcap
+vcap:!::syslog
+bosh_sshers:!::vcap
+bosh_sudoers:!::
+HERE
+      else
+        its(:content) { should eql(<<HERE) }
 root:*::
 daemon:*::
 bin:*::
@@ -541,6 +732,7 @@ vcap:!::syslog
 bosh_sshers:!::vcap
 bosh_sudoers:!::
 HERE
+      end
     end
   end
 end

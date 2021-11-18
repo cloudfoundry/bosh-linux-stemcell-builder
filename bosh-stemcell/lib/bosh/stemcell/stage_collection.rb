@@ -249,6 +249,7 @@ module Bosh::Stemcell
         :base_debootstrap,
         :base_ubuntu_firstboot,
         :base_apt,
+        :base_apt_fips,
         :base_ubuntu_build_essential,
         :base_ubuntu_packages,
         :base_file_permission,
