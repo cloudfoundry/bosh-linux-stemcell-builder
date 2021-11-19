@@ -62,7 +62,13 @@ changes on top of the base OS image such as new bosh-agent versions, or updating
 security configuration, or changing user settings.
 
     $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,impish,$PWD/tmp/ubuntu_base_image.tgz,"0.1"]
+    $ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.1"]
+
+Note: we're **naming the stemcell Jammy even though it's an Impish stemcell**;
+this makes it easier for release writers to make changes for Jammy. For example,
+to test this stemcell, the BOSH DNS addon writers would only need to modify
+their stemcell list to include "ubuntu-jammy" instead of _both_ "ubuntu-impish"
+and "ubuntu-jammy".
 
 The arguments to `stemcell:build_with_local_os_image` are:
 
@@ -85,7 +91,7 @@ default to '0000'
 
 ## Testing
 
-_[Fixme: update Testing section to Impish/Jammy]
+_[Fixme: update Testing section to Impish/Jammy]_
 
 ### How to run tests for OS Images
 
