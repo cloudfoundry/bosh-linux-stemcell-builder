@@ -256,7 +256,6 @@ module Bosh::Stemcell
         :bosh_sysstat,
         :system_kernel,
         :system_kernel_modules,
-        :system_ixgbevf,
         bosh_steps,
         :password_policies,
         :restrict_su_command,
