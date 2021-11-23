@@ -24,7 +24,7 @@ if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
   debs="$debs  module-init-tools"
 fi
 
-if [[ "${DISTRIB_CODENAME}" == 'bionic' || ${DISTRIB_CODENAME} == 'impish' ]]; then
+if [[ "${DISTRIB_CODENAME}" == 'bionic' || ${DISTRIB_CODENAME} == 'impish' || ${DISTRIB_CODENAME} == 'jammy' ]]; then
   debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
   pkg_mgr purge netplan.io
@@ -73,7 +73,7 @@ run_in_chroot $chroot "
 "
 
 # Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
-if [[ ${DISTRIB_CODENAME} == 'bionic' || ${DISTRIB_CODENAME} == 'impish' ]]; then
+if [[ ${DISTRIB_CODENAME} == 'bionic' || ${DISTRIB_CODENAME} == 'impish' || ${DISTRIB_CODENAME} == 'jammy' ]]; then
   install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
 fi
 

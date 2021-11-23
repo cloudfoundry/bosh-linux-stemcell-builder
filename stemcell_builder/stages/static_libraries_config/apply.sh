@@ -12,6 +12,8 @@ if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
     major_kernel_version="5.4"
 elif [[ "${DISTRIB_CODENAME}" == 'impish' ]]; then
     major_kernel_version="5.13"
+elif [[ "${DISTRIB_CODENAME}" == 'jammy' ]]; then
+    major_kernel_version="5.13"
 else
     major_kernel_version="4.15"
 fi

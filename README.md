@@ -41,14 +41,14 @@ those packages, or if you need to pull in and test an updated package from
 upstream.
 
     $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_os_image[ubuntu,impish,$PWD/tmp/ubuntu_base_image.tgz]
+    $ bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
 
 The arguments to `stemcell:build_os_image` are:
 
 0. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
    Determines which package repository and packaging tool will be used to
    download and assemble the files. Currently, only `ubuntu` is recognized.
-0. *`operating_system_version`* (`impish`): an identifier that the system may use
+0. *`operating_system_version`* (`jammy`): an identifier that the system may use
    to decide which release of the OS to download. Acceptable values depend on
    the operating system. For `ubuntu`, use `bionic`.
 0. *`os_image_path`* (`$PWD/tmp/ubuntu_base_image.tgz`): the path to write the

@@ -17,6 +17,9 @@ if [[  "${DISTRIB_CODENAME}" == "bionic" ]]; then
 elif [[  "${DISTRIB_CODENAME}" == "impish" ]]; then
   sed -i "/^add_drivers.*/d" $chroot/etc/dracut.conf.d/10-debian.conf
   pkg_mgr install linux-generic-hwe-20.04
+elif [[  "${DISTRIB_CODENAME}" == "jammy" ]]; then
+  sed -i "/^add_drivers.*/d" $chroot/etc/dracut.conf.d/10-debian.conf
+  pkg_mgr install linux-generic-hwe-20.04
 elif [[ "${DISTRIB_CODENAME}" == "xenial" ]]; then
   pkg_mgr install linux-generic-hwe-16.04
 else

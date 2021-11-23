@@ -12,7 +12,7 @@ mkdir -p $chroot/warden-cpi-dev
 # Run system services via runit and replace /usr/sbin/service with a script which call runit
 mkdir -p $chroot/etc/sv/
 # TODO: figure out why this is a existing symlink now in impish by default
-if [[ "${DISTRIB_CODENAME}" != 'impish' ]]; then
+if [[ "${DISTRIB_CODENAME}" != 'impish' && "${DISTRIB_CODENAME}" != 'jammy' ]]; then
   mkdir -p $chroot/etc/service/
 fi
 cp -a $assets_dir/runit/{ssh,rsyslog,cron} $chroot/etc/sv/
