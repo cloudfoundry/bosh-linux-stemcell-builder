@@ -143,7 +143,7 @@ module Bosh::Stemcell
   describe Infrastructure::Vsphere do
     its(:name)              { should eq('vsphere') }
     its(:hypervisor)        { should eq('esxi') }
-    its(:default_disk_size) { should eq(3072) }
+    its(:default_disk_size) { should eq(5120)) }
     its(:disk_formats)      { should eq(['ovf']) }
     its(:stemcell_formats)  { should eq(['vsphere-ova', 'vsphere-ovf']) }
 

@@ -103,7 +103,7 @@ module Bosh::Stemcell
       def initialize
         super(name: 'vsphere',
           hypervisor: 'esxi',
-          default_disk_size: 3072,
+          default_disk_size: 5120,
           disk_formats: ['ovf'],
           stemcell_formats: ['vsphere-ova', 'vsphere-ovf']
         )
