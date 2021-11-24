@@ -3,30 +3,30 @@
 set -ex
 
 cat > /etc/apt/sources.list <<EOS
-deb http://us.archive.ubuntu.com/ubuntu/ impish main restricted
-deb-src http://us.archive.ubuntu.com/ubuntu/ impish main restricted
+deb http://us.archive.ubuntu.com/ubuntu/ bionic main restricted
+deb-src http://us.archive.ubuntu.com/ubuntu/ bionic main restricted
 
-deb http://us.archive.ubuntu.com/ubuntu/ impish-updates main restricted
-deb-src http://us.archive.ubuntu.com/ubuntu/ impish-updates main restricted
+deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates main restricted
+deb-src http://us.archive.ubuntu.com/ubuntu/ bionic-updates main restricted
 
-deb http://security.ubuntu.com/ubuntu impish-security main restricted
-deb-src http://security.ubuntu.com/ubuntu impish-security main restricted
-deb http://security.ubuntu.com/ubuntu impish-security universe
-deb-src http://security.ubuntu.com/ubuntu impish-security universe
-deb http://security.ubuntu.com/ubuntu impish-security multiverse
-deb-src http://security.ubuntu.com/ubuntu impish-security multiverse
+deb http://security.ubuntu.com/ubuntu bionic-security main restricted
+deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted
+deb http://security.ubuntu.com/ubuntu bionic-security universe
+deb-src http://security.ubuntu.com/ubuntu bionic-security universe
+deb http://security.ubuntu.com/ubuntu bionic-security multiverse
+deb-src http://security.ubuntu.com/ubuntu bionic-security multiverse
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
-deb http://us.archive.ubuntu.com/ubuntu/ impish universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ impish universe
-deb http://us.archive.ubuntu.com/ubuntu/ impish-updates universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ impish-updates universe
-deb http://us.archive.ubuntu.com/ubuntu/ impish multiverse
-deb-src http://us.archive.ubuntu.com/ubuntu/ impish multiverse
-deb http://us.archive.ubuntu.com/ubuntu/ impish-updates multiverse
-deb-src http://us.archive.ubuntu.com/ubuntu/ impish-updates multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ bionic universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ bionic universe
+deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ bionic-updates universe
+deb http://us.archive.ubuntu.com/ubuntu/ bionic multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ bionic multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ bionic-updates multiverse
 EOS
 
 apt-get update

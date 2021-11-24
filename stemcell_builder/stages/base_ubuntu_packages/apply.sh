@@ -24,7 +24,7 @@ if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
   debs="$debs  module-init-tools"
 fi
 
-if [[ "${DISTRIB_CODENAME}" == 'bionic' || ${DISTRIB_CODENAME} == 'impish' || ${DISTRIB_CODENAME} == 'jammy' ]]; then
+if [[ "${DISTRIB_CODENAME}" == 'bionic' || ${DISTRIB_CODENAME} == 'jammy' ]]; then
   debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
   pkg_mgr purge netplan.io
@@ -51,7 +51,7 @@ if [[ "${DISTRIB_CODENAME}" == 'trusty' ]]; then
     rm -f nvme-cli_0.5-1_amd64.deb
   "
 fi
-# TODO: adiscon does not have impish repo need to wait for jj
+# TODO: adiscon does not have jammy repo need to wait
 # run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
 # pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
 pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-relp"
@@ -73,7 +73,7 @@ run_in_chroot $chroot "
 "
 
 # Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
-if [[ ${DISTRIB_CODENAME} == 'bionic' || ${DISTRIB_CODENAME} == 'impish' || ${DISTRIB_CODENAME} == 'jammy' ]]; then
+if [[ ${DISTRIB_CODENAME} == 'bionic' || ${DISTRIB_CODENAME} == 'jammy' ]]; then
   install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
 fi
 

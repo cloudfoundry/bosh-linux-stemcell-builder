@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source "$base_dir/lib/prelude_apply.bash"
 source "$base_dir/etc/settings.bash"
 
-if [[  "${DISTRIB_CODENAME}" == "bionic" || "${DISTRIB_CODENAME}" == "impish" || "${DISTRIB_CODENAME}" == "jammy" ]]; then
+if [[  "${DISTRIB_CODENAME}" == "bionic" || "${DISTRIB_CODENAME}" == "jammy" ]]; then
     exit 0
 fi
 

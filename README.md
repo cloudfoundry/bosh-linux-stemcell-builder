@@ -16,7 +16,7 @@ trying to run the commands in **Build Steps**.
 **If you have docker installed**,
 
     host$ cd ci/docker
-    host$ ./run os-image-stemcell-builder-impish
+    host$ ./run os-image-stemcell-builder-jammy
 
 ## Build Steps
 
@@ -64,12 +64,6 @@ security configuration, or changing user settings.
     $ mkdir -p $PWD/tmp
     $ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.1"]
 
-Note: we're **naming the stemcell Jammy even though it's an Impish stemcell**;
-this makes it easier for release writers to make changes for Jammy. For example,
-to test this stemcell, the BOSH DNS addon writers would only need to modify
-their stemcell list to include "ubuntu-jammy" instead of _both_ "ubuntu-impish"
-and "ubuntu-jammy".
-
 The arguments to `stemcell:build_with_local_os_image` are:
 
 0. `infrastructure_name`: Which IaaS you are producing the stemcell for.
@@ -79,7 +73,7 @@ The arguments to `stemcell:build_with_local_os_image` are:
    `kvm`, `vsphere` → `esxi`
 0. `operating_system_name` (`ubuntu`): Type of OS. Same as
    `stemcell:build_os_image`
-0. `operating_system_version` (`impish`): OS release. Same as
+0. `operating_system_version` (`jammy`): OS release. Same as
    `stemcell:build_os_image`
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
@@ -91,7 +85,7 @@ default to '0000'
 
 ## Testing
 
-_[Fixme: update Testing section to Impish/Jammy]_
+_[Fixme: update Testing section to Jammy]_
 
 ### How to run tests for OS Images
 
