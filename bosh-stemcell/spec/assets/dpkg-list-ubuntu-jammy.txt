@@ -170,8 +170,6 @@ libdebuginfod1:amd64
 libdevmapper1.02.1:amd64
 libdns-export1110
 libdpkg-perl
-libdrm-common
-libdrm2:amd64
 libdw1:amd64
 libedit2:amd64
 libefiboot1:amd64
@@ -239,7 +237,6 @@ libmount1:amd64
 libmpc3:amd64
 libmpdec3:amd64
 libmpfr6:amd64
-libmspack0:amd64
 libncurses-dev:amd64
 libncurses5-dev:amd64
 libncurses6:amd64
@@ -268,7 +265,6 @@ libpam-systemd:amd64
 libpam0g:amd64
 libparted2:amd64
 libpcap0.8:amd64
-libpci3:amd64
 libpcre2-8-0:amd64
 libpcre3:amd64
 libperl5.32:amd64
@@ -335,8 +331,6 @@ libuv1:amd64
 libwrap0:amd64
 libxml2:amd64
 libxml2-dev:amd64
-libxmlsec1:amd64
-libxmlsec1-openssl:amd64
 libxslt1-dev:amd64
 libxslt1.1:amd64
 libxtables12:amd64
@@ -376,7 +370,6 @@ netbase
 netcat-openbsd
 networkd-dispatcher
 nvme-cli
-open-vm-tools
 openssh-client
 openssh-server
 openssh-sftp-server
@@ -385,8 +378,6 @@ packagekit
 parted
 passwd
 patch
-pci.ids
-pciutils
 perl
 perl-base
 perl-modules-5.32
