@@ -116,7 +116,7 @@ module Bosh::Stemcell
       describe 'infrastructure variation' do
         context 'when infrastruture is aws' do
           let(:infrastructure) { Infrastructure.for('aws') }
-          let(:default_disk_size) { 3072 }
+          let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
@@ -127,7 +127,7 @@ module Bosh::Stemcell
 
         context 'when infrastruture is google' do
           let(:infrastructure) { Infrastructure.for('google') }
-          let(:default_disk_size) { 3072 }
+          let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
@@ -161,7 +161,7 @@ module Bosh::Stemcell
 
         context 'when infrastruture is vcloud' do
           let(:infrastructure) { Infrastructure.for('vcloud') }
-          let(:default_disk_size) { 3072 }
+          let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
@@ -184,7 +184,7 @@ module Bosh::Stemcell
 
         context 'when infrastructure is openstack' do
           let(:infrastructure) { Infrastructure.for('openstack') }
-          let(:default_disk_size) { 3072 }
+          let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
@@ -195,7 +195,7 @@ module Bosh::Stemcell
 
         context 'when infrastruture is azure' do
           let(:infrastructure) { Infrastructure.for('azure') }
-          let(:default_disk_size) { 3072 }
+          let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
