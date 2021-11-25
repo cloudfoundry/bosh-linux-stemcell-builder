@@ -35,7 +35,7 @@ module ShelloutTypes
 
       it 'returns exit code and stderr' do
         _, stderr, status = runner.run('non-existent-command')
-        expect(stderr).to eq("/bin/bash: non-existent-command: command not found\n")
+        expect(stderr).to end_with "non-existent-command: command not found\n"
         expect(status).to be > 0
       end
 
