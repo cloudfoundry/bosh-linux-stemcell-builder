@@ -39,7 +39,7 @@ var _ = Describe("Auditd", func() {
 				ps --no-headers -fp $(ps --no-headers -fp $$ | awk '{ print $3 }') | awk '{ print $3 }'
 			}
 			auditpid() {
-				last_user_login_log | tail -n1 | awk '{ print $7 }' | cut -d= -f2
+				last_user_login_log | tail -n1 | sed 's/.*pid=\([0-9]*\).*/\1/g'
 			}
 			i=0
 			while [[ "$(sessionpid)" != "$(auditpid)" ]]; do
