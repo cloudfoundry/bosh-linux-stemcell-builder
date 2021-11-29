@@ -21,7 +21,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
           "URI": "http://169.254.169.254",
           "UserDataPath": "/latest/user-data",
           "InstanceIDPath": "/latest/meta-data/instance-id",
-          "SSHKeysPath": "/latest/meta-data/public-keys/0/openssh-key"
+          "SSHKeysPath": "/latest/meta-data/public-keys/0/openssh-key",
+          "TokenPath": "/latest/api/token"
         }
       ],
       "UseRegistry": true
