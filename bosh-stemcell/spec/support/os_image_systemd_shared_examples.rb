@@ -18,13 +18,13 @@ shared_examples_for 'a systemd-based OS image' do
       its(:content) { should match /^InaccessiblePaths=-\/var\/vcap\/store/ }
     end
 
-    describe file('/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf') do
-      # this file is an rsyslog override which make s it wait for the var/log
-      # dir to be bind mounted before starting rsyslog
-      it { should be_file }
-      its(:content) { should match /^Requires=rsyslog.service/ }
-      its(:content) { should match /^Before=rsyslog.service/ }
-    end
+    # describe file('/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf') do
+    #   # this file is an rsyslog override which make s it wait for the var/log
+    #   # dir to be bind mounted before starting rsyslog
+    #   it { should be_file }
+    #   its(:content) { should match /^Requires=rsyslog.service/ }
+    #   its(:content) { should match /^Before=rsyslog.service/ }
+    # end
 
     describe file('/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf') do
       it { should be_file }
