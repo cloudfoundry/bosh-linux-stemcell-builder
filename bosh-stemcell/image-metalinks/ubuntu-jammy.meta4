@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-jammy.tgz">
-    <hash type="sha-512">5eec968801148d11593c99cf4d67f33905db729fd8c36dd5230413fcd3d75df4dcf574fd955b92240a9eea14def06a351565435fe48ee791671a2aa74a9f8cd5</hash>
-    <hash type="sha-256">cb4c73944569194d4389731a53d13614d9b7793b220d23b13a8f7535d623aa6f</hash>
-    <hash type="sha-1">5236cceb1760ee923ebe8ccdfb23a5068957fded</hash>
-    <hash type="md5">dc37af685022b2009144b9b5553f5a40</hash>
-    <size>892188980</size>
+    <hash type="sha-512">12fc8768f34a7f0620486bc17a8ffda139df165b98df95e2ac80da808696712c0de47f717fe7d72ce7ddb8a2524d92b69ca6356e483cff0b1a72cfcdc97c1de2</hash>
+    <hash type="sha-256">630c5702572d6a7f740434baa095257669f4ac43acda6991c0498fe1e4fa9603</hash>
+    <hash type="sha-1">648157a47b5e3e69d67ad180e6fae59037af2ce8</hash>
+    <hash type="md5">87357f377e37a83f1705b6e4338914f3</hash>
+    <size>892484361</size>
     <url>https://storage.googleapis.com/bosh-os-images/master/ubuntu-jammy.tgz</url>
-    <version>6.0.0</version>
+    <version>7.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">1c3cade729888dd4bcd046765a4370b999d0242b61f1fe128de80f32182279ccb37aa9dffcdfa416dfe4ffb6e3b591e1bce4984a061d1e880e664d6af16c00e9</hash>
-    <hash type="sha-256">406828f88cbb49862a7255a3ad1b670d438cf1f6749e8ae6f58553b0069a1a2e</hash>
-    <hash type="sha-1">25e97c9b87de39f9129dc94ac5c2472c9442c005</hash>
-    <hash type="md5">b7e50efe060937857e98622c1a0bfed7</hash>
-    <size>155071</size>
+    <hash type="sha-512">b4bf4f0ef88a03ad1dc0487fd3c2993001fd2ae2916db9ac6e443bea2dd80cc4e649ccb42b18ddb557066573c9cb6ba9bf215d3c6e8070b78f5a5ac8c5dcf20b</hash>
+    <hash type="sha-256">6c405f2e72f30b85b12986b40c73c80f19435d97e4923599eba3f10b74fdecab</hash>
+    <hash type="sha-1">6218323a022a2f9d78a1c34ec0fede990b853a6d</hash>
+    <hash type="md5">f6637514582168ffbbdb582e28b4a36a</hash>
+    <size>156670</size>
     <url>https://storage.googleapis.com/bosh-os-images/master/usn-log.json</url>
-    <version>6.0.0</version>
+    <version>7.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2021-11-29T12:15:53.502057477Z</published>
+  <published>2021-12-01T16:31:51.500581658Z</published>
 </metalink>
