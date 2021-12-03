@@ -42,12 +42,6 @@ describe 'Ubuntu 21.10 OS image', os_image: true do
     end
   end
 
-  context 'installed by system_kernel' do
-    describe file('/etc/dracut.conf.d/10-debian.conf') do
-      its(:content) { should_not match '^add_drivers.*' }
-    end
-  end
-
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
       its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu jammy main universe multiverse' }
