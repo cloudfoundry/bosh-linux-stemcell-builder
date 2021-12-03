@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Ubuntu 21.10 stemcell image', stemcell_image: true do
+describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
 
   # linux_version_regex = '/linux-(.+)-([0-9]+.+)/d'
@@ -529,7 +529,7 @@ HERE
   end
 end
 
-describe 'Ubuntu 21.10 stemcell tarball', stemcell_tarball: true do
+describe 'Ubuntu 22.04 stemcell tarball', stemcell_tarball: true do
   context 'installed by bosh_dpkg_list stage' do
     describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/packages.txt", ShelloutTypes::Chroot.new('/')) do
       it { should be_file }
