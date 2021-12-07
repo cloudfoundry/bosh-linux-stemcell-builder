@@ -199,13 +199,13 @@ EOF
 
     describe file('/etc/pam.d/common-account') do
       it 'must reset the tally of a user after successful login, esp. `sudo` (stig: V-38573)' do
-        expect(subject.content).to match /account.*required.*pam_tally2\.so/
+        expect(subject.content).to match /account.*required.*pam_faillock\.so/
       end
     end
 
     describe file('/etc/pam.d/common-auth') do
       it'must restrict a user account after 3 failed login attempts (stig: V-38573)' do
-        expect(subject.content).to match /auth.*pam_tally2\.so.*deny=3/
+        expect(subject.content).to match /auth.*pam_faillock\.so.*deny=3/
       end
     end
   end
