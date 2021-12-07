@@ -41,3 +41,9 @@ install_setup_logrotate_script
 seed_default_logrotate_cronjob
 install_logrotate_cron_script
 install_default_su_directive
+
+## TODO: either remove /etc/logrotate.d/{wtmp,btmp}
+## or remove it from logrotate.conf and copy over the default created wtmp,btmp files
+rm $chroot/etc/logrotate.d/{btmp,wtmp}
+# logrotate changed from cron to systemd timer
+cp -f "$assets_dir/logrotate.timer" "$chroot/etc/systemd.d/system/logrotate.timer"
