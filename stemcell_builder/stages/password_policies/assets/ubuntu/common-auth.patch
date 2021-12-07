@@ -1,5 +1,6 @@
-17c17,18
-< auth	[success=1 default=ignore]	pam_unix.so
----
-> auth	required	pam_faillock.so deny=3
-> auth	[success=1 default=ignore]	pam_unix.so
+@@ -24,3 +24,5 @@
+ # and here are more per-package modules (the "Additional" block)
+ auth	optional			pam_cap.so
+ # end of pam-auth-update config
++auth	required			pam_faillock.so preauth silent deny=3 unlock_time=604800 fail_interval=900
++auth	[default=die]			pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900

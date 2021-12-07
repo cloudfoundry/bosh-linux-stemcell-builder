@@ -24,14 +24,11 @@ strip_trailing_whitespace_from() {
   sed -i -e's/[[:space:]]*$//' "$1"
 }
 
-strip_trailing_whitespace_from $chroot/etc/pam.d/common-account
-patch $chroot/etc/pam.d/common-account < $assets_dir/ubuntu/common-account.patch
-
 strip_trailing_whitespace_from $chroot/etc/pam.d/common-auth
-patch $chroot/etc/pam.d/common-auth < $assets_dir/ubuntu/common-auth.patch
+patch -p1 $chroot/etc/pam.d/common-auth < $assets_dir/ubuntu/common-auth.patch
 
 strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
-patch $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
+patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
 
 strip_trailing_whitespace_from $chroot/etc/pam.d/login
 patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch
