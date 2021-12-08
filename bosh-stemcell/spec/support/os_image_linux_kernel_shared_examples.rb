@@ -92,22 +92,5 @@ shared_examples_for 'a Linux kernel based OS image' do
     describe file('/etc/sysctl.d/60-bosh-sysctl-neigh-fix.conf') do
       it { should be_file }
     end
-
-    # context 'installed by system_ixgbevf' do
-    #   describe package('dkms') do
-    #     it { should be_installed }
-    #   end
-
-    #   describe 'the ixgbevf kernel module' do
-    #     it 'is installed with the right version' do
-    #       prefix = "/var/lib/dkms/ixgbevf/4.6.3/#{kernel_version}/x86_64/module"
-    #       uncompressed = "#{prefix}/ixgbevf.ko"
-    #       compressed = "#{uncompressed}.xz"
-
-    #       expect(file(uncompressed).file? || file(compressed).file?)
-    #         .to be_truthy
-    #     end
-    #   end
-    # end
   end
 end
