@@ -46,9 +46,9 @@ cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
 cd $assets_dir
 rm -rf davcli
 mkdir davcli
-current_version=0.0.26
+current_version=0.0.48
 curl -L -o davcli/davcli https://s3.amazonaws.com/davcli/davcli-${current_version}-linux-amd64
-echo "cd75e886b4f5d27ce41841d5cc902fe64bab7b78 davcli/davcli" | sha1sum -c -
+echo "e6ee5a32358cef0ae1118dcad9abc7bbf058a84c2e25c00353a47cf59da77530 davcli/davcli" | sha256sum -c -
 mv davcli/davcli $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 
