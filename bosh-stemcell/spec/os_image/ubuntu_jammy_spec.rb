@@ -380,8 +380,8 @@ gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologi
 nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
 systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
 systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
-systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
-messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+messagebus:x:102:105::/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:103:106:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
 syslog:x:104:111::/home/syslog:/usr/sbin/nologin
 _apt:x:105:65534::/nonexistent:/usr/sbin/nologin
 uuidd:x:106:113::/run/uuidd:/usr/sbin/nologin
@@ -416,8 +416,8 @@ gnats:\*:(\d{5}):0:99999:7:::
 nobody:\*:(\d{5}):0:99999:7:::
 systemd-network:\*:(\d{5}):0:99999:7:::
 systemd-resolve:\*:(\d{5}):0:99999:7:::
-systemd-timesync:\*:(\d{5}):0:99999:7:::
 messagebus:\*:(\d{5}):0:99999:7:::
+systemd-timesync:\*:(\d{5}):0:99999:7:::
 syslog:\*:(\d{5}):0:99999:7:::
 _apt:\*:(\d{5}):0:99999:7:::
 uuidd:\*:(\d{5}):0:99999:7:::
