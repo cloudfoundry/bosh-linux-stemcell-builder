@@ -49,7 +49,7 @@ The arguments to `stemcell:build_os_image` are:
    download and assemble the files. Currently, only `ubuntu` is recognized.
 0. *`operating_system_version`* (`jammy`): an identifier that the system may use
    to decide which release of the OS to download. Acceptable values depend on
-   the operating system. For `ubuntu`, use `bionic`.
+   the operating system. For `ubuntu`, use `jammy`.
 0. *`os_image_path`* (`$PWD/tmp/ubuntu_base_image.tgz`): the path to write the
    finished OS image tarball to. If a file exists at this path already, it will
    be overwritten without warning.
@@ -76,7 +76,7 @@ The arguments to `stemcell:build_with_local_os_image` are:
    `stemcell:build_os_image`
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
-0. `build_number` (`0.1`): Stemcell version.
+0. `build_number` (`0.4`): Stemcell version.
 
 The final argument, which specifies the build number, is optional and will
 default to '0000'
@@ -92,45 +92,36 @@ The OS tests are meant to be run against the OS environment to which they
 belong. When you run the `stemcell:build_os_image` rake task, it will create a
 .raw OS image that it runs the OS specific tests against. You will need to run
 the rake task the first time you create your docker container, but everytime
-after, as long as you do not destroy the container, you should be able to just
-run the specific tests.
+after, as long as you do not destroy the container, you should be able to run
+the specific tests.
 
-To run the `ubuntu_bionic_spec.rb` tests for example you will need to:
-
-* `bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz]`
-* -update tests-
-
-Then run the following:
+To run the `ubuntu_jammy_spec.rb` tests (**assuming you've already built the OS
+image** at the `tmp/ubuntu_base_image.tgz` and you're within the Docker
+container):
 
     cd /opt/bosh/bosh-stemcell
-    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_bionic_spec.rb
+    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_jammy_spec.rb
 
-### How to run tests for Stemcell
+### How to Run Tests for Stemcell
 
 When you run the `stemcell:build_with_local_os_image` or `stemcell:build` rake
 task, it will create a stemcell that it runs the stemcell specific tests
-against. You will need to run the rake task the first time you create your
-docker container, but everytime after, as long as you do not destroy the
-container, you should be able to just run the specific tests.
+against. You will need to run the **rake task the first time you create your
+docker container**, but everytime after, as long as you do not destroy the
+container, you should be able to run the specific tests:
 
-To run the stemcell tests when building against local OS image you will need to:
-
-* `bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz]`
-* -make test changes-
-
-Then run the following:
 ```shell
-    cd /opt/bosh/bosh-stemcell; \
-    STEMCELL_IMAGE=/mnt/stemcells/aws/xen/ubuntu/work/work/aws-xen-ubuntu.raw \
-    STEMCELL_WORKDIR=/mnt/stemcells/aws/xen/ubuntu/work/work/chroot \
-    OS_NAME=ubuntu \
-    bundle exec rspec -fd --tag ~exclude_on_aws \
-    spec/os_image/ubuntu_bionic_spec.rb \
-    spec/stemcells/ubuntu_bionic_spec.rb \
-    spec/stemcells/go_agent_spec.rb \
-    spec/stemcells/aws_spec.rb \
-    spec/stemcells/stig_spec.rb \
-    spec/stemcells/cis_spec.rb
+cd /opt/bosh/bosh-stemcell; \
+STEMCELL_IMAGE=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/vsphere-esxi-ubuntu.raw \
+STEMCELL_WORKDIR=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot \
+OS_NAME=ubuntu \
+bundle exec rspec -fd --tag ~exclude_on_vsphere \
+spec/os_image/ubuntu_jammy_spec.rb \
+spec/stemcells/ubuntu_jammy_spec.rb \
+spec/stemcells/go_agent_spec.rb \
+spec/stemcells/vsphere_spec.rb \
+spec/stemcells/stig_spec.rb \
+spec/stemcells/cis_spec.rb
 ```
 
 ### How to run tests for ShelloutTypes
@@ -154,16 +145,15 @@ If on macOS, run:
 OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
 ```
 
-### How to run tests for Bosh Linux Stemcell Builder
+### How to run tests for BOSH Linux Stemcell Builder
 
-The Bosh Linux Stemcell Builder code itself can be tested with the following command's:
+The BOSH Linux Stemcell Builder code itself can be tested with the following command's:
 
 ```shell
 bundle install --local
 cd /opt/bosh/bosh-stemcell
 bundle exec rspec spec/
 ```
-
 
 ## Troubleshooting
 
@@ -182,35 +172,21 @@ If you find yourself debugging any of the above processes, here is what you need
 
    Example usage:
 
-    ```shell
-    bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
-    ```
-0. `Directory renamed before its status could be extracted`
-
-    If you run into the following error whilst building an image with Docker:
-    ```shell
-    ubuntu@98b2a2aed0e6:/opt/bosh$ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz,705]
-    cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_bionic_spec.rb
-    All stemcell_tarball tests are being skipped. STEMCELL_WORKDIR needs to be set
-    All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set
-    Run options: exclude {:stemcell_image=>true, :stemcell_tarball=>true, :shellout_types=>true}
-
-    Ubuntu 16.04 OS image
-    tar: ./var/log: Directory renamed before its status could be extracted
-    ```
-    You can convert Docker's storage driver to `aufs` as described [here](https://github.com/docker/hub-feedback/issues/727#issuecomment-312498015).
+   ```shell
+   bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
+   ```
 
 ## Pro Tips
 
 * If the OS image has been built and so long as you only make test case
-  modifications you can just rerun the tests (without rebuilding OS image).
-  Details in section `How to run tests for OS Images`
+  modifications you can rerun the tests (without rebuilding OS image). Details
+  in section `How to run tests for OS Images`
 * If the Stemcell has been built and you are only updating tests, you do not
   need to re-build the stemcell. You can simply rerun the tests (without
   rebuilding Stemcell. Details in section `How to run tests for Stemcell`
 * It's possible to verify OS/Stemcell changes without making a deployment using
-  the stemcell. For an AWS specific ubuntu stemcell, the filesytem is available
-  at `/mnt/stemcells/aws/xen/ubuntu/work/work/chroot`
+  the stemcell. For a vSphere-specific Ubuntu stemcell, the filesytem is
+  available at `/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot`
 
 ## External Assets
 
@@ -222,7 +198,7 @@ The ovftool installer must be copied into the [ci/docker/os-image-stemcell-build
     Step 24/30 : ADD ${OVF_TOOL_INSTALLER} /tmp/ovftool_installer.bundle
     ADD failed: stat /var/lib/docker/tmp/docker-builder389354746/VMware-ovftool-4.1.0-2459827-lin.x86_64.bundle: no such file or directory
 
-## Rebuilding the docker image
+## Rebuilding the Docker Image
 
 The Docker image is published to
 [`bosh/os-image-stemcell-builder`](https://hub.docker.com/r/bosh/os-image-stemcell-builder/).
@@ -230,9 +206,9 @@ You will need the ovftool installer present on your filesystem.
 
 Rebuild the container with the `build` script...
 
-    vagrant$ ./build os-image-stemcell-builder
+    ./build os-image-stemcell-builder
 
 When ready, `push` to DockerHub and use the credentials from LastPass...
 
-    vagrant$ cd os-image-stemcell-builder
-    vagrant$ ./push
+    cd os-image-stemcell-builder
+    ./push
