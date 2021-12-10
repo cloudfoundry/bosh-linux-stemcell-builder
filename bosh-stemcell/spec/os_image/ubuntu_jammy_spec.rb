@@ -476,9 +476,9 @@ nogroup:x:65534:
 systemd-journal:x:101:
 systemd-network:x:102:
 systemd-resolve:x:103:
-systemd-timesync:x:104:
-crontab:x:105:
-messagebus:x:106:
+crontab:x:104:
+messagebus:x:105:
+systemd-timesync:x:106:
 input:x:107:
 sgx:x:108:
 kvm:x:109:
@@ -542,9 +542,9 @@ nogroup:*::
 systemd-journal:!::
 systemd-network:!::
 systemd-resolve:!::
-systemd-timesync:!::
 crontab:!::
 messagebus:!::
+systemd-timesync:!::
 input:!::
 sgx:!::
 kvm:!::
