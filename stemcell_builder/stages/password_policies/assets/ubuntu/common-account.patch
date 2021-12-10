@@ -1,0 +1,3 @@
+@@ -25 +25,2 @@ account	required			pam_permit.so
+ # end of pam-auth-update config
++account	required			pam_faillock.so
