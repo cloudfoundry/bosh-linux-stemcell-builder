@@ -15,8 +15,8 @@ trying to run the commands in **Build Steps**.
 
 **If you have docker installed**,
 
-    host$ cd ci/docker
-    host$ ./run os-image-stemcell-builder-jammy
+    cd ci/docker
+    ./run os-image-stemcell-builder-jammy
 
 ## Build Steps
 
@@ -24,9 +24,8 @@ At this point, you should be ssh'd and running within a docker container in the
 `bosh-linux-stemcell-builder` directory. Start by installing the latest
 dependencies before continuing to a specific build task...
 
-    $ echo $PWD
-    /opt/bosh
-    $ bundle install --local
+    echo $PWD # should return "/opt/bosh"
+    bundle install --local
 
 ### Build an OS image
 
@@ -40,8 +39,8 @@ install in the operating system, or when making changes to how we configure
 those packages, or if you need to pull in and test an updated package from
 upstream.
 
-    $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+    mkdir -p $PWD/tmp
+    bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
 
 The arguments to `stemcell:build_os_image` are:
 
@@ -61,8 +60,8 @@ The stemcell should be rebuilt when you are making and testing BOSH-specific
 changes on top of the base OS image such as new bosh-agent versions, or updating
 security configuration, or changing user settings.
 
-    $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.1"]
+    mkdir -p $PWD/tmp
+    bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.1"]
 
 The arguments to `stemcell:build_with_local_os_image` are:
 
@@ -120,8 +119,8 @@ To run the stemcell tests when building against local OS image you will need to:
 * -make test changes-
 
 Then run the following:
-```sh
-    $ cd /opt/bosh/bosh-stemcell; \
+```shell
+    cd /opt/bosh/bosh-stemcell; \
     STEMCELL_IMAGE=/mnt/stemcells/aws/xen/ubuntu/work/work/aws-xen-ubuntu.raw \
     STEMCELL_WORKDIR=/mnt/stemcells/aws/xen/ubuntu/work/work/chroot \
     OS_NAME=ubuntu \
@@ -144,13 +143,14 @@ an ubuntu chroot environment to run. For this reason, we use the
 `bosh/main-ubuntu-chroot` docker image for unit tests. To run these unit tests
 locally, run:
 
+```shell
+bundle install --local
+cd /opt/bosh/bosh-stemcell
+OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
 ```
-$ bundle install --local
-$ cd /opt/bosh/bosh-stemcell
-$ OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
-```
-if on osx use
-```
+If on macOS, run:
+
+```shell
 OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
 ```
 
@@ -158,10 +158,10 @@ OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --
 
 The Bosh Linux Stemcell Builder code itself can be tested with the following command's:
 
-```
-$ bundle install --local
-$ cd /opt/bosh/bosh-stemcell
-$ bundle exec rspec spec/
+```shell
+bundle install --local
+cd /opt/bosh/bosh-stemcell
+bundle exec rspec spec/
 ```
 
 
@@ -183,11 +183,11 @@ If you find yourself debugging any of the above processes, here is what you need
    Example usage:
 
     ```shell
-    $ bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
+    bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
     ```
 0. `Directory renamed before its status could be extracted`
 
-    If you run into the following error whilst builing an image with Docker:
+    If you run into the following error whilst building an image with Docker:
     ```shell
     ubuntu@98b2a2aed0e6:/opt/bosh$ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz,705]
     cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_bionic_spec.rb
