@@ -61,7 +61,7 @@ changes on top of the base OS image such as new bosh-agent versions, or updating
 security configuration, or changing user settings.
 
     mkdir -p $PWD/tmp
-    bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.1"]
+    bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.4"]
 
 The arguments to `stemcell:build_with_local_os_image` are:
 

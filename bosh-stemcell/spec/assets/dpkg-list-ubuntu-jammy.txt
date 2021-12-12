@@ -23,6 +23,7 @@ bison
 bsdextrautils
 bsdutils
 build-essential
+busybox-initramfs
 bzip2
 ca-certificates
 chrony
@@ -32,6 +33,7 @@ cmake-data
 console-setup
 console-setup-linux
 coreutils
+cpio
 cpp
 cpp-11
 cpp-9
@@ -96,6 +98,9 @@ icu-devtools
 ifupdown
 init
 init-system-helpers
+initramfs-tools
+initramfs-tools-bin
+initramfs-tools-core
 intel-microcode
 intltool-debian
 iproute2
@@ -109,6 +114,7 @@ iucode-tool
 iw
 kbd
 keyboard-configuration
+klibc-utils
 kmod
 less
 libacl1:amd64
@@ -139,12 +145,12 @@ libbz2-1.0:amd64
 libbz2-dev:amd64
 libc-bin
 libc-dev-bin
-libc6:amd64
 libc6-dev:amd64
+libc6:amd64
 libcap-dev:amd64
 libcap-ng0:amd64
-libcap2:amd64
 libcap2-bin
+libcap2:amd64
 libcbor0.6:amd64
 libcc1-0:amd64
 libcom-err2:amd64
@@ -155,8 +161,8 @@ libcryptsetup12:amd64
 libctf-nobfd0:amd64
 libctf0:amd64
 libcurl3-gnutls:amd64
-libcurl4:amd64
 libcurl4-openssl-dev:amd64
+libcurl4:amd64
 libdb5.3:amd64
 libdbus-1-3:amd64
 libdebconfclient0:amd64
@@ -185,8 +191,8 @@ libfuse2:amd64
 libgcc-11-dev:amd64
 libgcc-9-dev:amd64
 libgcc-s1:amd64
-libgcrypt20:amd64
 libgcrypt20-dev
+libgcrypt20:amd64
 libgdbm-compat4:amd64
 libgdbm6:amd64
 libgirepository-1.0-1:amd64
@@ -215,6 +221,7 @@ libjson-c5:amd64
 libjsoncpp24:amd64
 libk5crypto3:amd64
 libkeyutils1:amd64
+libklibc:amd64
 libkmod2:amd64
 libkrb5-3:amd64
 libkrb5support0:amd64
@@ -254,8 +261,8 @@ libp11-kit0:amd64
 libpackagekit-glib2-18:amd64
 libpam-cap:amd64
 libpam-cracklib:amd64
-libpam-modules:amd64
 libpam-modules-bin
+libpam-modules:amd64
 libpam-runtime
 libpam-systemd:amd64
 libpam0g:amd64
@@ -272,9 +279,9 @@ libpopt0:amd64
 libprocps8:amd64
 libpsl5:amd64
 libpython3-stdlib:amd64
-libpython3.9:amd64
 libpython3.9-minimal:amd64
 libpython3.9-stdlib:amd64
+libpython3.9:amd64
 libquadmath0:amd64
 libreadline-dev:amd64
 libreadline8:amd64
@@ -301,6 +308,7 @@ libss2:amd64
 libssh-4:amd64
 libssl-dev:amd64
 libssl1.1:amd64
+libssl3:amd64
 libstdc++-11-dev:amd64
 libstdc++-9-dev:amd64
 libstdc++6:amd64
@@ -325,8 +333,9 @@ libunwind8:amd64
 libuuid1:amd64
 libuv1:amd64
 libwrap0:amd64
-libxml2:amd64
 libxml2-dev:amd64
+libxml2:amd64
+libxmlb2:amd64
 libxslt1-dev:amd64
 libxslt1.1:amd64
 libxtables12:amd64
@@ -464,5 +473,6 @@ xkb-data
 xxd
 xz-utils
 zip
-zlib1g:amd64
 zlib1g-dev:amd64
+zlib1g:amd64
+zstd
