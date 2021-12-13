@@ -1,0 +1,12 @@
+[Unit]
+Description=random 1 min rotation of log files
+Documentation=man:logrotate(8) man:logrotate.conf(5)
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=1min
+RandomizedDelaySec=1min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
