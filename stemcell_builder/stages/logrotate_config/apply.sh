@@ -46,4 +46,4 @@ install_default_su_directive
 ## or remove it from logrotate.conf and copy over the default created wtmp,btmp files
 rm $chroot/etc/logrotate.d/{btmp,wtmp}
 # logrotate changed from cron to systemd timer
-cp -f "$assets_dir/logrotate.timer" "$chroot/etc/systemd.d/system/logrotate.timer"
+cp -f "$assets_dir/logrotate.timer" "$chroot/etc/systemd/system/"
