@@ -20,7 +20,7 @@ install_ruby() {
     local sha=$2
 
     echo "Installing ruby $version..."
-    ruby-install --jobs=2 --cleanup --system --sha256 "$sha" ruby "$version" -- --disable-install-rdoc
+    ruby-install --no-install-deps --jobs=2 --cleanup --system --sha256 "$sha" ruby "$version" -- --disable-install-rdoc
 
     ruby -v
     gem update --system

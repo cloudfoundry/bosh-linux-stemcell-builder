@@ -24,6 +24,10 @@ RUN apt-get update \
     lsof \
   && apt-get clean
 
+
+
+
+
 RUN groupadd -o -g ${GROUP_ID} ubuntu                  \
   && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
   && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
@@ -33,7 +37,23 @@ RUN apt-get install -y libxslt-dev libxml2-dev && apt-get clean
 
 ADD install-ruby.sh /tmp/install-ruby.sh
 RUN chmod a+x /tmp/install-ruby.sh
-RUN cd /tmp && ./install-ruby.sh && rm install-ruby.sh
+# -----------------------------------------------------------------------------------------
+# ROLL BACK OPENSSL3 FOR NOW. RUBY 3 DOESN'T COMPILE WITH IT. SEE ISSUE FOR TRACKING SUPPORT 
+# https://github.com/ruby/openssl/issues/369
+
+RUN wget http://launchpadlibrarian.net/524873081/wget_1.21-1ubuntu3_amd64.deb && \
+    wget https://answers.launchpad.net/ubuntu/+source/openssl/1.1.1l-1ubuntu1.1/+build/22454275/+files/openssl_1.1.1l-1ubuntu1.1_amd64.deb  && dpkg -i openssl_1.1.1l-1ubuntu1.1_amd64.deb && \
+    wget http://mirrors.kernel.org/ubuntu/pool/main/z/zlib/zlib1g_1.2.11.dfsg-2ubuntu7_amd64.deb && \
+    wget http://mirrors.kernel.org/ubuntu/pool/main/z/zlib/zlib1g-dev_1.2.11.dfsg-2ubuntu7_amd64.deb && \
+    wget http://launchpadlibrarian.net/557734981/libssl-dev_1.1.1l-1ubuntu1_amd64.deb
+RUN apt -y remove libssl-dev=3.0.0-1ubuntu1 libssl3 && \
+    apt install rsync libssl1.1
+RUN dpkg -i wget_1.21-1ubuntu3_amd64.deb && \
+    dpkg -i libssl-dev_1.1.1l-1ubuntu1_amd64.deb && \
+    dpkg -i zlib1g_1.2.11.dfsg-2ubuntu7_amd64.deb && \
+    dpkg -i zlib1g-dev_1.2.11.dfsg-2ubuntu7_amd64.deb
+# -----------------------------------------------------------------------------------------
+RUN cd /tmp && ./install-ruby.sh  && rm install-ruby.sh
 
 COPY --from=golang:1 /usr/local/go /usr/local/go
 ENV GOROOT=/usr/local/go PATH=/usr/local/go/bin:$PATH
@@ -58,6 +78,7 @@ RUN for GO_EXECUTABLE in $GOROOT/bin/*; do ln -s $GO_EXECUTABLE /usr/bin/; done
 
 # Source: https://stackoverflow.com/questions/28247427/strange-locale-issue-on-arch
 RUN locale-gen && sed -i '1 i\en_US.UTF-8 UTF-8' /etc/locale.gen && locale-gen
+
 
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
