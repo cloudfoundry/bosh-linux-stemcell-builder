@@ -186,7 +186,7 @@ var _ = Describe("Stemcell", func() {
 		stdout, _, exitStatus, err := bosh.Run(
 			"--column=stdout",
 			"ssh", "default/0", "-r", "-c",
-			`sudo cat /var/vcap/bosh/etc/dev_tools_file_list | xargs -n1 -I {} /bin/bash -c '[ ! -e % ] || echo found file %'`,
+			`sudo cat /var/vcap/bosh/etc/dev_tools_file_list | xargs -n1 | xargs -I {} /bin/bash -c '[ ! -e % ] || echo found file %'`,
 		)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
@@ -195,7 +195,7 @@ var _ = Describe("Stemcell", func() {
 		stdout, _, exitStatus, err = bosh.Run(
 			"--column=stdout",
 			"ssh", "default/0", "-r", "-c",
-			`sudo cat /var/vcap/bosh/etc/static_libraries_list | xargs -n1 -I % /bin/bash -c '[ ! -e % ] || echo found library %'`,
+			`sudo cat /var/vcap/bosh/etc/static_libraries_list | xargs -n1 | xargs -I % /bin/bash -c '[ ! -e % ] || echo found library %'`,
 		)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
