@@ -1,0 +1,21 @@
+<metalink xmlns="urn:ietf:params:xml:ns:metalink">
+  <file name="ubuntu-bionic.tgz">
+    <hash type="sha-512">bba6197ef82ddf1bbcde5f4b964ab763aa63002a3055f112a3721897d3e124b33fea2d101fbfcd182894ec6c2558321767ee905584f0a3ac2db8f25bba742cc2</hash>
+    <hash type="sha-256">db1d343b35ee0d30d50e67f2c08f7bda8c29a1e825e7dbb388e9e9788e7c3d23</hash>
+    <hash type="sha-1">fb24ea3a3dcea5d0f067a797f3d995c975526cb2</hash>
+    <hash type="md5">f1bf4ac1046dd92ce8612c14c4a359ea</hash>
+    <size>570035907</size>
+    <url>https://storage.googleapis.com/cloudfoundry-ubuntu-fips/ubuntu-bionic-fips/master/ubuntu-bionic.tgz</url>
+    <version>1.0.0</version>
+  </file>
+  <file name="usn-log.json">
+    <hash type="sha-512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+    <hash type="sha-256">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</hash>
+    <hash type="sha-1">da39a3ee5e6b4b0d3255bfef95601890afd80709</hash>
+    <hash type="md5">d41d8cd98f00b204e9800998ecf8427e</hash>
+    <url>https://storage.googleapis.com/cloudfoundry-ubuntu-fips/ubuntu-bionic-fips/master/usn-log.json</url>
+    <version>1.0.0</version>
+  </file>
+  <generator>metalink-repository-resource/0.0.0</generator>
+  <published>2021-12-15T16:32:04.41307914Z</published>
+</metalink>
