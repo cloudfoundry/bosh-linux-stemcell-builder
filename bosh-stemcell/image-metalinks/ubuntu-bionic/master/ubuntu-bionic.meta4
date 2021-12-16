@@ -1,21 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">0e10d9cc314bad6bb7d32df86ea7668edb8e2ccf18fbca3e164184d0b2715ff6f5cbc36baa3fb3ff6ff7a0ed6bffc4aa8137f903967499764586491266658ac1</hash>
-    <hash type="sha-256">f53c05320c14ecb4f6acb98c396bdefe9f2ed18a4ad8f627071cefef2c64c97c</hash>
-    <hash type="sha-1">aac96c4c7ae6d186e8e610aa3b2160a1238ad9b4</hash>
-    <hash type="md5">5fd08ac032ec346b1e5d53c92abb8af0</hash>
-    <size>600929803</size>
+    <hash type="sha-512">64dcb01ab6cb7069d0a5e0b41077c6785ca811052293901042d902205271457e4dee2fcb2965220383ec4a6011db0fe0f7f1ea66c8e8b06d4e1aeb07025b6a2e</hash>
+    <hash type="sha-256">6deb3ebfadc92161b42bbc383f602b85501a2b88aaff6f9b6c7f5f156dee8c4d</hash>
+    <hash type="sha-1">dac560497cc562135bb609fdda375f27cc357272</hash>
+    <hash type="md5">b18f0787ca2920871335ce1caaa6e4a5</hash>
+    <size>600955984</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/ubuntu-bionic.tgz</url>
-    <version>84.0.0</version>
+    <version>88.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
-    <hash type="sha-256">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</hash>
-    <hash type="sha-1">da39a3ee5e6b4b0d3255bfef95601890afd80709</hash>
-    <hash type="md5">d41d8cd98f00b204e9800998ecf8427e</hash>
+    <hash type="sha-512">2ad082a97feaa4f98d5005a8909e9286275773e3c798aaa6f47bfb38b0bd614564551cfd48c33564a6f76bc6e0c67743625c0d2ee1d9d937cc9f6c10af7ec5e6</hash>
+    <hash type="sha-256">34ed03de8ee30e82fa178d267b7de5e7ab849d226e082bc4c5f158ba184208b9</hash>
+    <hash type="sha-1">2228d9f24ed67ec94b99c8246a3f5b372f74a21a</hash>
+    <hash type="md5">c0cbe7957f6cb153e287374da0eb6468</hash>
+    <size>8819</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/usn-log.json</url>
-    <version>84.0.0</version>
+    <version>88.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2021-12-08T11:04:12.685299094Z</published>
+  <published>2021-12-15T21:07:29.448154074Z</published>
 </metalink>
