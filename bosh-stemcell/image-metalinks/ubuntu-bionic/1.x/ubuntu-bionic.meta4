@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">f6b2e656e82422922f54726d4214762f5807f740ecc70de855f41c64813a951130e8b745c9cc3e4e903af4c4059958ff1ac7bf0b2badb2ba6f000aa176d5870d</hash>
-    <hash type="sha-256">df45244fa50db17fd0c2fef99ab56acb56eb0b61b6f6b40e3c456a1b14545d2b</hash>
-    <hash type="sha-1">bff1e51a7322c55ab899d611a8d871ec5c16acb0</hash>
-    <hash type="md5">6db2f3300d089b4d40284131cc394409</hash>
-    <size>600829858</size>
+    <hash type="sha-512">919aa6e56c4a7acbecbedf50169e57e8f284edcbcb6a420de1c4908997688062ec9e10040aeeb63e4c749e450870a13b691afd6cdf874654af629697155b1fb5</hash>
+    <hash type="sha-256">efff1d005071db6dd86a33a43133c00d42dd02b2f58c808d534170b55d0984af</hash>
+    <hash type="sha-1">4e6f48874fde8fe6e022e20cd25c4fddbcd06b9b</hash>
+    <hash type="md5">c89b68b64dc4f153d78823e00ff90152</hash>
+    <size>600835917</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/ubuntu-bionic.tgz</url>
-    <version>44.0.0</version>
+    <version>1.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">e5aac789297e841c835f05d9a6d3ede22769402b94e018cb4470054f85c785e74c1963c8cf69cd45de56f27ad82c11545d39c4a0e5e800dc9826d285c4a4a2f7</hash>
-    <hash type="sha-256">c1da33f5cb4cc7b314364423a8d2667a87d37ed88e3e892fe068bbdcd4ed3196</hash>
-    <hash type="sha-1">75788e048acfd1f1708ca8f82fa06b118c6388e3</hash>
-    <hash type="md5">8e94ac8d129224cc9b6a12314e35ff2e</hash>
-    <size>8369</size>
+    <hash type="sha-512">c12753050a241cb9730dc5daca813d88dedbc2ed1a2f83c85c2de42ea9c7ae46821a908b47b640218e45e3644926c5eb5b8b9046438bbe405063175d92c27d73</hash>
+    <hash type="sha-256">fcada89882c9e2e4ae88e9afd0643f5a757776d99bc2d0f48a072dec87cf3019</hash>
+    <hash type="sha-1">09dbfef959e1460c71e7c97ad733fa2894bcb257</hash>
+    <hash type="md5">06be2f6892ec00b6186ed2ec8be0f8ec</hash>
+    <size>12586</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/usn-log.json</url>
-    <version>44.0.0</version>
+    <version>1.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2021-12-14T14:42:53.384579987Z</published>
+  <published>2021-12-21T09:11:44.465887975Z</published>
 </metalink>
