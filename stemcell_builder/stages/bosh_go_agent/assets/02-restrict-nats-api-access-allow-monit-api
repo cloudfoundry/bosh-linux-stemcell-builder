@@ -7,7 +7,6 @@ source /var/vcap/bosh/etc/nats-access-helper.sh
 # Give the agent access to Monit right away
 if ! iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
             -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
-then
     iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
              -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
 fi
@@ -28,7 +27,7 @@ wait_for_agent_settings() {
     # GET SECOND FIELD WITH DELIMITER `@` LEAVING `IP:PORT`
     BOSH_IP_PORT=$( cut -f2 -d@ <<< "${NATS_URL}" )
     # GET FIRST FIELD WITH DELIMITER `:` LEAVING `IP`
-    BOSH_IP=$( cut -f1 -d: <<< "${BOSH_IP_PORT}" )
+    BOSH_IP=$( cut -f1 -d: <<< "${BOSH_IP_PORT} )"
     # GET SECOND FIELD WITH DELIMITER `:` LEAVING `PORT`
     BOSH_PORT=$( cut -f2 -d: <<< "${BOSH_IP_PORT}" )
 
