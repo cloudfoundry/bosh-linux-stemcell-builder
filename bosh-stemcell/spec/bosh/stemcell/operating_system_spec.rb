@@ -42,13 +42,20 @@ module Bosh::Stemcell
 
       its(:version) { should eq('HORSESHOE') }
     end
+
+    describe '#variant' do
+      subject { OperatingSystem::Base.new(name: 'CLOUDY_PONY_OS', version: 'HORSESHOE', variant: 'DONKYTAIL') }
+
+      its(:variant) { should eq('DONKYTAIL') }
+    end
   end
 
   describe OperatingSystem::Ubuntu do
-    subject { OperatingSystem::Ubuntu.new('penguin') }
+    subject { OperatingSystem::Ubuntu.new('penguin-gentoo') }
 
     its(:name) { should eq('ubuntu') }
     its(:version) { should eq('penguin') }
-    it { should eq OperatingSystem.for('ubuntu', 'penguin') }
+    its(:variant) { should eq('gentoo') }
+    it { should eq OperatingSystem.for('ubuntu', 'penguin-gentoo') }
   end
 end
