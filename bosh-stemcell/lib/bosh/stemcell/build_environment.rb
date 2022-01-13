@@ -181,9 +181,12 @@ module Bosh::Stemcell
       when 'google'
         ' --tag ~exclude_on_google'
       else
-        ''
+        nil
       end,
-      ].join(' ').rstrip
+      unless operating_system.variant.nil?
+        " --tag #{operating_system.variant}"
+      end,
+      ].compact.join(' ').rstrip
     end
 
     def image_file_path

@@ -196,6 +196,7 @@ module Bosh::Stemcell
 
     describe '#stemcell_rspec_command' do
       before { allow(operating_system).to receive(:version).and_return('fake-version') }
+      before { allow(operating_system).to receive(:variant).and_return('fips') }
 
       it 'returns the correct command' do
         expected_rspec_command = [
@@ -205,7 +206,7 @@ module Bosh::Stemcell
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
           "CANDIDATE_BUILD_NUMBER=#{version}",
-          "bundle exec rspec -fd",
+          "bundle exec rspec -fd --tag fips",
           "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/go_agent_spec.rb",
