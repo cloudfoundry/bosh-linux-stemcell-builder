@@ -10,6 +10,7 @@ module Bosh::Stemcell
 
     class Base
       attr_reader :name, :version, :variant
+      alias_method :variant?, :variant
 
       def initialize(options = {})
         @name = options.fetch(:name)
@@ -24,7 +25,7 @@ module Bosh::Stemcell
 
     class Ubuntu < Base
       def initialize(version)
-        (version, variant) = version.split('-') unless version.nil?
+        (version, variant) = version.split('-') if version
         super(name: 'ubuntu', version: version, variant: variant)
       end
     end

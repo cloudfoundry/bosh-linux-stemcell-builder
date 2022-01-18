@@ -196,6 +196,7 @@ module Bosh::Stemcell
 
     describe '#stemcell_rspec_command' do
       before { allow(operating_system).to receive(:version).and_return('fake-version') }
+      before { allow(operating_system).to receive(:variant?).and_return(true) }
       before { allow(operating_system).to receive(:variant).and_return('fips') }
 
       it 'returns the correct command' do
