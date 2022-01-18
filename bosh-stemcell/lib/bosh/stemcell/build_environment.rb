@@ -183,7 +183,7 @@ module Bosh::Stemcell
       else
         nil
       end,
-      unless operating_system.variant.nil?
+      if operating_system.variant?
         " --tag #{operating_system.variant}"
       end,
       ].compact.join(' ').rstrip
