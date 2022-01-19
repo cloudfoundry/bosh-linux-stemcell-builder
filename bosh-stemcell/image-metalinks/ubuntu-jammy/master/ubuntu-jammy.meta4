@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-jammy.tgz">
-    <hash type="sha-512">188fa66dde4a3a38b80b5c8e3bb928bac954349491d4e545571f0c075932f070beb0871e9d9d89612419f033b87b964cf069b6ce362d218e7901dbe26a6ab2db</hash>
-    <hash type="sha-256">e498d8ff75f68fcf0c7839855d71a1d92eb68461c953934c1896305f08abd443</hash>
-    <hash type="sha-1">2243a762cbc664e5a35643e4a23864223585ff6d</hash>
-    <hash type="md5">90a745d65f9f77a680130a54ef92fe4e</hash>
-    <size>946921267</size>
+    <hash type="sha-512">450432b01c6013cc8e18b9523e181e85c1b12298a27471257845181b30f14297e86173861b2d9f926c6df8613dad1cea7313e0b364d01d4e341a36316792a315</hash>
+    <hash type="sha-256">a86665b8377bc2f871bf2238df0b2df6272da8a7ef2a53a2a30e68b543ba17af</hash>
+    <hash type="sha-1">4b4a9497a071090f451e0b442bb40587c0f61134</hash>
+    <hash type="md5">d292039fcc3031468c95643dde6ded13</hash>
+    <size>946917014</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/master/ubuntu-jammy.tgz</url>
-    <version>8.0.0</version>
+    <version>9.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">bccdfe68c81f4161fe266ded93d4725eae513b15d9afd4b6345879338b9f5bf7fe2e6459bece5924cf72e034bf387d72f573b1aaad5e05c53fee11eeeb325df1</hash>
-    <hash type="sha-256">15ad5095bc9d2f69b37a3c0e6f3112067813edcbc94682cf0603a71b33ef3246</hash>
-    <hash type="sha-1">db0512a85d1110a75b7f9cf58331fa098efdba25</hash>
-    <hash type="md5">dd5bcbd229a8a135760a72ac31c5af00</hash>
-    <size>26640</size>
+    <hash type="sha-512">0e5a4dcc46c8e45c41fb58de7acbab5a19837e07b2f34d7ef33ac44082394d1aa81229b861542963b37c0954c440e0a5128438e7ee9a6ecca6527724e79a19f2</hash>
+    <hash type="sha-256">9c48ffe58c1e27c1e2829367532a537778428636336ea0d1c8da7d979a451f6a</hash>
+    <hash type="sha-1">4e57aa3fa9710dd1729059f8a6fb1897f7149e1c</hash>
+    <hash type="md5">c9c9fb525284ffe36d6537c50384a119</hash>
+    <size>30730</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/master/usn-log.json</url>
-    <version>8.0.0</version>
+    <version>9.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2022-01-18T11:51:33.702271817Z</published>
+  <published>2022-01-19T18:40:17.466620171Z</published>
 </metalink>
