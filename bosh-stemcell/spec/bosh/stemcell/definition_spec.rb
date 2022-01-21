@@ -16,11 +16,13 @@ module Bosh::Stemcell
 
     let(:hypervisor) { "hypervisor" }
     let(:operating_system_version) { 'operating_system_version' }
+    let(:operating_system_variant) { nil }
     let(:operating_system) do
       instance_double(
         'Bosh::Stemcell::OperatingSystem::Base',
         name: 'operating-system-name',
         version: operating_system_version,
+        variant: operating_system_variant,
       )
     end
 
@@ -90,6 +92,16 @@ module Bosh::Stemcell
         it 'leaves off the os version' do
           expect(definition.stemcell_name('disk-format')).to eq(
             'infrastructure-name-hypervisor-operating-system-name-go_agent-disk-format'
+          )
+        end
+      end
+
+      context 'the os has a variant' do
+        let(:operating_system_variant) { 'variant' }
+
+        it 'leaves off the os version' do
+          expect(definition.stemcell_name('disk-format')).to eq(
+            'infrastructure-name-hypervisor-operating-system-name-operating_system_version-variant-go_agent-disk-format'
           )
         end
       end
