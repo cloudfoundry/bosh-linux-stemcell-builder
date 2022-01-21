@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">cdcf359c18785da99450fe8d15d358a20e559c596da2a5db70a5e7483b981c29e9d1880e3456dd41060aa4f7579101ce27ab9619f52878b1ee58f505918c2a90</hash>
-    <hash type="sha-256">21c5c6ef8132e653fa6ba5bb81d600f3b648143d242ef8ee68b84c1d34bc0e45</hash>
-    <hash type="sha-1">cd7ee070597162c7c35138f1068b0d7c60c1212e</hash>
-    <hash type="md5">49c1d3682d8bfcca35e467d4428da677</hash>
-    <size>602623861</size>
+    <hash type="sha-512">5cc9e09d760f9908c189932d9892bfd8a54cc3b36051bc8815977d8377172a97a5ec8c49dd8804680cd48338f69dcd539ced23edfcfaca0e958efd80c2d06e8f</hash>
+    <hash type="sha-256">a12d9ad34e82e69b2eec36f0f6793b6a95c120b353e44b4970def75b3db90eb9</hash>
+    <hash type="sha-1">8fe6d43207985611ee1d85b141c8e2b91c31fb4f</hash>
+    <hash type="md5">e53350efade6007049ae187d1402a706</hash>
+    <size>602607277</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/ubuntu-bionic.tgz</url>
-    <version>9.0.0</version>
+    <version>10.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">3a97b7161b3d2fb860d21760380911d90123cfbfcb1740fe83d6dad825f0cb39fa10acbc701b0c7c7a15ad562290104ba4518b2f449bb9bbe555a71552a4da08</hash>
-    <hash type="sha-256">f80b84bcca8f0e532a88b6c3428352a22e38c4a95e9391413eef779d79bf77b3</hash>
-    <hash type="sha-1">465322f399b20f0a57152eec8be805c866722666</hash>
-    <hash type="md5">36a059e25dbd4fd8663238a7a46c3690</hash>
-    <size>14148</size>
+    <hash type="sha-512">1d7f8b5da8b4b00c25b2792b7cb972f3917b8f35d87cd04cc8c228821a645c25e5aae12497e7987510a67b312db207e3adb75548672e684b6172b6e68fec5621</hash>
+    <hash type="sha-256">3683abc03dbae8fd0adb9ffdf7353b8ecb520b19fdc92d3c34d12cde3e38d675</hash>
+    <hash type="sha-1">1de822eb1e2cbb6eeb8a5e3eb7a1699c85d27fb1</hash>
+    <hash type="md5">637cb4a6619577131c621ca0865c3667</hash>
+    <size>15822</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/usn-log.json</url>
-    <version>9.0.0</version>
+    <version>10.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2022-01-20T13:45:44.818406524Z</published>
+  <published>2022-01-21T15:26:14.221465038Z</published>
 </metalink>
