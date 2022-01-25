@@ -101,7 +101,7 @@ var _ = Describe("Stemcell", func() {
 			"--column=stdout",
 			"ssh", "default/0", "-r", "-c",
 			// sleep to ensure we have multiple samples so average can be verified
-			`sudo /usr/lib/sysstat/debian-sa1 && sudo /usr/lib/sysstat/debian-sa1 1 1 && sleep 2 && sudo /usr/lib/sysstat/debian-sa1 1 1`,
+			`sudo /usr/lib/sysstat/debian-sa1 && sudo /usr/lib/sysstat/debian-sa1 1 1 && sleep 2 && sudo /usr/lib/sysstat/debian-sa1 1 1 && sleep 5`,
 		)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
