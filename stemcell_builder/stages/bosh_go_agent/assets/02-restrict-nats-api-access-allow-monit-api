@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# This script does two things:
+# 1. allows bosh-agent to access monit on the localhost
+# 2. allows bosh-agent to access NATS on the Director; denies everyone else
+
+exec --  &>> /var/vcap/bosh/log/nats-iptables.log
+set -x
+source /var/vcap/bosh/etc/nats-access-helper.sh
+
+# Script ordering is important. An earlier script denied access to monit's
+# port 2822, this script allows it for the bosh-agent. If the ordering was
+# reversed, it would break the bosh-agent's ability to speak with monit.
+# see interfaces(8) for more info.
+echo "$(date) enable monit access to bosh-agent"
+if ! iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+            -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+then
+    iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+             -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+fi
+
+NEXT_WAIT_TIME=0
+until [ $NEXT_WAIT_TIME -eq 5 ] || [ -f /var/vcap/bosh/settings.json ]; do
+  echo 'waiting for /var/vcap/bosh/settings.json';
+  sleep $(( NEXT_WAIT_TIME++ ))
+done
+
+if [ ! -f /var/vcap/bosh/settings.json ]; then
+  echo '/var/vcap/bosh/settings.json did not appear after 15 seconds.'
+  echo 'We assume that this is the preliminary IP address to download IP config:'
+  ip a
+  echo 'exiting successfully'
+  exit 0
+fi
+
+set +x # don't print out the NATS password
+NATS_URL=$(sed 's#.*\("mbus"\):"\(.*\)",.*#\2#g' < /var/vcap/bosh/settings.json)
+set -x
+
+# Check if this is a create env. We don't need to set up NATS rules for the BOSH Director itself.
+if grep -q '^https' <<< ${NATS_URL}; then
+  echo "create-env, skipping iptables for nats"
+  exit 0
+fi
+
+# The NATS address is *not* guaranteed to have `user:pass@` before the IP and port
+if grep -q '@' <<< ${NATS_URL}; then
+  # Format we're parsing: nats://user:pass@ip:port
+  DIRECTOR_NATS=$( cut -f2 -d@ <<< "${NATS_URL}" )
+else
+  # Format we're parsing: nats://ip:port
+  DIRECTOR_NATS=$( cut -f3 -d/ <<< "${NATS_URL}" )
+fi
+
+if ! grep -q ':' <<< ${DIRECTOR_NATS}; then
+  echo "NATS Address couldn't be parsed into IP:PORT, this script is failing to interpret the /var/vcap/bosh/settings.json"
+  exit 1
+fi
+
+# GET FIRST FIELD WITH DELIMITER `:` LEAVING `IP`
+DIRECTOR_IP=$( cut -f1 -d: <<< "${DIRECTOR_NATS}" )
+# GET SECOND FIELD WITH DELIMITER `:` LEAVING `PORT`
+DIRECTOR_NATS_PORT=$( cut -f2 -d: <<< "${DIRECTOR_NATS}" )
+
+echo "$(date) restricting director NATS access to bosh-agent"
+if ! iptables -t mangle -C POSTROUTING -d "${DIRECTOR_IP}" -p tcp --dport "${DIRECTOR_NATS_PORT}" \
+              -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+then
+  iptables -t mangle -I POSTROUTING -d "${DIRECTOR_IP}" -p tcp --dport "${DIRECTOR_NATS_PORT}" \
+            -m cgroup --cgroup "${nats_isolation_classid}" -j ACCEPT
+fi
+if ! iptables -t mangle -C POSTROUTING -d "${DIRECTOR_IP}" -p tcp --dport "${DIRECTOR_NATS_PORT}" \
+              -m cgroup \! --cgroup "${nats_isolation_classid}" -j DROP
+then
+  iptables -t mangle -A POSTROUTING -d "${DIRECTOR_IP}" -p tcp --dport "${DIRECTOR_NATS_PORT}" \
+            -m cgroup \! --cgroup "${nats_isolation_classid}" -j DROP
+fi
