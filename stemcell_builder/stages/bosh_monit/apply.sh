@@ -37,5 +37,5 @@ cp $dir/assets/monit-access-helper.sh $chroot/$bosh_dir/etc/
 cp $dir/assets/monit $chroot/$bosh_dir/bin/monit
 chmod +x $chroot/$bosh_dir/bin/monit
 
-cp $dir/assets/restrict-monit-api-access $chroot/etc/network/if-up.d/restrict-monit-api-access
-chmod +x $chroot/etc/network/if-up.d/restrict-monit-api-access
+cp $dir/assets/01-restrict-monit-api-access $chroot/etc/network/if-up.d/01-restrict-monit-api-access
+chmod +x $chroot/etc/network/if-up.d/01-restrict-monit-api-access
