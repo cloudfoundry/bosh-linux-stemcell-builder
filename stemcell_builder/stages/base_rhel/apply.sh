@@ -11,8 +11,18 @@ rpm --root $chroot --initdb
 
 case "${stemcell_operating_system_version}" in
   "7")
+    redhat_version="7"
+    redhat_config_file="custom_rhel_yum.conf"
+    redhat_base_path="/mnt/rhel"
     release_package_url="/mnt/rhel/Packages/redhat-release-server-*.el7.x86_64.rpm"
-    epel_package_url="https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-13.noarch.rpm"
+    epel_package_url="https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm"
+    ;;
+  "8")
+    redhat_version="8"
+    redhat_config_file="custom_rhel_8_yum.conf"
+    redhat_base_path="/mnt/rhel/BaseOS"
+    release_package_url="/mnt/rhel/BaseOS/Packages/redhat-release-*.el8.x86_64.rpm"
+    epel_package_url="https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/e/epel-release-8-13.el8.noarch.rpm"
     ;;
   *)
     echo "Unknown RHEL version: ${stemcell_operating_system_version}"
@@ -21,7 +31,7 @@ case "${stemcell_operating_system_version}" in
 esac
 
 if [ ! -f $release_package_url ]; then
-  echo "Please mount the RHEL 7 install DVD at /mnt/rhel"
+  echo "Please mount the RHEL 7 or RHEL 8 install DVD at /mnt/rhel"
   exit 1
 fi
 
@@ -36,10 +46,11 @@ unshare -m $SHELL <<INSTALL_YUM
 
   mkdir -p /etc/pki
   mount --no-mtab --bind $chroot/etc/pki /etc/pki
-  yum --installroot=$chroot -c $base_dir/etc/custom_rhel_yum.conf --assumeyes install yum
+  yum --installroot=$chroot -c $base_dir/etc/${redhat_config_file} --assumeyes install yum
+
 INSTALL_YUM
 
-if [ ! -d $chroot/mnt/rhel/Packages ]; then
+if [ ! -d $chroot/$redhat_base_path/Packages ]; then
   mkdir -p $chroot/mnt/rhel
   mount --bind /mnt/rhel $chroot/mnt/rhel
   add_on_exit "umount $chroot/mnt/rhel"
@@ -51,26 +62,26 @@ rpm --force --nodeps --install ${epel_package_url}
 rpm --rebuilddb
 "
 
-if [ ! -f $chroot/custom_rhel_yum.conf ]; then
-  cp $base_dir/etc/custom_rhel_yum.conf $chroot/
+if [ ! -f $chroot/$redhat_config_file ]; then
+  cp $base_dir/etc/$redhat_config_file $chroot/
 fi
-run_in_chroot $chroot "yum -c /custom_rhel_yum.conf update --assumeyes"
-run_in_chroot $chroot "yum -c /custom_rhel_yum.conf --verbose --assumeyes groupinstall Base"
-run_in_chroot $chroot "yum -c /custom_rhel_yum.conf --verbose --assumeyes groupinstall 'Development Tools'"
-run_in_chroot $chroot "yum -c /custom_rhel_yum.conf --verbose --assumeyes install subscription-manager"
-run_in_chroot $chroot "yum -c /custom_rhel_yum.conf clean all"
+run_in_chroot $chroot "yum -c /$redhat_config_file update --assumeyes"
+run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall Base"
+run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall 'Development Tools'"
+run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes install subscription-manager"
+run_in_chroot $chroot "yum -c /$redhat_config_file clean all"
 
 
 # subscription-manager allows access to the Red Hat update server. It detects which repos
 # it should allow access to based on the contents of 69.pem.
-if [ ! -f /mnt/rhel/repodata/productid ]; then
-  echo "Can't find Red Hat product certificate at /mnt/rhel/repodata/productid."
-  echo "Please ensure you have mounted the RHEL 7 Server install DVD at /mnt/rhel."
+if [ ! -f $redhat_base_path/repodata/productid ]; then
+  echo "Can't find Red Hat product certificate at $redhat_base_path/repodata/productid."
+  echo "Please ensure you have mounted the RHEL 7 or RHEL 8 Server install DVD at /mnt/rhel."
   exit 1
 fi
 
 mkdir -p $chroot/etc/pki/product
-cp /mnt/rhel/repodata/productid $chroot/etc/pki/product/69.pem
+cp $redhat_base_path/repodata/productid $chroot/etc/pki/product/69.pem
 
 mount --bind /proc $chroot/proc
 add_on_exit "umount $chroot/proc"
@@ -80,14 +91,17 @@ add_on_exit "umount $chroot/dev"
 
 run_in_chroot $chroot "
 
-if ! rct cat-cert /etc/pki/product/69.pem | grep -q rhel-7-server; then
-  echo 'Product certificate from /mnt/rhel/repodata/productid is not for RHEL 7 server.'
-  echo 'Please ensure you have mounted the RHEL 7 Server install DVD at /mnt/rhel.'
+subscription-manager register --username=${RHN_USERNAME} --password=${RHN_PASSWORD} --auto-attach
+
+if rct cat-cert /etc/pki/product/69.pem | grep -q rhel-7-server; then
+  subscription-manager repos --enable=rhel-7-server-optional-rpms
+elif rct cat-cert /etc/pki/product/69.pem | grep -q rhel-8; then
+  subscription-manager repos --enable=rhel-8-for-x86_64-baseos-rpms
+else
+  echo 'Product certificate from /mnt/rhel/repodata/productid is not for RHEL 7 or RHEL 8 server.'
+  echo 'Please ensure you have mounted the RHEL 7 or RHEL 8 Server install DVD at /mnt/rhel.'
   exit 1
 fi
-
-subscription-manager register --username=${RHN_USERNAME} --password=${RHN_PASSWORD} --auto-attach
-subscription-manager repos --enable=rhel-7-server-optional-rpms
 "
 
 touch ${chroot}/etc/sysconfig/network # must be present for network to be configured
