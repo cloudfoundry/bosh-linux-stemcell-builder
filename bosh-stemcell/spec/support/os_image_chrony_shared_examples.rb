@@ -8,7 +8,7 @@ shared_examples_for 'an os with chrony' do
 
     describe file('/etc/chrony/chrony.conf') do
       it { should be_file }
-      its(:content) { should match(/makestep 3 1/) }
+      its(:content) { should match(/makestep 1 3/) }
     end
   end
 end

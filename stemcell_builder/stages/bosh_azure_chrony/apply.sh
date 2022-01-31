@@ -6,6 +6,8 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
-cp $dir/assets/chrony-updater-azure $chroot/$bosh_dir/bin/sync-time
-chmod 0755 $chroot/$bosh_dir/bin/sync-time
-
+cat > $chroot/etc/chrony/sources.d/azure_ptp.sources <<EOF
+# created by $0
+# https://docs.microsoft.com/en-us/azure/virtual-machines/linux/time-sync#chrony
+refclock PHC /dev/ptp0 poll 3 dpoll -2 offset 0
+EOF

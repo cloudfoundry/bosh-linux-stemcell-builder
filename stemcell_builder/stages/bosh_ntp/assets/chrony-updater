@@ -9,16 +9,15 @@ fi
 exec > $BOSH/log/sync-time.out
 exec 2>&1
 
-new_file=/etc/chrony/chrony.conf.new
-cp /etc/chrony/chrony.conf.base $new_file
+CHRONY_TIME_SOURCES_FILE=/etc/chrony/sources.d/bosh.sources
 
-echo "# appended by $0" >> $new_file
+cat > $CHRONY_TIME_SOURCES_FILE <<EOF
+# created by $0
+EOF
 
 for ip in $( cat $NTP_SERVER_FILE ); do
-  echo "server $ip iburst" >> $new_file
+  echo "server $ip iburst" >> $CHRONY_TIME_SOURCES_FILE
 done
-
-mv $new_file /etc/chrony/chrony.conf
 
 systemctl restart chrony.service
 chronyc waitsync 10

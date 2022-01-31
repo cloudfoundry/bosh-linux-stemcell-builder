@@ -84,7 +84,6 @@ run_in_chroot "${chroot}" "systemctl enable systemd-networkd"
 run_in_chroot "${chroot}" "systemctl disable systemd-resolved"
 pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
 pkg_mgr purge --auto-remove "$pkgs_to_purge"
-run_in_chroot "${chroot}" "systemctl disable chrony"
 
 exclusions="postfix whoopsie apport"
 pkg_mgr purge --auto-remove $exclusions
