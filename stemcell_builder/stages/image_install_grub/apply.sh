@@ -76,7 +76,7 @@ if [ -x ${image_mount_point}/usr/sbin/grub2-install ]; then # GRUB 2
   run_in_chroot ${image_mount_point} "grub2-install -v --no-floppy --grub-mkdevicemap=/device.map --target=i386-pc ${device}"
 
   cat >${image_mount_point}/etc/default/grub <<EOF
-GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 audit=1"
+GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 audit=1 audit_backlog_limit=8192"
 EOF
 
   # we use a random password to prevent user from editing the boot menu
@@ -142,7 +142,7 @@ elif [[ "${DISTRIB_CODENAME}" == 'bionic' || ${DISTRIB_CODENAME} == 'jammy' ]]; 
   CGROUP_FIX="systemd.unified_cgroup_hierarchy=false"
 
   cat >${image_mount_point}/etc/default/grub <<EOF
-GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1 cgroup_enable=memory swapaccount=1 ${grub_suffix} ${CGROUP_FIX}"
+GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1 audit_backlog_limit=8192 cgroup_enable=memory swapaccount=1 ${grub_suffix} ${CGROUP_FIX}"
 EOF
 
   # we use a random password to prevent user from editing the boot menu
@@ -210,7 +210,7 @@ default=0
 timeout=1
 title ${os_name} (${kernel_version})
   root (hd0,0)
-  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} net.ifnames=0 plymouth.enable=0 selinux=0 console=tty0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
+  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} net.ifnames=0 plymouth.enable=0 selinux=0 console=tty0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1 audit_backlog_limit=8192
   initrd /boot/${initrd_file}
 GRUB_CONF
 fi
