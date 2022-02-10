@@ -28,8 +28,6 @@ elif [ "${os_type}" == "rhel"  ] || [ "${os_type}" == "centos" ]; then # http://
   # Copy google daemon packages into chroot
   cp -R "$assets_dir/google-centos/"*.rpm "$chroot/tmp/google/"
 
-  run_in_chroot "${chroot}" "yum install -y python-setuptools python-boto"
-
   run_in_chroot "${chroot}" "yum --nogpgcheck install -y /tmp/google/*.rpm"
 
   # Hack: replace google metadata hostname with ip address (bosh agent might set a dns that it's unable to resolve the hostname)
