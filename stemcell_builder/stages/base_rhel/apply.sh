@@ -22,7 +22,7 @@ case "${stemcell_operating_system_version}" in
     redhat_config_file="custom_rhel_8_yum.conf"
     redhat_base_path="/mnt/rhel/BaseOS"
     release_package_url="/mnt/rhel/BaseOS/Packages/redhat-release-*.el8.x86_64.rpm"
-    epel_package_url="https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/e/epel-release-8-13.el8.noarch.rpm"
+    epel_package_url="http://mirror.centos.org/centos/8/extras/x86_64/os/Packages/epel-release-8-11.el8.noarch.rpm"
     ;;
   *)
     echo "Unknown RHEL version: ${stemcell_operating_system_version}"
