@@ -16,7 +16,7 @@ if [ "${stemcell_operating_system}" == "ubuntu" ]; then
   # Export list in stemcell tarball
   cp $chroot/$bosh_dir/packages.out $work/stemcell/packages.txt
 
-elif [ "${stemcell_operating_system}" == "centos" ]; then
+elif [ "${stemcell_operating_system}" == "centos" ] || [ "${stemcell_operating_system}" == "rhel" ]; then
    # Create list of installed packages
   run_in_bosh_chroot $chroot "rpm -qa > packages.out"
 
