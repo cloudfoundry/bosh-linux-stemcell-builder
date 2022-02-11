@@ -35,7 +35,7 @@ module ShelloutTypes
       # trusty-specific instead of fixing the docker images.
       if stdout.match(/Ubuntu/) && stdout.match(/Trusty/)
         check_upstart_links(runlevel) || check_init_conf(runlevel)
-      elsif stdout.match /Ubuntu|CentOS/
+      elsif stdout.match /Ubuntu|CentOS|Red Hat/
         check_is_enabled_systemctl
       else
         raise "Cannot determine Linux distribution: #{stdout}"
