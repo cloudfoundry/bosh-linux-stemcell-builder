@@ -138,7 +138,7 @@ HERE
 end
 
 describe 'CentOS 7 stemcell tarball', stemcell_tarball: true do
-  context 'installed by bosh_rpm_list stage' do
+  context 'installed by bosh_package_list stage' do
     describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/packages.txt", no_chroot) do
       it { should be_file }
     end
