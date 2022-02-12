@@ -13,7 +13,7 @@ install_logrotate_conf() {
   # evaluated to see if the replacement file should be updated.
   if [ "$(get_os_type)" == "centos" ] || [ "$(get_os_type)" == "rhel" ]; then
     # NOTE: For RHEL, we re-use the exact same logic and asset files as for CentOS.
-    echo "3129afc4edd2483030c6be7e7e7e1a7bfb3f110a  $chroot/etc/logrotate.conf" | sha1sum -c
+    echo "af68de4e50f46a643fa11d6e2e93cef399197bf5  $chroot/etc/logrotate.conf" | sha1sum -c
     # shellcheck disable=SC2154
     cp "$assets_dir/centos-logrotate.conf" "$chroot/etc/logrotate.conf"
   elif [ "$(get_os_type)" == "ubuntu" ]; then
