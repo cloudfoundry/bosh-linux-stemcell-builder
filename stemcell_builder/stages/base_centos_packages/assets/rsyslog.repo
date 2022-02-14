@@ -4,4 +4,5 @@ baseurl=http://rpms.adiscon.com/v8-stable/epel-$releasevernum/$basearch
 enabled=1
 gpgcheck=0
 gpgkey=http://rpms.adiscon.com/RPM-GPG-KEY-Adiscon
-protect=1
+# NOTE: `protect` appears to be an invalid/unknown config option: "Unknown configuration option: protect = 1 in /etc/yum.repos.d/rsyslog.repo"
+#protect=1
