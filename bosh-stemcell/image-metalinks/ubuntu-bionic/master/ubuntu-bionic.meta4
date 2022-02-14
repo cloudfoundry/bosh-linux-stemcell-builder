@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">618e1863be7de034af427bfc1f0aea06d6bca95167c202243a13fe5e94fef4518084c54a9dd870488386c6162cc5c2b2d24fd2936e95a529f219f780654850a9</hash>
-    <hash type="sha-256">0d206c46a746f8fbd9b22e8110a9661001b4bb7ca283ad16d6833bb032483f90</hash>
-    <hash type="sha-1">5039acffd1ec823e1d6c9152e780d6c7b30e5ec2</hash>
-    <hash type="md5">90e42400578371734e029854a92d358d</hash>
-    <size>602731149</size>
+    <hash type="sha-512">f01139c432f78b272bd7ba12a9f75ec7412378c1a08a73734863f978057f1a898a2cee12a37aca99402f44fc266ab847f8b3f89324409a4bb004af879e3268ac</hash>
+    <hash type="sha-256">cb287a7fced5c90793a8c1ceb8e2cafcd0995b05fdd6f4f46c43883559305e90</hash>
+    <hash type="sha-1">0715810390f23121b812a1e3b9cd37acab718696</hash>
+    <hash type="md5">a58d58820a4073dc28045ea0d5b20fd4</hash>
+    <size>602629524</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/ubuntu-bionic.tgz</url>
-    <version>26.0.0</version>
+    <version>27.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">363bcdf16a30d73e5a6f3ce109bdd9273f7f6b0cfd7d73f10f06636260124eb018f76852b061a85eff5bd80b6c3ef0f2feea66042268366cfd47c98a1340d6ee</hash>
-    <hash type="sha-256">50d10f6614bdc005403ec91d94ebf7a70a50d1111bfcd327b1b531a9fa6e3662</hash>
-    <hash type="sha-1">76a286504aecbb9bed0de2629cfa4e0dbb8bee61</hash>
-    <hash type="md5">cc9ca657fcac0533535281cd2e85272d</hash>
-    <size>58210</size>
+    <hash type="sha-512">861272a7fbafb0f2ab600e6425541dd73c707a01992d9e7af3448acace14ca5c09e2fd54882d785da37456189d9977ff4c45b64351f0d0b9db9c0f9c49968f2c</hash>
+    <hash type="sha-256">5bf68e0c00d4d1b4a33d74945c19c61f86f05f47de73f7b36751d9f76fc4e4e7</hash>
+    <hash type="sha-1">bb8f4e63b92ca1e0f42bfb1792dc83ed4e7331fa</hash>
+    <hash type="md5">c6f46fae2c1a0a21881e145ae892e40c</hash>
+    <size>61003</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/usn-log.json</url>
-    <version>26.0.0</version>
+    <version>27.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2022-02-08T16:24:45.401617939Z</published>
+  <published>2022-02-14T13:01:45.72810945Z</published>
 </metalink>
