@@ -36,7 +36,6 @@ coreutils
 cpio
 cpp
 cpp-11
-cpp-9
 cracklib-runtime
 crda
 cron
@@ -69,12 +68,9 @@ findutils
 flex
 g++
 g++-11
-g++-9
 gcc
 gcc-11
 gcc-11-base:amd64
-gcc-9
-gcc-9-base:amd64
 gdb
 gdisk
 gettext
@@ -127,7 +123,6 @@ libapt-pkg6.0:amd64
 libarchive-zip-perl
 libarchive13:amd64
 libargon2-1:amd64
-libasan5:amd64
 libasan6:amd64
 libassuan0:amd64
 libatm1:amd64
@@ -191,7 +186,6 @@ libfreetype6:amd64
 libfribidi0:amd64
 libfuse2:amd64
 libgcc-11-dev:amd64
-libgcc-9-dev:amd64
 libgcc-s1:amd64
 libgcrypt20-dev
 libgcrypt20:amd64
@@ -211,6 +205,7 @@ libgstreamer1.0-0:amd64
 libhogweed6:amd64
 libicu-dev:amd64
 libicu67:amd64
+libicu70:amd64
 libidn2-0:amd64
 libinih1:amd64
 libip4tc2:amd64
@@ -313,7 +308,6 @@ libssh-4:amd64
 libssl-dev:amd64
 libssl3:amd64
 libstdc++-11-dev:amd64
-libstdc++-9-dev:amd64
 libstdc++6:amd64
 libstemmer0d:amd64
 libsub-override-perl
