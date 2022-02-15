@@ -197,5 +197,23 @@ image
         expect(File.exist?(tarball_path)).to eq(true)
       end
     end
+
+    context 'when packaging a non standard os variant' do
+      let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('ubuntu', 'bionic-fips') }
+
+      it 'archives the working dir with a different tarball name' do
+        packager.package(disk_format)
+        tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-bionic-fips-go_agent.tgz")
+        expect(File.exist?(tarball_path)).to eq(true)
+      end
+
+      it 'writes the variant into the stemcell.MF' do
+        packager.package('raw')
+
+        actual_manifest = YAML.load_file(File.join(work_dir, 'stemcell/stemcell.MF'))
+
+        expect(actual_manifest['operating_system']).to eq('ubuntu-bionic-fips')
+      end
+    end
   end
 end

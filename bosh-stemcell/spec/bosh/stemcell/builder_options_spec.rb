@@ -25,7 +25,7 @@ module Bosh::Stemcell
     }
 
     let(:infrastructure) { Infrastructure.for('aws') }
-    let(:operating_system) { OperatingSystem.for('ubuntu', 'penguin') }
+    let(:operating_system) { OperatingSystem.for('ubuntu', 'penguin-bear') }
     let(:expected_source_root) { File.expand_path('../../../../..', __FILE__) }
     let(:archive_filename) { instance_double('Bosh::Stemcell::ArchiveFilename', to_s: 'FAKE_STEMCELL.tgz') }
 
@@ -51,6 +51,11 @@ module Bosh::Stemcell
       it 'sets stemcell operating system version' do
         result = stemcell_builder_options.default
         expect(result['stemcell_operating_system_version']).to eq('penguin')
+      end
+
+      it 'sets stemcell operating system variant' do
+        result = stemcell_builder_options.default
+        expect(result['stemcell_operating_system_variant']).to eq('bear')
       end
 
       # rubocop:disable MethodLength

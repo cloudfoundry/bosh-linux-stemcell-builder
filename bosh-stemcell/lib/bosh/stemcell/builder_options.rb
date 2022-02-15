@@ -23,6 +23,7 @@ module Bosh::Stemcell
         'stemcell_infrastructure' => infrastructure.name,
         'stemcell_operating_system' => operating_system.name,
         'stemcell_operating_system_version' => operating_system.version,
+        'stemcell_operating_system_variant' => operating_system.variant,
         'ruby_bin' => ruby_bin,
         'image_create_disk_size' => image_create_disk_size,
         'os_image_tgz' => os_image_tgz_path,
