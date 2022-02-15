@@ -32,6 +32,7 @@ describe 'RHEL 7 OS image', os_image: true do
   end
 
   context 'installed by base_centos_packages' do
+    # explicitly installed packages. see: stemcell_builder/stages/base_centos_packages/apply.sh
     %w(
       apparmor-utils
       bind9-host
@@ -39,7 +40,6 @@ describe 'RHEL 7 OS image', os_image: true do
       bzip2-devel
       cloud-utils-growpart
       cmake
-      cronie-anacron
       curl
       dhclient
       dnsutils
@@ -47,7 +47,6 @@ describe 'RHEL 7 OS image', os_image: true do
       flex
       gdb
       gdisk
-      glibc-static
       iptables
       iputils-arping
       libaio1
@@ -68,30 +67,40 @@ describe 'RHEL 7 OS image', os_image: true do
       nmap-ncat
       nvme-cli
       openssh-server
-      openssl
       openssl-devel
       parted
       psmisc
-      quota
       readline-devel
-      rpm-build
-      rpmdevtools
       rsync
-      rsyslog
-      rsyslog-relp
-      rsyslog-gnutls
-      rsyslog-mmjsonparse
-      runit
       strace
       sudo
       sysstat
-      systemd
       tcpdump
       traceroute
       unzip
       wget
       xfsprogs
       zip
+    ).each do |pkg|
+      describe package(pkg) do
+        it { should be_installed }
+      end
+    end
+
+    # implicitly installed packages.
+    %w(
+      cronie-anacron
+      glibc-static
+      openssl
+      quota
+      rpm-build
+      rpmdevtools
+      rsyslog
+      rsyslog-relp
+      rsyslog-gnutls
+      rsyslog-mmjsonparse
+      runit
+      systemd
     ).each do |pkg|
       describe package(pkg) do
         it { should be_installed }
