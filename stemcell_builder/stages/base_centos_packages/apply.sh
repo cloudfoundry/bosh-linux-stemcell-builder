@@ -20,7 +20,8 @@ case "${stemcell_operating_system_version}" in
     version_specific_packages="bind bind-utils iputils \
     libcurl libcurl-devel \
     ncurses-devel \
-    libaio libcap"
+    libaio libcap \
+    network-scripts"
     ;;
   *)
     echo "Unknown centos version: ${stemcell_operating_system_version}"

@@ -84,6 +84,7 @@ describe 'RHEL 8 OS image', os_image: true do
       libyaml-devel
       lsof
       ncurses-devel
+      network-scripts
       NetworkManager
       nmap-ncat
       nvme-cli
