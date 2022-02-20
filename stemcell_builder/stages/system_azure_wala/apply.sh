@@ -8,8 +8,8 @@ source $base_dir/lib/prelude_apply.bash
 packages="python3 python3-pyasn1 python3-setuptools"
 pkg_mgr install $packages
 
-wala_release=2.2.53
-wala_expected_sha1=b83039ed20cc76a383eb4121fa1c2858b9afa651
+wala_release=2.6.0.2
+wala_expected_sha1=8acc20f81082fee6a7aab2880077ae31f27d93ea
 
 curl -L https://github.com/Azure/WALinuxAgent/archive/v${wala_release}.tar.gz > /tmp/wala.tar.gz
 sha1=$(cat /tmp/wala.tar.gz | openssl dgst -sha1  | awk 'BEGIN {FS="="}; {gsub(/ /,"",$2); print $2}')
