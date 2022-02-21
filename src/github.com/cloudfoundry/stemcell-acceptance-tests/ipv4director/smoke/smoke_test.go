@@ -114,7 +114,7 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 		Expect(stdOut).To(MatchRegexp(`^Linux`))
-		Expect(stdOut).To(MatchRegexp(`\nAverage:\s+`))
+		Expect(stdOut).To(MatchRegexp(`Average:\s+`))
 	})
 
 	It("#146390925: rsyslog logs with precision timestamps", func() {
