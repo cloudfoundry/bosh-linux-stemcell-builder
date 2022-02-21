@@ -148,11 +148,11 @@ shared_examples_for 'every OS image' do
 
   context 'installed by rsyslog_config' do
     before do
-      Open3.capture3("sudo mount --bind /dev #{ @os_image_dir }/dev")
+      Open3.capture3("sudo mount --bind /dev #{ @os_image_dir }/dev") unless @os_image_dir.nil?
     end
 
     after do
-      Open3.capture3("sudo umount #{ @os_image_dir }/dev")
+      Open3.capture3("sudo umount #{ @os_image_dir }/dev") unless @os_image_dir.nil?
     end
 
     describe file('/etc/rsyslog.conf') do
