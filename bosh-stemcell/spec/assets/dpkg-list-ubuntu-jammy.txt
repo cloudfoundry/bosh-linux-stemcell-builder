@@ -134,7 +134,6 @@ libauparse0:amd64
 libbabeltrace1:amd64
 libbinutils:amd64
 libblkid1:amd64
-libboost-regex1.74.0:amd64
 libbpf0:amd64
 libbrotli1:amd64
 libbsd0:amd64
@@ -184,7 +183,7 @@ libfido2-1:amd64
 libfile-stripnondeterminism-perl
 libfreetype6:amd64
 libfribidi0:amd64
-libfuse2:amd64
+libfuse3-3:amd64
 libgcc-11-dev:amd64
 libgcc-s1:amd64
 libgcrypt20-dev
@@ -300,8 +299,6 @@ libsgutils2-2:amd64
 libsigsegv2:amd64
 libslang2:amd64
 libsmartcols1:amd64
-libsource-highlight-common
-libsource-highlight4v5
 libsqlite3-0:amd64
 libss2:amd64
 libssh-4:amd64
@@ -384,7 +381,9 @@ perl
 perl-base
 perl-modules-5.32
 pinentry-curses
+pkexec
 po-debconf
+polkitd
 policykit-1
 procps
 psmisc
