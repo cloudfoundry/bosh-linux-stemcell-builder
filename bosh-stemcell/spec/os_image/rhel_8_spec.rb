@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'RHEL 8 OS image', os_image: true do
   it_behaves_like 'every OS image'
+  it_behaves_like 'an os with chrony'
   it_behaves_like 'a CentOS or RHEL based OS image'
   it_behaves_like 'a systemd-based OS image'
   it_behaves_like 'a Linux kernel based OS image'

@@ -6,7 +6,17 @@ shared_examples_for 'an os with chrony' do
       its(:content) { should match(/chronyc waitsync 10/) }
     end
 
-    describe file('/etc/chrony/chrony.conf') do
+    describe 'chrony.conf file' do
+      let(:chrony_config_path) do
+        if ENV['OS_NAME'] == 'ubuntu'
+          '/etc/chrony/chrony.conf'
+        else
+          '/etc/chrony.conf'
+        end
+      end
+
+      subject { file(chrony_config_path) }
+
       it { should be_file }
       its(:content) { should match(/makestep 1 3/) }
     end
