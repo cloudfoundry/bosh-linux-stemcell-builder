@@ -65,7 +65,7 @@ describe 'RHEL 8 OS image', os_image: true do
       cloud-utils-growpart
       cmake
       curl
-      dhclient
+      dhcp-client
       e2fsprogs
       flex
       gdb

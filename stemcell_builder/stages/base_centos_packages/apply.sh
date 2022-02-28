@@ -11,6 +11,7 @@ case "${stemcell_operating_system_version}" in
     init_package_name="systemd"
     version_specific_packages="bind9-host dnsutils iputils-arping \
     libcurl3 libcurl3-dev \
+    dhclient \
     nfs-common apparmor-utils \
     libncurses5-devs \
     libaio1 libcap2-bin"
@@ -19,6 +20,7 @@ case "${stemcell_operating_system_version}" in
     init_package_name="systemd"
     version_specific_packages="bind bind-utils iputils \
     libcurl libcurl-devel \
+    dhcp-client \
     ncurses-devel \
     libaio libcap \
     network-scripts"
@@ -39,7 +41,6 @@ packages="openssl-devel libyaml-devel lsof \
 	curl wget bison \
 	readline-devel \
 	libxml2 libxml2-devel libxslt libxslt-devel \
-	dhclient \
 	zip unzip \
 	flex psmisc iptables sysstat \
 	rsync openssh-server traceroute \
