@@ -93,17 +93,6 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
-  context 'installed by system_kernel' do
-    %w(
-      kernel
-      kernel-headers
-    ).each do |pkg|
-      describe package(pkg) do
-        it { should be_installed }
-      end
-    end
-  end
-
   context 'readahead-collector should be disabled' do
     describe file('/etc/sysconfig/readahead') do
       it { should be_file }
