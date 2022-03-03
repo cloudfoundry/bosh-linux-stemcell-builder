@@ -292,6 +292,7 @@ module Bosh::Stemcell
         :base_ssh,
         :system_kernel_modules,
         bosh_steps,
+        :password_policies,
         :rsyslog_config,
         :delay_monit_start,
         :system_grub,

@@ -24,7 +24,8 @@ strip_trailing_whitespace_from() {
   sed -i -e's/[[:space:]]*$//' "$1"
 }
 
-if [ "$(get_os_type)" == "centos" ]; then
+if [ "$(get_os_type)" == "centos" ] || [ "$(get_os_type)" == "rhel" ]; then
+  # NOTE: For RHEL, we re-use the exact same logic and asset files as for CentOS.
   strip_trailing_whitespace_from $chroot/etc/pam.d/password-auth
   patch $chroot/etc/pam.d/password-auth < $assets_dir/centos/password-auth.patch
 
