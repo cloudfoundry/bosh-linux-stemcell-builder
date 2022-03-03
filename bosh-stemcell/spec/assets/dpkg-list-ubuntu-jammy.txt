@@ -267,7 +267,7 @@ libparted2:amd64
 libpcap0.8:amd64
 libpcre2-8-0:amd64
 libpcre3:amd64
-libperl5.32:amd64
+libperl5.34:amd64
 libpipeline1:amd64
 libpng16-16:amd64
 libpolkit-agent-1-0:amd64
@@ -380,7 +380,7 @@ passwd
 patch
 perl
 perl-base
-perl-modules-5.32
+perl-modules-5.34
 pinentry-curses
 pkexec
 po-debconf
@@ -421,6 +421,8 @@ python3-yaml
 python3-zipp
 python3.9
 python3.9-minimal
+python3.10
+python3.10-minimal
 quota
 readline-common
 resolvconf
