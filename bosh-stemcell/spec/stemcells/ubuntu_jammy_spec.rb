@@ -10,6 +10,7 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
     exclude_on_softlayer: true
   } do
     context 'for cloudstack infrastructure and xen hypervisor', {
+        exclude_on_alicloud: true,
         exclude_on_aws: true,
         exclude_on_vcloud: true,
         exclude_on_vsphere: true,
@@ -498,6 +499,7 @@ HERE
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
       exclude_on_vsphere: true,
