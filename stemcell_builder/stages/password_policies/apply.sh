@@ -31,6 +31,8 @@ if [ "$(get_os_type)" == "centos" ] || [ "$(get_os_type)" == "rhel" ]; then
 
   strip_trailing_whitespace_from $chroot/etc/pam.d/system-auth
   patch $chroot/etc/pam.d/system-auth < $assets_dir/centos/system-auth.patch
+  patch $chroot/etc/pam.d/login < $assets_dir/centos/login.patch
+  patch $chroot/etc/pam.d/remote < $assets_dir/centos/remote.patch
 elif [ "$(get_os_type)" == "ubuntu" ]; then
   strip_trailing_whitespace_from $chroot/etc/pam.d/common-account
   patch -p1 $chroot/etc/pam.d/common-account < $assets_dir/ubuntu/common-account.patch
