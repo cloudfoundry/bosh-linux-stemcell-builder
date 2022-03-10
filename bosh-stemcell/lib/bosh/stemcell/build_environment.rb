@@ -41,6 +41,8 @@ module Bosh::Stemcell
       [
         "cd #{STEMCELL_SPECS_DIR};",
         "OS_IMAGE=#{os_image_tarball_path}",
+        "OS_NAME=#{operating_system.name}",
+        "OS_VERSION=#{operating_system.version}",
         "bundle exec rspec -fd",
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
       ].join(' ')

@@ -185,6 +185,8 @@ module Bosh::Stemcell
           expected_rspec_command = [
             "cd #{stemcell_specs_dir};",
             'OS_IMAGE=/some/os_image.tgz',
+            "OS_NAME=#{operating_system.name}",
+            "OS_VERSION=#{operating_system.version}",
             "bundle exec rspec -fd",
             "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           ].join(' ')
