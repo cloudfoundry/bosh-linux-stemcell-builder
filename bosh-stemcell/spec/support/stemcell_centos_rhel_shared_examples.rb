@@ -143,6 +143,7 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
       its(:content) { should match '"Type": "HTTP"' }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
   end
 
@@ -157,6 +158,7 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
       its(:content) { should match '"Type": "InstanceMetadata"' }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
   end
 
@@ -171,6 +173,7 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
       its(:content) { should match '"Type": "CDROM"' }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
   end
 
@@ -190,6 +193,7 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
       its(:content) { should match '"SettingsPath": "/var/lib/waagent/CustomData"' }
       its(:content) { should match '"UseServerName": true' }
       its(:content) { should match '"UseRegistry": true' }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
   end
 end

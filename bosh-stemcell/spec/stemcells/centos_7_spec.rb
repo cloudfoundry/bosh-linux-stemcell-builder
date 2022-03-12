@@ -61,6 +61,7 @@ HERE
       end
       it('has ConfigDrive') { expect(subject.content).to match /"Type": "ConfigDrive"/ }
       it('has HTTP') { expect(subject.content).to match /"Type": "HTTP"/ }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
   end
 

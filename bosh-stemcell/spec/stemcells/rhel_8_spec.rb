@@ -25,6 +25,7 @@ describe 'RHEL 8 stemcell', stemcell_image: true do
       its(:content) { should_not include('"CreatePartitionIfNoEphemeralDisk": true') }
       its(:content) { should include('"Type": "ConfigDrive"') }
       its(:content) { should include('"Type": "HTTP"') }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
   end
 

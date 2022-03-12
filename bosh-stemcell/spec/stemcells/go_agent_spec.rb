@@ -11,6 +11,7 @@ describe 'Stemcell with Go Agent', stemcell_image: true do
 
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
+      its(:content) { should include('"PartitionerType": "parted"') }
     end
 
     describe 'set user/group owner and permission on /etc/crontab (CIS-9.1.2)' do
