@@ -86,24 +86,6 @@ There are a few extra steps you need to do before building a RHEL OS image:
 See below [Building the stemcell with local OS image](#with-local-os-image) on how to build stemcell with the new OS image.
 
 
-#### Special requirements for building a PhotonOS image
-
-There are a few extra steps you need to do before building a PhotonOS image:
-
-0. Start up or re-provision the stemcell building machine (run `vagrant up` or `vagrant provision` from this directory)
-0. Download the [latest PhotonOS ISO image](https://vmware.bintray.com/photon/iso/) and use `scp` to copy it to the stemcell building machine. The version must be TP2-dev or newer.
-0. On the stemcell building machine, mount the PhotonOS ISO at `/mnt/photonos`:
-
-        $ mkdir -p /mnt/photonos
-        $ mount photon.iso /mnt/photonos
-
-0. On the stemcell building machine, run the stemcell building rake task:
-
-        $ bundle exec rake stemcell:build_os_image[photonos,TP2,$PWD/tmp/photon_TP2_base_image.tgz]
-
-See below [Building the stemcell with local OS image](#with-local-os-image) on how to build stemcell with the new OS image.
-
-
 #### How to run tests for OS Images
 
 The OS tests are meant to be run agains the OS environment to which they belong. When you run the `stemcell:build_os_image` rake task, it will create a .raw OS image that it runs the OS specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests.

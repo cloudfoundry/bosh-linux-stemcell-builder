@@ -187,14 +187,6 @@ then
 # /etc/fstab Created by BOSH Stemcell Builder
 UUID=${uuid} / ext4 defaults 1 1
 FSTAB
-elif [ -f ${image_mount_point}/etc/photon-release ] # PhotonOS
-then
-  initrd_file="initramfs-${kernel_version}.img"
-  os_name=$(cat ${image_mount_point}/etc/photon-release)
-  cat > ${image_mount_point}/etc/fstab <<FSTAB
-# /etc/fstab Created by BOSH Stemcell Builder
-UUID=${uuid} / ext4 defaults 1 1
-FSTAB
 else
   echo "Unknown OS, exiting"
   exit 2
@@ -212,17 +204,6 @@ title ${os_name} (${kernel_version})
 GRUB_CONF
 
 elif [ -f ${image_mount_point}/etc/redhat-release ] # Centos or RHEL
-then
-  cat > ${image_mount_point}/boot/grub/grub.cfg <<GRUB_CONF
-default=0
-timeout=1
-title ${os_name} (${kernel_version})
-  root (hd0,0)
-  kernel /boot/vmlinuz-${kernel_version} ro root=UUID=${uuid} net.ifnames=0 plymouth.enable=0 selinux=0 console=tty0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1
-  initrd /boot/${initrd_file}
-GRUB_CONF
-
-elif [ -f ${image_mount_point}/etc/photon-release ] # PhotonOS
 then
   cat > ${image_mount_point}/boot/grub/grub.cfg <<GRUB_CONF
 default=0

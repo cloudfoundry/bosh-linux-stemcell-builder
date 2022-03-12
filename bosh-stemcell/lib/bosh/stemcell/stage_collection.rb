@@ -18,8 +18,6 @@ module Bosh::Stemcell
         rhel_os_stages
       when OperatingSystem::Ubuntu then
         ubuntu_os_stages
-      when OperatingSystem::Photonos then
-        photonos_os_stages
       end
     end
 
@@ -329,19 +327,6 @@ module Bosh::Stemcell
         :bosh_audit_ubuntu,
         :bosh_log_audit_start,
         :clean_machine_id,
-      ].flatten
-    end
-
-    def photonos_os_stages
-      [
-        :base_photonos,
-        :base_file_permission,
-        bosh_steps,
-        :base_ssh,
-        :rsyslog_config,
-        :delay_monit_start,
-        :system_grub,
-        :cron_config,
       ].flatten
     end
 

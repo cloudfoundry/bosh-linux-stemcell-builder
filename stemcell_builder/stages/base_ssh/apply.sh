@@ -71,7 +71,7 @@ for type in {rsa,ecdsa,ed25519}; do
 done
 
 # OS Specifics
-if [ "$(get_os_type)" == "centos" -o "$(get_os_type)" == "rhel" -o "$(get_os_type)" == "photonos" ]; then
+if [ "$(get_os_type)" == "centos" -o "$(get_os_type)" == "rhel" ]; then
   # Allow only 3DES and AES series ciphers
   sed "/^ *Ciphers/d" -i $chroot/etc/ssh/sshd_config
   echo 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' >> $chroot/etc/ssh/sshd_config
