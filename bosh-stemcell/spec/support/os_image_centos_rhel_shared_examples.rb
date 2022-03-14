@@ -48,7 +48,8 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
 
     describe file('/etc/localtime') do
-      its(:content) { should match 'UTC' }
+      it { should be_file }
+      it { expect(subject.content.scrub).to match 'UTC' }
     end
 
     describe file('/usr/lib/systemd/system/runit.service') do
