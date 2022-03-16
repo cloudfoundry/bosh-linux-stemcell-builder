@@ -155,7 +155,8 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
       expected_stig_test_cases = expected_base_stig_test_cases + [
         'V-38586',
         'V-38501',
-        'V-38668'
+        'V-38668',
+        'V-230531'
       ]
     end
 

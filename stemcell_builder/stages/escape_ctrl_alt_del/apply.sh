@@ -31,9 +31,11 @@ function safe_overwrite {
 
 echo 'Overriding for Control-Alt-Delete'
 if [ "${stemcell_operating_system}" == "ubuntu" ]; then
+  # stig: V-38668
   mkdir -p $chroot/etc/init
   echo 'exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"' > $chroot/etc/init/control-alt-delete.override
 elif [ "${stemcell_operating_system}" == "centos" ] || [ "${stemcell_operating_system}" == "rhel" ]; then
+  # stig: V-38668
   # NOTE: On some platforms, 'ctrl-alt-del.target' is a symlink, and on other platforms it is a regular file.
   # When it is a symlink to a location inside of $chroot, writing to the symlink affects both specs and VMs.
   # When it is a symlink to a location outside of $chroot, writing to the symlink will make the specs pass,
@@ -59,4 +61,19 @@ elif [ "${stemcell_operating_system}" == "centos" ] || [ "${stemcell_operating_s
   safe_overwrite "$target12" "$file_content"
   safe_overwrite "$target21" "$file_content"
   safe_overwrite "$target22" "$file_content"
+
+  if [ "${stemcell_operating_system}" == "rhel" ] ; then
+    # stig: V-230531: The systemd Ctrl-Alt-Delete burst key sequence in RHEL 8 must be disabled.
+    # NOTE: stig V-230531 explicitly targets RHEL 8, but the vulnerability affects RHEL 7.4 and later.
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-12-03/finding/V-230531
+    system_conf=$chroot/etc/systemd/system.conf
+    if [[ -e $system_conf ]]; then
+      sudo sed -i 's/^#?CtrlAltDelBurstAction=.*/CtrlAltDelBurstAction=none/' $system_conf
+      if ! grep -q -e '^CtrlAltDelBurstAction=none$' $system_conf; then
+        sudo echo 'CtrlAltDelBurstAction=none' >> $system_conf
+      fi
+    else
+      sudo echo 'CtrlAltDelBurstAction=none' > $system_conf
+    fi
+  fi
 fi

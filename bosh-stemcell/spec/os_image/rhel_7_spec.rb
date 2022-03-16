@@ -138,6 +138,16 @@ describe 'RHEL 7 OS image', os_image: true do
     end
   end
 
+  context 'ctrl-alt-del restrictions' do
+    # NOTE: stig V-230531 explicitly targets RHEL 8, but the vulnerability affects RHEL 7.4 and later.
+    context 'overriding control alt delete burst action (stig: V-230531)' do
+      describe file('/etc/systemd/system.conf') do
+        it { should be_file }
+        its(:content) { should match /^CtrlAltDelBurstAction=none$/ }
+      end
+    end
+  end
+
   context 'ensure sendmail is removed (stig: V-38671)' do
     describe command('rpm -q sendmail') do
       its (:stdout) { should match ('package sendmail is not installed')}
