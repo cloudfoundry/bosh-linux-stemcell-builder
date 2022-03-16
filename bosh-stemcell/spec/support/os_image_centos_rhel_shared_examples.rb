@@ -47,6 +47,13 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       it { should be_file }
     end
 
+    context 'locale is set to US english, UTF8 charset' do
+      describe file('/etc/locale.conf') do
+        it { should be_file }
+        its(:content) { should include 'en_US.UTF-8' }
+      end
+    end
+
     describe file('/etc/localtime') do
       it { should be_file }
       it { expect(subject.content.scrub).to match 'UTC' }

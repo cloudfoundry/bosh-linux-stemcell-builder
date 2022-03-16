@@ -40,11 +40,6 @@ describe 'RHEL 7 OS image', os_image: true do
       it { should_not be_file }
     end
 
-    describe file('/etc/locale.conf') do
-      it { should be_file }
-      its(:content) { should match 'en_US.UTF-8' }
-    end
-
     %w(
       redhat-release-server
       epel-release

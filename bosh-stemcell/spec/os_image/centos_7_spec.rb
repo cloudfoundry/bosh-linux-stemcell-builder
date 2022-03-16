@@ -34,11 +34,6 @@ describe 'CentOS 7 OS image', os_image: true do
       its(:content) { should match (/CentOS Linux release 7\./)} # example: `CentOS Linux release 7.7.1908 (Core)`
     end
 
-    describe file('/etc/locale.conf') do
-      it { should be_file }
-      it('uses US english, UTF8 charset') { expect(subject.content).to match /en_US\.UTF-8/}
-    end
-
     %w(
       centos-release
       epel-release
