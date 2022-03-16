@@ -9,6 +9,31 @@ describe 'CentOS 7 OS image', os_image: true do
   it_behaves_like 'a Linux kernel module configured OS image'
 
   context 'installed by base_centos' do
+    describe file('/etc/os-release') do
+      # SEE: https://www.freedesktop.org/software/systemd/man/os-release.html
+      it { should be_file }
+      its(:content) { should include ('ID="centos"')}
+      its(:content) { should include ('NAME="CentOS Linux"')}
+      its(:content) { should include ('VERSION_ID="7')} # example: `VERSION_ID="7"`
+      its(:content) { should include ('VERSION="7')} # example: `VERSION="7 (Core)"`
+      its(:content) { should include ('PRETTY_NAME="CentOS Linux 7')} # example: `PRETTY_NAME="CentOS Linux 7 (Core)"`
+    end
+
+    describe file('/etc/redhat-release') do
+      it { should be_file }
+      its(:content) { should match (/CentOS Linux release 7\./)} # example: `CentOS Linux release 7.7.1908 (Core)`
+    end
+
+    describe file('/etc/centos-release') do
+      # NOTE: This file MUST exist, or else the automation will mis-identify the OS-type of this stemcell.
+      # SEE: `function get_os_type` at stemcell_builder/lib/prelude_apply.bash:22-48
+      # NOTE: for centos, the '/etc/centos-release' file appears to be a soft link of the '/etc/redhat-release' file
+      # NOTE: It is OK for both this file and the one above to both exist (for centos stemcells),
+      # since the OS-type-inference code gives higher precedence to this file.
+      it { should be_file }
+      its(:content) { should match (/CentOS Linux release 7\./)} # example: `CentOS Linux release 7.7.1908 (Core)`
+    end
+
     describe file('/etc/locale.conf') do
       it { should be_file }
       it('uses US english, UTF8 charset') { expect(subject.content).to match /en_US\.UTF-8/}

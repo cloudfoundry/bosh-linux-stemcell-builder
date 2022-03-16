@@ -12,7 +12,30 @@ describe 'RHEL 8 OS image', os_image: true do
       its (:stdout) { should match /rhel-8/ }
     end
 
+    describe file('/etc/os-release') do
+      # SEE: https://www.freedesktop.org/software/systemd/man/os-release.html
+      it { should be_file }
+      its(:content) { should include ('ID="rhel"')}
+      its(:content) { should include ('NAME="Red Hat Enterprise Linux"')}
+      its(:content) { should include ('VERSION_ID="8')} # example: `VERSION_ID="8.5"`
+      its(:content) { should include ('VERSION="8')} # example: `VERSION="8.5 (Ootpa)"`
+      its(:content) { should include ('PRETTY_NAME="Red Hat Enterprise Linux 8.')} # example: `PRETTY_NAME="Red Hat Enterprise Linux 8.5 (Ootpa)"`
+    end
+
+    describe file('/etc/redhat-release') do
+      # NOTE: This file MUST exist, or else the automation will mis-identify the OS-type of this stemcell.
+      # SEE: `function get_os_type` at stemcell_builder/lib/prelude_apply.bash:22-48
+      it { should be_file }
+      its(:content) { should match (/Red Hat Enterprise Linux release 8\./)}
+    end
+
     describe file('/etc/centos-release') do
+      # NOTE: The stemcell builder automation infers the OS-type based on the existence of specific `/etc/*-release` files,
+      # so this file MUST NOT exist in this stemcell,
+      # or else the automation will incorrectly identify this stemcell as a CentOS stemcell.
+      # NOTE: It is NOT OK for both this file and the one above to both exist (for RHEL stemcells),
+      # since the OS-type-inference code gives higher precedence to this file.
+      # SEE: `function get_os_type` at stemcell_builder/lib/prelude_apply.bash:22-48
       it { should_not be_file }
     end
 

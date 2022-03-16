@@ -27,6 +27,14 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       it { should be_file }
     end
 
+    describe file('/etc/lsb-release') do
+      # NOTE: The stemcell builder automation infers the OS-type based on the existence of specific `/etc/*-release` files,
+      # so this file MUST NOT exist in this stemcell,
+      # or else the automation will incorrectly identify this stemcell as an Ubuntu stemcell.
+      # SEE: `function get_os_type` at stemcell_builder/lib/prelude_apply.bash:22-48
+      it { should_not be_file }
+    end
+
     describe file('/etc/sysconfig/network') do
       it { should be_file }
     end
