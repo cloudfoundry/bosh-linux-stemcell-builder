@@ -153,7 +153,8 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
       ]
     when 'rhel'
       expected_stig_test_cases = expected_base_stig_test_cases + [
-        'V-38586'
+        'V-38586',
+        'V-38668'
       ]
     end
 

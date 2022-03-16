@@ -151,4 +151,13 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       end
     end
   end
+
+  context 'ctrl-alt-del restrictions' do
+    context 'overriding control alt delete (stig: V-38668)' do
+      describe file('/etc/systemd/system/ctrl-alt-del.target') do
+        it { should be_file }
+        it('remarks on the escaping') { expect(subject.content).to match '# escaping ctrl alt del' }
+      end
+    end
+  end
 end

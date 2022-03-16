@@ -215,13 +215,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'overriding control alt delete (stig: V-38668)' do
-    describe file('/etc/systemd/system/ctrl-alt-del.target') do
-      it { should be_file }
-      it('remarks on the escaping') { expect(subject.content).to match '# escaping ctrl alt del' }
-    end
-  end
-
   context 'official Centos gpg key is installed (stig: V-38476)' do
     describe command('rpm -qa gpg-pubkey* 2>/dev/null | xargs rpm -qi 2>/dev/null') do
       its (:stdout) { should include('CentOS 7 Official Signing Key') }
