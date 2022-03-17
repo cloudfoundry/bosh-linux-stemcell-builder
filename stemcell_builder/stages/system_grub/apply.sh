@@ -15,6 +15,9 @@ fi
 
 if pkg_exists $preferred; then
   pkg_mgr install $preferred
+elif pkg_exists ${preferred}-pc; then
+  # HACK: On RHEL 8, `pkg_exists grub2` is false and `pkg_exists grub2-pc` is true, but `pkg_mgr install grub2` still works anyway.
+  pkg_mgr install $preferred
 elif pkg_exists $fallback; then
   pkg_mgr install $fallback
 else
