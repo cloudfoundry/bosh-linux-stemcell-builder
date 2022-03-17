@@ -15,3 +15,6 @@ fi
 
 persist_value image_create_disk_size
 persist_value stemcell_image_name
+
+persist stemcell_operating_system
+persist stemcell_operating_system_version

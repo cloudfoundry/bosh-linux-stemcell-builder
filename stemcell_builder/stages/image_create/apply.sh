@@ -7,9 +7,16 @@ source $base_dir/lib/prelude_apply.bash
 
 disk_image=${work}/${stemcell_image_name}
 
-# Reserve the first 63 sectors for grub
-part_offset=63s
-part_size=$((${image_create_disk_size} - 1))
+if [ "${stemcell_operating_system}" == "rhel" ] && [ "${stemcell_operating_system_version}" == "8" ] ; then
+  # Reserve the first 128 sectors for grub (63 is too small for rhel 8 core.img)
+  part_offset=128s
+  # NOTE: The original value of ${image_create_disk_size} was 3072 (see: `bosh-stemcell/lib/bosh/stemcell/infrastructure.rb`). It has been raised to 4096 to accommodate rhel 8.
+  part_size=$((${image_create_disk_size} - 1))
+else
+  # Reserve the first 63 sectors for grub
+  part_offset=63s
+  part_size=$((${image_create_disk_size} - 1))
+fi
 
 dd if=/dev/null of=${disk_image} bs=1M seek=${image_create_disk_size} 2> /dev/null
 parted --script ${disk_image} mklabel msdos
