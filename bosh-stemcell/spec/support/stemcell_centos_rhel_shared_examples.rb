@@ -1,4 +1,4 @@
-shared_examples_for 'a CentOS 7 or RHEL 7 stemcell' do
+shared_examples_for 'a CentOS or RHEL stemcell' do
 
   describe command('ls -1 /lib/modules | wc -l') do
     its(:stdout) {should eq "1\n"}

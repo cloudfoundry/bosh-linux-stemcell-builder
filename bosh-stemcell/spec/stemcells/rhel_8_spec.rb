@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'RHEL 7 stemcell', stemcell_image: true do
+describe 'RHEL 8 stemcell', stemcell_image: true do
 
   it_behaves_like 'All Stemcells'
   it_behaves_like 'a CentOS or RHEL stemcell'

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'CentOS 7 stemcell', stemcell_image: true do
   it_behaves_like 'All Stemcells'
-  it_behaves_like 'a CentOS 7 or RHEL 7 stemcell'
+  it_behaves_like 'a CentOS or RHEL stemcell'
 
   context 'installed by system_parameters' do
     describe file('/var/vcap/bosh/etc/operating_system') do
