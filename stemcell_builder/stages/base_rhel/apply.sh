@@ -93,10 +93,18 @@ run_in_chroot $chroot "
 
 subscription-manager register --username=${RHN_USERNAME} --password=${RHN_PASSWORD} --auto-attach
 
+# Configure RHSM package repositories
+# SEE: https://access.redhat.com/solutions/265523 (section 'Commonly used repositories')
 if rct cat-cert /etc/pki/product/69.pem | grep -q rhel-7-server; then
   subscription-manager repos --enable=rhel-7-server-optional-rpms
 elif rct cat-cert /etc/pki/product/69.pem | grep -q rhel-8; then
+  # NOTE: BaseOS and AppStream contain all software packages, which were available in extras and optional repositories before.
+  # see: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/considerations_in_adopting_rhel_8/repositories_considerations-in-adopting-rhel-8
+  # > Both repositories are required for a basic RHEL installation, and are available with all RHEL subscriptions.
   subscription-manager repos --enable=rhel-8-for-x86_64-baseos-rpms
+  subscription-manager repos --enable=rhel-8-for-x86_64-appstream-rpms
+  # > the CodeReady Linux Builder repository is available with all RHEL subscriptions. It provides additional packages for use by developers. Packages included in the CodeReady Linux Builder repository are unsupported.
+  subscription-manager repos --enable=codeready-builder-for-rhel-8-x86_64-rpms
 else
   echo 'Product certificate from /mnt/rhel/repodata/productid is not for RHEL 7 or RHEL 8 server.'
   echo 'Please ensure you have mounted the RHEL 7 or RHEL 8 Server install DVD at /mnt/rhel.'
