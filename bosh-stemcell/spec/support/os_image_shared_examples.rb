@@ -1,7 +1,14 @@
 shared_examples_for 'every OS image' do
   let(:sshd_config) { file('/etc/ssh/sshd_config') }
   let(:etc_environment) { file('/etc/environment') }
-  let(:syslog_config) { file('/etc/audisp/plugins.d/syslog.conf') }
+  let(:audit_plugin_dir) do
+    if ENV['OS_NAME'] == 'ubuntu' || (ENV['OS_NAME'] == 'rhel' && ENV['OS_VERSION'] == '8')
+      '/etc/audit/plugins.d'
+    else
+      '/etc/audisp/plugins.d'
+    end
+  end
+  let(:syslog_config) { file("#{audit_plugin_dir}/syslog.conf") }
 
   context 'etc_environment' do
     it 'should have /var/vcap/bosh/bin on the PATH' do
@@ -598,8 +605,11 @@ shared_examples_for 'every OS image' do
     end
 
     context ("plugins.d/syslog.conf") do
-      it 'auditd logs to syslog' do
-        expect(syslog_config.content).to match ( /^active = yes$/ )
+      context 'auditd logs to syslog' do
+        subject { syslog_config }
+
+        it { should be_file }
+        its (:content) { should match /^active = yes$/ }
       end
     end
   end

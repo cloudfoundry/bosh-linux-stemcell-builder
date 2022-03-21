@@ -151,9 +151,14 @@ function override_default_audit_variables {
     sed -i 's/^admin_space_left = .*$/admin_space_left = 50/g' $chroot/etc/audit/auditd.conf
 
     if [[ ${DISTRIB_CODENAME} == 'jammy' ]]; then
-        sed -i 's/^active = .*$/active = yes/g' $chroot/etc/audit/plugins.d/syslog.conf
+    	audit_plugin_dir=$chroot/etc/audit/plugins.d
+    elif [ "${stemcell_operating_system}" == "rhel" ] && [ "${stemcell_operating_system_version}" == "8" ] ; then
+    	audit_plugin_dir=$chroot/etc/audit/plugins.d
     else
-        sed -i 's/^active = .*$/active = yes/g' $chroot/etc/audisp/plugins.d/syslog.conf
+    	audit_plugin_dir=$chroot/etc/audisp/plugins.d
+    fi
+    if [ -f "$audit_plugin_dir/syslog.conf" ]; then
+      sed -i 's/^active = .*$/active = yes/g' $audit_plugin_dir/syslog.conf
     fi
 }
 

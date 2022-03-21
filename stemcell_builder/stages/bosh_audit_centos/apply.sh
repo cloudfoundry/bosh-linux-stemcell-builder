@@ -5,8 +5,15 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/stages/bosh_audit/shared_functions.bash
 source $base_dir/lib/prelude_bosh.bash
+source $base_dir/stages/base_rhel/rhel_functions.bash
 
 pkg_mgr install audit
+
+if [ "${stemcell_operating_system}" == "rhel" ] && [ "${stemcell_operating_system_version}" == "8" ] ; then
+  rhsm_register
+  rhsm_enable_dev_repos
+  pkg_mgr install audispd-plugins
+fi
 
 run_in_bosh_chroot $chroot "systemctl disable auditd.service"
 
