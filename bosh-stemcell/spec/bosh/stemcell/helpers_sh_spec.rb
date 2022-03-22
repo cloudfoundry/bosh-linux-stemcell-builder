@@ -5,7 +5,27 @@ context 'helpers.sh' do
 
   context '#enable'
 
-  context '#run_in_chroot'
+  context '#run_in_chroot' do
+    context 'in root dir' do
+      describe ShelloutTypes::Command.new(
+        '../../../assets/run_in_chroot_pwd.sh',
+        ShelloutTypes::Chroot.new('/')
+      ) do
+        its(:stdout) { should eq('/') }
+        its(:exit_status) { should eq(0) }
+      end
+    end
+
+    context 'in /bin dir' do
+      describe ShelloutTypes::Command.new(
+        '../../../assets/run_in_chroot_pwd.sh',
+        ShelloutTypes::Chroot.new('/bin')
+      ) do
+        its(:stdout) { should eq('/bin') }
+        its(:exit_status) { should eq(0) }
+      end
+    end
+  end
 
   context '#on_exit'
 
