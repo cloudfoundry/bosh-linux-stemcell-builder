@@ -25,6 +25,16 @@ context 'helpers.sh' do
         its(:exit_status) { should eq(0) }
       end
     end
+
+    context 'returns the executed script\'s exit code'  do
+      describe ShelloutTypes::Command.new(
+        '../../../assets/run_in_chroot_exit_with_error.sh',
+        ShelloutTypes::Chroot.new('/bin')
+      ) do
+        its(:stdout) { should include '/bin' }
+        its(:exit_status) { should eq(12) }
+      end
+    end
   end
 
   context '#on_exit'

@@ -16,6 +16,10 @@ function enable {
   fi
 }
 
+# function run_in_chroot executes a given fragment of script (using `bash`) in the given chroot dir.
+# $1: The chroot dir path.
+# $2: The fragment of shell script which should be executed.
+# returns the exit code returned by `bash` (when executing the $2 script).
 function run_in_chroot {
   local chroot=$1
   local script=$2
@@ -37,9 +41,13 @@ function run_in_chroot {
     chroot $chroot env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin http_proxy=${http_proxy:-} https_proxy=${https_proxy:-} no_proxy=${no_proxy:-} bash -e -c "$script"
 EOS
 
+  local unshare_exit_code=$?
+
   # Enable daemon startup
   enable $chroot/sbin/initctl
   enable $chroot/usr/sbin/invoke-rc.d
+
+  return "$unshare_exit_code"
 }
 
 declare -a on_exit_items
