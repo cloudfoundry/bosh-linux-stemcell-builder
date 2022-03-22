@@ -30,7 +30,8 @@ case "${stemcell_operating_system_version}" in
     ;;
 esac
 
-if [ ! -f $release_package_url ]; then
+if ! ls $release_package_url 2>&1 >/dev/null; then
+  # then no files match the GLOB in `$release_package_url`
   echo "Please mount the RHEL 7 or RHEL 8 install DVD at /mnt/rhel"
   exit 1
 fi
