@@ -123,9 +123,17 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
-  context 'package signature verification (stig: V-38462)' do
+  context 'package signature verification (stig: V-38462) (stig: V-38483)' do
     describe command('grep nosignature /etc/rpmrc /usr/lib/rpm/rpmrc /usr/lib/rpm/redhat/rpmrc ~root/.rpmrc') do
       its (:stdout) { should_not include('nosignature') }
+    end
+
+    context 'gpgcheck must be enabled (stig: V-38483)' do
+      describe file('/etc/yum.conf') do
+        # TODO: REVIEW: This spec doesn't seem to be precise enough to ensure stig V-38483 requirements are satisfied.
+        # E.g. The following expectation could match a string outside of the '[main]' section.
+        its(:content) { should match /^gpgcheck=1$/ }
+      end
     end
   end
 

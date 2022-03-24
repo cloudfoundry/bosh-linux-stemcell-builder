@@ -312,12 +312,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'gpgcheck must be enabled (stig: V-38483)' do
-    describe file('/etc/yum.conf') do
-      its(:content) { should match /^gpgcheck=1$/ }
-    end
-  end
-
   context 'installed by bosh_sysctl' do
     describe file('/etc/sysctl.d/60-bosh-sysctl.conf') do
       it { should be_file }
