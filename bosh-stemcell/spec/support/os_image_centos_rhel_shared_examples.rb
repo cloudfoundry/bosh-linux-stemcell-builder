@@ -169,4 +169,10 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       end
     end
   end
+
+  context 'ensure sendmail is removed (stig: V-38671)' do
+    describe command('rpm -q sendmail') do
+      its (:stdout) { should include ('package sendmail is not installed')}
+    end
+  end
 end

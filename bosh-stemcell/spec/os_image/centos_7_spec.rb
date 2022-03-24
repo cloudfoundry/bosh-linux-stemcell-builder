@@ -212,12 +212,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'ensure sendmail is removed (stig: V-38671)' do
-    describe command('rpm -q sendmail') do
-      its (:stdout) { should include ('package sendmail is not installed')}
-    end
-  end
-
   context 'ensure cron is installed and enabled (stig: V-38605)' do
     describe package('cronie') do
       it('should be installed') { should be_installed }
