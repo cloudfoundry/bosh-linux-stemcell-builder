@@ -350,16 +350,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'restrict access to the su command CIS-9.5' do
-    describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
-      it('exits 0') { expect(subject.exit_status).to eq(0), -> { "Stdout: #{subject.stdout} Stderr: #{subject.stderr}" } }
-    end
-    describe user('vcap') do
-      it { should exist }
-      it { should be_in_group 'wheel' }
-    end
-  end
-
   describe 'logging and audit startup script' do
     describe file('/var/vcap/bosh/bin/bosh-start-logging-and-auditing') do
       it { should be_file }

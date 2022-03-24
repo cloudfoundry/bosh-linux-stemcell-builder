@@ -175,4 +175,21 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       its (:stdout) { should include ('package sendmail is not installed')}
     end
   end
+
+  context 'restrict access to the su command CIS-9.5' do
+    # SEE: https://access.redhat.com/solutions/64860
+    describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
+      it('exits 0') { expect(subject.exit_status).to eq(0) }
+      it('exits 0') { expect(subject.exit_status).to eq(0), -> { "Stdout: #{subject.stdout} Stderr: #{subject.stderr}" } }
+    end
+    describe file('/etc/pam.d/su') do
+      it { should be_file }
+      its (:content) { should match(/^\s*auth\s*required\s*pam_wheel.so\s*use_uid/) }
+      it('has expected auth config') { expect(subject.content).to match(/^\s*auth\s*required\s*pam_wheel.so\s*use_uid/), -> { "content: #{subject.content}" } }
+    end
+    describe user('vcap') do
+      it { should exist }
+      it { should be_in_group 'wheel' }
+    end
+  end
 end
