@@ -145,6 +145,10 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
         expect(subject.content).to match /password.*pam_unix\.so.*minlen=14/
       end
 
+      it 'must use the cracklib library to set correct password requirements (CIS-9.2.1)' do
+        expect(subject.content).to match /password.*pam_cracklib\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/
+      end
+
       it 'must restrict a user account after 5 failed login attempts (stig: V-38573 V-38501)' do
         expect(subject.content).to match /auth.*pam_unix.so.*\nauth.*default=die.*pam_faillock\.so.*authfail.*deny=5.*fail_interval=900\nauth\s*sufficient\s*pam_faillock\.so.*authsucc.*deny=5.*fail_interval=900/
       end
