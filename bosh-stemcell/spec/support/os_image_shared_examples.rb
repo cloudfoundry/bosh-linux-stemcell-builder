@@ -122,11 +122,11 @@ shared_examples_for 'every OS image' do
       ).stdout.split("\n").each do |logfile|
         f = file(logfile)
 
-        expect(f).to be_owned_by('syslog') # stig: V-38518
-        expect(f.group).to eq('syslog') # stig: V-38519
-        expect(f).to be_mode(0600) # stig: V-38623
+        expect(f).to be_owned_by('syslog'), -> { "file: '#{logfile}', owner: '#{f.owner}'" } # stig: V-38518
+        expect(f.group).to eq('syslog'), -> { "file: '#{logfile}, group: '#{f.group}'" } # stig: V-38519
+        expect(f).to be_mode(0600), -> { "file: '#{logfile}', mode: '#{f.mode}'" } # stig: V-38623
 
-        expect(f).to_not be_readable_by_user('vcap')
+        expect(f).to_not be_readable_by_user('vcap'), -> { "file: '#{logfile}'" }
       end
     end
   end
