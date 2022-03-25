@@ -142,4 +142,16 @@ describe 'RHEL 7 OS image', os_image: true do
       end
     end
   end
+
+  context 'official Red Hat gpg key is installed (stig: V-38476)' do
+    describe command('rpm -qa gpg-pubkey* 2>/dev/null | xargs rpm -qi 2>/dev/null') do
+      # SEE: https://access.redhat.com/security/team/key
+      it('shows the Red Hat RHEL 6,7,8 release key is installed') { expect(subject.stdout).to include('Red Hat, Inc. (release key 2) <security@redhat.com>') }
+      it('shows the Red Hat RHEL 5,6,7 disaster recovery key is installed') { expect(subject.stdout).to include('Red Hat, Inc. (auxiliary key) <security@redhat.com>') }
+
+      # SEE: https://getfedora.org/security/
+      # SEE: https://dl.fedoraproject.org/pub/epel/
+      it('shows the Fedora EPEL 7 key is installed') { expect(subject.stdout).to include('Fedora EPEL (7) <epel@fedoraproject.org>') }
+    end
+  end
 end
