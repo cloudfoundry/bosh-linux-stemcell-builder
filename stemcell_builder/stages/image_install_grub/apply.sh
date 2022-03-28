@@ -172,27 +172,6 @@ EOF" >> ${image_mount_point}/etc/grub.d/00_header
 
   rm ${image_mount_point}/device.map
 
-else # Classic GRUB
-
-  mkdir -p ${image_mount_point}/tmp/grub
-  add_on_exit "rm -rf ${image_mount_point}/tmp/grub"
-
-  touch ${image_mount_point}/tmp/grub/${stemcell_image_name}
-
-  mount --bind $work/${stemcell_image_name} ${image_mount_point}/tmp/grub/${stemcell_image_name}
-  add_on_exit "umount ${image_mount_point}/tmp/grub/${stemcell_image_name}"
-
-  cat > ${image_mount_point}/tmp/grub/device.map <<EOS
-(hd0) ${stemcell_image_name}
-EOS
-
-  run_in_chroot ${image_mount_point} "
-cd /tmp/grub
-grub --device-map=device.map --batch <<EOF
-root (hd0,0)
-setup (hd0)
-EOF
-"
 fi # end of GRUB and GRUB 2 bootsector installation
 
 # Figure out uuid of partition
