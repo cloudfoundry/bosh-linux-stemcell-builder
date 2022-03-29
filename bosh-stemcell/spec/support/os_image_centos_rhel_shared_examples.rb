@@ -145,6 +145,14 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
         it { should be_installed }
       end
     end
+
+    context 'ensure audit package file have unmodified contents (stig: V-38637)' do
+      # ignore auditd.conf, and audit.rules since we modify these files in
+      # other stigs
+      describe command("rpm -V audit | grep -v 'auditd.conf' | grep -v 'audit.rules' | grep -v 'syslog.conf' | grep '^..5'") do
+        its (:stdout) { should be_empty }
+      end
+    end
   end
 
   context 'package signature verification (stig: V-38462) (stig: V-38483)' do
