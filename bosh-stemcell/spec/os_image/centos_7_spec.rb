@@ -253,16 +253,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'installed by bosh_sysctl' do
-    describe file('/etc/sysctl.d/60-bosh-sysctl.conf') do
-      it { should be_file }
-
-      it 'must limit the ability of processes to have simultaneous write and execute access to memory. (only centos) (stig: V-38597)' do
-        expect(subject.content).to match /^kernel.exec-shield=1$/
-      end
-    end
-  end
-
   context 'ensure net-snmp is not installed (stig: V-38660) (stig: V-38653)' do
     describe package('net-snmp') do
       it { should_not be_installed }

@@ -244,6 +244,16 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'installed by bosh_sysctl' do
+    describe file('/etc/sysctl.d/60-bosh-sysctl.conf') do
+      it { should be_file }
+
+      it 'must limit the ability of processes to have simultaneous write and execute access to memory. (only centos) (stig: V-38597)' do
+        expect(subject.content).to match /^kernel.exec-shield=1$/
+      end
+    end
+  end
+
   context 'restrict access to the su command CIS-9.5' do
     # SEE: https://access.redhat.com/solutions/64860
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
