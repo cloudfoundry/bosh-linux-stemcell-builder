@@ -12,8 +12,11 @@ mkdir -p $chroot/var/vcap/monit/svlog
 
 # Set up agent and monit with runit
 run_in_bosh_chroot $chroot "
-rm /etc/service
-mkdir /etc/service
+# TODO: figure out why this is a existing symlink now in jammy by default (see commits a41d51c0, 30db35c2)
+# If '/etc/service' is a symlink, replace the symlink with an empty directory
+[ ! -L /etc/service ] || rm /etc/service
+[ -d /etc/service ] || mkdir /etc/service
+
 chmod +x /etc/sv/agent/run /etc/sv/agent/log/run
 rm -f /etc/service/agent
 ln -s /etc/sv/agent /etc/service/agent
