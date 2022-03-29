@@ -238,6 +238,12 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'display the number of unsuccessful logon/access attempts since the last successful logon/access (stig: V-51875)' do
+    describe file('/etc/pam.d/system-auth') do
+      its(:content){ should match /session     required      pam_lastlog\.so showfailed/ }
+    end
+  end
+
   context 'restrict access to the su command CIS-9.5' do
     # SEE: https://access.redhat.com/solutions/64860
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
