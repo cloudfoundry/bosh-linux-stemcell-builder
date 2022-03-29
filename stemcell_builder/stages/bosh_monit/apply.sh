@@ -12,7 +12,9 @@ monit_archive=$monit_basename.tar.gz
 mkdir -p $chroot/$bosh_dir/src
 cp -r $dir/assets/$monit_archive $chroot/$bosh_dir/src
 
-pkg_mgr install "zlib1g-dev"
+if [[ "${OS_TYPE}" == "ubuntu" ]]; then
+  pkg_mgr install "zlib1g-dev"
+fi
 
 run_in_bosh_chroot $chroot "
 cd src
