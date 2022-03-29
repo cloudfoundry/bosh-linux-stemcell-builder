@@ -248,12 +248,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'ensure ypserv is not installed (stig: V-38603)' do
-    describe package('ypserv') do
-      it('should not be installed') { should_not be_installed }
-    end
-  end
-
   context 'ensure auditd file permissions and ownership (stig: V-38663) (stig: V-38664) (stig: V-38665)' do
     [[0o755, '/usr/bin/auvirt'],
      [0o755, '/usr/bin/ausyscall'],

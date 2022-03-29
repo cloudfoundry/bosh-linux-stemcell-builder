@@ -192,6 +192,12 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'ensure ypserv is not installed (stig: V-38603)' do
+    describe package('ypserv') do
+      it('should not be installed') { should_not be_installed }
+    end
+  end
+
   context 'restrict access to the su command CIS-9.5' do
     # SEE: https://access.redhat.com/solutions/64860
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
