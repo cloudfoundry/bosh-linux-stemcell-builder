@@ -123,6 +123,22 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'ensure cron is installed and enabled (stig: V-38605)' do
+    describe package('cronie') do
+      it('should be installed') { should be_installed }
+    end
+
+    describe file('/etc/systemd/system/default.target') do
+      it { should be_file }
+      its(:content) { should match /^Requires=multi-user\.target/ }
+    end
+
+    describe file('/etc/systemd/system/multi-user.target.wants/crond.service') do
+      it { should be_file }
+      its(:content) { should match /^ExecStart=\/usr\/sbin\/crond/ }
+    end
+  end
+
   context 'configured by bosh_audit_centos' do
     context 'ensure auditd is installed (stig: V-38628) (stig: V-38631) (stig: V-38632)' do
       describe package('audit') do
