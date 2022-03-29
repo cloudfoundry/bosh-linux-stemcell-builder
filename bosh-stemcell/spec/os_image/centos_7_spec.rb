@@ -253,22 +253,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'ensure rpcbind is not enabled (CIS-6.7)' do
-    describe file('/etc/init/rpcbind-boot.conf') do
-      it { should_not be_file }
-    end
-
-    describe file('/etc/init/rpcbind.conf') do
-      it { should_not be_file }
-    end
-  end
-
-  describe 'ensure nfs is not enabled (CIS-6.7)' do
-    describe command("ls /etc/rc*.d/ | grep S*nfs-kernel-server") do
-      its (:stdout) { should be_empty }
-    end
-  end
-
   describe 'logging and audit startup script' do
     describe file('/var/vcap/bosh/bin/bosh-start-logging-and-auditing') do
       it { should be_file }

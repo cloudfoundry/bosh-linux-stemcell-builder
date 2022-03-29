@@ -65,6 +65,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
           ]
         when 'rhel'
           expected_cis_test_cases = expected_base_cis_test_cases + [
+            'CIS-6.7'
           ]
       end
 
@@ -97,6 +98,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
           ]
         when 'rhel'
           expected_cis_test_cases = expected_base_cis_test_cases + [
+            'CIS-6.7'
           ]
       end
 

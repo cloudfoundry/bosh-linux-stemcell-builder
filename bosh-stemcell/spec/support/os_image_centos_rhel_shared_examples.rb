@@ -260,6 +260,27 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'Ensure NFS and RPC are not enabled (CIS-6.7)' do
+    # SEE: section 6.7 of: https://security.uri.edu/files/CIS_Ubuntu_14.04_LTS_Server_Benchmark_v1.0.0.pdf
+    # SEE: https://blackhole.nmrc.org/code-testing/sast-testing/-/blob/master/wazuh-master/ruleset/sca/debian/cis_debian7.yml#L818-833
+
+    context 'ensure rpcbind is not enabled (CIS-6.7)' do
+      describe file('/etc/init/rpcbind-boot.conf') do
+        it { should_not be_file }
+      end
+
+      describe file('/etc/init/rpcbind.conf') do
+        it { should_not be_file }
+      end
+    end
+
+    context 'ensure nfs is not enabled (CIS-6.7)' do
+      describe command("ls /etc/rc*.d/ | grep S*nfs-kernel-server") do
+        its (:stdout) { should be_empty }
+      end
+    end
+  end
+
   context 'restrict access to the su command CIS-9.5' do
     # SEE: https://access.redhat.com/solutions/64860
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
