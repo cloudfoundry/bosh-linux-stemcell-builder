@@ -24,17 +24,41 @@ strip_trailing_whitespace_from() {
   sed -i -e's/[[:space:]]*$//' "$1"
 }
 
-strip_trailing_whitespace_from $chroot/etc/pam.d/common-account
-patch -p1 $chroot/etc/pam.d/common-account < $assets_dir/ubuntu/common-account.patch
+if [ "$(get_os_type)" == "centos" ]; then
+  strip_trailing_whitespace_from $chroot/etc/pam.d/password-auth
+  patch $chroot/etc/pam.d/password-auth < $assets_dir/centos/password-auth.patch
 
-strip_trailing_whitespace_from $chroot/etc/pam.d/common-auth
-patch -p1 $chroot/etc/pam.d/common-auth < $assets_dir/ubuntu/common-auth.patch
+  strip_trailing_whitespace_from $chroot/etc/pam.d/system-auth
+  patch $chroot/etc/pam.d/system-auth < $assets_dir/centos/system-auth.patch
+elif [ "$(get_os_type)" == "opensuse" ]; then
+  rm $chroot/etc/pam.d/common-password.pam-config-backup
 
-strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
-patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
+  mv $chroot/etc/pam.d/common-account-pc $chroot/etc/pam.d/common-account
+  mv $chroot/etc/pam.d/common-auth-pc $chroot/etc/pam.d/common-auth
+  mv $chroot/etc/pam.d/common-password-pc $chroot/etc/pam.d/common-password
+  mv $chroot/etc/pam.d/common-session-pc $chroot/etc/pam.d/common-session
 
-strip_trailing_whitespace_from $chroot/etc/pam.d/login
-patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-account
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-auth
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-session
+
+  patch $chroot/etc/pam.d/common-account < $assets_dir/opensuse/common-account.patch
+  patch $chroot/etc/pam.d/common-auth < $assets_dir/opensuse/common-auth.patch
+  patch $chroot/etc/pam.d/common-password < $assets_dir/opensuse/common-password.patch
+elif [ "$(get_os_type)" == "ubuntu" ]; then
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-account
+  patch -p1 $chroot/etc/pam.d/common-account < $assets_dir/ubuntu/common-account.patch
+
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-auth
+  patch -p1 $chroot/etc/pam.d/common-auth < $assets_dir/ubuntu/common-auth.patch
+
+  strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
+  patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
+
+  strip_trailing_whitespace_from $chroot/etc/pam.d/login
+  patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch
+fi
 
 # /etc/login.defs are only effective for new users
 sed -i -r 's/^PASS_MIN_DAYS.+/PASS_MIN_DAYS 1/' $chroot/etc/login.defs

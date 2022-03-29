@@ -19,20 +19,90 @@ else
   export DISTRIB_CODENAME="no-distrib-codename"
 fi
 
+function get_os_type {
+  centos_file=$chroot/etc/centos-release
+  rhel_file=$chroot/etc/redhat-release
+  ubuntu_file=$chroot/etc/lsb-release
+  photonos_file=$chroot/etc/photon-release
+  opensuse_file=$chroot/etc/SuSE-release
+
+  os_type=''
+  if [ -f $photonos_file ]
+  then
+    os_type='photonos'
+  elif [ -f $ubuntu_file ]
+  then
+    os_type='ubuntu'
+  elif [ -f $centos_file ]
+  then
+    os_type='centos'
+  elif [ -f $rhel_file ]
+  then
+    os_type='rhel'
+  elif [ -f $opensuse_file ]
+  then
+    os_type='opensuse'
+  fi
+
+  echo $os_type
+}
+
+os_type=$(get_os_type)
+export OS_TYPE=$os_type
+
 function pkg_mgr {
-  run_in_chroot $chroot "apt-get update"
-  run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive;apt-get -f -y --no-install-recommends $*"
-  run_in_chroot $chroot "apt-get clean"
+  os_type=$(get_os_type)
+
+  if [ "${os_type}" == 'ubuntu' ]
+  then
+    run_in_chroot $chroot "apt-get update"
+    run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive;apt-get -f -y --no-install-recommends $*"
+    run_in_chroot $chroot "apt-get clean"
+  elif [ "${os_type}" == 'centos' -o "${os_type}" == 'rhel' -o "${os_type}" == 'photonos' ]
+  then
+    run_in_chroot $chroot "yum --verbose --assumeyes $*"
+    run_in_chroot $chroot "yum clean all"
+  elif [ "${os_type}" == 'opensuse' ]
+  then
+    run_in_chroot $chroot "zypper -n $*"
+  else
+    echo "Unknown OS, exiting"
+    exit 2
+  fi
 }
 
 # checks if an OS package with the given name exists in the current database of available packages.
 # returns 0 if package exists (whether or not is is installed); 1 otherwise
 function pkg_exists {
-  run_in_chroot $chroot "apt-get update"
-  result=`run_in_chroot $chroot "if apt-cache show $1 2>/dev/null >/dev/null; then echo exists; else echo does not exist; fi"`
-  if [[ "$result" == *"exists"* ]]; then
-    return 0
+  os_type=$(get_os_type)
+
+  if [ "${os_type}" == 'ubuntu' ]
+  then
+    run_in_chroot $chroot "apt-get update"
+    result=`run_in_chroot $chroot "if apt-cache show $1 2>/dev/null >/dev/null; then echo exists; else echo does not exist; fi"`
+    if [[ "$result" == *"exists"* ]]; then
+      return 0
+    else
+      return 1
+    fi
+  elif [ "${os_type}" == 'centos' -o "${os_type}" == 'rhel' -o "${os_type}" == 'photonos' ]
+  then
+    result=`run_in_chroot $chroot "if yum list $1 2>/dev/null >/dev/null; then echo exists; else echo does not exist; fi"`
+    if [[ "$result" == *"exists"* ]]; then
+      return 0
+    else
+      return 1
+    fi
+  elif [ "${os_type}" == 'opensuse' ]
+  then
+    result=`run_in_chroot $chroot "if zypper se $1 2>/dev/null >/dev/null; then echo exists; else echo does not exist; fi"`
+    if [ "$result" == 'exists' ]; then
+      return 0
+    else
+      return 1
+    fi
   else
-    return 1
+    echo "Unknown OS, exiting"
+    exit 2
   fi
 }

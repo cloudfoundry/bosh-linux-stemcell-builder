@@ -70,13 +70,42 @@ for type in {rsa,ecdsa,ed25519}; do
   sed "s/^[ #]*HostKey \/etc\/ssh\/ssh_host_${type}_key/HostKey \/etc\/ssh\/ssh_host_${type}_key/" -i $chroot/etc/ssh/sshd_config
 done
 
-#  Allow only 3DES and AES series ciphers
-sed "/^ *Ciphers/d" -i $chroot/etc/ssh/sshd_config
-echo 'Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' >> $chroot/etc/ssh/sshd_config
+# OS Specifics
+if [ "$(get_os_type)" == "centos" -o "$(get_os_type)" == "rhel" -o "$(get_os_type)" == "photonos" ]; then
+  # Allow only 3DES and AES series ciphers
+  sed "/^ *Ciphers/d" -i $chroot/etc/ssh/sshd_config
+  echo 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' >> $chroot/etc/ssh/sshd_config
 
-# Disallow Weak MACs
-sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
-echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' >> $chroot/etc/ssh/sshd_config
+  # Disallow Weak MACs
+  sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
+  echo 'MACs hmac-sha2-512,hmac-sha2-256' >> $chroot/etc/ssh/sshd_config
+
+elif [ "$(get_os_type)" == "ubuntu" ]; then
+  #  Allow only 3DES and AES series ciphers
+  sed "/^ *Ciphers/d" -i $chroot/etc/ssh/sshd_config
+  echo 'Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' >> $chroot/etc/ssh/sshd_config
+
+  # Disallow Weak MACs
+  sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
+  echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' >> $chroot/etc/ssh/sshd_config
+
+elif [ "$(get_os_type)" == "opensuse" ]; then
+  # Allow only 3DES and AES series ciphers
+  sed "/^ *Ciphers/d" -i $chroot/etc/ssh/sshd_config
+  echo 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' >> $chroot/etc/ssh/sshd_config
+
+  # Disallow Weak MACs
+  sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
+  echo 'MACs hmac-sha2-512,hmac-sha2-256,hmac-ripemd160,hmac-sha1' >> $chroot/etc/ssh/sshd_config
+
+  sed "/^ *ChallengeResponseAuthentication/d" -i $chroot/etc/ssh/sshd_config
+  echo 'ChallengeResponseAuthentication no' >> $chroot/etc/ssh/sshd_config
+
+else
+  echo "Unknown OS type $(get_os_type)"
+  exit 1
+
+fi
 
 cat << EOF > $chroot/etc/issue
 Unauthorized use is strictly prohibited. All access and activity

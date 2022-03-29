@@ -12,10 +12,28 @@ rm -fr $chroot/etc/udev/rules.d/70-persistent-net.rules
 # https://github.com/cloudfoundry/bosh/issues/1399
 echo -n "bosh-stemcell" > $chroot/etc/hostname
 
-cat >> $chroot/etc/network/interfaces <<EOS
+if [ -e "$chroot/etc/network/interfaces" ]; then # ubuntu
+  cat >> $chroot/etc/network/interfaces <<EOS
 auto eth0
 iface eth0 inet dhcp
 EOS
+
+elif [ -e "$chroot/etc/sysconfig/network" ]; then # centos
+  cat >> $chroot/etc/sysconfig/network <<EOS
+NETWORKING=yes
+NETWORKING_IPV6=no
+HOSTNAME=bosh-stemcell
+NOZEROCONF=yes
+EOS
+
+  cat >> $chroot/etc/sysconfig/network-scripts/ifcfg-eth0 <<EOS
+DEVICE=eth0
+BOOTPROTO=dhcp
+ONBOOT=on
+TYPE="Ethernet"
+EOS
+
+fi
 
 # The port 65330 is unusable on Azure
 cp $dir/assets/90-azure-sysctl.conf $chroot/etc/sysctl.d

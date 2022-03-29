@@ -27,6 +27,13 @@ if [[ "$NEW_GID" == 0 ]]; then
   NEW_GID=1000
 fi
 
+if [[ "$IMAGE_NAME" == "os-image-stemcell-builder" || \
+      "$IMAGE_NAME" == "os-image-stemcell-builder-bionic" ]] ; then
+  USER_OPTION="--user=$NEW_UID:$NEW_GID"
+elif [[ "$IMAGE_NAME" == "suse-os-image-stemcell-builder" ]] ; then
+  USER_OPTION="-e LOCAL_USER_ID=$(id -u "$USER")"
+fi
+
 pushd "$IMAGE_NAME"
   docker build                      \
     --build-arg USER_ID="$NEW_UID"  \
@@ -35,4 +42,4 @@ pushd "$IMAGE_NAME"
     .
 popd
 
-exec docker run --privileged -v "$DIR/../..:/opt/bosh" --workdir /opt/bosh "--user=$NEW_UID:$NEW_GID" -t -i "$DOCKER_IMAGE"
+exec docker run --privileged -v "$DIR/../..:/opt/bosh" --workdir /opt/bosh "$USER_OPTION" -t -i "$DOCKER_IMAGE"

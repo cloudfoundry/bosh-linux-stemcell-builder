@@ -64,6 +64,9 @@ apt-get -y install open-vm-tools
 # OpenStack requirement
 apt-get -y install qemu-utils
 
+# CentOS building requirements
+apt-get -y install yum
+
 # needed by stemcell building
 apt-get -y install parted
 

@@ -12,6 +12,10 @@ chown root:root $chroot/etc/gshadow
 chmod 0000 $chroot/etc/shadow
 chown root:root $chroot/etc/shadow
 
+# only for CentOS
+chmod 0755 $chroot/lib
+chmod 0755 $chroot/lib64
+
 # remove setuid binaries - except su/sudo (sudoedit is hardlinked)
 run_in_bosh_chroot $chroot "
 find / -xdev -perm /ug=s -type f \

@@ -1,0 +1,578 @@
+- path: /groups/-
+  type: replace
+  value:
+    jobs:
+    - start-job-((group))
+    - create-story-((group))
+    - bats-((group))
+    - build-vcloud-esxi-((group))
+    - build-vsphere-esxi-((group))
+    - build-openstack-kvm-((group))
+    - build-google-kvm-((group))
+    - build-azure-hyperv-((group))
+    - build-aws-xen-hvm-((group))
+    - build-warden-boshlite-((group))
+    - build-stemcell-((group))
+    - test-unit-((group))
+    - build-os-image-((group))
+    - bump-os-image-((group))
+    name: ((group))
+- path: /jobs/-
+  type: replace
+  value:
+    name: start-job-((group))
+    plan:
+    - get: bosh-linux-stemcell-builder
+      resource: bosh-linux-stemcell-builder-((group))
+    - get: every-2-weeks-on-monday
+      trigger: true
+    serial: true
+- path: /jobs/-
+  type: replace
+  value:
+    name: create-story-((group))
+    plan:
+      - aggregate:
+        - get: every-2-weeks-on-monday
+          trigger: true
+        - get: bosh-linux-stemcell-builder
+          resource: bosh-linux-stemcell-builder-((group))
+      - task: create-story
+        file: bosh-linux-stemcell-builder/ci/tasks/create-story.yml
+        params:
+          BRANCH: centos-7/((group))
+          PROJECT_ID: ((story_creator_tracker_project_id))
+          TOKEN: ((story_creator_tracker_token))
+          DESCRIPTION: "periodic bump"
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-os-image-((group))
+    plan:
+    - get: bosh-linux-stemcell-builder
+      resource: bosh-linux-stemcell-builder-((group))
+      passed:
+      - start-job-((group))
+      trigger: true
+    - get: every-2-weeks-on-monday
+      trigger: true
+      passed:
+      - start-job-((group))
+    - file: bosh-linux-stemcell-builder/ci/os-images/tasks/build.yml
+      params:
+        OPERATING_SYSTEM_NAME: centos
+        OPERATING_SYSTEM_VERSION: 7
+      privileged: true
+      task: build
+    - params:
+        acl: public-read
+        file: os-image/centos-7.tgz
+      put: os-image-tarball-((group))
+- path: /jobs/-
+  type: replace
+  value:
+    name: bump-os-image-((group))
+    plan:
+    - aggregate:
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-os-image-((group))
+      - get: os-image-tarball-((group))
+        trigger: true
+        passed:
+        - build-os-image-((group))
+    - task: bump-os-image
+      file: bosh-linux-stemcell-builder/ci/os-images/tasks/bump-os-image.yml
+      params:
+        OS_NAME: centos
+        OS_VERSION: 7
+      input_mapping: { image-tarball: os-image-tarball-((group)) }
+    - put: bosh-linux-stemcell-builder-push-((group))
+      params:
+        repository: bosh-linux-stemcell-builder-push
+        rebase: true
+- path: /jobs/-
+  type: replace
+  value:
+    name: test-unit-((group))
+    plan:
+    - get: bosh-linux-stemcell-builder
+      resource: bosh-linux-stemcell-builder-((group))
+      trigger: true
+    - file: bosh-linux-stemcell-builder/ci/tasks/test-unit.yml
+      task: test-unit
+    serial: true
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-stemcell-((group))
+    plan:
+    - get: bosh-linux-stemcell-builder
+      resource: bosh-linux-stemcell-builder-((group))
+      passed:
+      - test-unit-((group))
+      trigger: true
+    - get: version
+      resource: version-((group))
+      params:
+        bump: ((bump_version))
+    - params:
+        file: version/number
+      put: version-((group))
+    serial: true
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-warden-boshlite-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: boshlite
+        IAAS: warden
+        OS_NAME: centos
+        OS_VERSION: 7
+      privileged: true
+      task: create-stemcell
+      attempts: 3
+    - aggregate:
+      - params:
+          file: stemcell/*.tgz
+        put: warden-boshlite-((group))
+        attempts: 3
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+      attempts: 3
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-aws-xen-hvm-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: xen-hvm
+        IAAS: aws
+        OS_NAME: centos
+        OS_VERSION: 7
+      privileged: true
+      task: create-stemcell
+      attempts: 3
+    - aggregate:
+      - params:
+          file: stemcell/*.tgz
+        put: aws-xen-hvm-((group))
+        attempts: 3
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+      attempts: 3
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-azure-hyperv-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: hyperv
+        IAAS: azure
+        OS_NAME: centos
+        OS_VERSION: 7
+      privileged: true
+      task: create-stemcell
+      attempts: 3
+    - aggregate:
+      - params:
+          file: stemcell/*.tgz
+        put: azure-hyperv-((group))
+        attempts: 3
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+      attempts: 3
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-google-kvm-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: kvm
+        IAAS: google
+        OS_NAME: centos
+        OS_VERSION: 7
+      privileged: true
+      task: create-stemcell
+      attempts: 3
+    - aggregate:
+      - params:
+          file: stemcell/*-go_agent.tgz
+        put: google-kvm-((group))
+        attempts: 3
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+      attempts: 3
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-openstack-kvm-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: kvm
+        IAAS: openstack
+        OS_NAME: centos
+        OS_VERSION: 7
+      privileged: true
+      task: create-stemcell
+      attempts: 3
+    - aggregate:
+      - params:
+          file: stemcell/*-raw.tgz
+        put: openstack-kvm-raw-((group))
+        attempts: 3
+      - params:
+          file: stemcell/*-go_agent.tgz
+        put: openstack-kvm-((group))
+        attempts: 3
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+      attempts: 3
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-vsphere-esxi-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: esxi
+        IAAS: vsphere
+        OS_NAME: centos
+        OS_VERSION: 7
+      privileged: true
+      task: create-stemcell
+      attempts: 3
+    - aggregate:
+      - params:
+          file: stemcell/*.tgz
+        put: vsphere-esxi-((group))
+        attempts: 3
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+      attempts: 3
+- path: /jobs/-
+  type: replace
+  value:
+    name: build-vcloud-esxi-((group))
+    plan:
+    - aggregate:
+      - get: version
+        resource: version-((group))
+        passed:
+        - build-stemcell-((group))
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder-((group))
+        passed:
+        - build-stemcell-((group))
+      - get: stemcells-index
+    - file: bosh-linux-stemcell-builder/ci/tasks/build.yml
+      params:
+        HYPERVISOR: esxi
+        IAAS: vcloud
+        OS_NAME: centos
+        OS_VERSION: 7
+      privileged: true
+      task: create-stemcell
+      attempts: 3
+    - aggregate:
+      - params:
+          file: stemcell/*.tgz
+        put: vcloud-esxi-((group))
+        attempts: 3
+    - params:
+        rebase: true
+        repository: stemcells-index
+      put: stemcells-index
+      attempts: 3
+
+- path: /jobs/-
+  type: replace
+  value:
+    name: bats-((group))
+    plan:
+    - do:
+      - aggregate:
+        - get: stemcell
+          passed:
+          - build-vsphere-esxi-((group))
+          resource: vsphere-esxi-((group))
+          tags:
+          - vsphere-v6.5
+          trigger: true
+        - get: bosh-cli
+        - get: bats
+        - get: bosh-deployment
+        - get: bosh-linux-stemcell-builder
+          resource: bosh-linux-stemcell-builder-((group))
+          passed:
+          - build-warden-boshlite-((group))
+          - build-aws-xen-hvm-((group))
+          - build-azure-hyperv-((group))
+          - build-google-kvm-((group))
+          - build-openstack-kvm-((group))
+          - build-vsphere-esxi-((group))
+          - build-vcloud-esxi-((group))
+        - get: version
+          resource: version-((group))
+          passed:
+          - build-warden-boshlite-((group))
+          - build-aws-xen-hvm-((group))
+          - build-azure-hyperv-((group))
+          - build-google-kvm-((group))
+          - build-openstack-kvm-((group))
+          - build-vsphere-esxi-((group))
+          - build-vcloud-esxi-((group))
+      - params:
+          acquire: true
+        put: environment
+      - do:
+        - file: bosh-linux-stemcell-builder/ci/bats/tasks/deploy-director.yml
+          params:
+            BAT_INFRASTRUCTURE: vsphere
+            BOSH_CLIENT: ((stemcell-test-director-username))
+            BOSH_CLIENT_SECRET: ((stemcell-test-director-password))
+            BOSH_VSPHERE_VCENTER: ((vcenter-ip))
+            BOSH_VSPHERE_VCENTER_CLUSTER: ((vcenter-cluster))
+            BOSH_VSPHERE_VCENTER_DATASTORE: ((vcenter-datastore))
+            BOSH_VSPHERE_VCENTER_DC: ((vcenter-dc))
+            BOSH_VSPHERE_VCENTER_DISK_PATH: ((vcenter-disk-path))
+            BOSH_VSPHERE_VCENTER_PASSWORD: ((vcenter-password))
+            BOSH_VSPHERE_VCENTER_TEMPLATE_FOLDER: ((vcenter-template-folder))
+            BOSH_VSPHERE_VCENTER_USER: ((vcenter-user))
+            BOSH_VSPHERE_VCENTER_VLAN: ((vcenter-vlan))
+            BOSH_VSPHERE_VCENTER_VM_FOLDER: ((vcenter-vm-folder))
+            BOSH_VSPHERE_VERSION: ((vsphere-version))
+            BOSH_VSPHERE_VCENTER_RP: ((vcenter-rp))
+          tags:
+          - vsphere-v6.5
+          task: deploy-director
+        - file: bosh-linux-stemcell-builder/ci/bats/iaas/vsphere/prepare-bats-config.yml
+          params:
+            STEMCELL_NAME: bosh-vsphere-esxi-centos-7-go_agent
+          tags:
+          - vsphere-v6.5
+          task: prepare-bats
+        - file: bats/ci/tasks/run-bats.yml
+          tags:
+          - vsphere-v6.5
+          task: run-bats
+        ensure:
+          do:
+          - file: bosh-linux-stemcell-builder/ci/bats/tasks/destroy-director.yml
+            tags:
+            - vsphere-v6.5
+            task: teardown
+      ensure:
+        do:
+        - params:
+            release: environment
+          put: environment
+    serial: true
+- path: /resources/-
+  type: replace
+  value:
+    name: os-image-tarball-((group))
+    source:
+      access_key_id: ((osimage_aws_access_key))
+      bucket: ((osimage_bucket))
+      secret_access_key: ((osimage_aws_secret_key))
+      versioned_file: bosh-centos-7-os-image.tgz
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: bosh-linux-stemcell-builder-push-((group))
+    source:
+      branch: ((branch))
+      private_key: ((bosh_src_key))
+      uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+    type: git
+- path: /resources/-
+  type: replace
+  value:
+    name: bosh-linux-stemcell-builder-((group))
+    source:
+      branch: ((branch))
+      uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
+      ignore_paths:
+        - bosh-stemcell/image-metalinks/ubuntu-trusty.meta4
+        - bosh-stemcell/image-metalinks/ubuntu-xenial.meta4
+    type: git
+- path: /resources/-
+  type: replace
+  value:
+    name: version-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      driver: s3
+      initial_version: ((initial_version))
+      key: bosh-stemcell/centos-7/((group))-version
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: semver
+- path: /resources/-
+  type: replace
+  value:
+    name: aws-xen-hvm-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: aws/bosh-stemcell-(.+)-aws-xen-hvm-centos-7-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: azure-hyperv-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: azure/bosh-stemcell-(.+)-azure-hyperv-centos-7-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: vsphere-esxi-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: vsphere/bosh-stemcell-(.+)-vsphere-esxi-centos-7-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: google-kvm-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: google/bosh-stemcell-(.+)-google-kvm-centos-7-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: openstack-kvm-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: openstack/bosh-stemcell-(.+)-openstack-kvm-centos-7-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: openstack-kvm-raw-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: openstack/bosh-stemcell-(.+)-openstack-kvm-centos-7-go_agent-raw.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: vcloud-esxi-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: vcloud/bosh-stemcell-(.+)-vcloud-esxi-centos-7-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
+- path: /resources/-
+  type: replace
+  value:
+    name: warden-boshlite-((group))
+    source:
+      access_key_id: ((stemcell_aws_access_key))
+      bucket: ((candidate_stemcell_bucket))
+      regexp: warden/bosh-stemcell-(.+)-warden-boshlite-centos-7-go_agent.tgz
+      secret_access_key: ((stemcell_aws_secret_key))
+    type: s3
