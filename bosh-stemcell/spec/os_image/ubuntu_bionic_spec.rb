@@ -208,8 +208,7 @@ EOF
     end
   end
 
-  # V-38498 and V-38495 are the package defaults and cannot be configured
-  context 'ensure auditd is installed (stig: V-38498) (stig: V-38495)' do
+  context 'ensure auditd is installed (stig: V-38628) (stig: V-38631) (stig: V-38632)' do
     describe package('auditd') do
       it { should be_installed }
     end

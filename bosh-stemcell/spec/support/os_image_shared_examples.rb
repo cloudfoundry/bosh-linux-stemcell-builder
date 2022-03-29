@@ -591,8 +591,29 @@ shared_examples_for 'every OS image' do
         its (:content) { should match /^num_logs = 5$/ }
       end
 
-      describe 'audit log files must be group owned by root (stig: V-38445)' do
+      describe 'audit log files must be group owned by root (stig: V-38445) (stig: V-38495) (stig: V-38498)' do
         its (:content) { should match /^log_group = root$/ }
+
+        # NOTE: STIGs V-38495 and V-38498 are the package defaults, and cannot be directly configured.
+        # The STIG V-38445 configuration (already verified above) is as close as we can get to verifying V-38495 and V-38498.
+        # There does not seem to be a way to pre-configure the 'user owner'
+        # (vs 'group owner' above, for stig V-38445) of the audit log file(s).
+        # And the stig V-38495 'fix' of `chown root [audit_file]` does not seem valid,
+        # since every time 'audit.log' gets rotated permissions (and presumably user owner)
+        # get reset (as configured via `log_group =` within 'auditd.conf').
+        # SEE: https://man7.org/linux/man-pages/man5/auditd.conf.5.html
+        # SEE: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2018-11-28/finding/V-38495
+        # SEE: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2018-11-28/finding/V-38498
+        # SEE: https://access.redhat.com/solutions/905243
+        #   > Every time audit.log gets rotated permissions change back to 600
+        #   > ...
+        #   > By default, auditd will set the permissions to 0600 because of the sensitive data recorded in its
+        #   > logfile(s) and it is not possible to configure these permissions directly
+        #   > If the "log_group" configuration directive is set to something other then root,
+        #   > auditd will set the specified group for the logfile and change its permissions to 0640
+
+        # describe 'audit log files must be owned by root (stig: V-38495) (stig: V-38445)'
+        # describe 'audit log files must have mode 0640 or less permissive (stig: V-38498) (stig: V-38445)'
       end
 
       describe 'audit log files triggers action when storage capacity is less than 75mb (stig: V-38678)' do

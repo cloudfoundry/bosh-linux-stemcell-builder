@@ -123,6 +123,14 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'configured by bosh_audit_centos' do
+    context 'ensure auditd is installed (stig: V-38628) (stig: V-38631) (stig: V-38632)' do
+      describe package('audit') do
+        it { should be_installed }
+      end
+    end
+  end
+
   context 'package signature verification (stig: V-38462) (stig: V-38483)' do
     describe command('grep nosignature /etc/rpmrc /usr/lib/rpm/rpmrc /usr/lib/rpm/redhat/rpmrc ~root/.rpmrc') do
       its (:stdout) { should_not include('nosignature') }

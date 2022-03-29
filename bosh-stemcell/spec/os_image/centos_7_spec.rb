@@ -228,13 +228,6 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  # V-38498 and V-38495 are the package defaults and cannot be configured
-  context 'ensure auditd is installed but not enabled (stig: V-38628) (stig: V-38631) (stig: V-38632) (stig: V-38498) (stig: V-38495)' do
-    describe package('audit') do
-      it { should be_installed }
-    end
-  end
-
   context 'ensure xinetd is not installed nor enabled (stig: V-38582)' do
     describe package('xinetd') do
       it('should not be installed') { should_not be_installed }
