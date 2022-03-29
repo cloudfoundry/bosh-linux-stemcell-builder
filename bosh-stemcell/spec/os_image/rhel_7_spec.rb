@@ -127,12 +127,6 @@ describe 'RHEL 7 OS image', os_image: true do
     end
   end
 
-  context 'installed by system_grub' do
-    describe package('grub2-tools') do
-      it { should be_installed }
-    end
-  end
-
   context 'ctrl-alt-del restrictions' do
     # NOTE: stig V-230531 explicitly targets RHEL 8, but the vulnerability affects RHEL 7.4 and later.
     context 'overriding control alt delete burst action (stig: V-230531)' do

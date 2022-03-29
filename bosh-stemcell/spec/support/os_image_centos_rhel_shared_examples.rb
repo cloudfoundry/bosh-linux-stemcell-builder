@@ -117,6 +117,12 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'installed by system_grub' do
+    describe package('grub2-tools') do
+      it { should be_installed, -> { "Message: #{subject.last_message} #{subject.last_error}" } }
+    end
+  end
+
   context 'configured by cron_config' do
     describe file '/etc/cron.daily/man-db.cron' do
       it { should_not be_file }

@@ -126,12 +126,6 @@ describe 'RHEL 8 OS image', os_image: true do
     end
   end
 
-  context 'installed by system_grub' do
-    describe package('grub2-tools') do
-      it { should be_installed }
-    end
-  end
-
   context 'ctrl-alt-del restrictions' do
     context 'overriding control alt delete burst action (stig: V-230531)' do
       describe file('/etc/systemd/system.conf') do
