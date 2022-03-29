@@ -65,13 +65,6 @@ HERE
     end
   end
 
-  describe 'mounted file systems: /etc/fstab should mount nfs with nodev (stig: V-38654)(stig: V-38652)' do
-    describe file('/etc/fstab') do
-      it { should be_file }
-      its (:content) { should_not match /nfs/ }
-    end
-  end
-
   describe 'installed packages' do
     # NOTE: Installed packages' names aren't necessarily unique, which is why there are some duplicate names.
     # However, including the VERSION, RELEASE, and/or ARCH values would make this spec fail if any of those values vary between builds.

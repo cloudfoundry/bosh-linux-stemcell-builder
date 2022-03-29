@@ -25,6 +25,13 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
       its(:content) { should match '/ ext4 defaults 1 1' }
     end
 
+    describe 'mounted file systems: /etc/fstab should mount nfs with nodev (stig: V-38654)(stig: V-38652)' do
+      describe file('/etc/fstab') do
+        it { should be_file }
+        its (:content) { should_not match /nfs/ }
+      end
+    end
+
     # GRUB 2 configuration
     describe file('/boot/grub2/grub.cfg') do
       its(:content) { should match 'net.ifnames=0' }
