@@ -232,6 +232,12 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'PAM configuration' do
+    describe file('/usr/lib64/security/pam_cracklib.so') do
+      it { should be_file }
+    end
+  end
+
   context 'restrict access to the su command CIS-9.5' do
     # SEE: https://access.redhat.com/solutions/64860
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
