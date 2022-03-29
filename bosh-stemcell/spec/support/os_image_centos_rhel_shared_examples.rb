@@ -153,6 +153,17 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
         its (:stdout) { should be_empty }
       end
     end
+
+    describe file('/etc/audit/rules.d/audit.rules') do
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/lib64\/dbus-1\/dbus-daemon-launch-helper -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/libexec\/openssh\/ssh-keysign -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/libexec\/sssd\/krb5_child -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/libexec\/sssd\/ldap_child -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/libexec\/sssd\/p11_child -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/libexec\/sssd\/proxy_child -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/libexec\/sssd\/selinux_child -k privileged/ }
+      its(:content) { should match /^-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=\/usr\/libexec\/utempter\/utempter -k privileged/ }
+    end
   end
 
   context 'package signature verification (stig: V-38462) (stig: V-38483)' do
