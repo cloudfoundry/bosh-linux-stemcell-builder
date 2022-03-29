@@ -21,14 +21,14 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
   context 'installed by image_install_grub' do
     describe file('/etc/fstab') do
       it { should be_file }
-      its(:content) { should match 'UUID=' }
-      its(:content) { should match '/ ext4 defaults 1 1' }
+      its(:content) { should include 'UUID=' }
+      its(:content) { should include '/ ext4 defaults 1 1' }
     end
 
-    describe 'mounted file systems: /etc/fstab should mount nfs with nodev (stig: V-38654)(stig: V-38652)' do
+    describe 'mounted file systems: /etc/fstab should mount nfs with nodev, nosuid (stig: V-38652) (stig: V-38654)' do
       describe file('/etc/fstab') do
         it { should be_file }
-        its (:content) { should_not match /nfs/ }
+        it('has no nfs mounts') { expect(subject.content).to_not include 'nfs' }
       end
     end
 
