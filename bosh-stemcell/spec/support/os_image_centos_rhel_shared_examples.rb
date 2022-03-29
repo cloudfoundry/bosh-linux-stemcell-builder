@@ -192,6 +192,16 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'ensure ypbind is not installed nor enabled (stig: V-38604)' do
+    describe package('ypbind') do
+      it('should not be installed') { should_not be_installed }
+    end
+
+    describe file('/etc/systemd/system/multi-user.target.wants/ypbind.service') do
+      it { should_not be_file }
+    end
+  end
+
   context 'ensure ypserv is not installed (stig: V-38603)' do
     describe package('ypserv') do
       it('should not be installed') { should_not be_installed }
