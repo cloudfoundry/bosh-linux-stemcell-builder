@@ -135,6 +135,7 @@ libauparse0:amd64
 libbabeltrace1:amd64
 libbinutils:amd64
 libblkid1:amd64
+libboost-regex1.74.0:amd64
 libbpf0:amd64
 libbrotli1:amd64
 libbsd0:amd64
@@ -151,6 +152,8 @@ libcap2:amd64
 libcbor0.8:amd64
 libcc1-0:amd64
 libcom-err2:amd64
+libsource-highlight-common
+libsource-highlight4v5
 libcrack2:amd64
 libcrypt-dev:amd64
 libcrypt1:amd64
@@ -204,7 +207,6 @@ libgssapi-krb5-2:amd64
 libgstreamer1.0-0:amd64
 libhogweed6:amd64
 libicu-dev:amd64
-libicu67:amd64
 libicu70:amd64
 libidn2-0:amd64
 libinih1:amd64
