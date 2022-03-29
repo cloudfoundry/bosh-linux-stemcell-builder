@@ -297,4 +297,12 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       it { should be_in_group 'wheel' }
     end
   end
+
+  describe 'logging and audit startup script' do
+    describe file('/var/vcap/bosh/bin/bosh-start-logging-and-auditing') do
+      it { should be_file }
+      it { should be_executable }
+      it('starts auditd') { expect(subject.content).to match('service auditd start') }
+    end
+  end
 end
