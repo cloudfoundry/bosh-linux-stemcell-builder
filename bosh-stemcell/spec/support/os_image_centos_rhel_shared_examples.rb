@@ -254,6 +254,12 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'ensure net-snmp is not installed (stig: V-38660) (stig: V-38653)' do
+    describe package('net-snmp') do
+      it { should_not be_installed }
+    end
+  end
+
   context 'restrict access to the su command CIS-9.5' do
     # SEE: https://access.redhat.com/solutions/64860
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
