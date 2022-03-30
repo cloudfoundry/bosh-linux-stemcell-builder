@@ -19,7 +19,6 @@ case "${stemcell_operating_system_version}" in
     init_package_name="systemd"
     version_specific_packages="bind bind-utils iputils \
     libcurl libcurl-devel \
-    nfs-utils \
     ncurses-devel \
     libaio libcap"
     ;;
@@ -105,5 +104,6 @@ if [ "${stemcell_operating_system_version}" != "8" ]; then
 	run_in_chroot $chroot "rpm -e quota rpcbind"
 fi
 
-exclusions="mlocate firewalld rpcbind"
-pkg_mgr erase $exclusions
+# Ensure NFS and RPC are not enabled (CIS-6.7)
+forbidden_pkgs="mlocate firewalld rpcbind"
+pkg_mgr remove $forbidden_pkgs

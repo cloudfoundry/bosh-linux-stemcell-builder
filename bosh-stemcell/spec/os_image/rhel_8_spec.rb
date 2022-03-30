@@ -63,7 +63,6 @@ describe 'RHEL 8 OS image', os_image: true do
       lsof
       ncurses-devel
       NetworkManager
-      nfs-utils
       nmap-ncat
       nvme-cli
       openssh-server
