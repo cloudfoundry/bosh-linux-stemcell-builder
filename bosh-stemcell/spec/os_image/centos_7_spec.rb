@@ -125,77 +125,80 @@ describe 'CentOS 7 OS image', os_image: true do
     end
   end
 
-  context 'required initramfs modules' do
-    describe command("/usr/lib/dracut/skipcpio /boot/initramfs-3.10.*.el7.x86_64.img | zcat | cpio -t | grep '/lib/modules/3.10.*.el7.x86_64'") do
+  context 'installed by image_install_grub' do
+    context 'required initramfs modules' do
+      # SEE: RHEL release kernel versions: https://access.redhat.com/articles/3078
+      describe command("/usr/lib/dracut/skipcpio /boot/initramfs-3.10.*.el7.x86_64.img | zcat | cpio -t | grep '/lib/modules/3.10.*.el7.x86_64'") do
 
-      modules = [
-        #ata
-          'ata_generic', 'pata_acpi',
-        #block
-          'floppy', 'loop', 'brd',
-        #xen
-          'xen-blkfront',
-        #hv
-          'hv_vmbus','hv_storvsc', 'hv_vmbus',
-        #virtio
-          'virtio_blk', 'virtio_net', 'virtio_pci', 'virtio_scsi',
-        #vmware fusion
-          'mptspi', 'mptbase', 'mptscsih','mpt2sas', 'mpt3sas',
-        #scsci
-          '3w-9xxx',
-          '3w-sas',
-          'aic79xx',
-          'arcmsr',
-          'bfa',
-          'fnic',
-          'hpsa',
-          'hptiop',
-          'initio',
-          'isci',
-          'libsas',
-          'lpfc',
-          'megaraid_sas',
-          'mtip32xx',
-          'mvsas',
-          'mvumi',
-          'nvme',
-          'pm80xx',
-          'pmcraid',
-          'qla2xxx',
-          'qla4xxx',
-          'raid_class',
-          'stex',
-          'sx8',
-          'vmw_pvscsi',
-        #fs
-          'cachefiles',
-          'cifs',
-          'cramfs',
-          'dlm',
-          'libore',
-          'fscache',
-          'grace',
-          'nfs_acl',
-          'fuse',
-          'gfs2',
-          'isofs',
-          'nfs',
-          'nfsd',
-          'nfsv3',
-          'nfsv4',
-          'overlay',
-          'ramoops',
-          'squashfs',
-          'udf',
-          'btrfs',
-          'ext4',
-          'jbd2',
-          'mbcache',
-          'xfs'
-      ]
+        modules = [
+          #ata
+            'ata_generic', 'pata_acpi',
+          #block
+            'floppy', 'loop', 'brd',
+          #xen
+            'xen-blkfront',
+          #hv
+            'hv_vmbus','hv_storvsc', 'hv_vmbus',
+          #virtio
+            'virtio_blk', 'virtio_net', 'virtio_pci', 'virtio_scsi',
+          #vmware fusion
+            'mptspi', 'mptbase', 'mptscsih','mpt2sas', 'mpt3sas',
+          #scsci
+            '3w-9xxx',
+            '3w-sas',
+            'aic79xx',
+            'arcmsr',
+            'bfa',
+            'fnic',
+            'hpsa',
+            'hptiop',
+            'initio',
+            'isci',
+            'libsas',
+            'lpfc',
+            'megaraid_sas',
+            'mtip32xx',
+            'mvsas',
+            'mvumi',
+            'nvme',
+            'pm80xx',
+            'pmcraid',
+            'qla2xxx',
+            'qla4xxx',
+            'raid_class',
+            'stex',
+            'sx8',
+            'vmw_pvscsi',
+          #fs
+            'cachefiles',
+            'cifs',
+            'cramfs',
+            'dlm',
+            'libore',
+            'fscache',
+            'grace',
+            'nfs_acl',
+            'fuse',
+            'gfs2',
+            'isofs',
+            'nfs',
+            'nfsd',
+            'nfsv3',
+            'nfsv4',
+            'overlay',
+            'ramoops',
+            'squashfs',
+            'udf',
+            'btrfs',
+            'ext4',
+            'jbd2',
+            'mbcache',
+            'xfs'
+        ]
 
-      modules.each do |foo|
-        its (:stdout) { should match(/\/#{foo}\.ko/) }
+        modules.each do |m|
+          its (:stdout) { should include("/#{m}.ko") }
+        end
       end
     end
   end
