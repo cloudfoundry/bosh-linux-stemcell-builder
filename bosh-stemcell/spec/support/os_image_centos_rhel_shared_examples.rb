@@ -56,6 +56,7 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     %w(
       firewalld
       mlocate
+      rpcbind
     ).each do |pkg|
       describe package(pkg) do
         it { should_not be_installed }
