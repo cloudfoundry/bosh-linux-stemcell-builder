@@ -238,7 +238,6 @@ describe 'CentOS 7 OS image', os_image: true do
   end
 
   describe 'allowed user accounts' do
-
     describe file('/etc/passwd') do
       passwd_match_raw = <<HERE
 root:x:0:0:root:/root:/bin/bash
@@ -271,6 +270,8 @@ HERE
       passwd_match_lines = passwd_match_raw.split(/\n+/)
 
       its(:content_as_lines) { should match_array(passwd_match_lines)}
+      # NOTE: The following line is needed because rspec truncates the previous line's output upon failure
+      its(:content_as_lines) { should match_array(passwd_match_lines), -> { "full content: '#{subject.content}'" } }
     end
 
     describe file('/etc/shadow') do
@@ -305,6 +306,8 @@ HERE
 
       shadow_match_lines = shadow_match_raw.split(/\n+/).map { |l| Regexp.new("^#{l}$") }
       its(:content_as_lines) { should match_array(shadow_match_lines) }
+      # NOTE: The following line is needed because rspec truncates the previous line's output upon failure
+      its(:content_as_lines) { should match_array(shadow_match_lines), -> { "full content: '#{subject.content}'" } }
     end
 
     describe file('/etc/group') do
@@ -362,7 +365,8 @@ syslog:x:993:
 HERE
       group_lines = group_raw.split(/\n+/)
       its(:content_as_lines) { should match_array(group_lines)}
-
+      # NOTE: The following line is needed because rspec truncates the previous line's output upon failure
+      its(:content_as_lines) { should match_array(group_lines), -> { "full content: '#{subject.content}'" } }
     end
 
     describe file('/etc/gshadow') do
@@ -421,7 +425,8 @@ HERE
 
       gshadow_lines = gshadow_raw.split(/\n+/)
       its(:content_as_lines) { should match_array(gshadow_lines)}
-
+      # NOTE: The following line is needed because rspec truncates the previous line's output upon failure
+      its(:content_as_lines) { should match_array(gshadow_lines), -> { "full content: '#{subject.content}'" } }
     end
   end
 end
