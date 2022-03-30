@@ -18,7 +18,7 @@ shared_examples_for 'an os with chrony' do
       subject { file(chrony_config_path) }
 
       it { should be_file }
-      its(:content) { should match(/makestep 1 3/) }
+      its(:content) { should match(/^makestep 1(\.0)? 3$/) }
     end
   end
 end
