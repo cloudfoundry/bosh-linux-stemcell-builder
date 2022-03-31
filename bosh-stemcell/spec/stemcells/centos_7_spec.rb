@@ -78,11 +78,11 @@ HERE
     # rpm_list_packages = 'rpm --query --all --queryformat="%{NAME} %{VERSION} %{RELEASE} %{ARCH}\n"'
     rpm_list_packages = 'rpm --query --all --queryformat="%{NAME}\n"'
 
-    let(:rpm_list_centos) { File.readlines(spec_asset('rpm-list-centos-7.txt')).map(&:chop) }
-    let(:rpm_list_google_centos) { File.readlines(spec_asset('rpm-list-centos-7-google-additions.txt')).map(&:chop) }
-    let(:rpm_list_vsphere_centos) { File.readlines(spec_asset('rpm-list-centos-7-vsphere-additions.txt')).map(&:chop) }
-    let(:rpm_list_azure_centos) { File.readlines(spec_asset('rpm-list-centos-7-azure-additions.txt')).map(&:chop) }
-    let(:rpm_list_softlayer_centos) { File.readlines(spec_asset('rpm-list-centos-7-softlayer-additions.txt')).map(&:chop) }
+    let(:rpm_list) { File.readlines(spec_asset('rpm-list-centos-7.txt')).map(&:chop) }
+    let(:rpm_list_google) { File.readlines(spec_asset('rpm-list-centos-7-google-additions.txt')).map(&:chop) }
+    let(:rpm_list_vsphere) { File.readlines(spec_asset('rpm-list-centos-7-vsphere-additions.txt')).map(&:chop) }
+    let(:rpm_list_azure) { File.readlines(spec_asset('rpm-list-centos-7-azure-additions.txt')).map(&:chop) }
+    let(:rpm_list_softlayer) { File.readlines(spec_asset('rpm-list-centos-7-softlayer-additions.txt')).map(&:chop) }
 
     describe command(rpm_list_packages), {
       exclude_on_google: true,
@@ -90,8 +90,12 @@ HERE
       exclude_on_vsphere: true,
       exclude_on_azure: true,
     } do
+      let(:installed_packages_aws) { rpm_list }
       it 'contains only the base set of packages for aws, openstack, warden' do
-        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos)
+        expect(subject.stdout.split("\n")).to match_array(installed_packages_aws)
+      end
+      it 'contains only the base set of packages for aws, openstack, warden (full list)' do
+        expect(subject.stdout.split("\n")).to match_array(installed_packages_aws), -> { "actual packages: '#{subject.stdout}'" }
       end
     end
 
@@ -103,8 +107,12 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
+      let(:installed_packages_google) { rpm_list_google }
       it 'contains only the base set of packages plus google-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(rpm_list_google_centos))
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_google))
+      end
+      it 'contains only the base set of packages plus google-specific packages (full list)' do
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_google)), -> { "actual packages: '#{subject.stdout}'" }
       end
     end
 
@@ -115,8 +123,12 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
+      let(:installed_packages_vsphere) { rpm_list_vsphere }
       it 'contains only the base set of packages plus vsphere-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(rpm_list_vsphere_centos))
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_vsphere))
+      end
+      it 'contains only the base set of packages plus vsphere-specific packages (full list)' do
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_vsphere)), -> { "actual packages: '#{subject.stdout}'" }
       end
     end
 
@@ -128,8 +140,12 @@ HERE
       exclude_on_warden: true,
       exclude_on_openstack: true,
     } do
+      let(:installed_packages_azure) { rpm_list_azure }
       it 'contains only the base set of packages plus azure-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(rpm_list_azure_centos))
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_azure))
+      end
+      it 'contains only the base set of packages plus azure-specific packages (full list)' do
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_azure)), -> { "actual packages: '#{subject.stdout}'" }
       end
     end
 
@@ -144,12 +160,12 @@ HERE
       exclude_on_azure: true,
       exclude_on_openstack: true,
     } do
-      let(:installed_packages_softlayer) { rpm_list_softlayer_centos }
+      let(:installed_packages_softlayer) { rpm_list_softlayer }
       it 'contains only the base set of packages plus softlayer-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(installed_packages_softlayer))
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_softlayer))
       end
       it 'contains only the base set of packages plus softlayer-specific packages (full list)' do
-        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(installed_packages_softlayer)), -> { "actual packages: '#{subject.stdout}'" }
+        expect(subject.stdout.split("\n")).to match_array(rpm_list.concat(installed_packages_softlayer)), -> { "actual packages: '#{subject.stdout}'" }
       end
     end
   end
