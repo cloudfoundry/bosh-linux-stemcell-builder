@@ -82,6 +82,7 @@ HERE
     let(:rpm_list_google_centos) { File.readlines(spec_asset('rpm-list-centos-7-google-additions.txt')).map(&:chop) }
     let(:rpm_list_vsphere_centos) { File.readlines(spec_asset('rpm-list-centos-7-vsphere-additions.txt')).map(&:chop) }
     let(:rpm_list_azure_centos) { File.readlines(spec_asset('rpm-list-centos-7-azure-additions.txt')).map(&:chop) }
+    let(:rpm_list_softlayer_centos) { File.readlines(spec_asset('rpm-list-centos-7-softlayer-additions.txt')).map(&:chop) }
 
     describe command(rpm_list_packages), {
       exclude_on_google: true,
@@ -129,6 +130,26 @@ HERE
     } do
       it 'contains only the base set of packages plus azure-specific packages' do
         expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(rpm_list_azure_centos))
+      end
+    end
+
+    describe command(rpm_list_packages), {
+      exclude_on_alicloud: true,
+      exclude_on_aws: true,
+      exclude_on_cloudstack: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_google: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+    } do
+      let(:installed_packages_softlayer) { rpm_list_softlayer_centos }
+      it 'contains only the base set of packages plus softlayer-specific packages' do
+        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(installed_packages_softlayer))
+      end
+      it 'contains only the base set of packages plus softlayer-specific packages (full list)' do
+        expect(subject.stdout.split("\n")).to match_array(rpm_list_centos.concat(installed_packages_softlayer)), -> { "actual packages: '#{subject.stdout}'" }
       end
     end
   end
