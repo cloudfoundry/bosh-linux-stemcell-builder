@@ -72,6 +72,10 @@ HERE
   end
 
   describe 'installed packages' do
+    # NOTE: Installed packages' names aren't necessarily unique, which is why there are some duplicate names.
+    # However, including the VERSION, RELEASE, and/or ARCH values would make this spec fail if any of those values vary between builds.
+    # SEE: https://prefetch.net/blog/2009/05/19/duplicate-rpm-names-are-showing-up-in-the-rpm-query-output/
+    # rpm_list_packages = 'rpm --query --all --queryformat="%{NAME} %{VERSION} %{RELEASE} %{ARCH}\n"'
     rpm_list_packages = 'rpm --query --all --queryformat="%{NAME}\n"'
 
     let(:rpm_list_centos) { File.readlines(spec_asset('rpm-list-centos-7.txt')).map(&:chop) }
