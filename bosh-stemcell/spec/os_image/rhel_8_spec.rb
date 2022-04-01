@@ -145,7 +145,17 @@ describe 'RHEL 8 OS image', os_image: true do
     describe command('rpm -qa gpg-pubkey* 2>/dev/null | xargs rpm -qi 2>/dev/null') do
       # SEE: https://access.redhat.com/security/team/key
       it('shows the Red Hat RHEL 6,7,8 release key is installed') { expect(subject.stdout).to include('Red Hat, Inc. (release key 2) <security@redhat.com>') }
-      it('shows the Red Hat RHEL 8 disaster recovery key is installed') { expect(subject.stdout).to include('Red Hat, Inc. (auxiliary key 2) <security@redhat.com>') }
+      it('shows the Red Hat RHEL 8 disaster recovery key is installed') do
+        # NOTE: The Red Hat docs page (see link above) says that the RHEL 8 disaster recovery key (published 2018-06-27)
+        # should be named 'Red Hat, Inc. (auxiliary key 2) <security@redhat.com>'.
+        # However, with RHEL 8.5 we find a key with matching publish date and fingerprint,
+        # but with a different name/packager (which matches the documented name of the RHEL 5,6,7 gpg key).
+        # Based on the matching publish date and fingerprint, we have changed the spec
+        # to match the observed name plus the publish date (instead of the documented name).
+        # See the commit message associated with this comment for details.
+        expect(subject.stdout).to include('Red Hat, Inc. (auxiliary key) <security@redhat.com>')
+        expect(subject.stdout).to include('Build Date  : Wed 27 Jun 2018 12:33:57 AM UTC')
+      end
 
       # SEE: https://getfedora.org/security/
       # SEE: https://dl.fedoraproject.org/pub/epel/
