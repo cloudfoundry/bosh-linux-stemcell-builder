@@ -807,7 +807,7 @@ disk:x:6:
 lp:x:7:
 mem:x:8:
 kmem:x:9:
-wheel:x:10:
+wheel:x:10:vcap
 cdrom:x:11:vcap
 mail:x:12:
 man:x:15:
@@ -873,7 +873,7 @@ disk:*::
 lp:*::
 mem:*::
 kmem:*::
-wheel:*::
+wheel:*::vcap
 cdrom:*::vcap
 mail:*::
 man:*::
