@@ -16,6 +16,13 @@ chown root:root $chroot/etc/shadow
 chmod 0755 $chroot/lib
 chmod 0755 $chroot/lib64
 
+# only for RHEL
+# stig V-230259: all system command files must be owned by root group (stig: V-230259)
+chown root:root $chroot/bin/staprun
+chown root:root $chroot/usr/bin/staprun
+chown root:root $chroot/bin/write
+chown root:root $chroot/usr/bin/write
+
 # remove setuid binaries - except su/sudo (sudoedit is hardlinked)
 run_in_bosh_chroot $chroot "
 find / -xdev -perm /ug=s -type f \

@@ -83,6 +83,13 @@ shared_examples_for 'All Stemcells' do
     end
   end
 
+  context 'all system command files must be owned by root group (stig: V-230259)' do
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-03-04/finding/V-230259
+    describe command('find -L /bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin ! -group root') do
+      its (:stdout) { should eq('') }
+    end
+  end
+
   context 'There must be no .netrc files on the system (stig: V-38619)' do
     describe command('sudo find /root /home /var/vcap -xdev -name .netrc') do
       # its (:stdout) { should eq('') }
