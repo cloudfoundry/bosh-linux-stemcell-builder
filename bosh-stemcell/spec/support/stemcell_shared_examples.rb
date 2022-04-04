@@ -58,19 +58,26 @@ shared_examples_for 'All Stemcells' do
     it('should still be created') { should be_directory }
   end
 
-  context 'Library files must have mode 0755 or less permissive (stig: V-38465)' do
+  context 'Library files must have mode 0755 or less permissive (stig: V-38465) (stig: V-230260)' do
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2020-05-19/finding/V-38465
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-03-04/finding/V-230260
     describe command("find -L /lib /lib64 /usr/lib $( [ ! -e /usr/lib64 ] || echo '/usr/lib64' ) -perm /022 -type f") do
       its (:stdout) { should eq('') }
     end
   end
 
-  context 'System command files must have mode 0755 or less permissive (stig: V-38469)' do
+  context 'System command files must have mode 0755 or less permissive (stig: V-38469) (stig: V-230257)' do
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2020-05-19/finding/V-38469
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-03-04/finding/V-230257
     describe command('find -L /bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin -perm /022 -type f') do
       its (:stdout) { should eq('') }
     end
   end
 
-  context 'all system command files must be owned by root (stig: V-38472)' do
+  context 'all system command files must be owned by root (stig: V-38472) (stig: V-217886) (stig: V-230258)' do
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2020-05-19/finding/V-38472
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2020-09-03/finding/V-217886
+    # see: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-03-04/finding/V-230258
     describe command('find -L /bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin ! -user root') do
       its (:stdout) { should eq('') }
     end
