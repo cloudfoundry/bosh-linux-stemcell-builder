@@ -4,6 +4,12 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
     its(:stdout) {should eq "1\n"}
   end
 
+  context 'installed by dev_tools_config' do
+    describe file('/var/vcap/bosh/etc/dev_tools_file_list') do
+      it('has GCC installed') { expect(subject.content).to match '/usr/bin/gcc' }
+    end
+  end
+
   context 'installed by image_install_grub' do
     describe file('/etc/fstab') do
       it { should be_file }

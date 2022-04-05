@@ -64,12 +64,6 @@ HERE
     end
   end
 
-  context 'installed by dev_tools_config' do
-    describe file('/var/vcap/bosh/etc/dev_tools_file_list') do
-      it('has GCC installed') { expect(subject.content).to match '/usr/bin/gcc' }
-    end
-  end
-
   describe 'mounted file systems: /etc/fstab should mount nfs with nodev (stig: V-38654)(stig: V-38652)' do
     describe file('/etc/fstab') do
       it { should be_file }
