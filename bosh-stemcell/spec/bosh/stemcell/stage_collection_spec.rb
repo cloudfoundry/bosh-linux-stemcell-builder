@@ -124,6 +124,37 @@ module Bosh::Stemcell
           )
         end
       end
+
+      context 'when RHEL 8' do
+        let(:operating_system) { OperatingSystem.for('rhel', '8') }
+
+        it 'has the correct stages' do
+          expect(stage_collection.operating_system_stages).to eq(
+            [
+              :base_rhel,
+              :base_runsvdir,
+              :base_centos_packages,
+              :base_file_permission,
+              :base_ssh,
+              :system_kernel_modules,
+              :bosh_environment,
+              :bosh_sysctl,
+              :bosh_limits,
+              :bosh_users,
+              :bosh_monit,
+              :bosh_ntp,
+              :bosh_sudoers,
+              :rsyslog_config,
+              :delay_monit_start,
+              :system_grub,
+              :rhel_unsubscribe,
+              :cron_config,
+              :bosh_audit_centos,
+              :bosh_log_audit_start,
+            ]
+          )
+        end
+      end
     end
 
     describe '#agent_stages' do
