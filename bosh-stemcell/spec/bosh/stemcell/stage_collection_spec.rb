@@ -118,6 +118,8 @@ module Bosh::Stemcell
               :system_grub,
               :rhel_unsubscribe,
               :cron_config,
+              :bosh_audit_centos,
+              :bosh_log_audit_start,
             ]
           )
         end
