@@ -7,7 +7,6 @@ module Bosh::Stemcell
         when 'rhel' then Rhel.new(operating_system_version)
         when 'ubuntu' then Ubuntu.new(operating_system_version)
         when 'photonos' then Photonos.new(operating_system_version)
-        when 'opensuse' then Opensuse.new(operating_system_version)
         else raise ArgumentError.new("invalid operating system: #{operating_system_name}")
       end
     end
@@ -40,12 +39,6 @@ module Bosh::Stemcell
     class Ubuntu < Base
       def initialize(version)
         super(name: 'ubuntu', version: version)
-      end
-    end
-
-    class Opensuse < Base
-      def initialize(version)
-        super(name: 'opensuse', version: version)
       end
     end
 

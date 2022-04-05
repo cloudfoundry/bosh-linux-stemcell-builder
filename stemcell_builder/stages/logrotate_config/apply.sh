@@ -18,9 +18,6 @@ install_logrotate_conf() {
   elif [ "$(get_os_type)" == "ubuntu" ]; then
     # TODO: why the hell are we doing this? # echo "7e52df7373b42a36b2bdde9bc88315e828cdc61e  $chroot/etc/logrotate.conf" | sha1sum -c
     cp "$assets_dir/ubuntu-logrotate.conf" "$chroot/etc/logrotate.conf"
-  elif [ "$(get_os_type)" == "opensuse" ]; then
-    echo "47755bc41e67be920d97a2ba027a2263274ed69f  $chroot/etc/logrotate.conf" | sha1sum -c
-    cp "$assets_dir/opensuse-logrotate.conf" "$chroot/etc/logrotate.conf"
   fi
 }
 

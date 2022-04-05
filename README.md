@@ -104,10 +104,6 @@ There are a few extra steps you need to do before building a PhotonOS image:
 See below [Building the stemcell with local OS image](#with-local-os-image) on how to build stemcell with the new OS image.
 
 
-#### Special requirements for building an openSUSE image
-
-The openSUSE image is built using [Kiwi](http://opensuse.github.io/kiwi/) which is not available in the normal builder container. For that reason a special container has to be used. All required steps are described in the [documentation](./ci/docker/suse-os-image-stemcell-builder/README.md).
-
 #### How to run tests for OS Images
 
 The OS tests are meant to be run agains the OS environment to which they belong. When you run the `stemcell:build_os_image` rake task, it will create a .raw OS image that it runs the OS specific tests against. You will need to run the rake task the first time you create your docker container, but everytime after, as long as you do not destroy the container, you should be able to just run the specific tests.

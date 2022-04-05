@@ -65,14 +65,6 @@ then
   mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
   cp -f $assets_dir/rsyslog_to_syslog_service.conf $chroot/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf
   run_in_bosh_chroot $chroot "systemctl disable rsyslog.service"
-elif [ -f $chroot/etc/SuSE-release ] # openSUSE
-then
-  sed -i "s@/dev/xconsole@/dev/console@g" $chroot/etc/rsyslog.d/50-default.conf
-  mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
-  cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
-  mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
-  cp -f $assets_dir/rsyslog_to_syslog_service.conf $chroot/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf
-  run_in_bosh_chroot $chroot "systemctl disable rsyslog.service"
 elif [ -f $chroot/etc/photon-release ] # PhotonOS
 then
   sed -i "s@/dev/xconsole@/dev/console@g" $chroot/etc/rsyslog.d/50-default.conf

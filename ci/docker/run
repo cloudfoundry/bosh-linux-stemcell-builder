@@ -30,8 +30,6 @@ fi
 if [[ "$IMAGE_NAME" == "os-image-stemcell-builder" || \
       "$IMAGE_NAME" == "os-image-stemcell-builder-bionic" ]] ; then
   USER_OPTION="--user=$NEW_UID:$NEW_GID"
-elif [[ "$IMAGE_NAME" == "suse-os-image-stemcell-builder" ]] ; then
-  USER_OPTION="-e LOCAL_USER_ID=$(id -u "$USER")"
 fi
 
 pushd "$IMAGE_NAME"

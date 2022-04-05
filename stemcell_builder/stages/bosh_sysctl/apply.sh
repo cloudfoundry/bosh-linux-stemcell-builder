@@ -11,8 +11,7 @@ source "$base_dir/lib/prelude_bosh.bash"
 # shellcheck disable=SC2154
 if [ "${stemcell_operating_system}" == "ubuntu" ] || \
    [ "${stemcell_operating_system_version}" == "7" ] || \
-   [ "${stemcell_operating_system}" == "photonos" ] || \
-   [ "${stemcell_operating_system}" ==  "opensuse" ]; then
+   [ "${stemcell_operating_system}" == "photonos" ]; then
 
   cp "$dir/assets/60-bosh-sysctl.conf" "$chroot/etc/sysctl.d"
   chmod 0644 "$chroot/etc/sysctl.d/60-bosh-sysctl.conf"

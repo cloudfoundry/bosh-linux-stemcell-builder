@@ -10,6 +10,6 @@ echo 'Overriding for Control-Alt-Delete'
 if [ "${stemcell_operating_system}" == "ubuntu" ]; then
   mkdir -p $chroot/etc/init
   echo 'exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"' > $chroot/etc/init/control-alt-delete.override
-elif [ "${stemcell_operating_system}" == "centos" ] || [ "${stemcell_operating_system}" == "opensuse" ]; then
+elif [ "${stemcell_operating_system}" == "centos" ]; then
   echo '# escaping ctrl alt del' > $chroot/etc/systemd/system/ctrl-alt-del.target
 fi
