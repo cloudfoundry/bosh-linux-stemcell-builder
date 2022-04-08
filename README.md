@@ -1,48 +1,54 @@
-# bosh-linux-stemcell-builder
+# BOSH Linux Stemcell Builder
 
-Tools for creating stemcells.
+This repo contains tools for creating BOSH stemcells. A stemcell is a bootable
+disk image that is used as a template by a BOSH Director to create VMs.
 
-## Building a stemcell locally
+## Quick Start: Building a Stemcell Locally
 
-First make sure you have a local copy of this repository. Additionally, you must
-download an external asset - `VMware-ovftool-*.bundle`. See **External Assets**
-for instructions on where to download it from. Please place that asset in
-`ci/docker` directory.
+```bash
+git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
+git checkout ubuntu-jammy/master
+mkdir -p tmp
+docker build \
+   --tag os-image-stemcell-builder-jammy \
+   $PWD/ci/docker/os-image-stemcell-builder-jammy
+docker run \
+   --privileged \
+   -v "$(pwd):/opt/bosh" \
+   --workdir /opt/bosh \
+   --user=1000:1000 \
+   -it \
+   os-image-stemcell-builder-jammy
+# You're now in the the Docker container
+gem install bundler
+bundle
+ # build OS image
+bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz] # build OS image
+ # build vSphere stemcell
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
+```
 
-If you already have a stemcell-building environment set up and ready, skip to
-the **Build Steps** section. Otherwise, follow one of these two methods before
-trying to run the commands in **Build Steps**.
+When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
+and place it in the `ci/docker` directory. See [External
+Assets](#external-assets) for download instructions.
 
-**If you have docker installed**,
+### OS image
 
-    cd ci/docker
-    ./run os-image-stemcell-builder-jammy
+An OS image is a tarball that contains a snapshot of an OS filesystem,
+including the libraries and system utilities needed by the BOSH agent; however,
+it does not contain the BOSH agent nor the virtualization tools: [a subsequent
+Rake task](#with-local-os-image) adds the BOSH agent and a set of
+virtualization tools to the base OS image to produce a stemcell.
 
-## Build Steps
+The OS Image should be rebuilt when you are making changes to the packages
+installed in the operating system or when making changes to the configuration
+of those packages.
 
-At this point, you should be ssh'd and running within a docker container in the
-`bosh-linux-stemcell-builder` directory. Start by installing the latest
-dependencies before continuing to a specific build task...
+```bash
+bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+```
 
-    echo $PWD # should return "/opt/bosh"
-    bundle install --local
-
-### Build an OS image
-
-An OS image is a tarball that contains a snapshot of an entire OS filesystem
-that contains all the libraries and system utilities that the BOSH agent depends
-on. It does not contain the BOSH agent or the virtualization tools: there is [a
-separate Rake task](#with-local-os-image) that adds the BOSH agent and a chosen
-set of virtualization tools to any base OS image, thereby producing a stemcell.
-The OS Image should be rebuilt when you are making changes to packages we
-install in the operating system, or when making changes to how we configure
-those packages, or if you need to pull in and test an updated package from
-upstream.
-
-    mkdir -p $PWD/tmp
-    bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
-
-The arguments to `stemcell:build_os_image` are:
+The arguments to the `stemcell:build_os_image` rake task follow:
 
 0. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
    Determines which package repository and packaging tool will be used to
@@ -56,12 +62,12 @@ The arguments to `stemcell:build_os_image` are:
 
 ### Building a Stemcell
 
-The stemcell should be rebuilt when you are making and testing BOSH-specific
-changes on top of the base OS image such as new bosh-agent versions, or updating
-security configuration, or changing user settings.
+Rebuild the stemcell when you are making and testing BOSH-specific
+changes such as a new BOSH agent.
 
-    mkdir -p $PWD/tmp
-    bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.4"]
+```bash
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
+```
 
 The arguments to `stemcell:build_with_local_os_image` are:
 
@@ -76,11 +82,21 @@ The arguments to `stemcell:build_with_local_os_image` are:
    `stemcell:build_os_image`
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
-0. `build_number` (`0.4`): Stemcell version.
+0. `build_number` (`0.0.8`): Stemcell version. Pro-tip: take the version number
+   of the most recent release and add one, e.g.: "0.0.7" → "0.0.8". If not
+   specified, it will default to "0000".
 
-The final argument, which specifies the build number, is optional and will
-default to '0000'
+### The Resulting Stemcell
 
+You can find the resulting stemcell in the `tmp/` directory of the host, or in
+the `/opt/bosh/tmp` directory in the Docker container. Using the above example,
+the stemcell would be at
+`tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz`. You can
+upload the stemcell to a vSphere BOSH Director:
+
+```bash
+bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz
+```
 
 ## Testing
 
