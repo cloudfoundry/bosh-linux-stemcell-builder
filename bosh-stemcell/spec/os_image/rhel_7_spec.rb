@@ -33,27 +33,40 @@ describe 'RHEL 7 OS image', os_image: true do
 
   context 'installed by base_centos_packages' do
     %w(
+      apparmor-utils
+      bind9-host
       bison
       bzip2-devel
+      cloud-utils-growpart
       cmake
       cronie-anacron
       curl
       dhclient
+      dnsutils
       e2fsprogs
       flex
       gdb
       gdisk
       glibc-static
       iptables
+      iputils-arping
+      libaio1
       libcap-devel
+      libcap2-bin
+      libcurl3
+      libcurl3-dev
+      libncurses5-devs
       libuuid-devel
       libxml2
       libxml2-devel
       libxslt
       libxslt-devel
+      libyaml-devel
       lsof
       NetworkManager
+      nfs-common
       nmap-ncat
+      nvme-cli
       openssh-server
       openssl
       openssl-devel
@@ -77,6 +90,7 @@ describe 'RHEL 7 OS image', os_image: true do
       traceroute
       unzip
       wget
+      xfsprogs
       zip
     ).each do |pkg|
       describe package(pkg) do

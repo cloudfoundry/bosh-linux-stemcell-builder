@@ -9,7 +9,19 @@ source $base_dir/etc/settings.bash
 case "${stemcell_operating_system_version}" in
   "7")
     init_package_name="systemd"
-    version_specific_packages="nmap-ncat"
+    version_specific_packages="bind9-host dnsutils iputils-arping \
+    libcurl3 libcurl3-dev \
+    nfs-common apparmor-utils \
+    libncurses5-devs \
+    libaio1 libcap2-bin"
+    ;;
+  "8")
+    init_package_name="systemd"
+    version_specific_packages="bind bind-utils iputils \
+    libcurl libcurl-devel \
+    nfs-utils \
+    ncurses-devel \
+    libaio libcap"
     ;;
   *)
     echo "Unknown centos version: ${stemcell_operating_system_version}"
@@ -23,17 +35,19 @@ pkg_mgr install ${init_package_name}
 
 # Install base packages needed by both the warden and bosh
 packages="openssl-devel libyaml-devel lsof \
-strace bind9-host dnsutils tcpdump iputils-arping \
-curl wget libcurl3 libcurl3-dev bison \
-readline-devel \
-libxml2 libxml2-devel libxslt libxslt-devel \
-dhclient \
-zip unzip \
-nfs-common flex psmisc apparmor-utils iptables sysstat \
-rsync openssh-server traceroute libncurses5-devs \
-libaio1 gdb libcap2-bin libcap-devel bzip2-devel \
-cmake sudo libuuid-devel parted NetworkManager e2fsprogs cloud-utils-growpart \
-xfsprogs gdisk nvme-cli"
+	strace tcpdump \
+	curl wget bison \
+	readline-devel \
+	libxml2 libxml2-devel libxslt libxslt-devel \
+	dhclient \
+	zip unzip \
+	flex psmisc iptables sysstat \
+	rsync openssh-server traceroute \
+	gdb libcap-devel bzip2-devel \
+	cmake sudo libuuid-devel parted NetworkManager e2fsprogs cloud-utils-growpart \
+	xfsprogs gdisk nvme-cli \
+	nmap-ncat"
+
 pkg_mgr install ${packages} ${version_specific_packages}
 
 # Install runit
@@ -64,7 +78,9 @@ cp $(dirname $0)/assets/rsyslog.repo ${chroot}/etc/yum.repos.d/
 pkg_mgr install "rsyslog rsyslog-relp rsyslog-mmjsonparse rsyslog-gnutls"
 run_in_chroot $chroot "yum update --assumeyes"
 
-run_in_chroot $chroot "rpm -e quota rpcbind"
+if [ "${stemcell_operating_system_version}" != "8" ]; then
+	run_in_chroot $chroot "rpm -e quota rpcbind"
+fi
 
 exclusions="mlocate firewalld rpcbind"
 pkg_mgr erase $exclusions

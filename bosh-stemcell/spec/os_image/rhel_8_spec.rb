@@ -33,8 +33,11 @@ describe 'RHEL 8 OS image', os_image: true do
 
   context 'installed by base_centos_packages' do
     %w(
+      bind
+      bind-utils
       bison
       bzip2-devel
+      cloud-utils-growpart
       cmake
       cronie-anacron
       curl
@@ -42,17 +45,27 @@ describe 'RHEL 8 OS image', os_image: true do
       e2fsprogs
       flex
       gdb
+      gdisk
       glibc-static
       iptables
+      iputils
+      libaio
+      libcap
       libcap-devel
+      libcurl
+      libcurl-devel
       libuuid-devel
       libxml2
       libxml2-devel
       libxslt
       libxslt-devel
+      libyaml-devel
       lsof
+      ncurses-devel
       NetworkManager
+      nfs-utils
       nmap-ncat
+      nvme-cli
       openssh-server
       openssl
       openssl-devel
@@ -76,6 +89,7 @@ describe 'RHEL 8 OS image', os_image: true do
       traceroute
       unzip
       wget
+      xfsprogs
       zip
     ).each do |pkg|
       describe package(pkg) do
