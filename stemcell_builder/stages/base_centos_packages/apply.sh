@@ -50,6 +50,28 @@ packages="openssl-devel libyaml-devel lsof \
 
 pkg_mgr install ${packages} ${version_specific_packages}
 
+if [ "${stemcell_operating_system_version}" == "8" ]; then
+    pkg_mgr install perl-Pod-Checker perl-Pod-Html python3
+    run_in_chroot $chroot "
+    	yum -y groupinstall 'Development Tools'
+    	wget https://launchpad.net/apparmor/3.0/3.0.3/+download/apparmor-3.0.3.tar.gz
+    	wget https://rpmfind.net/linux/centos/8-stream/PowerTools/x86_64/os/Packages/libstdc++-static-8.5.0-4.el8_5.x86_64.rpm
+	yum install -y libstdc++-static-8.5.0-4.el8_5.x86_64.rpm
+	rm libstdc++-static-8.5.0-4.el8_5.x86_64.rpm
+	tar xzf apparmor-3.0.3.tar.gz
+	cd apparmor-3.0.3/libraries/libapparmor/
+	./configure
+	make
+	cd ../../parser
+	make arch
+	cd ../utils
+	make
+	make install
+	cd ..
+	rm -rf apparmor-3.0.3.tar.gz apparmor-3.0.3
+    "
+fi		
+
 # Install runit
 runit_version=runit-2.1.1
 if ! pkg_exists ${runit_version}; then
