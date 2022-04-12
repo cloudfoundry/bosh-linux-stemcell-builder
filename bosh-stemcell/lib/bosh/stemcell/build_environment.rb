@@ -104,7 +104,7 @@ module Bosh::Stemcell
     end
 
     def esm_settings_from_environment
-      keep = %w[ESM_TOKEN PPA_SOURCE PPA_USERNAME PPA_PASSWORD PPA_KEY KERNEL_PACKAGES]
+      keep = %w[ESM_TOKEN]
 
       environment.select { |k| keep.include?(k.upcase) }
     end
