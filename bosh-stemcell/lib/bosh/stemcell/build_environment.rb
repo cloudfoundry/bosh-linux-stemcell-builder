@@ -56,7 +56,7 @@ module Bosh::Stemcell
         "OS_NAME=#{operating_system.name}",
         "OS_VERSION=#{operating_system.version}",
         "CANDIDATE_BUILD_NUMBER=#{@version}",
-        "bundle exec rspec -fd#{exclude_exclusions}",
+        "bundle exec rspec -fd#{rspec_exclusion_args}",
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
         "spec/stemcells/#{operating_system_spec_name}_spec.rb",
         'spec/stemcells/go_agent_spec.rb',
@@ -159,33 +159,25 @@ module Bosh::Stemcell
       end
     end
 
-    def exclude_exclusions
-      [
-      case infrastructure.name
-      when 'alicloud'
-        ' --tag ~exclude_on_alicloud'
-      when 'vsphere'
-        ' --tag ~exclude_on_vsphere'
-      when 'vcloud'
-        ' --tag ~exclude_on_vcloud'
-      when 'warden'
-        ' --tag ~exclude_on_warden'
-      when 'aws'
-        ' --tag ~exclude_on_aws'
-      when 'openstack'
-        ' --tag ~exclude_on_openstack'
-      when 'cloudstack'
-        ' --tag ~exclude_on_cloudstack'
-      when 'azure'
-        ' --tag ~exclude_on_azure'
-      when 'softlayer'
-        ' --tag ~exclude_on_softlayer'
-      when 'google'
-        ' --tag ~exclude_on_google'
-      else
-        ''
-      end,
-      ].join(' ').rstrip
+    # Returns the tag-based filtering arguments to use when invoking the rspec CLI.
+    #
+    # Supported tags include:
+    #   - exclude_on_alicloud
+    #   - exclude_on_aws
+    #   - exclude_on_azure
+    #   - exclude_on_cloudstack
+    #   - exclude_on_google
+    #   - exclude_on_openstack
+    #   - exclude_on_softlayer
+    #   - exclude_on_vcloud
+    #   - exclude_on_vsphere
+    #   - exclude_on_warden
+    #
+    # @return [String] a string containing the tag-based filtering arguments to use when invoking the rspec CLI
+    def rspec_exclusion_args
+      tags_to_exclude = []
+      tags_to_exclude << "exclude_on_#{infrastructure.name}" if infrastructure&.name
+      tags_to_exclude.map { |tag| " --tag ~#{tag}" }.join(' ').rstrip
     end
 
     def image_file_path
