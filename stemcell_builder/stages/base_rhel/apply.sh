@@ -64,13 +64,40 @@ rpm --force --nodeps --install ${epel_package_url}
 rpm --rebuilddb
 "
 
+# subscription-manager allows access to the Red Hat update server. It detects which repos
+# it should allow access to based on the contents of 69.pem.
+if [ ! -f $redhat_base_path/repodata/productid ]; then
+  echo "Can't find Red Hat product certificate at $redhat_base_path/repodata/productid."
+  echo "Please ensure you have mounted the RHEL 7 or RHEL 8 Server install DVD at /mnt/rhel."
+  exit 1
+fi
+
+mkdir -p $chroot/etc/pki/product
+cp $redhat_base_path/repodata/productid $chroot/etc/pki/product/69.pem
+
+mount --bind /proc $chroot/proc
+add_on_exit "umount $chroot/proc"
+
+mount --bind /dev $chroot/dev
+add_on_exit "umount $chroot/dev"
+
+# create the OS-specific yum config (referenced below)
 if [ ! -f $chroot/$redhat_config_file ]; then
   cp $base_dir/etc/$redhat_config_file $chroot/
 fi
+
+# update yum
 run_in_chroot $chroot "yum -c /$redhat_config_file update --assumeyes"
+
+# RHSM CLI registration and repo configuration
+run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes install subscription-manager"
+rhsm_register
+#rhsm_enable_base_repos #redundant
+rhsm_enable_dev_repos
+
+# Install required yum 'Groups' (including 'Environment Groups')
 run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall Base"
 run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall 'Development Tools'"
-run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes install subscription-manager"
 
 # NOTE: RHEL 7 & 8 docs both strongly recommend that 1 of the 'Environment Group' packages be installed,
 # and the 'Minimal Install' group is the recommended package for systems aiming for the smallest possible OS footprint.
@@ -90,28 +117,6 @@ run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupin
 run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes grouplist"
 
 run_in_chroot $chroot "yum -c /$redhat_config_file clean all"
-
-
-# subscription-manager allows access to the Red Hat update server. It detects which repos
-# it should allow access to based on the contents of 69.pem.
-if [ ! -f $redhat_base_path/repodata/productid ]; then
-  echo "Can't find Red Hat product certificate at $redhat_base_path/repodata/productid."
-  echo "Please ensure you have mounted the RHEL 7 or RHEL 8 Server install DVD at /mnt/rhel."
-  exit 1
-fi
-
-mkdir -p $chroot/etc/pki/product
-cp $redhat_base_path/repodata/productid $chroot/etc/pki/product/69.pem
-
-mount --bind /proc $chroot/proc
-add_on_exit "umount $chroot/proc"
-
-mount --bind /dev $chroot/dev
-add_on_exit "umount $chroot/dev"
-
-rhsm_register
-#rhsm_enable_base_repos #redundant
-rhsm_enable_dev_repos
 
 touch ${chroot}/etc/sysconfig/network # must be present for network to be configured
 

@@ -4,6 +4,7 @@ NetworkManager-team
 NetworkManager-tui
 PackageKit
 PackageKit-glib
+abattis-cantarell-fonts
 acl
 adcli
 adobe-mappings-cmap
@@ -18,6 +19,7 @@ audispd-plugins
 audit
 audit-libs
 authselect
+authselect-compat
 authselect-libs
 autoconf
 automake
@@ -95,6 +97,7 @@ dbus-libs
 dbus-tools
 dejavu-fonts-common
 dejavu-sans-mono-fonts
+desktop-file-utils
 device-mapper
 device-mapper-event
 device-mapper-event-libs
@@ -144,6 +147,8 @@ findutils
 flex
 fontconfig
 fontpackages-filesystem
+fprintd
+fprintd-pam
 freetype
 fribidi
 fstrm
@@ -187,8 +192,8 @@ gobject-introspection
 google-droid-sans-fonts
 gpg-pubkey
 gpg-pubkey
-gpg-pubkey
 gpgme
+gpm-libs
 graphite2
 graphviz
 grep
@@ -214,6 +219,7 @@ hwdata
 ima-evm-utils
 info
 initscripts
+insights-client
 intltool
 ipcalc
 iproute
@@ -249,7 +255,6 @@ json-glib
 kbd
 kbd-legacy
 kbd-misc
-kernel-core
 kernel-core
 kernel-devel
 kernel-headers
@@ -325,6 +330,7 @@ libfastjson
 libfdisk
 libffi
 libfontenc
+libfprint
 libgcc
 libgcrypt
 libgcrypt-devel
@@ -332,6 +338,7 @@ libgomp
 libgpg-error
 libgpg-error-devel
 libgs
+libgusb
 libibverbs
 libidn
 libidn2
@@ -458,6 +465,7 @@ mailcap
 make
 man-db
 man-pages
+man-pages-overrides
 mcelog
 mcpp
 mdadm
@@ -490,6 +498,8 @@ nss-util
 numactl-libs
 nvme-cli
 ocaml-srpm-macros
+oddjob
+oddjob-mkhomedir
 openblas-srpm-macros
 openjpeg2
 openldap
@@ -570,6 +580,7 @@ perl-threads
 perl-threads-shared
 pesign
 pigz
+pinfo
 pixman
 pkgconf
 pkgconf-m4
@@ -577,6 +588,9 @@ pkgconf-pkg-config
 platform-python
 platform-python-pip
 platform-python-setuptools
+plymouth
+plymouth-core-libs
+plymouth-scripts
 policycoreutils
 policycoreutils-python-utils
 polkit
@@ -624,6 +638,7 @@ python3-libstoragemgmt
 python3-libxml2
 python3-linux-procfs
 python3-lxml
+python3-magic
 python3-perf
 python3-pexpect
 python3-pip
@@ -664,6 +679,7 @@ redhat-logos
 redhat-release
 redhat-release-eula
 redhat-rpm-config
+rhc
 rhsm-icons
 rootfiles
 rpm
@@ -677,6 +693,7 @@ rpmdevtools
 rsync
 rsyslog
 rsyslog-gnutls
+rsyslog-gssapi
 rsyslog-mmjsonparse
 rsyslog-relp
 runit
@@ -700,7 +717,6 @@ smartmontools
 snappy
 sos
 source-highlight
-sqlite
 sqlite-libs
 squashfs-tools
 sscg
@@ -766,12 +782,15 @@ util-linux-user
 valgrind
 valgrind-devel
 vdo
+vim-common
+vim-enhanced
 vim-filesystem
 vim-minimal
 virt-what
 wget
 which
 words
+xdg-utils
 xfsdump
 xfsprogs
 xkeyboard-config

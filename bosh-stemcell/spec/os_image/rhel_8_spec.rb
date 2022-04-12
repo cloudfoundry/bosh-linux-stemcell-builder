@@ -137,7 +137,7 @@ describe 'RHEL 8 OS image', os_image: true do
 
   context 'installed by image_install_grub' do
     context 'required initramfs modules' do
-      describe command("/usr/lib/dracut/skipcpio /boot/initramfs-4.18.*.el8.x86_64.img | zcat | cpio -t | grep '/lib/modules/4.18.*.el8.x86_64'") do
+      describe command("/usr/lib/dracut/skipcpio /boot/initramfs-4.18.*.x86_64.img | zcat | cpio -t | grep '/lib/modules/4.18.*.x86_64'") do
 
         # SEE: RHEL 8 adoption: 11.1. Removed hardware support: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/considerations_in_adopting_rhel_8/hardware-enablement_considerations-in-adopting-rhel-8#removed-hardware-support_hardware-enablement
         modules = %w(
@@ -733,17 +733,17 @@ tss:x:59:59:Account used for TPM access:/dev/null:/sbin/nologin
 dbus:x:81:81:System message bus:/:/sbin/nologin
 systemd-coredump:x:999:997:systemd Core Dumper:/:/sbin/nologin
 systemd-resolve:x:193:193:systemd Resolver:/:/sbin/nologin
-polkitd:x:998:996:User for polkitd:/:/sbin/nologin
-libstoragemgmt:x:997:995:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
-cockpit-ws:x:996:993:User for cockpit web service:/nonexisting:/sbin/nologin
-cockpit-wsinstance:x:995:992:User for cockpit-ws instances:/nonexisting:/sbin/nologin
-sssd:x:994:991:User for sssd:/:/sbin/nologin
-chrony:x:993:990::/var/lib/chrony:/sbin/nologin
+polkitd:x:998:995:User for polkitd:/:/sbin/nologin
+cockpit-ws:x:997:994:User for cockpit web service:/nonexisting:/sbin/nologin
+cockpit-wsinstance:x:996:993:User for cockpit-ws instances:/nonexisting:/sbin/nologin
+libstoragemgmt:x:995:992:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
+setroubleshoot:x:994:991::/var/lib/setroubleshoot:/sbin/nologin
+sssd:x:993:990:User for sssd:/:/sbin/nologin
+chrony:x:992:989::/var/lib/chrony:/sbin/nologin
+tcpdump:x:72:72::/:/sbin/nologin
+pesign:x:991:987:Group for the pesign signing daemon:/var/run/pesign:/sbin/nologin
 sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
 named:x:25:25:Named:/var/named:/bin/false
-tcpdump:x:72:72::/:/sbin/nologin
-pesign:x:992:988:Group for the pesign signing daemon:/var/run/pesign:/sbin/nologin
-setroubleshoot:x:991:987::/var/lib/setroubleshoot:/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 syslog:x:990:985::/home/syslog:/sbin/nologin
 HERE
@@ -831,23 +831,23 @@ render:x:998:
 systemd-journal:x:190:
 systemd-coredump:x:997:
 systemd-resolve:x:193:
-polkitd:x:996:
-libstoragemgmt:x:995:
-printadmin:x:994:
-cockpit-ws:x:993:
-cockpit-wsinstance:x:992:
-sssd:x:991:
-chrony:x:990:
-slocate:x:21:
-ssh_keys:x:989:
-sshd:x:74:
-named:x:25:
+printadmin:x:996:
+polkitd:x:995:
+cockpit-ws:x:994:
+cockpit-wsinstance:x:993:
+libstoragemgmt:x:992:
+setroubleshoot:x:991:
+sssd:x:990:
+chrony:x:989:
 tcpdump:x:72:
+slocate:x:21:
 stapusr:x:156:
 stapsys:x:157:
 stapdev:x:158:
-pesign:x:988:
-setroubleshoot:x:987:
+ssh_keys:x:988:
+pesign:x:987:
+sshd:x:74:
+named:x:25:
 admin:x:986:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
