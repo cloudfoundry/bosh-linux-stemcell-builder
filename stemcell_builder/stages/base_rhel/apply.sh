@@ -10,17 +10,16 @@ source $base_dir/stages/base_rhel/rhel_functions.bash
 mkdir -p $chroot/var/lib/rpm
 rpm --root $chroot --initdb
 
+redhat_version="${stemcell_operating_system_version}"
+redhat_config_file="custom_rhel_${stemcell_operating_system_version}_yum.conf"
+
 case "${stemcell_operating_system_version}" in
   "7")
-    redhat_version="7"
-    redhat_config_file="custom_rhel_yum.conf"
     redhat_base_path="/mnt/rhel"
     release_package_url="/mnt/rhel/Packages/redhat-release-server-*.el7.x86_64.rpm"
     epel_package_url="https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm"
     ;;
   "8")
-    redhat_version="8"
-    redhat_config_file="custom_rhel_8_yum.conf"
     redhat_base_path="/mnt/rhel/BaseOS"
     release_package_url="/mnt/rhel/BaseOS/Packages/redhat-release-*.el8.x86_64.rpm"
     epel_package_url="http://mirror.centos.org/centos/8/extras/x86_64/os/Packages/epel-release-8-11.el8.noarch.rpm"
@@ -36,6 +35,16 @@ if ! ls $release_package_url 2>&1 >/dev/null; then
   echo "Please mount the RHEL 7 or RHEL 8 install DVD at /mnt/rhel"
   exit 1
 fi
+
+# STIG: official Red Hat gpg key is installed (stig: V-38476)
+# see: https://access.redhat.com/security/team/key
+# see: https://dl.fedoraproject.org/pub/epel/
+rpm --import $(dirname $0)/assets/RPM-GPG-KEY-RHEL-${stemcell_operating_system_version}
+rpm --import $(dirname $0)/assets/RPM-GPG-KEY-RHEL-${stemcell_operating_system_version}-auxiliary
+rpm --import $(dirname $0)/assets/RPM-GPG-KEY-EPEL-${stemcell_operating_system_version}
+
+# STIG: gpgcheck must be enabled (stig: V-38483)
+rpm -K ${release_package_url}
 
 rpm --root $chroot --force --nodeps --install ${release_package_url}
 
@@ -81,6 +90,7 @@ add_on_exit "umount $chroot/proc"
 mount --bind /dev $chroot/dev
 add_on_exit "umount $chroot/dev"
 
+# STIG: gpgcheck must be enabled (stig: V-38483)
 # create the OS-specific yum config (referenced below)
 if [ ! -f $chroot/$redhat_config_file ]; then
   cp $base_dir/etc/$redhat_config_file $chroot/

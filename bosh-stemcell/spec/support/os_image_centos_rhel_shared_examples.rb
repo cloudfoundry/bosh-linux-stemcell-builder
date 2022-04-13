@@ -179,9 +179,24 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
 
     context 'gpgcheck must be enabled (stig: V-38483)' do
       describe file('/etc/yum.conf') do
-        # TODO: REVIEW: This spec doesn't seem to be precise enough to ensure stig V-38483 requirements are satisfied.
-        # E.g. The following expectation could match a string outside of the '[main]' section.
-        its(:content) { should match /^gpgcheck=1$/ }
+        # NOTE: The original expectation doesn't ensure the stig V-38483 requirements are satisfied.
+        # E.g. The original expectation could match a string outside of the '[main]' section.
+        # Also, since the Fedora/RHEL default behavior is `gpgcheck=1`, a repo WITHOUT any explicit gpgcheck
+        # config SHOULD satisfy this STIG's requirements.
+        # its(:content) { should match /^gpgcheck=1$/ }
+
+        # The following expectation SHOULD be completely effective IF RHEL's default behavior is `gpgcheck=1`
+        # (which it seems to be), AND IF there is no way to override that default from outside this file.
+        # see: https://docs.fedoraproject.org/en-US/quick-docs/fedora-and-red-hat-enterprise-linux/
+        #   > RHEL 8 is based on Fedora v28
+        # see: https://docs.fedoraproject.org/en-US/fedora/latest/system-administrators-guide/package-management/DNF/#sec-Setting_main_Options
+        # see: https://docs.fedoraproject.org/en-US/fedora/f28/system-administrators-guide/package-management/DNF/#sec-Setting_main_Options
+        #   > In Fedora v28 & v35, `gpgcheck=1` is still the default
+        # see: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/sec-configuring_yum_and_yum_repositories
+        #   > In RHEL 6, `gpgcheck=1` is still the default
+        # see: https://docs.fedoraproject.org/en-US/Fedora/26/html/System_Administrators_Guide/sec-Configuring_DNF_and_DNF_Repositories.html#sec-Setting_main_Options
+        #   > In Fedora v26, `gpgcheck=1` is the default
+        its(:content) { should_not match /^gpgcheck=0$/ }
       end
     end
   end

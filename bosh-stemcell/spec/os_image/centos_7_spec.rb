@@ -206,6 +206,10 @@ describe 'CentOS 7 OS image', os_image: true do
   context 'official Centos gpg key is installed (stig: V-38476)' do
     describe command('rpm -qa gpg-pubkey* 2>/dev/null | xargs rpm -qi 2>/dev/null') do
       its (:stdout) { should include('CentOS 7 Official Signing Key') }
+
+      # SEE: https://getfedora.org/security/
+      # SEE: https://dl.fedoraproject.org/pub/epel/
+      it('shows the Fedora EPEL 7 key is installed') { expect(subject.stdout).to include('Fedora EPEL (7) <epel@fedoraproject.org>') }
     end
   end
 
