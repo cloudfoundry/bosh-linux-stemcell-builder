@@ -186,9 +186,42 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
-  context 'X Windows must not be enabled unless required (stig: V-38674)' do
+  context 'X Windows must not be enabled unless required (stig: V-38674) (stig: V-230553)' do
+    # SEE: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-12-03/finding/V-230553
+    # SEE: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2016-06-05/finding/V-38674
+    # NOTE: inittab is no longer used when using systemd (since RHEL 7.0), so STIG V-38674's original check & fix commands are obsolete.
     describe package('xorg-x11-server-Xorg') do
-      it { should_not be_installed }
+      it { should_not be_installed } # stig: V-38674, V-230553
+    end
+
+    describe package('xorg-x11-server-common') do
+      it { should_not be_installed } # stig: V-38674, V-230553
+    end
+
+    describe package('xorg-x11-server-utils') do
+      before do
+        # NOTE: STIG V-230553's original check & fix commands consider the existence of the 'xorg-x11-server-utils' RPM package as a finding.
+        # See the STIG V-230553 comments within 'stemcell_builder/stages/base_rhel/apply.sh' for details.
+        skip 'inapplicable to RHEL 8: the "xorg-x11-server-utils" RPM package is a false positive finding' if ENV['OS_NAME'] == 'rhel' && ENV['OS_VERSION'] == '8'
+      end
+
+      it { should_not be_installed } # stig: V-38674, V-230553
+    end
+
+    describe package('xorg-x11-server-Xwayland') do
+      it { should_not be_installed } # stig: V-38674, V-230553
+    end
+  end
+
+  context 'graphical display manager must not be installed on RHEL 8 unless approved (stig: V-230553) (stig: V-38674)' do
+    describe command('rpm -qa | grep xorg | grep server') do
+      before do
+        # NOTE: STIG V-230553's original check & fix commands consider the existence of the 'xorg-x11-server-utils' RPM package as a finding.
+        # See the STIG V-230553 comments within 'stemcell_builder/stages/base_rhel/apply.sh' for details.
+        skip 'inapplicable to RHEL 8: the "xorg-x11-server-utils" RPM package is a false positive finding' if ENV['OS_NAME'] == 'rhel' && ENV['OS_VERSION'] == '8'
+      end
+
+      its (:stdout) { should be_empty } # stig: V-230553
     end
   end
 

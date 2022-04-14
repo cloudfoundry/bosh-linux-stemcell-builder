@@ -150,6 +150,7 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
         'V-38668',
         'V-38586',
         'V-38501',
+        'V-230553',
         'V-251718'
       ]
     when 'rhel'
@@ -158,6 +159,7 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
         'V-38501',
         'V-38668',
         'V-230531',
+        'V-230553',
         'V-251718'
       ]
     end
