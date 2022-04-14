@@ -106,6 +106,14 @@ if [ "${stemcell_operating_system_version}" != "8" ]; then
 	run_in_chroot $chroot "rpm -e quota rpcbind"
 fi
 
+# system is configured to boot to the command line (stig: V-251718)
+# graphical display manager must not be the default target (stig: V-251718)
+# SEE: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-12-03/finding/V-251718
+# SEE: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/working-with-systemd-targets_configuring-basic-system-settings
+# SEE: https://unix.stackexchange.com/a/594894/366322
+run_in_chroot $chroot 'systemctl set-default multi-user.target'
+run_in_chroot $chroot 'systemctl isolate multi-user.target'
+
 # Ensure NFS and RPC are not enabled (CIS-6.7)
 forbidden_pkgs="mlocate firewalld rpcbind"
 pkg_mgr remove $forbidden_pkgs

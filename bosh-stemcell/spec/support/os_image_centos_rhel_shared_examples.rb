@@ -192,6 +192,14 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
     end
   end
 
+  context 'system is configured to boot to the command line (stig: V-251718)' do
+    # graphical display manager must not be the default target (stig: V-251718)
+    # SEE: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2021-12-03/finding/V-251718
+    describe command('systemctl get-default') do
+      its (:stdout) { should eq "multi-user.target\n" }
+    end
+  end
+
   context 'login and password restrictions' do
     describe file('/etc/pam.d/system-auth') do
       it 'must prohibit the reuse of passwords within twenty-four iterations (stig: V-38658)' do
