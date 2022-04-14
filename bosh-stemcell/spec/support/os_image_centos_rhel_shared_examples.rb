@@ -130,13 +130,13 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
   end
 
   context 'ensure cron is installed and enabled (stig: V-38605)' do
+    # SEE: https://www.stigviewer.com/stig/red_hat_enterprise_linux_6/2018-11-28/finding/V-38605
     describe package('cronie') do
       it('should be installed') { should be_installed }
     end
 
-    describe file('/etc/systemd/system/default.target') do
-      it { should be_file }
-      its(:content) { should match /^Requires=multi-user\.target/ }
+    describe command('systemctl get-default') do
+      its (:stdout) { should eq "multi-user.target\n" }
     end
 
     describe file('/etc/systemd/system/multi-user.target.wants/crond.service') do
