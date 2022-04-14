@@ -1,6 +1,7 @@
 NetworkManager
 NetworkManager-libnm
 NetworkManager-team
+NetworkManager-tui
 PackageKit
 PackageKit-glib
 acl
@@ -32,6 +33,7 @@ bind-libs-lite
 bind-license
 bind-utils
 binutils
+biosdevname
 bison
 blktrace
 boost-atomic
@@ -113,6 +115,7 @@ docbook-style-xsl
 dos2unix
 dosfstools
 dracut
+dracut-config-rescue
 dracut-network
 dracut-squash
 dwz
@@ -204,6 +207,7 @@ guile
 gzip
 hardlink
 harfbuzz
+hdparm
 hicolor-icon-theme
 hostname
 hwdata
@@ -213,12 +217,26 @@ initscripts
 intltool
 ipcalc
 iproute
+iprutils
 iptables
 iptables-libs
 iptstate
 iputils
 irqbalance
 isl
+iwl100-firmware
+iwl1000-firmware
+iwl105-firmware
+iwl135-firmware
+iwl2000-firmware
+iwl2030-firmware
+iwl3160-firmware
+iwl5000-firmware
+iwl5150-firmware
+iwl6000-firmware
+iwl6000g2a-firmware
+iwl6050-firmware
+iwl7260-firmware
 jansson
 jasper-libs
 java-1.8.0-openjdk-headless
@@ -235,6 +253,8 @@ kernel-core
 kernel-core
 kernel-devel
 kernel-headers
+kernel-tools
+kernel-tools-libs
 kexec-tools
 keyutils-libs
 keyutils-libs-devel
@@ -347,6 +367,7 @@ libpaper
 libpath_utils
 libpcap
 libpciaccess
+libpipeline
 libpkgconf
 libpng
 libproxy
@@ -383,6 +404,7 @@ libstdc++-devel
 libstdc++-static
 libstemmer
 libstoragemgmt
+libsysfs
 libtalloc
 libtasn1
 libtdb
@@ -421,7 +443,9 @@ lksctp-tools
 lm_sensors-libs
 lmdb-libs
 logrotate
+lshw
 lsof
+lsscsi
 ltrace
 lua
 lua-libs
@@ -432,6 +456,7 @@ lzo
 m4
 mailcap
 make
+man-db
 man-pages
 mcelog
 mcpp
@@ -452,6 +477,7 @@ net-tools
 nettle
 network-scripts
 network-scripts-team
+newt
 nmap-ncat
 npth
 nspr
@@ -557,6 +583,7 @@ polkit
 polkit-libs
 polkit-pkla-compat
 popt
+prefixdevname
 procps-ng
 protobuf-c
 psacct
@@ -570,6 +597,7 @@ python3-bind
 python3-cairo
 python3-chardet
 python3-cloud-what
+python3-configobj
 python3-cssselect
 python3-dateutil
 python3-dbus
@@ -594,7 +622,9 @@ python3-libselinux
 python3-libsemanage
 python3-libstoragemgmt
 python3-libxml2
+python3-linux-procfs
 python3-lxml
+python3-perf
 python3-pexpect
 python3-pip
 python3-pip-wheel
@@ -604,6 +634,7 @@ python3-psutil
 python3-ptyprocess
 python3-pydbus
 python3-pysocks
+python3-pyudev
 python3-pyyaml
 python3-requests
 python3-rpm
@@ -634,10 +665,12 @@ redhat-release
 redhat-release-eula
 redhat-rpm-config
 rhsm-icons
+rootfiles
 rpm
 rpm-build
 rpm-build-libs
 rpm-libs
+rpm-plugin-selinux
 rpm-plugin-systemd-inhibit
 rpm-sign
 rpmdevtools
@@ -652,13 +685,17 @@ samba-client-libs
 samba-common
 samba-common-libs
 sed
+selinux-policy
+selinux-policy-targeted
 setroubleshoot-plugins
 setroubleshoot-server
 setup
+sg3_utils
 sg3_utils-libs
 sgml-common
 shadow-utils
 shared-mime-info
+slang
 smartmontools
 snappy
 sos
@@ -673,6 +710,7 @@ sssd-client
 sssd-common
 sssd-common-pac
 sssd-ipa
+sssd-kcm
 sssd-krb5
 sssd-krb5-common
 sssd-ldap
@@ -705,6 +743,7 @@ traceroute
 tree
 trousers
 trousers-lib
+tuned
 tzdata
 tzdata-java
 unzip
@@ -743,6 +782,7 @@ xorg-x11-server-utils
 xz
 xz-devel
 xz-libs
+yum
 zip
 zlib
 zlib-devel
