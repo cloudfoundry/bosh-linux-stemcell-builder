@@ -43,7 +43,7 @@ module Bosh::Stemcell
         "OS_IMAGE=#{os_image_tarball_path}",
         "OS_NAME=#{operating_system.name}",
         "OS_VERSION=#{operating_system.version}",
-        "bundle exec rspec -fd",
+        "bundle exec rspec -fd#{rspec_exclusion_args}",
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
       ].join(' ')
     end
@@ -161,7 +161,7 @@ module Bosh::Stemcell
 
     # Returns the tag-based filtering arguments to use when invoking the rspec CLI.
     #
-    # Supported tags include:
+    # Supported Infrastructure-related tags include:
     #   - exclude_on_alicloud
     #   - exclude_on_aws
     #   - exclude_on_azure
@@ -173,10 +173,23 @@ module Bosh::Stemcell
     #   - exclude_on_vsphere
     #   - exclude_on_warden
     #
+    # Supported OS-related tags include:
+    #   - exclude_on_centos
+    #   - exclude_on_centos_7
+    #   - exclude_on_centos_8
+    #   - exclude_on_rhel
+    #   - exclude_on_rhel_7
+    #   - exclude_on_rhel_8
+    #   - exclude_on_ubuntu
+    #   - exclude_on_ubuntu_bionic
+    #   - exclude_on_ubuntu_jammy
+    #
     # @return [String] a string containing the tag-based filtering arguments to use when invoking the rspec CLI
     def rspec_exclusion_args
       tags_to_exclude = []
       tags_to_exclude << "exclude_on_#{infrastructure.name}" if infrastructure&.name
+      tags_to_exclude << "exclude_on_#{operating_system.name}" if operating_system&.name
+      tags_to_exclude << "exclude_on_#{operating_system.name}_#{operating_system.version}" if operating_system&.name && operating_system&.version
       tags_to_exclude.map { |tag| " --tag ~#{tag}" }.join(' ').rstrip
     end
 

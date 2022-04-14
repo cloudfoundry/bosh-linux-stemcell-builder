@@ -2,11 +2,10 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
 
   context 'Linux kernel modules' do
     context '/lib/modules' do
-      describe command('ls -1 /lib/modules | wc -l') do
-        before do
-          skip 'inapplicable to RHEL 8: the RHEL 8.5 kernel RPM installs 2 kernel dirs at "/lib/modules/<KERNEL_VERSION>"' if ENV['OS_NAME'] == 'rhel' && ENV['OS_VERSION'] == '8'
-        end
-
+      describe command('ls -1 /lib/modules | wc -l'), {
+        # NOTE: the RHEL 8.5 kernel RPM installs 2 kernel dirs under "/lib/modules/<KERNEL_VERSION>"
+        exclude_on_rhel_8: true,
+      } do
         it('should match only 1 kernel dir') { expect(subject.stdout).to eq "1\n" }
       end
     end
@@ -213,13 +212,11 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
       it { should_not be_installed } # stig: V-38674, V-230553
     end
 
-    describe package('xorg-x11-server-utils') do
-      before do
-        # NOTE: STIG V-230553's original check & fix commands consider the existence of the 'xorg-x11-server-utils' RPM package as a finding.
-        # See the STIG V-230553 comments within 'stemcell_builder/stages/base_rhel/apply.sh' for details.
-        skip 'inapplicable to RHEL 8: the "xorg-x11-server-utils" RPM package is a false positive finding' if ENV['OS_NAME'] == 'rhel' && ENV['OS_VERSION'] == '8'
-      end
-
+    describe package('xorg-x11-server-utils'), {
+      # NOTE: STIG V-230553's original check & fix commands consider the presence of the 'xorg-x11-server-utils' RPM package as a finding.
+      # However, that package is needed by other packages, even if no GUI is installed.
+      exclude_on_rhel_8: true,
+    } do
       it { should_not be_installed } # stig: V-38674, V-230553
     end
 
@@ -229,13 +226,11 @@ shared_examples_for 'a CentOS or RHEL based OS image' do
   end
 
   context 'graphical display manager must not be installed on RHEL 8 unless approved (stig: V-230553) (stig: V-38674)' do
-    describe command('rpm -qa | grep xorg | grep server') do
-      before do
-        # NOTE: STIG V-230553's original check & fix commands consider the existence of the 'xorg-x11-server-utils' RPM package as a finding.
-        # See the STIG V-230553 comments within 'stemcell_builder/stages/base_rhel/apply.sh' for details.
-        skip 'inapplicable to RHEL 8: the "xorg-x11-server-utils" RPM package is a false positive finding' if ENV['OS_NAME'] == 'rhel' && ENV['OS_VERSION'] == '8'
-      end
-
+    describe command('rpm -qa | grep xorg | grep server'), {
+      # NOTE: STIG V-230553's original check & fix commands consider the presence of the 'xorg-x11-server-utils' RPM package as a finding.
+      # However, that package is needed by other packages, even if no GUI is installed.
+      exclude_on_rhel_8: true,
+    } do
       its (:stdout) { should be_empty } # stig: V-230553
     end
   end

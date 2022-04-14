@@ -2,11 +2,10 @@ shared_examples_for 'a CentOS or RHEL stemcell' do
 
   context 'Linux kernel modules' do
     context '/lib/modules' do
-      describe command('ls -1 /lib/modules | wc -l') do
-        before do
-          skip 'inapplicable to RHEL 8: the RHEL 8.5 kernel RPM installs 2 kernel dirs at "/lib/modules/<KERNEL_VERSION>"' if ENV['OS_NAME'] == 'rhel' && ENV['OS_VERSION'] == '8'
-        end
-
+      describe command('ls -1 /lib/modules | wc -l'), {
+        # NOTE: the RHEL 8.5 kernel RPM installs 2 kernel dirs under "/lib/modules/<KERNEL_VERSION>"
+        exclude_on_rhel_8: true,
+      } do
         it('should match only 1 kernel dir') { expect(subject.stdout).to eq "1\n" }
       end
     end

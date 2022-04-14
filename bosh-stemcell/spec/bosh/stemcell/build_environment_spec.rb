@@ -187,7 +187,7 @@ module Bosh::Stemcell
             'OS_IMAGE=/some/os_image.tgz',
             "OS_NAME=#{operating_system.name}",
             "OS_VERSION=#{operating_system.version}",
-            "bundle exec rspec -fd",
+            "bundle exec rspec -fd ~exclude_on_#{operating_system.name} ~exclude_on_#{operating_system.name}_#{operating_system.version}",
             "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           ].join(' ')
 
@@ -207,7 +207,7 @@ module Bosh::Stemcell
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
           "CANDIDATE_BUILD_NUMBER=#{version}",
-          "bundle exec rspec -fd",
+          "bundle exec rspec -fd --tag ~exclude_on_#{infrastructure.name} ~exclude_on_#{operating_system.name} ~exclude_on_#{operating_system.name}_#{operating_system.version}",
           "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/go_agent_spec.rb",
