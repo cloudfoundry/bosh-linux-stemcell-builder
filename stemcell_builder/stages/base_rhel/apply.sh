@@ -100,14 +100,14 @@ fi
 run_in_chroot $chroot "yum -c /$redhat_config_file update --assumeyes"
 
 # RHSM CLI registration and repo configuration
-run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes install subscription-manager"
+pkg_mgr "-c /$redhat_config_file install subscription-manager"
 rhsm_register
 #rhsm_enable_base_repos #redundant
 rhsm_enable_dev_repos
 
 # Install required yum 'Groups' (including 'Environment Groups')
-run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall Base"
-run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall 'Development Tools'"
+pkg_mgr "-c /$redhat_config_file groupinstall Base"
+pkg_mgr "-c /$redhat_config_file groupinstall 'Development Tools'"
 
 # NOTE: RHEL 7 & 8 docs both strongly recommend that 1 of the 'Environment Group' packages be installed,
 # and the 'Minimal Install' group is the recommended package for systems aiming for the smallest possible OS footprint.
@@ -120,11 +120,11 @@ run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupin
 #   > If you are not sure what package should be installed, Red Hat recommends you to select the Minimal Install environment. Minimal Install provides only the packages which are essential for running Red Hat Enterprise Linux 8. This will substantially reduce the chance of the system being affected by a vulnerability.
 # SEE: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/security_hardening/index#Minimal_install_securing-rhel-during-installation
 # SEE: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/security_hardening/index#ref_profiles-not-compatible-with-server-with-gui_deploying-systems-that-are-compliant-with-a-security-profile-immediately-after-an-installation
-run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall 'Minimal Install'"
-#run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes groupinstall 'Server'"
+pkg_mgr "-c /$redhat_config_file groupinstall 'Minimal Install'"
+#pkg_mgr "-c /$redhat_config_file groupinstall 'Server'"
 
 # list the available and installed 'groups'
-run_in_chroot $chroot "yum -c /$redhat_config_file --verbose --assumeyes grouplist"
+pkg_mgr "-c /$redhat_config_file grouplist"
 
 run_in_chroot $chroot "yum -c /$redhat_config_file clean all"
 
