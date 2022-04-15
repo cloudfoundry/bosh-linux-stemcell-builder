@@ -7,6 +7,7 @@ disk image that is used as a template by a BOSH Director to create VMs.
 
 ```bash
 git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
+cd bosh-linux-stemcell-builder
 git checkout ubuntu-jammy/master
 mkdir -p tmp
 docker build \
