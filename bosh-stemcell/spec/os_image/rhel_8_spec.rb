@@ -734,11 +734,11 @@ dbus:x:81:81:System message bus:/:/sbin/nologin
 systemd-coredump:x:999:997:systemd Core Dumper:/:/sbin/nologin
 systemd-resolve:x:193:193:systemd Resolver:/:/sbin/nologin
 polkitd:x:998:995:User for polkitd:/:/sbin/nologin
-cockpit-ws:x:997:994:User for cockpit web service:/nonexisting:/sbin/nologin
-cockpit-wsinstance:x:996:993:User for cockpit-ws instances:/nonexisting:/sbin/nologin
-libstoragemgmt:x:995:992:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
-setroubleshoot:x:994:991::/var/lib/setroubleshoot:/sbin/nologin
-sssd:x:993:990:User for sssd:/:/sbin/nologin
+setroubleshoot:x:997:994::/var/lib/setroubleshoot:/sbin/nologin
+sssd:x:996:993:User for sssd:/:/sbin/nologin
+cockpit-ws:x:995:992:User for cockpit web service:/nonexisting:/sbin/nologin
+cockpit-wsinstance:x:994:991:User for cockpit-ws instances:/nonexisting:/sbin/nologin
+libstoragemgmt:x:993:990:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
 chrony:x:992:989::/var/lib/chrony:/sbin/nologin
 tcpdump:x:72:72::/:/sbin/nologin
 pesign:x:991:987:Group for the pesign signing daemon:/var/run/pesign:/sbin/nologin
@@ -833,11 +833,11 @@ systemd-coredump:x:997:
 systemd-resolve:x:193:
 printadmin:x:996:
 polkitd:x:995:
-cockpit-ws:x:994:
-cockpit-wsinstance:x:993:
-libstoragemgmt:x:992:
-setroubleshoot:x:991:
-sssd:x:990:
+setroubleshoot:x:994:
+sssd:x:993:
+cockpit-ws:x:992:
+cockpit-wsinstance:x:991:
+libstoragemgmt:x:990:
 chrony:x:989:
 tcpdump:x:72:
 slocate:x:21:
