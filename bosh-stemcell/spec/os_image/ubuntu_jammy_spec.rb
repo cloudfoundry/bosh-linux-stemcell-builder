@@ -37,7 +37,7 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
   end
 
   context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-20.04') do
+    describe package('linux-generic-hwe-22.04') do
       it { should be_installed }
     end
   end
