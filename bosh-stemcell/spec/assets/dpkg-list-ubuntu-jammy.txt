@@ -37,7 +37,6 @@ cpio
 cpp
 cpp-11
 cracklib-runtime
-crda
 cron
 curl
 dash
@@ -110,7 +109,6 @@ isc-dhcp-client
 isc-dhcp-common
 iso-codes
 iucode-tool
-iw
 kbd
 keyboard-configuration
 klibc-utils
@@ -281,8 +279,6 @@ libpython3-stdlib:amd64
 libpython3.10-minimal:amd64
 libpython3.10-stdlib:amd64
 libpython3.10:amd64
-libpython3.9-minimal:amd64
-libpython3.9-stdlib:amd64
 libquadmath0:amd64
 libreadline-dev:amd64
 libreadline8:amd64
@@ -341,12 +337,12 @@ libyaml-0-2:amd64
 libzstd1:amd64
 linux-base
 linux-firmware
-linux-generic-hwe-20.04
+linux-generic-hwe-22.04
 linux-headers-5.15
 linux-headers-5.15-generic
-linux-headers-generic-hwe-20.04
+linux-headers-generic-hwe-22.04
 linux-image-5.15-generic
-linux-image-generic-hwe-20.04
+linux-image-generic-hwe-22.04
 linux-libc-dev:amd64
 linux-modules-5.15-generic
 linux-modules-extra-5.15-generic
@@ -421,14 +417,12 @@ python3-software-properties
 python3-wadllib
 python3-yaml
 python3-zipp
-python3.9
-python3.9-minimal
 python3.10
 python3.10-minimal
 quota
 readline-common
 resolvconf
-rng-tools
+rng-tools-debian
 rpcsvc-proto
 rsync
 rsyslog
