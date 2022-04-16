@@ -734,11 +734,11 @@ dbus:x:81:81:System message bus:/:/sbin/nologin
 systemd-coredump:x:999:997:systemd Core Dumper:/:/sbin/nologin
 systemd-resolve:x:193:193:systemd Resolver:/:/sbin/nologin
 polkitd:x:998:995:User for polkitd:/:/sbin/nologin
-setroubleshoot:x:997:994::/var/lib/setroubleshoot:/sbin/nologin
-sssd:x:996:993:User for sssd:/:/sbin/nologin
-cockpit-ws:x:995:992:User for cockpit web service:/nonexisting:/sbin/nologin
-cockpit-wsinstance:x:994:991:User for cockpit-ws instances:/nonexisting:/sbin/nologin
-libstoragemgmt:x:993:990:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
+cockpit-ws:x:\\d+:\\d+:User for cockpit web service:/nonexisting:/sbin/nologin
+cockpit-wsinstance:x:\\d+:\\d+:User for cockpit-ws instances:/nonexisting:/sbin/nologin
+libstoragemgmt:x:\\d+:\\d+:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
+setroubleshoot:x:\\d+:\\d+::/var/lib/setroubleshoot:/sbin/nologin
+sssd:x:\\d+:\\d+:User for sssd:/:/sbin/nologin
 chrony:x:992:989::/var/lib/chrony:/sbin/nologin
 tcpdump:x:72:72::/:/sbin/nologin
 pesign:x:991:987:Group for the pesign signing daemon:/var/run/pesign:/sbin/nologin
@@ -747,7 +747,7 @@ named:x:25:25:Named:/var/named:/bin/false
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 syslog:x:990:985::/home/syslog:/sbin/nologin
 HERE
-      passwd_match_lines = passwd_match_raw.split(/\n+/)
+      passwd_match_lines = passwd_match_raw.split(/\n+/).map { |l| Regexp.new("^#{l}$") }
 
       its(:content_as_lines) { should match_array(passwd_match_lines)}
       # NOTE: The following line is needed because rspec truncates the previous line's output upon failure
@@ -833,11 +833,11 @@ systemd-coredump:x:997:
 systemd-resolve:x:193:
 printadmin:x:996:
 polkitd:x:995:
-setroubleshoot:x:994:
-sssd:x:993:
-cockpit-ws:x:992:
-cockpit-wsinstance:x:991:
-libstoragemgmt:x:990:
+cockpit-ws:x:\\d+:
+cockpit-wsinstance:x:\\d+:
+libstoragemgmt:x:\\d+:
+setroubleshoot:x:\\d+:
+sssd:x:\\d+:
 chrony:x:989:
 tcpdump:x:72:
 slocate:x:21:
@@ -854,7 +854,7 @@ bosh_sshers:x:1001:vcap
 bosh_sudoers:x:1002:
 syslog:x:985:
 HERE
-      group_lines = group_raw.split(/\n+/)
+      group_lines = group_raw.split(/\n+/).map { |l| Regexp.new("^#{l}$") }
       its(:content_as_lines) { should match_array(group_lines)}
       # NOTE: The following line is needed because rspec truncates the previous line's output upon failure
       its(:content_as_lines) { should match_array(group_lines), -> { "full content: '#{subject.content}'" } }
