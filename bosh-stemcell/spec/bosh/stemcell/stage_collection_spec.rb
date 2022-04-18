@@ -53,6 +53,7 @@ module Bosh::Stemcell
               :system_users,
               :bosh_audit_ubuntu,
               :bosh_log_audit_start,
+              :clean_machine_id,
             ]
           )
         end
@@ -88,7 +89,6 @@ module Bosh::Stemcell
               :escape_ctrl_alt_del,
               :bosh_audit_centos,
               :bosh_log_audit_start,
-              :clean_machine_id,
             ]
           )
         end
