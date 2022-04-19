@@ -32,7 +32,6 @@ module Bosh::Stemcell
               :base_ssh,
               :bosh_sysstat,
               :system_kernel,
-              :patch_kernel,
               :system_kernel_modules,
               :system_ixgbevf,
               :bosh_environment,
