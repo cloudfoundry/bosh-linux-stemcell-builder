@@ -40,6 +40,7 @@ fi
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
+cp $assets_dir/nats-access-helper.sh $chroot/$bosh_dir/etc/nats-access-helper.sh
 
 # Download CLI source or release from github into assets directory
 cd $assets_dir
