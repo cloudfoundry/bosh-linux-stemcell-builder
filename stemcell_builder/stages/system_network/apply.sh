@@ -30,6 +30,7 @@ EOS
 [main]
 plugins=ifcfg-rh
 no-auto-default=*
+dhcp=dhclient
 EOS
 
 fi
