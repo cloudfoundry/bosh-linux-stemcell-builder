@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">55c29f01c3a5dee913394e8b8f27af4d4577f86980eb068a58f3e7fbef59a05329e6a2f26696cdb0e0e3285710e2635af9a973de40e9b6b5ed4917e54cc3f97c</hash>
-    <hash type="sha-256">52021508e49c03af9476a11f64d1f21429d9925273cb04f607bc1b8de1aacd1a</hash>
-    <hash type="sha-1">77fb48df89a85e29ea7ca2020bddf7164185a952</hash>
-    <hash type="md5">2e08ffb38a501067f2d1967f8f243395</hash>
-    <size>603234987</size>
+    <hash type="sha-512">d4e91b715f8a77612012b16f4dad3f98c581a9e15824f9afa179e552fdcb53a51cf9e59255feb07af933b9c215910669ec92140ffb5e16ac09a50ab7c308a9f3</hash>
+    <hash type="sha-256">6827f78d5117ee60f6e905a0c5422cc29a3dc09821d6581f51deda6172fe5023</hash>
+    <hash type="sha-1">a2871888cebd9306adf244f02cc2e49ed4134153</hash>
+    <hash type="md5">36b486c9b4b0a1e9faf0450070903df5</hash>
+    <size>603265465</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/ubuntu-bionic.tgz</url>
-    <version>61.0.0</version>
+    <version>62.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">f9a59f2c5a764d0ef2a4961d24b54e1bbd6bb5436f6440edf5b90d9a67af2d31d53f31888a79a083ef6685849a05353e8981197af99828c9072a878ccc6151d6</hash>
-    <hash type="sha-256">9e0b000d08a0f46a4c682cbfce683e6b596be630c3900a2c203354253699a0f3</hash>
-    <hash type="sha-1">a87719ac0fc3587fb79ed80caf6f70ab9ea0156f</hash>
-    <hash type="md5">7f5cd28c7017bf43c61ad04ea3aa1c3b</hash>
-    <size>148112</size>
+    <hash type="sha-512">5d27b3eaf547f55be562e9b8b395748b2019b9952b8b2d0fb03889ad423d611841d98086ea5fb314340dee408c7b155236881e021ada32ea01275bce0d8c20fd</hash>
+    <hash type="sha-256">9054dd97605ed3ae998448599fe6ab124da69c984107ad1be0943f93e0a16119</hash>
+    <hash type="sha-1">b004dbcb6d72fa9028e75468c9e86ab60b027dc3</hash>
+    <hash type="md5">42501880a6662825999171b3dca7d6e2</hash>
+    <size>153173</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/usn-log.json</url>
-    <version>61.0.0</version>
+    <version>62.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2022-04-26T16:11:49.97752258Z</published>
+  <published>2022-04-28T17:30:46.153530644Z</published>
 </metalink>
