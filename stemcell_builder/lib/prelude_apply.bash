@@ -19,6 +19,9 @@ else
   export DISTRIB_CODENAME="no-distrib-codename"
 fi
 
+# Mark /opt/bosh as a safe git repo to avoid "fatal: unsafe repository ('/opt/bosh' is owned by someone else)"
+git config --global --add safe.directory /opt/bosh
+
 function pkg_mgr {
   run_in_chroot $chroot "apt-get update"
   run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive;apt-get -f -y --no-install-recommends $*"
