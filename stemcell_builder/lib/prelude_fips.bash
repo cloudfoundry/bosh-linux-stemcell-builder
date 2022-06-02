@@ -1,11 +1,3 @@
-#!/usr/bin/env bash
-
-set -e
-
-base_dir=$(readlink -nf $(dirname $0)/../..)
-source $base_dir/lib/prelude_apply.bash
-source $base_dir/etc/settings.bash
-
 # do nothing if the variant isn't fips
 if [ ${stemcell_operating_system_variant} != "fips" ]; then
     echo "Skipping base_apt_fips given that this is not a 'fips' variant"
@@ -14,28 +6,32 @@ else
     echo "FIPS variant detected. setting up FIPS"
 fi
 
-
 if [ -z ${UBUNTU_ADVANTAGE_TOKEN} ]; then
     echo "'fips' variant detected but \$UBUNTU_ADVANTAGE_TOKEN not given."
     echo "please provide a UBUNTU_ADVANTAGE_TOKEN to be able to build 'fips' variants."
     exit 1
 fi
 
-
-function ua_attach() {
-    local chroot=$1
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ubuntu-advantage-tools"
+function write_ua_client_config() {
+    local iaas=${1}
 
     # overwrite the cloud type so the correct kernel gets installed
-    # FIXME: do not hardcode aws here!
-    echo "settings_overrides:" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
-    echo "  cloud_type: aws" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
+    if [ -z "${iaas}" ]; then
+        echo "settings_overrides:" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
+        echo "  cloud_type: ${iaas}" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
+    fi
+}
+
+function ua_attach() {
+    echo "Setting up Ubuntu Advantage ..."
+
+    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ubuntu-advantage-tools"
+
     run_in_chroot ${chroot} "ua attach --no-auto-enable ${UBUNTU_ADVANTAGE_TOKEN}"
 }
 
 
 function ua_detach() {
-    local chroot=$1
     run_in_chroot ${chroot} "ua detach --assume-yes"
     # cleanup (to not leak the token into an image)
     run_in_chroot ${chroot} "rm -rf /var/lib/ubuntu-advantage/private/*"
@@ -44,14 +40,12 @@ function ua_detach() {
 
 
 function ua_enable_fips() {
-    local chroot=$1
     run_in_chroot ${chroot} "ua enable --assume-yes fips"
 }
 
 
 function install_and_hold_packages() {
-    local chroot=$1
-    local pkgs=$2
+    local pkgs=$1
     echo "Installing and holding packages: ${pkgs}"
     DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ${pkgs}"
 
@@ -121,12 +115,11 @@ PSUEDO_GRUB_PROBE
 
 
 function mock_grub_probe() {
-    local chroot=$1
     # make sure /usr/sbin/grub-probe is installed in the chroot
     DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes grub-common"
     gprobe="${chroot}/usr/sbin/grub-probe"
     if [ -f "${gprobe}" ]; then
-	mv "${gprobe}" "${gprobe}.dist"
+        mv "${gprobe}" "${gprobe}.dist"
     fi
     psuedo_grub_probe > "${gprobe}"
     chmod 755 "${gprobe}"
@@ -134,22 +127,8 @@ function mock_grub_probe() {
 
 
 function unmock_grub_probe() {
-    local chroot=$1
     gprobe="${chroot}/usr/sbin/grub-probe"
     if [ -f "${gprobe}.dist" ]; then
-	mv "${gprobe}.dist" "${gprobe}"
+        mv "${gprobe}.dist" "${gprobe}"
     fi
 }
-
-# those packages need to be installed from the FIPS repo and hold
-FIPS_PKGS="openssh-client openssh-server openssl libssl1.1 libssl1.1-hmac libssl-dev fips-initramfs libgcrypt20 libgcrypt20-hmac libgcrypt20-dev linux-image-aws-fips linux-aws-fips linux-headers-aws-fips fips-initramfs linux-modules-extra-4.15.0-2000-aws-fips"
-
-echo "Setting up Ubuntu Advantage ..."
-
-mock_grub_probe "${chroot}"
-ua_attach "${chroot}"
-ua_enable_fips "${chroot}"
-install_and_hold_packages "${chroot}" "${FIPS_PKGS}"
-ua_detach "${chroot}"
-
-unmock_grub_probe "${chroot}"

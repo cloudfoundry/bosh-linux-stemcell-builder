@@ -12,15 +12,16 @@ cp -p "${assets_dir}/${DISTRIB_CODENAME}_static_libraries_list.txt" $chroot/var/
 
 kernel_suffix="-generic"
 if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
-    if [ -z ${UBUNTU_ADVANTAGE_TOKEN+x} ]; then
-	major_kernel_version="5.4"
-    else
-	# FIPS kernel is 4.15
-	major_kernel_version="4.15"
-	kernel_suffix="-aws-fips"
-    fi
+    major_kernel_version="5.4"
 else
     major_kernel_version="4.15"
 fi
-kernel_version=$(find $chroot/usr/src/ -name "linux-headers-$major_kernel_version.*$kernel_suffix" | grep -o "[0-9].*-[0-9]*$kernel_suffix")
-sed -i "s/__KERNEL_VERSION__/$kernel_version/g" $chroot/var/vcap/bosh/etc/static_libraries_list
+
+if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
+    kernel_suffix="-aws-fips"
+    major_kernel_version="4.15"
+fi
+
+update_kernel_static_libraries ${kernel_suffix} ${major_kernel_version}
+
+

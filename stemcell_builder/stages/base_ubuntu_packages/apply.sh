@@ -79,13 +79,10 @@ run_in_chroot "${chroot}" "systemctl enable systemd-logind"
 run_in_chroot "${chroot}" "systemctl enable systemd-networkd"
 run_in_chroot "${chroot}" "systemctl disable systemd-resolved"
 
-# FIPS kernel depends on crda so do not try to remove it
-if [ -z ${UBUNTU_ADVANTAGE_TOKEN+x} ]; then
-    pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
-    pkg_mgr purge --auto-remove "$pkgs_to_purge"
-fi
-
 run_in_chroot "${chroot}" "systemctl disable chrony"
+
+pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
+pkg_mgr purge --auto-remove "$pkgs_to_purge"
 
 exclusions="postfix whoopsie apport"
 pkg_mgr purge --auto-remove $exclusions
