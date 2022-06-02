@@ -77,13 +77,7 @@ echo 'Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ct
 
 # Disallow Weak MACs
 sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
-if [ -z ${UBUNTU_ADVANTAGE_TOKEN+x} ]; then
-    echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' >> $chroot/etc/ssh/sshd_config
-else
-    # FIPS only allows specific MACs. See "Security Policy" from
-    # https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/3632
-    echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256' >> $chroot/etc/ssh/sshd_config
-fi
+echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' >> $chroot/etc/ssh/sshd_config
 
 cat << EOF > $chroot/etc/issue
 Unauthorized use is strictly prohibited. All access and activity

@@ -8,11 +8,6 @@ source $base_dir/lib/prelude_bosh.bash
 source $base_dir/etc/settings.bash
 
 
-if [ ! -z ${UBUNTU_ADVANTAGE_TOKEN+x} ]; then
-    echo "Ubuntu Advantage used. Skipping system_kernel setup"
-    exit 0
-fi
-
 mkdir -p $chroot/tmp
 
 
