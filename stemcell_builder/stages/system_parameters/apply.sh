@@ -18,6 +18,7 @@ echo -n ${os} > $chroot/var/vcap/bosh/etc/operating_system
 echo -n ${stemcell_version} > $chroot/var/vcap/bosh/etc/stemcell_version
 
 has_uncommitted_changes=""
+git config --global --add safe.directory $PWD # fixes "fatal: unsafe repository"
 if ! git diff --quiet --exit-code; then
   has_uncommitted_changes="+"
 fi
