@@ -1,6 +1,11 @@
-@@ -24,3 +24,5 @@
- # and here are more per-package modules (the "Additional" block)
- auth	optional			pam_cap.so
- # end of pam-auth-update config
+@@ -14,7 +14,10 @@
+ # pam-auth-update(8) for details.
+
+ # here are the per-package modules (the "Primary" block)
 +auth	required			pam_faillock.so preauth silent deny=3 unlock_time=604800 fail_interval=900
+ auth	[success=1 default=ignore]	pam_unix.so
 +auth	[default=die]			pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900
++auth    sufficient pam_faillock.so authsucc audit deny=3 unlock_time=604800 fail_interval=900
+ # here's the fallback if no module succeeds
+ auth	requisite			pam_deny.so
+ # prime the stack with a positive return value if there isn't one already;
