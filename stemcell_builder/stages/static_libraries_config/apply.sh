@@ -18,7 +18,7 @@ else
 fi
 
 if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
-    kernel_suffix="-aws-fips"
+    kernel_suffix="-${stemcell_infrastructure}-fips"
     major_kernel_version="4.15"
 fi
 
