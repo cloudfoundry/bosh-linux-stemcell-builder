@@ -45,7 +45,7 @@ vm_guestos=ubuntu-64
 
 cat > $ovf/$vm_hostname.vmx <<EOS
 config.version = "8"
-virtualHW.version = 9
+virtualHW.version = "13"
 floppy0.present = "FALSE"
 nvram = "nvram"
 deploymentPlatform = "windows"
@@ -68,10 +68,11 @@ scsi0:0.present = "true"
 scsi0:0.fileName = "root.vmdk"
 scsi0:0.deviceType = "scsi-hardDisk"
 
-ide0:0.present = "true"
-ide0:0.clientDevice = "TRUE"
-ide0:0.deviceType = "cdrom-raw"
-ide0:0.startConnected = "FALSE"
+sata0.present = "TRUE"
+sata0:0.deviceType = "atapi-cdrom"
+sata0:0.fileName = "emptyBackingString"
+sata0:0.present = "TRUE"
+sata0:0.startConnected = "FALSE"
 
 guestOSAltName = "$vm_guestos ($vm_arch)"
 guestOS = "$vm_guestos"

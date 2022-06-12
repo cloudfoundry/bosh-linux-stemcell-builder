@@ -26,7 +26,7 @@ bundle
  # build OS image
 bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz] # build OS image
  # build vSphere stemcell
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
