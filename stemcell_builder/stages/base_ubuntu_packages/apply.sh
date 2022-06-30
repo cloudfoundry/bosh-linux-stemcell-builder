@@ -4,6 +4,7 @@ set -e
 
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
+source $base_dir/etc/settings.bash
 
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
 curl wget bison libreadline6-dev rng-tools \
@@ -77,9 +78,11 @@ run_in_chroot "${chroot}" "systemctl enable runit"
 run_in_chroot "${chroot}" "systemctl enable systemd-logind"
 run_in_chroot "${chroot}" "systemctl enable systemd-networkd"
 run_in_chroot "${chroot}" "systemctl disable systemd-resolved"
+
+run_in_chroot "${chroot}" "systemctl disable chrony"
+
 pkgs_to_purge="crda iw mg wireless-crda wireless-regdb"
 pkg_mgr purge --auto-remove "$pkgs_to_purge"
-run_in_chroot "${chroot}" "systemctl disable chrony"
 
 exclusions="postfix whoopsie apport"
 pkg_mgr purge --auto-remove $exclusions

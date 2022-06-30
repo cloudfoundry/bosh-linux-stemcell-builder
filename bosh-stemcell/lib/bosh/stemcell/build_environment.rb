@@ -47,7 +47,7 @@ module Bosh::Stemcell
     end
 
     def stemcell_rspec_command
-      [
+      cmd = [
         "cd #{STEMCELL_SPECS_DIR};",
         "STEMCELL_IMAGE=#{image_file_path}",
         "STEMCELL_WORKDIR=#{work_path}",
@@ -61,7 +61,9 @@ module Bosh::Stemcell
         "spec/stemcells/#{infrastructure.name}_spec.rb",
         'spec/stemcells/stig_spec.rb',
         'spec/stemcells/cis_spec.rb'
-      ].join(' ')
+      ]
+      cmd << "spec/stemcells/#{operating_system.variant}_spec.rb" if operating_system.variant?
+      cmd.join(' ')
     end
 
     def build_path
@@ -184,7 +186,7 @@ module Bosh::Stemcell
         nil
       end,
       if operating_system.variant?
-        " --tag #{operating_system.variant}"
+        " --tag ~exclude_on_#{operating_system.variant}"
       end,
       ].compact.join(' ').rstrip
     end

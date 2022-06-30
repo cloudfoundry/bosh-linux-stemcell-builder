@@ -102,7 +102,7 @@ The arguments to `stemcell:build_with_local_os_image` are:
 0. `operating_system_name` (`ubuntu`): Type of OS. Same as
    `stemcell:build_os_image`
 0. `operating_system_version` (`bionic`): OS release. Same as
-   `stemcell:build_os_image`
+   `stemcell:build_os_image`. Can optionally include a variant suffix (`bionic-fips`)
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
 0. `build_number` (`1.23`): Stemcell version.
