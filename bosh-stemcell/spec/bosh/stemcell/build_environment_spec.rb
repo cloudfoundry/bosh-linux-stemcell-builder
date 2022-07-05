@@ -199,6 +199,7 @@ module Bosh::Stemcell
       before { allow(operating_system).to receive(:variant?).and_return(true) }
       before { allow(operating_system).to receive(:variant).and_return('fips') }
 
+
       it 'returns the correct command' do
         expected_rspec_command = [
           "cd #{stemcell_specs_dir};",
@@ -207,13 +208,14 @@ module Bosh::Stemcell
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
           "CANDIDATE_BUILD_NUMBER=#{version}",
-          "bundle exec rspec -fd --tag fips",
+          "bundle exec rspec -fd --tag ~exclude_on_#{operating_system.variant}",
           "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/go_agent_spec.rb",
           "spec/stemcells/#{infrastructure.name}_spec.rb",
           "spec/stemcells/stig_spec.rb",
           "spec/stemcells/cis_spec.rb",
+          "spec/stemcells/#{operating_system.variant}_spec.rb"
         ].join(' ')
 
         expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
