@@ -14,6 +14,9 @@ ConditionPathExists=/etc/waagent.conf
 
 [Service]
 Type=simple
+# stemcells on Azure re-generate the SSH Hostkey upon first reboot
+# waagent has to wait until the file was recreated
+ExecStartPre=/bin/bash -c "while [ ! -f /root/firstboot_done ]; do sleep 1; done"
 ExecStart=/usr/bin/python3 -u /usr/sbin/waagent -daemon
 Restart=always
 
