@@ -5,7 +5,7 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-packages="python3 python3-pyasn1 python3-setuptools"
+packages="python3 python3-pyasn1 python3-setuptools python-is-python3 cloud-init"
 pkg_mgr install $packages
 
 wala_release=2.6.0.2
@@ -32,9 +32,8 @@ run_in_chroot $chroot "
   sudo rm -fr WALinuxAgent-${wala_release}
   rm wala.tar.gz
 "
-cp -f $dir/assets/etc/waagent.conf $chroot/etc/waagent.conf
-
-cp -f $dir/assets/etc/walinuxagent.service $chroot/lib/systemd/system/walinuxagent.service
+cp -f $dir/assets/etc/waagent/waagent.conf $chroot/etc/waagent.conf
+cp -f $dir/assets/etc/waagent/walinuxagent.service $chroot/lib/systemd/system/walinuxagent.service
 chmod 0644 $chroot/lib/systemd/system/walinuxagent.service
 run_in_chroot $chroot "systemctl enable walinuxagent.service"
 
@@ -46,3 +45,24 @@ cat > $chroot/etc/logrotate.d/waagent <<EOS
     missingok
 }
 EOS
+
+#setup cloud-init
+rm $chroot/etc/cloud/*.cfg
+rm $chroot/etc/cloud/cloud.cfg.d/*.cfg
+cp -f $dir/assets/etc/cloud-init/cloud.cfg $chroot/etc/cloud/cloud.cfg
+cp -f $dir/assets/etc/cloud-init/*-*.cfg $chroot/etc/cloud/cloud.cfg.d/
+
+
+# this will append the following two relevant lines (plus a few commented out lines)
+# to the default-conf:
+# >> :syslogtag, isequal, "[CLOUDINIT]" /var/log/cloud-init.log
+# >> & stop
+# the effect is that cloud-init logs will not be contained in /var/log/syslog
+
+cat $chroot/etc/rsyslog.d/21-cloudinit.conf >> $chroot/etc/rsyslog.d/50-default.conf
+
+# remove the the cloudinit conf file as we have a test explicitly checking for only
+# one syslog config file being present
+
+rm $chroot/etc/rsyslog.d/21-cloudinit.conf
+
