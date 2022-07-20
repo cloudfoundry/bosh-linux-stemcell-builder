@@ -201,7 +201,7 @@ module Bosh::Stemcell
     def azure_stages
       [
         :system_azure_network,
-        :system_azure_wala,
+        :system_azure_init,
         :system_parameters,
         :enable_udf_module,
         :bosh_azure_chrony,

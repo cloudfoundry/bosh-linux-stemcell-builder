@@ -17,23 +17,13 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
     "Settings": {
       "Sources": [
         {
-          "Type": "ConfigDrive",
-          "DiskPaths": [
-            "/dev/disk/by-label/azure_cfg_dsk",
-            "/dev/disk/by-label/AZURE_CFG_DSK"
-          ],
-          "MetaDataPath": "configs/MetaData",
-          "UserDataPath": "configs/UserData"
-        },
-        {
           "Type": "File",
           "MetaDataPath": "",
-          "UserDataPath": "/var/lib/waagent/CustomData",
-          "SettingsPath": "/var/lib/waagent/CustomData"
+          "UserDataPath": "/var/lib/cloud/instance/user-data.txt",
+          "SettingsPath": "/var/lib/cloud/instance/user-data.txt"
         }
       ],
-      "UseServerName": true,
-      "UseRegistry": true
+      "UseServerName": true
     }
   }
 }
