@@ -13,6 +13,7 @@ FIPS_PKGS="openssh-client openssh-server openssl libssl1.1 libssl1.1-hmac libssl
 mock_grub_probe
 ua_attach
 ua_enable_fips
+write_fips_cmdline_conf
 install_and_hold_packages "${FIPS_PKGS}"
 ua_detach
 unmock_grub_probe
