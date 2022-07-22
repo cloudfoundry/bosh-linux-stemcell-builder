@@ -58,7 +58,9 @@ function install_and_hold_packages() {
 
 
 function write_fips_cmdline_conf() {
-    run_in_chroot ${chroot} "echo 'GRUB_CMDLINE_LINUX_DEFAULT=\"$GRUB_CMDLINE_LINUX_DEFAULT fips=1\"' > /etc/default/grub.d/99-fips.cfg"
+    cat << "EOF" >> "${chroot}/etc/default/grub.d/99-fips.cfg"
+GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT fips=1"
+EOF
 }
 
 
