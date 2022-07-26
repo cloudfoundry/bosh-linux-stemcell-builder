@@ -1,21 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-jammy.tgz">
-    <hash type="sha-512">99cfa3704796804d2f26e930dcbbd9d41bd0c563e5f79c91cf7fa9602c7c9312e75ccaba70c84b3159e43b8437fec3484ee535a2045b935f8d0079a66df66789</hash>
-    <hash type="sha-256">a647474a1e3cc47e9f5f0afb9fbf925d62be39764fee9e527af29479d93fd810</hash>
-    <hash type="sha-1">062135121f250c0adc490b80460158a699c0ad87</hash>
-    <hash type="md5">9d02ba40b42a986ac2315da642b82e80</hash>
-    <size>951767277</size>
+    <hash type="sha-512">d332f30cb31dfb4c9ed926284d97daa3f671f2974df9ed088fe5806068a27daf49a52b74f1d5a367f25d1f8932be8978bae12d9eb32b04e721b1cf8ed84d3541</hash>
+    <hash type="sha-256">ed69503cf9cf3fc220c0eb352cc93de059615cd615e1322d412f312bdf53463f</hash>
+    <hash type="sha-1">b735f94910358b4bf9703447fa3c2313dd196fc5</hash>
+    <hash type="md5">fac76e97cf6653b720ac76af66cb24b2</hash>
+    <size>951778728</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/1.x/ubuntu-jammy.tgz</url>
     <version>1.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
-    <hash type="sha-256">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</hash>
-    <hash type="sha-1">da39a3ee5e6b4b0d3255bfef95601890afd80709</hash>
-    <hash type="md5">d41d8cd98f00b204e9800998ecf8427e</hash>
+    <hash type="sha-512">a57d7a83150f78d7f2a2157e93d1d1dd85dcc663ea7fab83dce153a8c0bf080e89c29da78c0822879d11b2898f125e595db9305f37008c56e19221b1b7fe01bf</hash>
+    <hash type="sha-256">e5d6869d14835689875eb42971e43c93113d9629f9c14d2568514b533458f8d7</hash>
+    <hash type="sha-1">d566acc496f630317649e5b2a0491969ff434e90</hash>
+    <hash type="md5">eb2e4b0025deaf96e16ee6df260d209d</hash>
+    <size>4027</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/1.x/usn-log.json</url>
     <version>1.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2022-07-26T08:44:31.434248309Z</published>
+  <published>2022-07-26T08:46:50.505468844Z</published>
 </metalink>
