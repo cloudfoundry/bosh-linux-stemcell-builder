@@ -181,7 +181,6 @@ module Bosh::Stemcell
         :system_azure_wala,
         :system_parameters,
         :enable_udf_module,
-        :bosh_azure_chrony,
         :esm_disable,
         :bosh_clean,
         :bosh_harden,
