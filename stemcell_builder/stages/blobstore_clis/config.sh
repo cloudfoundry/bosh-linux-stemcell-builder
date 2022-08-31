@@ -5,7 +5,7 @@ base_dir=$(readlink -nf "$(dirname "${0}")/../..")
 source "${base_dir}/lib/prelude_config.bash"
 
 # shellcheck disable=SC2154
-downloaded_cli_dir="${assets_dir}/downloaded_clis/"
+downloaded_cli_dir="${assets_dir}/downloaded_clis"
 persist_value downloaded_cli_dir
 
 rm -rf "${downloaded_cli_dir}"
