@@ -23,8 +23,7 @@ module Bosh::Stemcell
     def agent_stages
       %i[
         bosh_go_agent
-        aws_cli
-        google_gcscli
+        blobstore_clis
         logrotate_config
         dev_tools_config
         static_libraries_config
