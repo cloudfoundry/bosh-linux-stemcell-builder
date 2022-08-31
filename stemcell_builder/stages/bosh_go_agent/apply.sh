@@ -38,16 +38,6 @@ mv bosh-agent $chroot/var/vcap/bosh/bin/
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
 
-# Download CLI source or release from github into assets directory
-cd $assets_dir
-rm -rf davcli
-mkdir davcli
-current_version=0.0.48
-curl -L -o davcli/davcli https://s3.amazonaws.com/davcli/davcli-${current_version}-linux-amd64
-echo "e6ee5a32358cef0ae1118dcad9abc7bbf058a84c2e25c00353a47cf59da77530 davcli/davcli" | sha256sum -c -
-mv davcli/davcli $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
-chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
-
 cat > $chroot/var/vcap/bosh/bin/restart_networking <<EOF
 #!/bin/bash
 systemctl restart systemd-networkd
@@ -56,7 +46,6 @@ chmod +x $chroot/var/vcap/bosh/bin/restart_networking
 
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent
 chmod +x $chroot/var/vcap/bosh/bin/bosh-agent-rc
-chmod +x $chroot/var/vcap/bosh/bin/bosh-blobstore-dav
 
 # Setup additional permissions
 run_in_chroot $chroot "
