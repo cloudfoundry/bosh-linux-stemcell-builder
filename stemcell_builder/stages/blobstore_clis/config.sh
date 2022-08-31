@@ -4,34 +4,20 @@ set -e
 base_dir=$(readlink -nf "$(dirname "${0}")/../..")
 source "${base_dir}/lib/prelude_config.bash"
 
-# DAV CLI
-dav_cli_binary=bosh-blobstore-dav
-dav_cli_version=$(cat "${assets_dir}/${dav_cli_binary}.version")
-dav_cli_sha256sum=$(cat "${assets_dir}/${dav_cli_binary}.sha256sum")
-dav_cli_url=https://s3.amazonaws.com/davcli/davcli-${dav_cli_version}-linux-amd64
+# shellcheck disable=SC2154
+downloaded_cli_dir="${assets_dir}/downloaded_clis/"
+persist_value downloaded_cli_dir
 
-rm -rf "${assets_dir:?}/${dav_cli_binary}"
-curl_five_times "${assets_dir}/${dav_cli_binary}" "${dav_cli_url}"
-echo "${dav_cli_sha256sum} ${assets_dir}/${dav_cli_binary}" | sha256sum -c -
+rm -rf "${downloaded_cli_dir}"
+mkdir -p "${downloaded_cli_dir}"
 
+blobstore_clis=(bosh-blobstore-dav bosh-blobstore-gcs bosh-blobstore-s3)
 
-# GCS CLI
-gcs_cli_binary=bosh-blobstore-gcs
-gcs_cli_version=$(cat "${assets_dir}/${gcs_cli_binary}.version")
-gcs_cli_sha256sum=$(cat "${assets_dir}/${gcs_cli_binary}.sha256sum")
-gcs_cli_url=https://s3.amazonaws.com/bosh-gcscli/bosh-gcscli-${gcs_cli_version}-linux-amd64
+for cli_binary in "${blobstore_clis[@]}"; do
+  # shellcheck disable=SC2154
+  cli_url=$(cat "${assets_dir}/${cli_binary}.url")
+  cli_sha256sum=$(cat "${assets_dir}/${cli_binary}.sha256sum")
 
-rm -rf "${assets_dir:?}/${gcs_cli_binary}"
-curl_five_times "${assets_dir}/${gcs_cli_binary}" "${gcs_cli_url}"
-echo "${gcs_cli_sha256sum} ${assets_dir}/${gcs_cli_binary}" | sha256sum -c -
-
-
-# S3 CLI
-s3_cli_binary=bosh-blobstore-s3
-s3_cli_version=$(cat "${assets_dir}/${s3_cli_binary}.version")
-s3_cli_sha256sum=$(cat "${assets_dir}/${s3_cli_binary}.sha256sum")
-s3_cli_url=https://s3.amazonaws.com/s3cli-artifacts/s3cli-${s3_cli_version}-linux-amd64
-
-rm -rf "${assets_dir:?}/${s3_cli_binary}"
-curl_five_times "${assets_dir}/${s3_cli_binary}" "${s3_cli_url}"
-echo "${s3_cli_sha256sum} ${assets_dir}/${s3_cli_binary}" | sha256sum -c -
+  curl_five_times "${downloaded_cli_dir}/${cli_binary}" "${cli_url}"
+  echo "${cli_sha256sum} ${downloaded_cli_dir}/${cli_binary}" | sha256sum -c -
+done
