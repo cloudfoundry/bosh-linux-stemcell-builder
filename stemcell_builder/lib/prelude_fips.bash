@@ -36,6 +36,8 @@ function ua_detach() {
     # cleanup (to not leak the token into an image)
     run_in_chroot ${chroot} "rm -rf /var/lib/ubuntu-advantage/private/*"
     run_in_chroot ${chroot} "rm /var/log/ubuntu-advantage.log"
+    run_in_chroot ${chroot} "rm -f /var/lib/ubuntu-advantage/notices.json"
+    run_in_chroot ${chroot} "rm -f /var/lib/ubuntu-advantage/status.json"
 }
 
 
