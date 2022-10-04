@@ -51,9 +51,9 @@ if [[ "${DISTRIB_CODENAME}" == 'trusty' ]]; then
     rm -f nvme-cli_0.5-1_amd64.deb
   "
 fi
-# TODO: adiscon does not have jammy repo need to wait
-# run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
-# pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
+
+run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
+pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
 pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-relp"
 run_in_chroot $chroot "
   cd /tmp
