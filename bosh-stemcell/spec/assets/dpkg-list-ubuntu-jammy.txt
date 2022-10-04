@@ -175,7 +175,7 @@ libedit2:amd64
 libefiboot1:amd64
 libefivar1:amd64
 libelf1:amd64
-libestr0:amd64
+libestr0
 libexpat1:amd64
 libext2fs2:amd64
 libfastjson4:amd64
@@ -225,6 +225,7 @@ libkrb5support0:amd64
 libldap-2.5-0:amd64
 liblmdb0:amd64
 liblocale-gettext-perl
+liblognorm5
 liblsan0:amd64
 liblz4-1:amd64
 liblzma5:amd64
@@ -426,6 +427,8 @@ rng-tools-debian
 rpcsvc-proto
 rsync
 rsyslog
+rsyslog-mmjsonparse
+rsyslog-mmnormalize
 rsyslog-gnutls
 rsyslog-relp
 runit
