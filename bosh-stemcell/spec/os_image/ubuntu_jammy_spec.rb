@@ -342,13 +342,18 @@ EOF
 
   describe 'rsyslog modifications' do
     describe file('/etc/systemd/system/rsyslog.service') do
-      its(:content) { should include "After=var-log.mount" }
+      its(:content) { should include "ExecStartPre=/usr/local/bin/wait_for_var_log_to_be_mounted" }
 
       it 'only differs by the ExecStartPre directive' do
-        content = subject.content.gsub("After=var-log.mount\n", "")
+        content = subject.content.gsub("ExecStartPre=/usr/local/bin/wait_for_var_log_to_be_mounted\n", "")
         original_service_content = file("/lib/systemd/system/rsyslog.service").content
         expect(content).to eq(original_service_content)
       end
+    end
+
+    describe file('/usr/local/bin/wait_for_var_log_to_be_mounted') do
+      it { should be_file }
+      its(:mode) { should eq(0o755) }
     end
   end
 
