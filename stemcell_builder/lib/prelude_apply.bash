@@ -112,6 +112,7 @@ function esm_enable {
   pkg_mgr install ubuntu-advantage-tools
   run_in_chroot $chroot "ua attach ${ESM_TOKEN} --no-auto-enable"
   run_in_chroot $chroot "ua enable esm-infra"
+  run_in_chroot $chroot "chmod a-x,o-w /tmp/ubuntu-advantage/candidate-version"
 }
 
 function esm_disable {
