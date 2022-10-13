@@ -118,4 +118,5 @@ function esm_enable {
 function esm_disable {
   run_in_chroot $chroot "ua detach --assume-yes"
   pkg_mgr --purge --auto-remove remove ubuntu-advantage-tools
+  run_in_chroot $chroot "rm -f /tmp/ubuntu-advantage/candidate-version"
 }
