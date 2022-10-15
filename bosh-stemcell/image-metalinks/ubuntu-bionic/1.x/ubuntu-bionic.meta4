@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">1f1094bd944641f91eebf36a7bebf763e10fb2a589a382b44b31324d3b4ca255c673cb5353abf9b6b1a1b5de9d7f4e45c7e4ef0e6f52474c7d49eca00fcad1af</hash>
-    <hash type="sha-256">c5a99ade7235c79834ed198a40d042ebe17f497e6e17acbfc397ad1210187556</hash>
-    <hash type="sha-1">f16b73ca6c54e9713488a42cdf9a9e53e94f4dad</hash>
-    <hash type="md5">01255f0d423c15df2ae2cbe405e9d329</hash>
-    <size>285533779</size>
+    <hash type="sha-512">71a156702d53daecf11568ea736a73107dc9075c29f1cf132897cbdfb83339df6740522c6edd4f239e2b96157531d00455d677f34ac9e7f3927067086e487c8b</hash>
+    <hash type="sha-256">4d66c8179f9bff37e46a21d9f3c13ffa2165d8b406076380ade305c1837a5834</hash>
+    <hash type="sha-1">71054c85db3f81ad119919e5e7859f7daf575b0f</hash>
+    <hash type="md5">ccd29f14e5c9d4b208c81aed209f509d</hash>
+    <size>285564714</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/ubuntu-bionic.tgz</url>
-    <version>68.0.0</version>
+    <version>69.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
-    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
-    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
-    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
-    <size>1</size>
+    <hash type="sha-512">d637279048ef7d6780880576af35b48eeb2d534a397177fee4aea13b2cd74d954558b2161400650eceaeb27bbab7c4d7f635b7c6937a8f9f19f126425389e900</hash>
+    <hash type="sha-256">07d4eb79b4b88d4ee996127f456797c77223256fa68a6d7bb3f355073cdf0125</hash>
+    <hash type="sha-1">4e208767f82e31395a3ae5e7dc5dfec021cf5573</hash>
+    <hash type="md5">d5599c2502c4b0fe50007313e2bcde84</hash>
+    <size>12069</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/usn-log.json</url>
-    <version>68.0.0</version>
+    <version>69.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2022-10-12T08:48:34.780812579Z</published>
+  <published>2022-10-15T10:33:27.840049588Z</published>
 </metalink>
