@@ -31,6 +31,7 @@ run_in_bosh_chroot $chroot "
 # Configure /var/log directory
 filenames=( auth.log cloud-init.log daemon.log kern.log syslog cron.log )
 
+# TODO: seems useless as /var/log is mounted later on
 for filename in ${filenames[@]}
 do
   fullpath=/var/log/$filename
@@ -39,19 +40,13 @@ do
   "
 done
 
-# init.d configuration is different for each OS
+# wait for var/log to be mounted
 mkdir -p $chroot/usr/local/bin
 cp -f $assets_dir/wait_for_var_log_to_be_mounted $chroot/usr/local/bin/wait_for_var_log_to_be_mounted
 chmod 755 $chroot/usr/local/bin/wait_for_var_log_to_be_mounted
-grep -q "ExecStart=" $chroot/lib/systemd/system/rsyslog.service || (echo "Unable to find ExecStart key in $chroot/lib/systemd/system/rsyslog.service"; exit 1)
-sed "s@ExecStart=@ExecStartPre=/usr/local/bin/wait_for_var_log_to_be_mounted\nExecStart=@g" $chroot/lib/systemd/system/rsyslog.service > $chroot/etc/systemd/system/rsyslog.service
+mkdir -p $chroot/etc/systemd/system/rsyslog.service.d/
+cp -f $assets_dir/override.conf $chroot/etc/systemd/system/rsyslog.service.d/00-override.conf
 
-## TODO:
-## temporarily remove unit file. this unit file causes to remove /var/log mountpoint that the bosh agents sets. when rsyslog is restarted.
-## which fail in the startup of rsyslog due to the prestart check to check if /var/log is a mountpoint
-## needs further investigation
-# mkdir -p $chroot/etc/systemd/system/var-log.mount.d/
-# cp -f $assets_dir/start_rsyslog_on_mount.conf $chroot/etc/systemd/system/var-log.mount.d/start_rsyslog_on_mount.conf
-mkdir -p $chroot/etc/systemd/system/syslog.socket.d/
-cp -f $assets_dir/rsyslog_to_syslog_service.conf $chroot/etc/systemd/system/syslog.socket.d/rsyslog_to_syslog_service.conf
-run_in_bosh_chroot $chroot "systemctl disable rsyslog.service"
+# set storage to volatile as /var/log is mounted later on and causes journald to stop as it no longer can write to /var/log/journal
+mkdir $chroot/etc/systemd/journald.conf.d/
+cp -f $assets_dir/journal-override.conf $chroot/etc/systemd/journald.conf.d/00-override.conf
