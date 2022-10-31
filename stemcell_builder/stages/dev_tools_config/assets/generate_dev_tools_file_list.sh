@@ -41,7 +41,21 @@ PACKAGES=( \
   gcc-8-base \
   gcc-9-base \
   gcc-10-base \
-  gcc-11-base
+  gcc-11-base \
+  clang \
+  clang-14 \
+  lib32gcc-s1 \
+  lib32stdc++6 \
+  libc6-i386 \
+  libclang-common-14-dev \
+  libclang-cpp14 \
+  libclang1-14 \
+  libgc1 \
+  libllvm14 \
+  libobjc-11-dev \
+  libobjc4 \
+  llvm-14-linker-tools \
+
 )
 
 for package_name in ${PACKAGES[*]} ; do

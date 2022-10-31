@@ -27,6 +27,8 @@ busybox-initramfs
 bzip2
 ca-certificates
 chrony
+clang
+clang-14
 cloud-guest-utils
 cmake
 cmake-data
@@ -114,6 +116,8 @@ keyboard-configuration
 klibc-utils
 kmod
 less
+lib32gcc-s1
+lib32stdc++6
 libacl1:amd64
 libaio1:amd64
 libapparmor1:amd64
@@ -142,6 +146,7 @@ libbz2-dev:amd64
 libc-bin
 libc-dev-bin
 libc6-dev:amd64
+libc6-i386
 libc6:amd64
 libcap-dev:amd64
 libcap-ng0:amd64
@@ -149,9 +154,10 @@ libcap2-bin
 libcap2:amd64
 libcbor0.8:amd64
 libcc1-0:amd64
+libclang-common-14-dev
+libclang-cpp14
+libclang1-14
 libcom-err2:amd64
-libsource-highlight-common
-libsource-highlight4v5
 libcrack2:amd64
 libcrypt-dev:amd64
 libcrypt1:amd64
@@ -186,6 +192,7 @@ libfile-stripnondeterminism-perl
 libfreetype6:amd64
 libfribidi0:amd64
 libfuse3-3:amd64
+libgc1:amd64
 libgcc-11-dev:amd64
 libgcc-s1:amd64
 libgcrypt20-dev
@@ -223,6 +230,7 @@ libkmod2:amd64
 libkrb5-3:amd64
 libkrb5support0:amd64
 libldap-2.5-0:amd64
+libllvm14:amd64
 liblmdb0:amd64
 liblocale-gettext-perl
 liblognorm5
@@ -255,6 +263,8 @@ libnpth0:amd64
 libnsl-dev:amd64
 libnsl2:amd64
 libnss-systemd:amd64
+libobjc-11-dev:amd64
+libobjc4:amd64
 libp11-kit0:amd64
 libpackagekit-glib2-18:amd64
 libpam-cap:amd64
@@ -299,6 +309,8 @@ libsgutils2-2:amd64
 libsigsegv2:amd64
 libslang2:amd64
 libsmartcols1:amd64
+libsource-highlight-common
+libsource-highlight4v5
 libsqlite3-0:amd64
 libss2:amd64
 libssh-4:amd64
@@ -347,6 +359,7 @@ linux-image-generic-hwe-22.04
 linux-libc-dev:amd64
 linux-modules-5.15-generic
 linux-modules-extra-5.15-generic
+llvm-14-linker-tools
 locales
 login
 logrotate
@@ -383,8 +396,8 @@ perl-modules-5.34
 pinentry-curses
 pkexec
 po-debconf
-polkitd
 policykit-1
+polkitd
 procps
 psmisc
 python-apt-common
@@ -427,9 +440,9 @@ rng-tools-debian
 rpcsvc-proto
 rsync
 rsyslog
+rsyslog-gnutls
 rsyslog-mmjsonparse
 rsyslog-mmnormalize
-rsyslog-gnutls
 rsyslog-relp
 runit
 scsitools

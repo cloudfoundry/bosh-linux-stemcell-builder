@@ -375,9 +375,9 @@ messagebus:x:102:105::/nonexistent:/usr/sbin/nologin
 systemd-timesync:x:103:106:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
 syslog:x:104:111::/home/syslog:/usr/sbin/nologin
 _apt:x:105:65534::/nonexistent:/usr/sbin/nologin
-uuidd:x:106:113::/run/uuidd:/usr/sbin/nologin
-tcpdump:x:107:114::/nonexistent:/usr/sbin/nologin
-_chrony:x:108:116:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+_chrony:x:106:112:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+uuidd:x:107:114::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:115::/nonexistent:/usr/sbin/nologin
 runit-log:x:999:999:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
 _runit-log:x:998:998:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
 sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
@@ -411,9 +411,9 @@ messagebus:\*:(\d{5}):0:99999:7:::
 systemd-timesync:\*:(\d{5}):0:99999:7:::
 syslog:\*:(\d{5}):0:99999:7:::
 _apt:\*:(\d{5}):0:99999:7:::
+_chrony:\*:(\d{5}):0:99999:7:::
 uuidd:\*:(\d{5}):0:99999:7:::
 tcpdump:\*:(\d{5}):0:99999:7:::
-_chrony:\*:(\d{5}):0:99999:7:::
 runit-log:!:(\d{5})::::::
 _runit-log:!:(\d{5})::::::
 sshd:\*:(\d{5}):0:99999:7:::
@@ -475,11 +475,11 @@ sgx:x:108:
 kvm:x:109:
 render:x:110:
 syslog:x:111:
-netdev:x:112:
-uuidd:x:113:
-tcpdump:x:114:
-_ssh:x:115:
-_chrony:x:116:
+_chrony:x:112:
+netdev:x:113:
+uuidd:x:114:
+tcpdump:x:115:
+_ssh:x:116:
 runit-log:x:999:
 _runit-log:x:998:
 admin:x:997:vcap
@@ -541,11 +541,11 @@ sgx:!::
 kvm:!::
 render:!::
 syslog:!::
+_chrony:!::
 netdev:!::
 uuidd:!::
 tcpdump:!::
 _ssh:!::
-_chrony:!::
 runit-log:!::
 _runit-log:!::
 admin:!::vcap
