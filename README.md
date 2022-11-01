@@ -34,8 +34,8 @@ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$P
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
-and place it in the `ci/docker` directory. See [External
-Assets](#external-assets) for download instructions.
+and place it in the `ci/docker/os-image-stemcell-builder-jammy/` directory. See
+[External Assets](#external-assets) for download instructions.
 
 ### OS image
 
