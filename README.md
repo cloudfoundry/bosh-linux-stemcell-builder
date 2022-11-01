@@ -212,7 +212,7 @@ If you find yourself debugging any of the above processes, here is what you need
 ## External Assets
 
 The ovftool installer from VMWare can be found at
-[my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL410&productId=489).
+[customerconnect.vmware.com](https://customerconnect.vmware.com/downloads/get-download?downloadGroup=OVFTOOL443).
 
 The ovftool installer must be copied into the [ci/docker/os-image-stemcell-builder-jammy](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile or you will receive the error
 
