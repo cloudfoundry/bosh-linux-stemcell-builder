@@ -1,12 +1,12 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">5e4319682f7ce43196ea6ed83ab3d927fe93397dcc2922971d5e554aa39d3083444a1b59f4544771eaabfbbf6e5f146289b4ca7a6ba06d7c6d835731715fda34</hash>
-    <hash type="sha-256">62652a30e218a5091d5a888153578e777455805450259c54020d1992097c7640</hash>
-    <hash type="sha-1">7fdcfd3e44167326b23af6af97ea798e1196a324</hash>
-    <hash type="md5">4502d973ca6a37748f739c4df4bad825</hash>
-    <size>285635953</size>
+    <hash type="sha-512">9038f328aebde42504fbe6abbbd40285f48d8e2ebd23a36421934a377066473a5d72c5e4a73d8c78a18f8978498d880b7ec3744371903490465f42d3a147fe8f</hash>
+    <hash type="sha-256">fa8da9ded72027bfc74dfe307b21ff1e43a0537457188274892a4de4fb59f70f</hash>
+    <hash type="sha-1">aa7b5ce1d9691b9d6bda96460e756c7af1838da6</hash>
+    <hash type="md5">cc87f9da0c45aa59559e836de26ebb27</hash>
+    <size>285735146</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/ubuntu-bionic.tgz</url>
-    <version>141.0.0</version>
+    <version>142.0.0</version>
   </file>
   <file name="usn-log.json">
     <hash type="sha-512">0bab3260cbd1fa023fc486e20627e484a2f5b7dcadf7b099a4063536baeccb4001c5c96b72fb1615ba745a14863b8e032182c5e14af6deeb16d4e8353fda333d</hash>
@@ -15,8 +15,8 @@
     <hash type="md5">39bfcf1608ebcd90176f104edb221548</hash>
     <size>370712</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/master/usn-log.json</url>
-    <version>141.0.0</version>
+    <version>142.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2022-11-02T10:49:15.446809031Z</published>
+  <published>2022-11-02T12:47:49.934921094Z</published>
 </metalink>
