@@ -157,7 +157,7 @@ shared_examples_for 'every OS image' do
 
     describe file('/etc/rsyslog.conf') do
       it { should be_file }
-      its(:content) { should match '\$ModLoad omrelp' }
+      its(:content) { should match /^module\( load="omrelp" tls.tlslib="openssl" \)$/ }
       its(:content) { should match '\$FileGroup syslog' } # stig: V-38519
       its(:content) { should match '\$FileOwner syslog' } # stig: V-38518
       its(:content) { should match '\$FileCreateMode 0600' } # stig: V-38623

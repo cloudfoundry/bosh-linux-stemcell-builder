@@ -53,7 +53,7 @@ if [[ "${DISTRIB_CODENAME}" == 'trusty' ]]; then
 fi
 
 run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
-pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
+pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
 run_in_chroot $chroot "
   cd /tmp
 
