@@ -9,4 +9,6 @@ then
 else
     iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
 	     -m cgroup \! --cgroup "${monit_isolation_classid}" -j DROP
+    iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+	     -m state --state ESTABLISHED,RELATED -j ACCEPT
 fi
