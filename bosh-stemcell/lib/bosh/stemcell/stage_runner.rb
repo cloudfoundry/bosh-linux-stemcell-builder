@@ -55,7 +55,7 @@ module Bosh::Stemcell
         stage_config_script = File.join(build_path, 'stages', stage.to_s, 'config.sh')
 
         @report.measure_configure(stage) do
-          if File.exists?(stage_config_script) && File.executable?(stage_config_script)
+          if File.exist?(stage_config_script) && File.executable?(stage_config_script)
             run_sudo_with_command_env("#{stage_config_script} #{settings_file}")
           end
         end
