@@ -107,7 +107,7 @@ module Bosh::Stemcell
 
         subject.prepare_build
 
-        expect(Dir.exists?(build_path)).to be(true)
+        expect(Dir.exist?(build_path)).to be(true)
         expect(File.read(settings_file)).to match(/some=var/)
         expect(File.read(settings_file)).to match(/hello=world/)
       end
@@ -132,13 +132,13 @@ module Bosh::Stemcell
       it 'creates the work root' do
         expect {
           subject.prepare_build
-        }.to change { Dir.exists?(work_root) }.from(false).to(true)
+        }.to change { Dir.exist?(work_root) }.from(false).to(true)
       end
 
       it 'creates the stemcell path' do
         expect {
           subject.prepare_build
-        }.to change { Dir.exists?(File.join(root_dir, 'work/work/stemcell')) }.from(false).to(true)
+        }.to change { Dir.exist?(File.join(root_dir, 'work/work/stemcell')) }.from(false).to(true)
       end
 
       context 'when resume_from is set' do
@@ -157,7 +157,7 @@ module Bosh::Stemcell
 
           subject.prepare_build
 
-          expect(Dir.exists?(build_path)).to be(true)
+          expect(Dir.exist?(build_path)).to be(true)
         end
 
         it 'does not run prepare_build_path' do
@@ -165,7 +165,7 @@ module Bosh::Stemcell
           FileUtils.touch(leftover_file)
 
           subject.prepare_build
-          expect(File.exists?(leftover_file)).to be(true)
+          expect(File.exist?(leftover_file)).to be(true)
         end
 
         it 'still updates the settings file' do
