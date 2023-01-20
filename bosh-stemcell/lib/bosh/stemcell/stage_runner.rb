@@ -24,7 +24,7 @@ module Bosh::Stemcell
 
         puts "=== Configuring '#{stage}' stage ==="
         puts "== Started #{Time.now.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
-        if File.exists?(stage_config_script) && File.executable?(stage_config_script)
+        if File.exist?(stage_config_script) && File.executable?(stage_config_script)
           run_sudo_with_command_env("#{stage_config_script} #{settings_file}")
         end
       end
