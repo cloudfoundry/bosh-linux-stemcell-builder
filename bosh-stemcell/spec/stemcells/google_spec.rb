@@ -52,7 +52,6 @@ describe 'Google Stemcell', stemcell_image: true do
       '/usr/bin/google_guest_agent',
       '/usr/bin/google_metadata_script_runner',
       '/usr/bin/google_optimize_local_ssd',
-      '/usr/bin/google_oslogin_control',
       '/usr/bin/google_oslogin_nss_cache',
       '/usr/bin/google_set_hostname',
       '/usr/bin/google_set_multiqueue'
