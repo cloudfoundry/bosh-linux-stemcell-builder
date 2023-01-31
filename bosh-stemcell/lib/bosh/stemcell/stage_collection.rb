@@ -211,6 +211,7 @@ module Bosh::Stemcell
     def finish_stemcell_stages
       [
         :bosh_clean_ssh,
+        :create_sbom,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
