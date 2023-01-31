@@ -166,6 +166,7 @@ module Bosh::Stemcell
             :bosh_aws_agent_settings,
             :udev_aws_rules,
             :bosh_clean_ssh,
+            :create_sbom,
             :image_create,
             :image_install_grub,
             :bosh_package_list,
@@ -212,6 +213,7 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_alicloud_agent_settings,
             :bosh_clean_ssh,
+            :create_sbom,
             :image_create,
             :image_install_grub,
             :bosh_package_list,
@@ -259,6 +261,7 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_google_agent_settings,
             :bosh_clean_ssh,
+            :create_sbom,
             :image_create,
             :image_install_grub,
             :bosh_package_list
@@ -308,6 +311,7 @@ module Bosh::Stemcell
                 :bosh_harden,
                 :bosh_openstack_agent_settings,
                 :bosh_clean_ssh,
+                :create_sbom,
                 :image_create,
                 :image_install_grub,
                 :bosh_package_list
@@ -337,6 +341,7 @@ module Bosh::Stemcell
                 :bosh_harden,
                 :bosh_openstack_agent_settings,
                 :bosh_clean_ssh,
+                :create_sbom,
                 :image_create,
                 :image_install_grub,
                 :bosh_package_list
@@ -371,6 +376,7 @@ module Bosh::Stemcell
                 :bosh_enable_password_authentication,
                 :bosh_vsphere_agent_settings,
                 :bosh_clean_ssh,
+                :create_sbom,
                 :image_create,
                 :image_install_grub,
                 :bosh_package_list
@@ -397,6 +403,7 @@ module Bosh::Stemcell
                 :bosh_enable_password_authentication,
                 :bosh_vsphere_agent_settings,
                 :bosh_clean_ssh,
+                :create_sbom,
                 :image_create,
                 :image_install_grub,
                 :bosh_package_list
@@ -427,6 +434,7 @@ module Bosh::Stemcell
                 :bosh_enable_password_authentication,
                 :bosh_vsphere_agent_settings,
                 :bosh_clean_ssh,
+                :create_sbom,
                 :image_create,
                 :image_install_grub,
                 :bosh_package_list,
@@ -453,6 +461,7 @@ module Bosh::Stemcell
                 :bosh_enable_password_authentication,
                 :bosh_vsphere_agent_settings,
                 :bosh_clean_ssh,
+                :create_sbom,
                 :image_create,
                 :image_install_grub,
                 :bosh_package_list,
@@ -478,6 +487,7 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_azure_agent_settings,
             :bosh_clean_ssh,
+            :create_sbom,
             :image_create,
             :image_install_grub,
             :bosh_package_list
@@ -530,6 +540,7 @@ module Bosh::Stemcell
                 :bosh_softlayer_agent_settings,
                 :bosh_config_root_ssh_login,
                 :bosh_clean_ssh,
+                :create_sbom,
                 :image_create,
                 :image_install_grub,
                 :bosh_package_list
@@ -552,6 +563,7 @@ module Bosh::Stemcell
             :bosh_clean,
             :bosh_harden,
             :bosh_clean_ssh,
+            :create_sbom,
             :image_create,
             :image_install_grub,
             :bosh_package_list
