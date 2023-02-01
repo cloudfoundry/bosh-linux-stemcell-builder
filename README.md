@@ -16,7 +16,7 @@ trying to run the commands in **Build Steps**.
 **If you have docker installed**,
 
     host$ cd ci/docker
-    host$ ./run os-image-stemcell-builder
+    host$ ./run os-image-stemcell-builder-bionic
 
 **If you are not running on Linux or you do not have Docker installed**, use
 `vagrant` to start a new VM which has Docker, and then change back into the
@@ -28,7 +28,7 @@ trying to run the commands in **Build Steps**.
 Once you have Docker running, run `./run`...
 
     vagrant$ cd /opt/bosh/ci/docker
-    vagrant$ ./run os-image-stemcell-builder
+    vagrant$ ./run os-image-stemcell-builder-bionic
     container$ whoami
     ubuntu
 
