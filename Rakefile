@@ -151,6 +151,8 @@ namespace :stemcell do
         stemcell_tarball = packager.package(disk_format)
         cp(stemcell_tarball, 'tmp')
       end
+      sbom_file = File.join(environment.work_path, 'sbom.json')
+      cp(sbom_file, 'tmp')
 
       sh(environment.stemcell_rspec_command)
     rescue RuntimeError => e
