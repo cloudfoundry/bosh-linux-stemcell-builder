@@ -74,7 +74,7 @@ module Bosh
         stemcell_name = ArchiveFilename.new(version, definition, 'bosh-stemcell', disk_format).to_s
         tarball_name = File.join(tarball_path, stemcell_name)
 
-        expected = ['stemcell.MF', 'packages.txt', 'dev_tools_file_list.txt', 'image', 'sbom.json']
+        expected = ['stemcell.MF', 'packages.txt', 'dev_tools_file_list.txt', 'image']
         Dir.chdir(stemcell_build_path) do
           stdout, stderr, status = Open3.capture3('ls')
           raise stderr unless status.success?
