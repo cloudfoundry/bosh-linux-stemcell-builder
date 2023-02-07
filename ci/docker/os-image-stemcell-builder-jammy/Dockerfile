@@ -56,7 +56,10 @@ RUN groupadd -o -g ${GROUP_ID} ubuntu                  \
   && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
   && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 
-# we install a local ruby (3.1) because Jammy is lagging at 2.7
+# we install a local ruby (3.x) because Jammy is lagging at 2.7
+ENV RUBY_SHA256="d2f4577306e6dd932259693233141e5c3ec13622c95b75996541b8d5b68b28b4"
+ENV RUBY_VERSION="3.2.0"
+
 RUN \
   wget -O ruby-install-0.8.3.tar.gz https://github.com/postmodern/ruby-install/archive/v0.8.3.tar.gz \
   && tar -xzvf ruby-install-0.8.3.tar.gz \
@@ -64,7 +67,7 @@ RUN \
   && make install \
   && cd .. \
   && rm -r ruby-install* \
-  && ruby-install 3.1.0
+  && ruby-install $RUBY_VERSION --cleanup --sha256 $RUBY_SHA256 -- --disable-install-rdoc
 
 # we install chruby to allow us to run `bundle` as a non-root user
 RUN \
@@ -74,7 +77,7 @@ RUN \
   && make install \
   && cd .. \
   && rm -r chruby-0.3.9* \
-  && echo 'source /usr/local/share/chruby/chruby.sh; chruby 3.1.0' > ~ubuntu/.bashrc
+  && echo 'source /usr/local/share/chruby/chruby.sh; chruby $RUBY_VERSION ' > ~ubuntu/.bashrc
 
 RUN \
   mkdir -p /mnt/tmp \
