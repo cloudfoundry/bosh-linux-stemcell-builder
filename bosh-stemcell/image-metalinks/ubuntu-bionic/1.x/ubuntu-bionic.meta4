@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-bionic.tgz">
-    <hash type="sha-512">fc28347d20f731bcc48a1747f550eab39227f8a7d9de1b3430d50a5d0cc373bcdb3ad10347c1fae04db2ba1fcfed4e0df5068802d09e876ff2f46652e8d33645</hash>
-    <hash type="sha-256">a7280d4d80211db0d07df32df3ffc112d041e621292f21a1d75c0c344ace7c5d</hash>
-    <hash type="sha-1">c58680db0a28aa6b56e9911029e967fb31ae5954</hash>
-    <hash type="md5">8f96f76ab804a430f6dc1fd9a9d621d7</hash>
-    <size>285924672</size>
+    <hash type="sha-512">a99118eec0e8646865d20c8c230b7f765a1bef0474e54c19d9d75d78a9ba57e6c2142afd8d78478d9fff11c9b2e98cc16ddb755485d12e1db8c089ea585f3995</hash>
+    <hash type="sha-256">c3d4a3eda0411af656b75b406259eeaaa1a40db2fe5c933043c5b5c9b8f70fcb</hash>
+    <hash type="sha-1">a0a618b486bc197e40c03724f867c330f8239920</hash>
+    <hash type="md5">fff47adf246ebcae697a9bfaccae5c93</hash>
+    <size>285981972</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/ubuntu-bionic.tgz</url>
-    <version>104.0.0</version>
+    <version>105.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">87113d708607bb0aac9ce7cbdbc6360f13c63f7872c834adcc3bd8af6e45685f35a95da1fa977ba6d75ddc70546a7a00a4ecd814debde5a832b8ad899e402f4f</hash>
-    <hash type="sha-256">59fc0da6066c020b59edfc95640b4550b80f57b70596ec186c427db673c02805</hash>
-    <hash type="sha-1">e4e8f26c23bbdaf1d3acfc7206d58c654de60d7a</hash>
-    <hash type="md5">923765de146cd3f3aaad9ab13486faac</hash>
-    <size>15732</size>
+    <hash type="sha-512">1a4c74d876e74ac4663d8e41796b59cb596cad1b33587e0fe4d28d43cacc8b89c2688cb1fda70ba50238a5a82506109db385dc5d12ef57f55fe45bda262802f9</hash>
+    <hash type="sha-256">9e52127a57c15200b0314e597362b7580b2b5a07f062a5e13c1670f2d839f365</hash>
+    <hash type="sha-1">75433471a2babb400d6d24e7e8a55562f0fef216</hash>
+    <hash type="md5">a3d1d2d3eb4cc6b1fe303933bdc790cb</hash>
+    <size>26920</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-bionic/1.x/usn-log.json</url>
-    <version>104.0.0</version>
+    <version>105.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2023-01-27T19:31:38.317498712Z</published>
+  <published>2023-02-08T19:27:09.330908075Z</published>
 </metalink>
