@@ -5,7 +5,7 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-packages="python3 python3-pyasn1 python3-setuptools python-is-python3 cloud-init"
+packages="python3 python3-pyasn1 python3-setuptools python3-distro python-is-python3 cloud-init"
 pkg_mgr install $packages
 
 wala_release=2.6.0.2
