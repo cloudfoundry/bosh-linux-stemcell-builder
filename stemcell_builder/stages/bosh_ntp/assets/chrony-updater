@@ -19,5 +19,5 @@ for ip in $( cat $NTP_SERVER_FILE ); do
   echo "server $ip iburst" >> $CHRONY_TIME_SOURCES_FILE
 done
 
-systemctl restart chrony.service
+chronyc reload sources
 chronyc waitsync 10
