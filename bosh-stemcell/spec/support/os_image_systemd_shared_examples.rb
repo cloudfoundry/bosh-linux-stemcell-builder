@@ -12,6 +12,11 @@ shared_examples_for 'a systemd-based OS image' do
       it { should be_enabled }
     end
 
+    describe file('/etc/systemd/system/chronyd.service.d/prevent_mount_locking.conf') do
+      it { should be_file }
+      its(:content) { should match /^InaccessiblePaths=-\/var\/vcap\/store/ }
+    end
+
     describe file('/etc/systemd/journald.conf.d/00-override.conf') do
       it { should be_file }
       its(:content) { should match /^Storage=volatile/ }
