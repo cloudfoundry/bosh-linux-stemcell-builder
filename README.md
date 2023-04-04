@@ -79,7 +79,7 @@ The arguments to `stemcell:build_with_local_os_image` are:
 0. `infrastructure_name`: Which IaaS you are producing the stemcell for.
    Determines which virtualization tools to package on top of the stemcell.
 0. `hypervisor_name`: Depending on what the IAAS supports, which hypervisor to
-   target: `aws` → `xen`, `azure` → `hyperv`, `google` → `kvm`, `openstack` →
+   target: `aws` → `xen-hvm`, `azure` → `hyperv`, `google` → `kvm`, `openstack` →
    `kvm`, `vsphere` → `esxi`
 0. `operating_system_name` (`ubuntu`): Type of OS. Same as
    `stemcell:build_os_image`
