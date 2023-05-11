@@ -72,7 +72,7 @@ module Bosh::Stemcell
         super(
           name: 'openstack',
           hypervisor: 'kvm',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['qcow2', 'raw'],
           stemcell_formats: ['openstack-qcow2', 'openstack-raw']
         )
@@ -88,7 +88,7 @@ module Bosh::Stemcell
         super(
           name: 'cloudstack',
           hypervisor: 'xen',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['vhdx'],
           stemcell_formats: ['cloudstack-vhdx']
         )
@@ -103,7 +103,7 @@ module Bosh::Stemcell
       def initialize
         super(name: 'vsphere',
           hypervisor: 'esxi',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['ovf'],
           stemcell_formats: ['vsphere-ova', 'vsphere-ovf']
         )
@@ -119,7 +119,7 @@ module Bosh::Stemcell
         super(
           name: 'vcloud',
           hypervisor: 'esxi',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['ovf'],
           stemcell_formats: ['vcloud-ova', 'vcloud-ovf']
         )
@@ -135,7 +135,7 @@ module Bosh::Stemcell
         super(
           name: 'aws',
           hypervisor: 'xen',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['raw'],
           stemcell_formats: ['aws-raw']
         )
@@ -151,7 +151,7 @@ module Bosh::Stemcell
         super(
           name: 'alicloud',
           hypervisor: 'kvm',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['raw'],
           stemcell_formats: ['alicloud-raw']
         )
@@ -166,7 +166,7 @@ module Bosh::Stemcell
       def initialize
         super(name: 'google',
         hypervisor: 'kvm',
-        default_disk_size: 5120,
+        default_disk_size: 15120,
         disk_formats: ['rawdisk'],
         stemcell_formats: ['google-rawdisk']
       )
@@ -182,7 +182,7 @@ module Bosh::Stemcell
         super(
           name: 'warden',
           hypervisor: 'boshlite',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['files'],
           stemcell_formats: ['warden-tar']
         )
@@ -198,7 +198,7 @@ module Bosh::Stemcell
         super(
           name: 'azure',
           hypervisor: 'hyperv',
-          default_disk_size: 5120,
+          default_disk_size: 15120,
           disk_formats: ['vhd'],
           stemcell_formats: ['azure-vhd']
         )

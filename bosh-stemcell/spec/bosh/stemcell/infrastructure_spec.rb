@@ -83,7 +83,7 @@ module Bosh::Stemcell
   describe Infrastructure::Aws do
     its(:name)              { should eq('aws') }
     its(:hypervisor)        { should eq('xen') }
-    its(:default_disk_size) { should eq(5120) }
+    its(:default_disk_size) { should eq(15120) }
     its(:disk_formats)      { should eq(['raw']) }
     its(:stemcell_formats)  { should eq(['aws-raw']) }
 
@@ -98,7 +98,7 @@ module Bosh::Stemcell
   describe Infrastructure::Google do
     its(:name)              { should eq('google') }
     its(:hypervisor)        { should eq('kvm') }
-    its(:default_disk_size) { should eq(5120) }
+    its(:default_disk_size) { should eq(15120) }
     its(:disk_formats)      { should eq(['rawdisk']) }
     its(:stemcell_formats)  { should eq(['google-rawdisk']) }
 
@@ -113,7 +113,7 @@ module Bosh::Stemcell
   describe Infrastructure::OpenStack do
     its(:name)              { should eq('openstack') }
     its(:hypervisor)        { should eq('kvm') }
-    its(:default_disk_size) { should eq(5120) }
+    its(:default_disk_size) { should eq(15120) }
     its(:disk_formats)      { should eq(['qcow2', 'raw']) }
     its(:stemcell_formats)  { should eq(['openstack-qcow2', 'openstack-raw']) }
 
@@ -128,7 +128,7 @@ module Bosh::Stemcell
   describe Infrastructure::CloudStack do
     its(:name)              { should eq('cloudstack') }
     its(:hypervisor)        { should eq('xen') }
-    its(:default_disk_size) { should eq(5120) }
+    its(:default_disk_size) { should eq(15120) }
     its(:disk_formats) {should eq(['vhdx'])}
     its(:stemcell_formats)  { should eq(['cloudstack-vhdx']) }
 
@@ -143,7 +143,7 @@ module Bosh::Stemcell
   describe Infrastructure::Vsphere do
     its(:name)              { should eq('vsphere') }
     its(:hypervisor)        { should eq('esxi') }
-    its(:default_disk_size) { should eq(5120) }
+    its(:default_disk_size) { should eq(15120) }
     its(:disk_formats)      { should eq(['ovf']) }
     its(:stemcell_formats)  { should eq(['vsphere-ova', 'vsphere-ovf']) }
 
@@ -158,7 +158,7 @@ module Bosh::Stemcell
   describe Infrastructure::Vcloud do
     its(:name)              { should eq('vcloud') }
     its(:hypervisor)        { should eq('esxi') }
-    its(:default_disk_size) { should eq(5120) }
+    its(:default_disk_size) { should eq(15120) }
     its(:disk_formats)      { should eq(['ovf']) }
     its(:stemcell_formats)  { should eq(['vcloud-ova', 'vcloud-ovf']) }
 
@@ -173,7 +173,7 @@ module Bosh::Stemcell
   describe Infrastructure::Azure do
     its(:name)              { should eq('azure') }
     its(:hypervisor)        { should eq('hyperv') }
-    its(:default_disk_size) { should eq(5120) }
+    its(:default_disk_size) { should eq(15120) }
     its(:disk_formats)      { should eq(['vhd']) }
     its(:stemcell_formats)  { should eq(['azure-vhd']) }
 
