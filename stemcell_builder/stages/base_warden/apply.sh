@@ -22,6 +22,9 @@ chmod +x /etc/sv/{ssh,rsyslog,cron}/run
 ln -s /etc/sv/{ssh,rsyslog,cron} /etc/service/
 "
 
+# Remove systemd setting from rsyslog as warden doesn't use systemd
+sed -i "/^\$SystemLogSocketName /d" /etc/rsyslog.conf
+
 # Pending for disk_quota
 #run_in_chroot $chroot "
 #ln -s /proc/self/mounts /etc/mtab
