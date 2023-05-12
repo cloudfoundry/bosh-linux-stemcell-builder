@@ -24,7 +24,7 @@ ln -s /etc/sv/{ssh,rsyslog,cron} /etc/service/
 
 # Remove systemd setting from rsyslog as warden doesn't use systemd
 run_in_chroot $chroot "
-sed -i "/^\$SystemLogSocketName /d" /etc/rsyslog.conf
+sed -i '/^\$SystemLogSocketName /d' /etc/rsyslog.conf
 "
 
 # Pending for disk_quota
