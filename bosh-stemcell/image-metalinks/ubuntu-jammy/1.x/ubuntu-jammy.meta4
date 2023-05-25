@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-jammy.tgz">
-    <hash type="sha-512">1695b298c68f5fa13ee549328cef2f8756f00f72e0957d9cd66439a0374f344b231d03bd8c9336ddcea64585a86fab0ac2ea0fb13673c41ab5b8d15ad3803428</hash>
-    <hash type="sha-256">fd6efb619e7c9d230dda29ce363d460fbad061c58982b3d3d9b33250c331ea28</hash>
-    <hash type="sha-1">37d68e4cc900cc68f967234770f36a7985c53317</hash>
-    <hash type="md5">ef2a8db2c0afa0584efe43096c3b151f</hash>
-    <size>1152619403</size>
+    <hash type="sha-512">20b292a3ee6bf9dd3cd768341562993d71a8df332dbbd901aa076e913ca5e0ad0a646d22876e7547df86ccaf22f6bf29d00f6a4b8d3057316cfc44658dc0008e</hash>
+    <hash type="sha-256">bd034d89c8619cee536506ed3cf788e16b1ed017422a4c46515f03eec3268d15</hash>
+    <hash type="sha-1">55f347eb9ba39165b5dd5b4da97f08d66b2ce026</hash>
+    <hash type="md5">2cdf27f2e451b6b61f0d6c3f8e28aa46</hash>
+    <size>1152495833</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/1.x/ubuntu-jammy.tgz</url>
-    <version>101.0.0</version>
+    <version>102.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
-    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
-    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
-    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
-    <size>1</size>
+    <hash type="sha-512">f89d7ceccc260fe88ffc85d688134792a53042ae8bd8c3a36e17d2495d8760d9954bceaa7378c423eae802e4d6e6050516d9044c0100eba620c6a5360d846491</hash>
+    <hash type="sha-256">0e0c2ca9200e5d14fc2f72dbd289f56fb90852ef15a5fee41c78dccf176f5c29</hash>
+    <hash type="sha-1">b9a67276929bfa9865d5182b0c64f268e7519d0e</hash>
+    <hash type="md5">c6784d6fa6dd429290b15d69a1867add</hash>
+    <size>6097</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/1.x/usn-log.json</url>
-    <version>101.0.0</version>
+    <version>102.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2023-05-23T01:35:07.392568847Z</published>
+  <published>2023-05-25T01:13:09.574068782Z</published>
 </metalink>
