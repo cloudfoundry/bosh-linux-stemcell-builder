@@ -377,6 +377,7 @@ syslog:x:104:111::/home/syslog:/usr/sbin/nologin
 _apt:x:105:65534::/nonexistent:/usr/sbin/nologin
 _chrony:x:106:112:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
 uuidd:x:107:114::/run/uuidd:/usr/sbin/nologin
+nvidia-persistenced:x:106:112:NVIDIA Persistence Daemon,,,:/nonexistent:/usr/sbin/nologin
 tcpdump:x:108:115::/nonexistent:/usr/sbin/nologin
 runit-log:x:999:999:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
 _runit-log:x:998:998:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
@@ -411,6 +412,7 @@ messagebus:\*:(\d{5}):0:99999:7:::
 systemd-timesync:\*:(\d{5}):0:99999:7:::
 syslog:\*:(\d{5}):0:99999:7:::
 _apt:\*:(\d{5}):0:99999:7:::
+nvidia-persistenced:\*:(\d{5}):0:99999:7:::
 _chrony:\*:(\d{5}):0:99999:7:::
 uuidd:\*:(\d{5}):0:99999:7:::
 tcpdump:\*:(\d{5}):0:99999:7:::
@@ -544,6 +546,7 @@ syslog:!::
 _chrony:!::
 netdev:!::
 uuidd:!::
+nvidia-persistenced:!::
 tcpdump:!::
 _ssh:!::
 runit-log:!::

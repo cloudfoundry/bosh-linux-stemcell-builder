@@ -28,10 +28,15 @@ fi
 if [[ "${DISTRIB_CODENAME}" == 'bionic' || ${DISTRIB_CODENAME} == 'jammy' ]]; then
   debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
+  cp "$(dirname "$0")/assets/cuda-keyring_1.1-1_all.deb" "${chroot}/tmp/cuda-keyring_1.1-1_all.deb"
+
   pkg_mgr purge netplan.io
   run_in_chroot $chroot "
     rm -rf /usr/share/netplan
     rm -rf /etc/netplan
+    dpkg -i /tmp/cuda-keyring_1.1-1_all.deb
+    apt-get update
+    apt-get -y install nvidia-container-toolkit cuda libnvidia-container-tools libcudnn8
   "
 
   cp "$(dirname "$0")/assets/systemd-networkd-resolvconf-update.path" "${chroot}/lib/systemd/system/"

@@ -30,7 +30,7 @@ bundle
  # build OS image
 bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz] # build OS image
  # build vSphere stemcell
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build_with_local_os_image[google,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
@@ -71,7 +71,7 @@ Rebuild the stemcell when you are making and testing BOSH-specific
 changes such as a new BOSH agent.
 
 ```bash
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
+bundle exec rake stemcell:build_with_local_os_image[google,kvm,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"1.211"]
 ```
 
 The arguments to `stemcell:build_with_local_os_image` are:

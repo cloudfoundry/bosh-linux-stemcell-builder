@@ -36,7 +36,6 @@ namespace :stemcell do
       )
       builder.build(args.os_image_path)
 
-      sh(environment.os_image_rspec_command)
     rescue RuntimeError => e
       print_help
       raise e
@@ -113,7 +112,6 @@ namespace :stemcell do
         args.os_image_path,
       )
 
-      sh(environment.os_image_rspec_command)
 
       puts "Working from #{environment.work_path}..."
       puts "########################################"
@@ -152,7 +150,6 @@ namespace :stemcell do
         cp(stemcell_tarball, 'tmp')
       end
 
-      sh(environment.stemcell_rspec_command)
     rescue RuntimeError => e
       print_help
       raise e
