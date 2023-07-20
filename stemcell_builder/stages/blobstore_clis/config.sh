@@ -11,7 +11,7 @@ persist_value downloaded_cli_dir
 rm -rf "${downloaded_cli_dir}"
 mkdir -p "${downloaded_cli_dir}"
 
-blobstore_clis=(bosh-blobstore-dav bosh-blobstore-gcs bosh-blobstore-s3)
+blobstore_clis=(bosh-blobstore-dav bosh-blobstore-gcs bosh-blobstore-s3 bosh-blobstore-az)
 
 for cli_binary in "${blobstore_clis[@]}"; do
   # shellcheck disable=SC2154
