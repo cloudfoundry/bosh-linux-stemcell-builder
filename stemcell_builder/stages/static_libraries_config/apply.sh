@@ -11,7 +11,7 @@ cp -p "${assets_dir}/${DISTRIB_CODENAME}_static_libraries_list.txt" $chroot/var/
 if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
     major_kernel_version="5.4"
 elif [[ "${DISTRIB_CODENAME}" == 'jammy' ]]; then
-    major_kernel_version="5.19"
+    major_kernel_version="6.2"
 else
     major_kernel_version="4.15"
 fi
