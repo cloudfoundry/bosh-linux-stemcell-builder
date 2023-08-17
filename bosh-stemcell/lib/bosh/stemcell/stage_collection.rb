@@ -281,6 +281,7 @@ module Bosh::Stemcell
         bosh_monit
         bosh_ntp
         bosh_sudoers
+        bosh_systemd
       ].flatten
     end
 
