@@ -10,20 +10,13 @@ git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
 git checkout ubuntu-jammy/master
 mkdir -p tmp
-ARCH=$(uname -m)
-[ $ARCH = "arm64" ] && DOCKER_OPTS=("--platform" "linux/x86_64") # macOS ARM + Rancher Desktop
-docker build \
-   --tag os-image-stemcell-builder-jammy \
-   $DOCKER_OPTS \
-   $PWD/ci/docker/os-image-stemcell-builder-jammy
 docker run \
    --privileged \
    -v "$(pwd):/opt/bosh" \
    --workdir /opt/bosh \
    --user=1000:1000 \
    -it \
-   $DOCKER_OPTS \
-   os-image-stemcell-builder-jammy
+   bosh/os-image-stemcell-builder:jammy
 # You're now in the the Docker container
 gem install bundler
 bundle
