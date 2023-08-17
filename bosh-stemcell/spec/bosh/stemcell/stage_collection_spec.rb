@@ -39,6 +39,7 @@ module Bosh::Stemcell
             :bosh_monit,
             :bosh_ntp,
             :bosh_sudoers,
+            :bosh_systemd,
             :password_policies,
             :restrict_su_command,
             :tty_config,
