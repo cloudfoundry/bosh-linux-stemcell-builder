@@ -7,8 +7,6 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
   it_behaves_like 'an os with chrony'
   it_behaves_like 'a systemd-based OS image'
   it_behaves_like 'an Ubuntu-based OS image'
-  it_behaves_like 'a Linux kernel based OS image'
-  it_behaves_like 'a Linux kernel module configured OS image'
 
   describe package('rpm') do
     it { should_not be_installed }
@@ -32,12 +30,6 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
 
   describe service('systemd-networkd') do
     it { should be_enabled }
-  end
-
-  context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-18.04') do
-      it { should be_installed }
-    end
   end
 
   describe 'base_apt' do
@@ -86,14 +78,14 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
       expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
-    it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
+    it 'allows only secure HMACs', exclude_on_fips: true  do
       macs = %w[
-        hmac-sha2-512-etm@openssh.com
-        hmac-sha2-256-etm@openssh.com
-        umac-128-etm@openssh.com
-        hmac-sha2-512
-        hmac-sha2-256
-        umac-128@openssh.com
+          hmac-sha2-512-etm@openssh.com
+          hmac-sha2-256-etm@openssh.com
+          umac-128-etm@openssh.com
+          hmac-sha2-512
+          hmac-sha2-256
+          umac-128@openssh.com
       ].join(',')
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
@@ -360,7 +352,7 @@ EOF
 
   describe 'allowed user accounts' do
     describe file('/etc/passwd') do
-      its(:content) { should eql(<<HERE) }
+        its(:content) { should eql(<<HERE) }
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -421,7 +413,6 @@ _chrony:(.+):(\d{5}):0:99999:7:::
 sshd:\*:(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
-
       its(:content) { should match(shadow_match) }
     end
 

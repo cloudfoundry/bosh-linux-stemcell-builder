@@ -39,3 +39,11 @@ function pkg_exists {
     return 1
   fi
 }
+
+function update_kernel_static_libraries {
+    kernel_suffix=${1}
+    major_kernel_version=${2}
+
+    kernel_version=$(find $chroot/usr/src/ -name "linux-headers-$major_kernel_version.*$kernel_suffix" | grep -o "[0-9].*-[0-9]*$kernel_suffix")
+sed -i "s/__KERNEL_VERSION__/$kernel_version/g" $chroot/var/vcap/bosh/etc/static_libraries_list
+}
