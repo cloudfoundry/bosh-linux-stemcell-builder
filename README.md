@@ -75,9 +75,8 @@ The arguments to `stemcell:build_with_local_os_image` are:
    target: `aws` → `xen-hvm`, `azure` → `hyperv`, `google` → `kvm`, `openstack` →
    `kvm`, `vsphere` → `esxi`
 0. `operating_system_name` (`ubuntu`): Type of OS. Same as
-   `stemcell:build_os_image`
+0. `stemcell:build_os_image`. Can optionally include a variant suffix (`jammy-fips`)
 0. `operating_system_version` (`jammy`): OS release. Same as
-   `stemcell:build_os_image`
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
 0. `build_number` (`0.0.8`): Stemcell version. Pro-tip: take the version number

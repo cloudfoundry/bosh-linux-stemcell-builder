@@ -36,7 +36,7 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
     it { should be_enabled }
   end
 
-  context 'installed by system_kernel' do
+  context 'installed by system_kernel', exclude_on_fips: true do
     describe package('linux-generic-hwe-22.04') do
       it { should be_installed }
     end
@@ -88,7 +88,7 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
       expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
-    it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
+    it 'allows only secure HMACs', exclude_on_fips: true do
       macs = %w[
         hmac-sha2-512-etm@openssh.com
         hmac-sha2-256-etm@openssh.com

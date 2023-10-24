@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe 'Ubuntu 18.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
+  it_behaves_like 'a Linux kernel based OS image'
+  it_behaves_like 'a Linux kernel module configured OS image'
 
   linux_version_regex = 's/linux-(.+)-([0-9]+).([0-9]+).([0-9]+)-([0-9]+)/linux-\1-\2.\3/'
 
@@ -420,6 +422,12 @@ HERE
       describe command('lsof -iTCP:111') do
         its(:exit_status) { should eq(1) }
       end
+    end
+  end
+
+  context 'installed by system_kernel', exclude_on_fips: true  do
+    describe package('linux-generic-hwe-18.04') do
+      it { should be_installed }
     end
   end
 
