@@ -16,9 +16,16 @@ module Bosh::Stemcell
 
     def kernel_stages
       if operating_system.variant == "fips"
-        %I[system_#{infrastructure.name}_fips_kernel base_fips_apt system_kernel_modules]
+        %I[
+          system_#{infrastructure.name}_fips_kernel
+          base_fips_apt
+          system_kernel_modules
+        ].flatten
       else
-        %i[system_kernel system_kernel_modules]
+        %i[
+          system_kernel
+          system_kernel_modules
+        ].flatten
       end
     end
 
