@@ -212,7 +212,8 @@ image
 
         actual_manifest = YAML.load_file(File.join(work_dir, 'stemcell/stemcell.MF'))
 
-        expect(actual_manifest['operating_system']).to eq('ubuntu-bionic-fips')
+        expect(actual_manifest['name']).to eq('bosh-fake_infra-fake_hypervisor-ubuntu-bionic-fips-go_agent-raw')
+        expect(actual_manifest['operating_system']).to eq('ubuntu-bionic')
       end
     end
   end
