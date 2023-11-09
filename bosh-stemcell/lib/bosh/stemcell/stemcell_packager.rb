@@ -44,7 +44,7 @@ module Bosh
           'bosh_protocol' => 1,
           'api_version' => 3,
           'sha1' => image_checksum,
-          'operating_system' => manifest_operating_system,
+          'operating_system' => "#{definition.operating_system.name}-#{definition.operating_system.version}",
           'stemcell_formats' => infrastructure.stemcell_formats,
           'cloud_properties' => manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
         }
@@ -65,14 +65,6 @@ module Bosh
             'os_distro' => definition.operating_system.name,
             'architecture' => architecture,
         }.merge(infrastructure.additional_cloud_properties)
-      end
-
-      def manifest_operating_system
-        # compact because variant can be nill
-        [ definition.operating_system.name,
-          definition.operating_system.version,
-          definition.operating_system.variant,
-        ].compact.join('-')
       end
 
       def create_tarball(disk_format)
