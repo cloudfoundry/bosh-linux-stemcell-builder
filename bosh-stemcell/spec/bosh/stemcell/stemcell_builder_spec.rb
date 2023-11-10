@@ -68,6 +68,7 @@ describe Bosh::Stemcell::StemcellBuilder do
 
   describe '#build' do
     before { allow(packager).to receive(:package) }
+    before { allow(collection).to receive(:kernel_stages).and_return([]) }
 
     it 'prepares the build environment' do
       expect(environment).to receive(:prepare_build)
