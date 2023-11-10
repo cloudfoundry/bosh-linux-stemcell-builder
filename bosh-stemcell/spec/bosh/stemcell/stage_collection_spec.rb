@@ -30,8 +30,6 @@ module Bosh::Stemcell
             :base_file_permission,
             :base_ssh,
             :bosh_sysstat,
-            :system_kernel,
-            :system_kernel_modules,
             :bosh_environment,
             :bosh_sysctl,
             :bosh_limits,

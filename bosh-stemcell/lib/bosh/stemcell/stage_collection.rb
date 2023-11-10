@@ -268,7 +268,6 @@ module Bosh::Stemcell
         :base_file_permission,
         :base_ssh,
         :bosh_sysstat,
-        kernel_stages,
         bosh_steps,
         :password_policies,
         :restrict_su_command,
