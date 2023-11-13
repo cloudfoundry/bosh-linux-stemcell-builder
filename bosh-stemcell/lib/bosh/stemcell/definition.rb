@@ -27,7 +27,6 @@ module Bosh::Stemcell
       ]
       stemcell_name_parts << operating_system.version if operating_system.version
       stemcell_name_parts << operating_system.variant if operating_system.variant
-      stemcell_name_parts << 'go_agent'
       stemcell_name_parts << disk_format unless disk_format == infrastructure.default_disk_format
 
       stemcell_name_parts.join('-')
