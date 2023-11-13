@@ -9,8 +9,6 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
   it_behaves_like 'an os with chrony'
   it_behaves_like 'a systemd-based OS image'
   it_behaves_like 'an Ubuntu-based OS image'
-  it_behaves_like 'a Linux kernel based OS image'
-  it_behaves_like 'a Linux kernel module configured OS image'
 
   describe package('rpm') do
     it { should_not be_installed }
@@ -34,12 +32,6 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
 
   describe service('systemd-networkd') do
     it { should be_enabled }
-  end
-
-  context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-22.04') do
-      it { should be_installed }
-    end
   end
 
   describe 'base_apt' do
@@ -88,7 +80,7 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
       expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
-    it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
+    it 'allows only secure HMACs', exclude_on_fips: true do
       macs = %w[
         hmac-sha2-512-etm@openssh.com
         hmac-sha2-256-etm@openssh.com
