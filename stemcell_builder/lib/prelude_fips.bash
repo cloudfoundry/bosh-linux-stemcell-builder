@@ -32,7 +32,12 @@ function ua_attach() {
 
 
 function ua_detach() {
+    # mock out apt-get to prevent package removal
+    run_in_chroot ${chroot} "mv /usr/bin/apt-get /usr/bin/apt-get.back"
+    run_in_chroot ${chroot} "ln -s /usr/bin/true /usr/bin/apt-get"
     run_in_chroot ${chroot} "ua detach --assume-yes"
+    run_in_chroot ${chroot} "rm /usr/bin/apt-get"
+    run_in_chroot ${chroot} "mv /usr/bin/apt-get.back /usr/bin/apt-get"
     # cleanup (to not leak the token into an image)
     run_in_chroot ${chroot} "rm -rf /var/lib/ubuntu-advantage/private/*"
     run_in_chroot ${chroot} "rm /var/log/ubuntu-advantage.log"
@@ -43,18 +48,6 @@ function ua_enable_fips() {
     run_in_chroot ${chroot} "ua enable --assume-yes fips"
 }
 
-
-function install_and_hold_packages() {
-    local pkgs=$1
-    echo "Installing and holding packages: ${pkgs}"
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ${pkgs}"
-
-    # NOTE:This package hold creates problems for users wanting to install
-    # updates from the FIPS update PPA. However this hold is required
-    # until there is a FIPS meta-package which can ensure higher versioned,
-    # non-FIPS packages are not selected to replace these.
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-mark hold ${pkgs}"
-}
 
 
 function write_fips_cmdline_conf() {

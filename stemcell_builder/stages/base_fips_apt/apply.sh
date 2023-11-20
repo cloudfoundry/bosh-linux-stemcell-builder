@@ -14,7 +14,7 @@ mock_grub_probe
 ua_attach
 ua_enable_fips
 write_fips_cmdline_conf
-install_and_hold_packages "${FIPS_PKGS}"
+pkg_mgr install --allow-downgrades "${FIPS_PKGS}"
 ua_detach
 unmock_grub_probe
 
