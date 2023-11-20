@@ -18,6 +18,6 @@ mock_grub_probe
 write_ua_client_config "aws"
 ua_attach 
 ua_enable_fips 
-install_and_hold_packages "${FIPS_PKGS}"
+pkg_mgr install "${FIPS_PKGS}"
 ua_detach
 unmock_grub_probe
