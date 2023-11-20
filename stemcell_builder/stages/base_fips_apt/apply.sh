@@ -7,6 +7,9 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/etc/settings.bash
 source $base_dir/lib/prelude_fips.bash
 
+mount --bind /sys "$chroot/sys"
+add_on_exit "umount $chroot/sys"
+
 # those packages need to be installed from the FIPS repo and hold
 FIPS_PKGS="openssh-client openssh-server openssl libssl1.1 libssl1.1-hmac libssl-dev fips-initramfs libgcrypt20 libgcrypt20-hmac libgcrypt20-dev fips-initramfs"
 
