@@ -43,12 +43,9 @@ function ua_detach() {
     run_in_chroot ${chroot} "rm /var/log/ubuntu-advantage.log"
 }
 
-
 function ua_enable_fips() {
-    run_in_chroot ${chroot} "ua enable --assume-yes fips"
+    run_in_chroot ${chroot} "ua enable --assume-yes fips-preview"
 }
-
-
 
 function write_fips_cmdline_conf() {
     cat << "EOF" >> "${chroot}/etc/default/grub.d/99-fips.cfg"
