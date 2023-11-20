@@ -19,8 +19,8 @@ else
 fi
 
 if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
-    # kernel_suffix="-${stemcell_infrastructure}-fips" # TODO: uncomment this line when we have fips kernel
-    major_kernel_version="6.2"
+    kernel_suffix="-${stemcell_infrastructure}-fips"
+    major_kernel_version="4.15"
 fi
 
 update_kernel_static_libraries ${kernel_suffix} ${major_kernel_version}
