@@ -21,7 +21,6 @@ pkg_mgr install --allow-downgrades "${FIPS_PKGS}"
 ua_detach
 unmock_grub_probe
 
-# TODO update lines below for Jammy
 # FIPS only allows specific MACs. See "Security Policy" from
 # https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/3632
 sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
