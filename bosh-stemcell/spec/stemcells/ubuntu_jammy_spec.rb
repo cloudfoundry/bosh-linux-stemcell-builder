@@ -440,6 +440,8 @@ HERE
     # TODO: maby we can use awk "dpkg --get-selections | awk '!/linux-(.+)-([0-9]+.+)/&&/linux/{print $1}'"
 
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy.txt')).map(&:chop) }
+    let(:dpkg_list_kernel_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-kernel.txt')).map(&:chop) }
+    let(:dpkg_list_fips_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-fips.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-azure-additions.txt')).map(&:chop) }
@@ -447,6 +449,7 @@ HERE
     let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-softlayer-additions.txt')).map(&:chop) }
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -455,7 +458,22 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages for alicloud, aws, openstack, warden' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu)
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu))
+      end
+    end
+
+    describe command(dpkg_list_packages), {
+      # TODO: how to exclude on normal build?
+      exclude_on_aws: true,
+      exclude_on_azure: true,
+      exclude_on_cloudstack: true,
+      exclude_on_google: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_softlayer: true,
+    } do
+      it 'contains only the base set of packages plus fips specific packages' do
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_fips_ubuntu))
       end
     end
 
