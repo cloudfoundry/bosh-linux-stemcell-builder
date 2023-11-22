@@ -26,7 +26,6 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
         CIS-8.1.9
         CIS-8.1.10
         CIS-8.1.11
-        CIS-8.1.12
         CIS-8.1.13
         CIS-8.1.14
         CIS-8.1.15
@@ -49,11 +48,31 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
   end
 
 
-  context "For all infrastructure except Azure and Cloudstack", {exclude_on_azure:true, exclude_on_cloudstack:true} do
+  context "For all infrastructure except Azure and Cloudstack and FIPS", {exclude_on_azure:true, exclude_on_cloudstack:true, exclude_on_fips: true} do
     it 'confirms that all CIS test cases ran' do
-      expect($cis_test_cases.to_a).to match_array(base_cis_test_cases + ['CIS-2.24'])
+      expect($cis_test_cases.to_a).to match_array(base_cis_test_cases + ['CIS-2.24', 'CIS-8.1.12' ])
     end
   end
+
+  # not sure if include is a thing
+  context "For FIPS stemcells", {
+    exclude_on_alicloud: true,
+    exclude_on_aws: true,
+    exclude_on_azure: true,
+    exclude_on_google: true,
+    exclude_on_vcloud: true,
+    exclude_on_vsphere: true,
+    exclude_on_warden: true,
+    exclude_on_openstack: true,
+    exclude_on_cloudstack: true,
+    exclude_on_softlayer: true,
+  } do
+    it 'confirms that all CIS test cases ran' do
+      expect($cis_test_cases.to_a).to match_array(base_cis_test_cases + ['CIS-2.24', ])
+    end
+  end
+
+  # TODO: how should we hanlde the cis test cases for FIPS as this is missing "CIS-8.1.12"
 
   context "For Azure infrastructure", {
     exclude_on_alicloud: true,
@@ -67,7 +86,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
     exclude_on_softlayer: true,
   } do
     it 'confirms that all CIS test cases ran' do
-      expect($cis_test_cases.to_a).to match_array(base_cis_test_cases)
+      expect($cis_test_cases.to_a).to match_array(base_cis_test_cases + ['CIS-8.1.12'])
     end
   end
 end

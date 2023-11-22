@@ -29,12 +29,10 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       it { should be_file }
       its(:content) { should match 'set default="0"' }
       its(:content) { should match(/^set root=\(hd0,0\)$/) }
-      its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
       its(:content) { should match ' selinux=0' }
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
       its(:content) { should match ' console=ttyS0,115200n8' }
       its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
-      its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
 
       it('should set the grub menu password (stig: V-38585)') { expect(subject.content).to match /password_pbkdf2 vcap/ }
       it('should be of mode 600 (stig: V-38583)') { expect(subject).to be_mode(0600) }
@@ -42,6 +40,32 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       it('should be grouped into root (stig: V-38581)') { expect(subject.group).to eq('root') }
       it('audits processes that start prior to auditd (CIS-8.1.3)') { expect(subject.content).to match ' audit=1' }
     end
+
+    context 'for default kernel', exclude_on_fips: true do
+      describe file('/boot/grub/grub.cfg') do
+        it { should be_file }
+        its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
+        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
+      end
+    end
+
+    context 'for fips kernel', {
+      exclude_on_alicloud: true,
+      exclude_on_aws: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_google: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+    } do
+      describe file('/boot/grub/grub.cfg') do
+        it { should be_file }
+        its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-fips root=UUID=\S* ro } }
+        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
+      end
+    end
+
 
     describe file('/boot/grub/menu.lst') do
       before { skip 'until alicloud/aws/openstack stop clobbering the symlink with "update-grub"' }

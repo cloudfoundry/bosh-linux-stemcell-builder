@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'FIPS Stemcell', os_image: true do
   context 'installed by system_kernel' do
-    describe package('linux-aws-fips') do
+    describe package('ubuntu-fips') do
       it { should be_installed }
     end
     describe package('linux-generic-hwe-22.04') do
