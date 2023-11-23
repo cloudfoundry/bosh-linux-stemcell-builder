@@ -49,24 +49,6 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       end
     end
 
-    context 'for fips kernel', {
-      exclude_on_alicloud: true,
-      exclude_on_aws: true,
-      exclude_on_vcloud: true,
-      exclude_on_vsphere: true,
-      exclude_on_google: true,
-      exclude_on_warden: true,
-      exclude_on_azure: true,
-      exclude_on_openstack: true,
-    } do
-      describe file('/boot/grub/grub.cfg') do
-        it { should be_file }
-        its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-fips root=UUID=\S* ro } }
-        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
-      end
-    end
-
-
     describe file('/boot/grub/menu.lst') do
       before { skip 'until alicloud/aws/openstack stop clobbering the symlink with "update-grub"' }
       it { should be_linked_to('./grub.cfg') }
@@ -465,7 +447,6 @@ HERE
 
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy.txt')).map(&:chop) }
     let(:dpkg_list_kernel_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-kernel.txt')).map(&:chop) }
-    let(:dpkg_list_fips_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-fips.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-azure-additions.txt')).map(&:chop) }
@@ -487,21 +468,7 @@ HERE
     end
 
     describe command(dpkg_list_packages), {
-      # TODO: how to exclude on normal build?
-      exclude_on_aws: true,
-      exclude_on_azure: true,
-      exclude_on_cloudstack: true,
-      exclude_on_google: true,
-      exclude_on_vcloud: true,
-      exclude_on_vsphere: true,
-      exclude_on_softlayer: true,
-    } do
-      it 'contains only the base set of packages plus fips specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_fips_ubuntu))
-      end
-    end
-
-    describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -513,11 +480,12 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus google-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_google_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_google_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -528,11 +496,12 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus vsphere-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_vsphere_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_vsphere_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -544,11 +513,12 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus azure-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_azure_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_azure_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
@@ -559,11 +529,12 @@ HERE
       exclude_on_openstack: true,
     } do
       it 'contains only the base set of packages plus cloudstack-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_cloudstack_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_cloudstack_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -575,7 +546,7 @@ HERE
       exclude_on_openstack: true,
     } do
       it 'contains only the base set of packages plus softlayer-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_softlayer_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_softlayer_ubuntu))
       end
     end
   end
