@@ -1,15 +1,7 @@
 fips-initramfs
-gawk
 kcapi-tools
-ubuntu-fips
-ubuntu-release-upgrader-core
-update-manager-core
-update-notifier-common
-libdbus-glib-1-2:amd64
-libevdev2:amd64
 libgcrypt20-hmac:amd64
 libkcapi1:amd64
-libupower-glib3:amd64
 linux-fips
 linux-fips-headers-5.15
 linux-headers-5.15-fips
@@ -20,10 +12,3 @@ linux-image-hmac-5.15-fips
 linux-modules-5.15-fips
 linux-modules-extra-5.15-fips
 openssl-fips-module-3:amd64
-python3-chardet
-python3-debconf
-python3-debian
-python3-distro-info
-python3-distupgrade
-python3-update-manager
-thermald
