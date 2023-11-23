@@ -14,6 +14,6 @@ add_on_exit "umount $chroot/sys"
 mock_grub_probe
 ua_attach
 ua_enable_fips
-pkg_mgr install linux-fips
+pkg_mgr install fips-initramfs linux-fips
 ua_detach
 unmock_grub_probe

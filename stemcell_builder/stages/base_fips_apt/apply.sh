@@ -11,7 +11,7 @@ source $base_dir/lib/prelude_bosh.bash
 mount --bind /sys "$chroot/sys"
 add_on_exit "umount $chroot/sys"
 
-FIPS_PKGS="openssh-client openssh-server openssl openssl-fips-module-3 libssl3 libssl-dev fips-initramfs libgcrypt20 libgcrypt20-hmac libgcrypt20-dev fips-initramfs"
+FIPS_PKGS="openssh-client openssh-server openssl openssl-fips-module-3 libssl3 libssl-dev libgcrypt20 libgcrypt20-hmac libgcrypt20-dev"
 
 mock_grub_probe
 ua_attach
