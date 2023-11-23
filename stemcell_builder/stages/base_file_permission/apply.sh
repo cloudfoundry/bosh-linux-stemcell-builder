@@ -12,9 +12,4 @@ chown root:root $chroot/etc/gshadow
 chmod 0000 $chroot/etc/shadow
 chown root:root $chroot/etc/shadow
 
-# remove setuid binaries - except su/sudo (sudoedit is hardlinked)
-run_in_bosh_chroot $chroot "
-find / -xdev -perm /ug=s -type f \
-  -not \( -name sudo -o -name su -o -name sudoedit \) \
-  -exec chmod ug-s {} \;
-"
+restrict_binary_setuid
