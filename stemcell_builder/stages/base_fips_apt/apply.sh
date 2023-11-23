@@ -6,6 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/etc/settings.bash
 source $base_dir/lib/prelude_fips.bash
+source $base_dir/lib/prelude_bosh.bash
 
 mount --bind /sys "$chroot/sys"
 add_on_exit "umount $chroot/sys"
@@ -19,6 +20,8 @@ write_fips_cmdline_conf
 pkg_mgr install --allow-downgrades "${FIPS_PKGS}"
 ua_detach
 unmock_grub_probe
+
+restrict_binary_setuid
 
 # FIPS only allows specific MACs. See "Security Policy" from
 # https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/3632
