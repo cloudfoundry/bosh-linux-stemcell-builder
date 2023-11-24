@@ -27,3 +27,5 @@ restrict_binary_setuid
 # https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/3632
 sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config
 echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256' >> $chroot/etc/ssh/sshd_config
+
+sed "/^ *HostKey \/etc\/ssh\/ssh_host_ed25519_key/d" -i $chroot/etc/ssh/sshd_config

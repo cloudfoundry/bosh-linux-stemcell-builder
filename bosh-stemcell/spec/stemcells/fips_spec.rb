@@ -25,6 +25,12 @@ describe 'FIPS Stemcell', os_image: true do
       ].join(',')
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
+
+    it 'enables RSA, ECDSA host keys' do
+      matches = sshd_config.content.scan(/^HostKey.*/)
+
+      expect(matches).to contain_exactly('HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_ecdsa_key')
+    end
   end
 
   context 'installed by image_install_grub for fips kernel' do
