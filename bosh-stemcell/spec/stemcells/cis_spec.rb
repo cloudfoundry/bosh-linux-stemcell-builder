@@ -72,8 +72,6 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
     end
   end
 
-  # TODO: how should we hanlde the cis test cases for FIPS as this is missing "CIS-8.1.12"
-
   context "For Azure infrastructure", {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
