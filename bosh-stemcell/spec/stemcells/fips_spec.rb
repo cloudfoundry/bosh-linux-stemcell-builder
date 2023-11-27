@@ -56,7 +56,6 @@ describe 'FIPS Stemcell', os_image: true do
     let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-softlayer-additions.txt')).map(&:chop) }
 
     describe command(dpkg_list_packages), {
-      exclude_on_fips: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -70,7 +69,6 @@ describe 'FIPS Stemcell', os_image: true do
     end
 
     describe command(dpkg_list_packages), {
-      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -87,7 +85,6 @@ describe 'FIPS Stemcell', os_image: true do
     end
 
     describe command(dpkg_list_packages), {
-      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -103,7 +100,6 @@ describe 'FIPS Stemcell', os_image: true do
     end
 
     describe command(dpkg_list_packages), {
-      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -120,7 +116,6 @@ describe 'FIPS Stemcell', os_image: true do
     end
 
     describe command(dpkg_list_packages), {
-      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
@@ -136,7 +131,6 @@ describe 'FIPS Stemcell', os_image: true do
     end
 
     describe command(dpkg_list_packages), {
-      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
