@@ -29,18 +29,24 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       it { should be_file }
       its(:content) { should match 'set default="0"' }
       its(:content) { should match(/^set root=\(hd0,0\)$/) }
-      its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
       its(:content) { should match ' selinux=0' }
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
       its(:content) { should match ' console=ttyS0,115200n8' }
       its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
-      its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
 
       it('should set the grub menu password (stig: V-38585)') { expect(subject.content).to match /password_pbkdf2 vcap/ }
       it('should be of mode 600 (stig: V-38583)') { expect(subject).to be_mode(0600) }
       it('should be owned by root (stig: V-38579)') { expect(subject).to be_owned_by('root') }
       it('should be grouped into root (stig: V-38581)') { expect(subject.group).to eq('root') }
       it('audits processes that start prior to auditd (CIS-8.1.3)') { expect(subject.content).to match ' audit=1' }
+    end
+
+    context 'for default kernel', exclude_on_fips: true do
+      describe file('/boot/grub/grub.cfg') do
+        it { should be_file }
+        its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
+        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
+      end
     end
 
     describe file('/boot/grub/menu.lst') do
@@ -440,6 +446,7 @@ HERE
     # TODO: maby we can use awk "dpkg --get-selections | awk '!/linux-(.+)-([0-9]+.+)/&&/linux/{print $1}'"
 
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy.txt')).map(&:chop) }
+    let(:dpkg_list_kernel_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-kernel.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-azure-additions.txt')).map(&:chop) }
@@ -447,6 +454,7 @@ HERE
     let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-softlayer-additions.txt')).map(&:chop) }
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -455,11 +463,12 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages for alicloud, aws, openstack, warden' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu)
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -471,11 +480,12 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus google-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_google_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_google_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -486,11 +496,12 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus vsphere-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_vsphere_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_vsphere_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -502,11 +513,12 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus azure-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_azure_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_azure_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
@@ -517,11 +529,12 @@ HERE
       exclude_on_openstack: true,
     } do
       it 'contains only the base set of packages plus cloudstack-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_cloudstack_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_cloudstack_ubuntu))
       end
     end
 
     describe command(dpkg_list_packages), {
+      exclude_on_fips: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -533,7 +546,7 @@ HERE
       exclude_on_openstack: true,
     } do
       it 'contains only the base set of packages plus softlayer-specific packages' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_softlayer_ubuntu))
+        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu, dpkg_list_softlayer_ubuntu))
       end
     end
   end

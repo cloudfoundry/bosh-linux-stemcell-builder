@@ -15,19 +15,18 @@ module Bosh::Stemcell
     end
 
     def kernel_stages
-      # if operating_system.variant == "fips" # TODO: uncomment when fips is ready
-      #   %I[
-      #     system_#{infrastructure.name}_fips_kernel
-      #     base_fips_apt
-      #     system_kernel
-      #     system_kernel_modules
-      #   ].flatten
-      # else
+      if operating_system.variant == "fips"
+        %I[
+          system_fips_kernel
+          base_fips_apt
+          system_kernel_modules
+        ].flatten
+      else
         %i[
           system_kernel
           system_kernel_modules
         ].flatten
-      # end # TODO: uncomment when fips is ready
+      end
     end
 
     def extract_operating_system_stages
