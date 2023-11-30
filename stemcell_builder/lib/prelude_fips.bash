@@ -12,16 +12,6 @@ if [ -z ${UBUNTU_ADVANTAGE_TOKEN} ]; then
     exit 1
 fi
 
-function write_ua_client_config() {
-    local iaas=${1}
-
-    # overwrite the cloud type so the correct kernel gets installed
-    if [ -z "${iaas}" ]; then
-        echo "settings_overrides:" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
-        echo "  cloud_type: ${iaas}" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
-    fi
-}
-
 function ua_attach() {
     echo "Setting up Ubuntu Advantage ..."
 
@@ -32,30 +22,27 @@ function ua_attach() {
 
 
 function ua_detach() {
-    run_in_chroot ${chroot} "ua detach --assume-yes"
+    run_in_chroot_without_apt ${chroot} "ua detach --assume-yes"
+
     # cleanup (to not leak the token into an image)
     run_in_chroot ${chroot} "rm -rf /var/lib/ubuntu-advantage/private/*"
     run_in_chroot ${chroot} "rm /var/log/ubuntu-advantage.log"
 }
 
-
 function ua_enable_fips() {
-    run_in_chroot ${chroot} "ua enable --assume-yes fips"
+    run_in_chroot_without_apt ${chroot} "ua enable --assume-yes fips-preview"
 }
 
+function run_in_chroot_without_apt() {
+    local chroot=${1}
+    local script=${2}
 
-function install_and_hold_packages() {
-    local pkgs=$1
-    echo "Installing and holding packages: ${pkgs}"
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ${pkgs}"
-
-    # NOTE:This package hold creates problems for users wanting to install
-    # updates from the FIPS update PPA. However this hold is required
-    # until there is a FIPS meta-package which can ensure higher versioned,
-    # non-FIPS packages are not selected to replace these.
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-mark hold ${pkgs}"
+    run_in_chroot ${chroot} "mv /usr/bin/apt-get /usr/bin/apt-get.back"
+    run_in_chroot ${chroot} "ln -s /usr/bin/true /usr/bin/apt-get"
+    run_in_chroot ${chroot} "${script}"
+    run_in_chroot ${chroot} "rm /usr/bin/apt-get"
+    run_in_chroot ${chroot} "mv /usr/bin/apt-get.back /usr/bin/apt-get"
 }
-
 
 function write_fips_cmdline_conf() {
     cat << "EOF" >> "${chroot}/etc/default/grub.d/99-fips.cfg"

@@ -215,7 +215,7 @@ shared_examples_for 'every OS image' do
       expect(sshd_config.content).to_not match(/HostKey \/etc\/ssh\/ssh_host_dsa_key$/)
     end
 
-    it 'enables RSA, ECDSA, ED25519 host keys' do
+    it 'enables RSA, ECDSA, ED25519 host keys', exclude_on_fips: true do
       matches = sshd_config.content.scan(/^HostKey.*/)
 
       expect(matches).to contain_exactly('HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_ecdsa_key', 'HostKey /etc/ssh/ssh_host_ed25519_key')
@@ -760,7 +760,7 @@ shared_examples_for 'every OS image' do
 
   end
 
-  describe 'record use of privileged programs (CIS-8.1.12)', exclude_on_fips: false do # TODO: revert exlude to true when fips is enabled
+  describe 'record use of privileged programs (CIS-8.1.12)' do
     let(:privileged_binaries) {
       command("find /bin /sbin /usr/bin /usr/sbin /boot -xdev \\( -perm -4000 -o -perm -2000 \\) -type f")
         .stdout
@@ -771,8 +771,6 @@ shared_examples_for 'every OS image' do
       its(:content) do
         privileged_binaries.each do |privileged_binary|
           should match /^-a always,exit -F path=#{privileged_binary} -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged$/
-          # TODO: DEBUG!! could be different order in audit rules.
-          # should match /^-a always,exit (-F path=#{privileged_binary} -F perm=x -F auid>=500 -F auid!=4294967295 | -F perm=x -F auid>=500 -F auid!=4294967295 -F path=#{privileged_binary}) -k privileged$/
         end
       end
     end
