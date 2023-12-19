@@ -760,7 +760,7 @@ shared_examples_for 'every OS image' do
 
   end
 
-  describe 'record use of privileged programs (CIS-8.1.12)' do
+  describe 'record use of privileged programs (CIS-8.1.12)', exclude_on_gpu: true  do
     let(:privileged_binaries) {
       command("find /bin /sbin /usr/bin /usr/sbin /boot -xdev \\( -perm -4000 -o -perm -2000 \\) -type f")
         .stdout

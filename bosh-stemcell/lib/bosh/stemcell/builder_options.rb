@@ -11,7 +11,6 @@ module Bosh::Stemcell
       @definition = dependencies.fetch(:definition)
 
       @stemcell_version = dependencies.fetch(:version)
-      @image_create_disk_size = dependencies.fetch(:disk_size, infrastructure.default_disk_size)
       @os_image_tgz_path = dependencies.fetch(:os_image_tarball)
     end
 
@@ -30,9 +29,12 @@ module Bosh::Stemcell
       }.merge(environment_variables).merge(ovf_options)
     end
 
+    def image_create_disk_size
+      environment['DISK_SIZE'] || infrastructure.default_disk_size
+    end
+
     attr_reader(
-      :stemcell_version,
-      :image_create_disk_size,
+      :stemcell_version
     )
 
     private

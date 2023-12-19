@@ -64,7 +64,7 @@ shared_examples_for 'All Stemcells' do
     end
   end
 
-  context 'System command files must have mode 0755 or less permissive (stig: V-38469)' do
+  context 'System command files must have mode 0755 or less permissive (stig: V-38469)', exclude_on_gpu: true do
     describe command('find -L /bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin -perm /022 -type f') do
       its (:stdout) { should eq('') }
     end

@@ -21,6 +21,12 @@ module Bosh::Stemcell
           base_fips_apt
           system_kernel_modules
         ].flatten
+      elsif operating_system.variant == "gpu"
+        %i[
+          install_gpu_drivers
+          system_kernel
+          system_kernel_modules
+        ].flatten
       else
         %i[
           system_kernel
@@ -339,6 +345,12 @@ module Bosh::Stemcell
     def files_package_stages
       [
         :prepare_files_image_stemcell,
+      ]
+    end
+
+    def gpu_stages
+      [
+        :install_gpu_drivers,
       ]
     end
   end

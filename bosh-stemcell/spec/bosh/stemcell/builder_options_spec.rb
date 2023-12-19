@@ -106,7 +106,11 @@ module Bosh::Stemcell
           end
 
           context 'when disk_size is passed' do
-            before { dependencies[:disk_size] = 1234 }
+            let(:env) do
+              {
+                'DISK_SIZE' => 1234
+              }
+            end
 
             it 'allows user to override default disk_size' do
               result = stemcell_builder_options.default

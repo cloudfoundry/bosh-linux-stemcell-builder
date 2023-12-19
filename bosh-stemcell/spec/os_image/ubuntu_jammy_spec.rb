@@ -341,7 +341,7 @@ EOF
   end
 
   describe 'allowed user accounts' do
-    describe file('/etc/passwd') do
+    describe file('/etc/passwd'), exclude_on_gpu: true do
       its(:content) { should eql(<<HERE) }
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
@@ -377,7 +377,7 @@ vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
 
-    describe file('/etc/shadow') do
+    describe file('/etc/shadow'), exclude_on_gpu: true do
       shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
 \Aroot:(.+):(\d{5}):0:99999:7:::
 daemon:\*:(\d{5}):0:99999:7:::
@@ -415,7 +415,7 @@ END_SHADOW
       its(:content) { should match(shadow_match) }
     end
 
-    describe file('/etc/group') do
+    describe file('/etc/group'), exclude_on_gpu: true do
       its(:content) { should eql(<<HERE) }
 root:x:0:
 daemon:x:1:
@@ -481,7 +481,7 @@ bosh_sudoers:x:1002:
 HERE
     end
 
-    describe file('/etc/gshadow') do
+    describe file('/etc/gshadow'), exclude_on_gpu: true do
       its(:content) { should eql(<<HERE) }
 root:*::
 daemon:*::

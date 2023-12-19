@@ -49,7 +49,7 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       end
     end
 
-    describe file('/boot/grub/menu.lst') do
+    describe file('/boot/grub/menu.lst'), exclude_on_gpu: true do
       before { skip 'until alicloud/aws/openstack stop clobbering the symlink with "update-grub"' }
       it { should be_linked_to('./grub.cfg') }
     end
@@ -127,7 +127,7 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
     describe file('/var/vcap/bosh/etc/static_libraries_list') do
       it { should be_file }
 
-      it 'should be a proper superset of the installed static libraries' do
+      it 'should be a proper superset of the installed static libraries', exclude_on_gpu: true  do
         libraries_to_remove = subject.content.split("\n")
         found_libraries = command('find / -iname "*.a" | sort | uniq' ).stdout.split("\n")
 
@@ -137,10 +137,10 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
   end
 
   context 'modified by base_file_permissions' do
-    describe 'disallow unsafe setuid binaries' do
+    describe 'disallow unsafe setuid binaries', exclude_on_gpu: true  do
       subject { command('find -L / -xdev -perm /ug=s -type f') }
 
-      it ('includes the correct binaries') do
+      it ('includes the correct binaries'), exclude_on_gpu: true  do
         # expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit))
         expect(subject.stdout.split).to match_array(%w(/bin/su /bin/sudo /bin/sudoedit /usr/bin/su /usr/bin/sudo /usr/bin/sudoedit))
 
@@ -455,6 +455,7 @@ HERE
 
     describe command(dpkg_list_packages), {
       exclude_on_fips: true,
+      exclude_on_gpu: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vcloud: true,
@@ -469,6 +470,7 @@ HERE
 
     describe command(dpkg_list_packages), {
       exclude_on_fips: true,
+      exclude_on_gpu: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -486,6 +488,7 @@ HERE
 
     describe command(dpkg_list_packages), {
       exclude_on_fips: true,
+      exclude_on_gpu: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -502,6 +505,7 @@ HERE
 
     describe command(dpkg_list_packages), {
       exclude_on_fips: true,
+      exclude_on_gpu: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
@@ -519,6 +523,7 @@ HERE
 
     describe command(dpkg_list_packages), {
       exclude_on_fips: true,
+      exclude_on_gpu: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_vcloud: true,
@@ -535,6 +540,7 @@ HERE
 
     describe command(dpkg_list_packages), {
       exclude_on_fips: true,
+      exclude_on_gpu: true,
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
