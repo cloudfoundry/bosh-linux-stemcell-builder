@@ -30,7 +30,7 @@ module Bosh::Stemcell
     end
 
     def image_create_disk_size
-      environment['DISK_SIZE'] || infrastructure.default_disk_size
+      environment['DISK_SIZE'].to_i || infrastructure.default_disk_size
     end
 
     attr_reader(
