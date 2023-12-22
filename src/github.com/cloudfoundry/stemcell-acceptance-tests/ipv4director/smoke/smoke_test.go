@@ -29,7 +29,7 @@ func fillUpFileWithRandomCharacters(filepath string) {
 var _ = Describe("Stemcell", func() {
 	Context("when logrotate wtmp/btmp logs", func() {
 		It("should rotate the wtmp/btmp logs", func() {
-			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `sudo sed -E -i "s/OnUnitActiveSec.*/OnUnitActiveSec=30s/" /etc/systemd/system/logrotate.timer && sudo sed -i "/RandomizedDelaySec/d" /etc/systemd/system/logrotate.timer && sudo systemctl daemon-reload`)
+			stdOut, stdErr, exitStatus, err := bosh.Run("ssh", "default/0", `sudo sed -E -i "s/OnCalendar.*/OnCalendar=*-*-* *:*:30/" /etc/systemd/system/logrotate.timer && sudo sed -i "/RandomizedDelaySec/d" /etc/systemd/system/logrotate.timer && sudo systemctl daemon-reload`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
@@ -43,7 +43,7 @@ var _ = Describe("Stemcell", func() {
 
 	Context("when syslog threshold limit is reached", func() {
 		It("should rotate the logs", func() {
-			_, _, exitStatus, err := bosh.Run("ssh", "default/0", `sudo sed -E -i "s/OnUnitActiveSec.*/OnUnitActiveSec=30s/" /etc/systemd/system/logrotate.timer && sudo sed -i "/RandomizedDelaySec/d" /etc/systemd/system/logrotate.timer && sudo systemctl daemon-reload`)
+			_, _, exitStatus, err := bosh.Run("ssh", "default/0", `sudo sed -E -i "s/OnCalendar.*/OnCalendar=*-*-* *:*:30/" /etc/systemd/system/logrotate.timer && sudo sed -i "/RandomizedDelaySec/d" /etc/systemd/system/logrotate.timer && sudo systemctl daemon-reload`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 
