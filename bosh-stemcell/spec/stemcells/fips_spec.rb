@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe 'FIPS Stemcell', os_image: true do
   context 'installed by system_kernel' do
-    describe package('linux-image-fips') do
+    iaas = ENV['IAAS_KERNEL'] || ''
+    unless iaas.empty?
+      iaas = "#{iaas}-"
+    end
+    describe package("linux-image-#{iaas}fips") do
       it { should be_installed }
     end
     describe package('linux-generic') do
@@ -37,7 +41,11 @@ describe 'FIPS Stemcell', os_image: true do
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-fips root=UUID=\S* ro } }
-      its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
+      if ENV.key?("IAAS_KERNEL")
+        its(:content) { should match %r{initrd\t/boot/microcode.cpio /boot/initrd.img-\S+-fips} }
+      else
+        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
+      end
     end
   end
 
@@ -49,11 +57,31 @@ describe 'FIPS Stemcell', os_image: true do
 
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy.txt')).map(&:chop) }
     let(:dpkg_list_fips_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-fips.txt')).map(&:chop) }
+    let(:dpkg_list_aws_fips_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-aws-fips.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-azure-additions.txt')).map(&:chop) }
     let(:dpkg_list_cloudstack_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-cloudstack-additions.txt')).map(&:chop) }
     let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-softlayer-additions.txt')).map(&:chop) }
+
+    describe command(dpkg_list_packages), {
+      exclude_on_alicloud: true,
+      exclude_on_cloudstack: true,
+      exclude_on_vcloud: true,
+      exclude_on_vsphere: true,
+      exclude_on_warden: true,
+      exclude_on_azure: true,
+      exclude_on_openstack: true,
+      exclude_on_softlayer: true,
+    } do
+      it 'contains only the base set of packages plus aws-specific kernel packages' do
+        skip "Test skipped due to non-aws kernel" if (ENV['IAAS_KERNEL'] != 'aws')
+        pkg_list = dpkg_list_ubuntu.concat(dpkg_list_aws_fips_ubuntu)
+        pkg_list.delete('linux-firmware')
+        pkg_list.delete('wireless-regdb')
+        expect(subject.stdout.split("\n")).to match_array(pkg_list)
+      end
+    end
 
     describe command(dpkg_list_packages), {
       exclude_on_cloudstack: true,
@@ -64,6 +92,7 @@ describe 'FIPS Stemcell', os_image: true do
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages for alicloud, aws, openstack, warden' do
+        skip "Test skipped due to IAAS-specific kernel" if ENV['IAAS_KERNEL']
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_fips_ubuntu))
       end
     end
