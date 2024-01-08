@@ -15,8 +15,8 @@ mock_grub_probe
 ua_attach
 ua_enable_fips
 kernel=linux-fips
-if [ ! -z "$IAAS_KERNEL" ]; then
-    kernel=linux-$IAAS_KERNEL-fips
+if [ ! -z "$UBUNTU_IAAS_KERNEL" ]; then
+    kernel=linux-$UBUNTU_IAAS_KERNEL-fips
 fi
 pkg_mgr install fips-initramfs $kernel
 ua_detach
