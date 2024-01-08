@@ -12,6 +12,13 @@ if [ -z ${UBUNTU_ADVANTAGE_TOKEN} ]; then
     exit 1
 fi
 
+# verify that UBUNTU_IAAS_KERNEL is valid if set
+if [ ! -z ${UBUNTU_IAAS_KERNEL} ] && [ "$UBUNTU_IAAS_KERNEL" != "aws" ]; then
+    echo "'aws' is the only currently-supported IAAS kernel."
+    echo "please unset UBUNTU_IAAS_KERNEL or set it to 'aws'"
+    exit 1
+fi
+
 function write_ua_client_config() {
     local iaas=${1}
 
