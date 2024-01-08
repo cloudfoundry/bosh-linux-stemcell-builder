@@ -15,8 +15,8 @@ FIPS_PKGS="openssh-client openssh-server openssl openssl-fips-module-3 libssl3 l
 
 mock_grub_probe
 ua_attach
-if [ ! -z "$IAAS_KERNEL" ]; then
-    write_ua_client_config "$IAAS_KERNEL"
+if [ ! -z "$UBUNTU_IAAS_KERNEL" ]; then
+    write_ua_client_config "$UBUNTU_IAAS_KERNEL"
 fi
 ua_enable_fips
 write_fips_cmdline_conf

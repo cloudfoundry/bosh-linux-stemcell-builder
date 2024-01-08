@@ -63,7 +63,7 @@ module Bosh::Stemcell
         'UBUNTU_ISO' => environment['UBUNTU_ISO'],
         'UBUNTU_MIRROR' => environment['UBUNTU_MIRROR'],
         'UBUNTU_ADVANTAGE_TOKEN' => environment['UBUNTU_ADVANTAGE_TOKEN'],
-        'IAAS_KERNEL' => environment['IAAS_KERNEL'],
+        'UBUNTU_IAAS_KERNEL' => environment['UBUNTU_IAAS_KERNEL'],
       }
     end
 

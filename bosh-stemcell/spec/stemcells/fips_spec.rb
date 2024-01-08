@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'FIPS Stemcell', os_image: true do
   context 'installed by system_kernel' do
-    iaas = ENV['IAAS_KERNEL'] || ''
+    iaas = ENV['UBUNTU_IAAS_KERNEL'] || ''
     unless iaas.empty?
       iaas = "#{iaas}-"
     end
@@ -41,7 +41,7 @@ describe 'FIPS Stemcell', os_image: true do
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-fips root=UUID=\S* ro } }
-      if ENV.key?("IAAS_KERNEL")
+      if ENV.key?("UBUNTU_IAAS_KERNEL")
         its(:content) { should match %r{initrd\t/boot/microcode.cpio /boot/initrd.img-\S+-fips} }
       else
         its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
@@ -75,7 +75,7 @@ describe 'FIPS Stemcell', os_image: true do
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages plus aws-specific kernel packages' do
-        skip "Test skipped due to non-aws kernel" if (ENV['IAAS_KERNEL'] != 'aws')
+        skip "Test skipped due to non-aws kernel" if (ENV['UBUNTU_IAAS_KERNEL'] != 'aws')
         pkg_list = dpkg_list_ubuntu.concat(dpkg_list_aws_fips_ubuntu)
         pkg_list.delete('linux-firmware')
         pkg_list.delete('wireless-regdb')
@@ -92,7 +92,7 @@ describe 'FIPS Stemcell', os_image: true do
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages for alicloud, aws, openstack, warden' do
-        skip "Test skipped due to IAAS-specific kernel" if ENV['IAAS_KERNEL']
+        skip "Test skipped due to IAAS-specific kernel" if ENV['UBUNTU_IAAS_KERNEL']
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_fips_ubuntu))
       end
     end
