@@ -46,6 +46,11 @@ fi
 
 if ! is_ppc64le; then
   run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
+   cat > "$chroot/etc/apt/preferences.d/LP-PPA-adiscon-v8-stable" <<EOS
+Package: rsyslog*
+Pin: release o=LP-PPA-adiscon-v8-stable
+Pin-Priority: 515
+EOS
   pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-mmjsonparse rsyslog-relp"
 
   run_in_chroot $chroot "
