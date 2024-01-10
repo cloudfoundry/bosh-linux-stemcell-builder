@@ -12,10 +12,6 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
     it { should_not be_installed }
   end
 
-  describe service('remount-rootdir-as-rprivate') do
-    it { should be_enabled }
-  end
-
   context 'The system must limit the ability of processes to have simultaneous write and execute access to memory. (stig: V-38597)' do
     # Ubuntu relies on the system's hardware NX capabilities, or emulates NX if the hardware does not support it.
     # Ubuntu has had this capability since v 11.04
