@@ -41,9 +41,16 @@ function pkg_exists {
 }
 
 function update_kernel_static_libraries {
-    kernel_suffix=${1}
-    major_kernel_version=${2}
+  kernel_suffix=${1}
+  major_kernel_version=${2}
 
-    kernel_version=$(find $chroot/usr/src/ -name "linux-headers-$major_kernel_version.*$kernel_suffix" | grep -o "[0-9].*-[0-9]*$kernel_suffix")
-sed -i "s/__KERNEL_VERSION__/$kernel_version/g" $chroot/var/vcap/bosh/etc/static_libraries_list
+  kernel_version=$(find $chroot/usr/src/ -name "linux-headers-$major_kernel_version.*$kernel_suffix" | grep -o "[0-9].*-[0-9]*$kernel_suffix")
+  sed -i "s/__KERNEL_VERSION__/$kernel_version/g" $chroot/var/vcap/bosh/etc/static_libraries_list
+
+  # since kernel 6.5 the objtool/libsubcmd.a has been moved to objtool/libsubcmd/libsubcmd.a
+  # fips still uses the 5.9 kernel, so we need to rewrite the static_libraries_list file to the old path
+  # TODO: puting a todo tag here as this could probably be removed in the future if the kernel version gets bumped
+  if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
+    sed -i "s|objtool/libsubcmd/libsubcmd.a|objtool/libsubcmd.a|g" $chroot/var/vcap/bosh/etc/static_libraries_list
+  fi
 }
