@@ -7,6 +7,7 @@ module Bosh::Stemcell
   class BuildEnvironment
     extend Forwardable
 
+    BUILD_TIME_MARKER_FILE = File.join(File.expand_path('../../../../..', __FILE__), 'build_time.txt')
     STEMCELL_BUILDER_SOURCE_DIR = File.join(File.expand_path('../../../../..', __FILE__), 'stemcell_builder')
     STEMCELL_SPECS_DIR = File.expand_path('../../..', File.dirname(__FILE__))
 
@@ -98,7 +99,7 @@ module Bosh::Stemcell
     end
 
     def command_env
-      "env #{hash_as_bash_env(proxy_settings_from_environment)}"
+      "env #{hash_as_bash_env(proxy_settings_from_environment.merge(build_time_settings))}"
     end
 
     private
@@ -127,6 +128,15 @@ module Bosh::Stemcell
       shell.run("sudo umount #{image_mount_point} 2> /dev/null", { ignore_failures: true })
 
       shell.run("sudo rm -rf #{base_directory}", { ignore_failures: true })
+    end
+
+    def build_time_settings
+      if File.exist?(BUILD_TIME_MARKER_FILE)
+        return { 'BUILD_TIME' => File.read(BUILD_TIME_MARKER_FILE) }
+      elsif environment['BUILD_TIME']
+        return { 'BUILD_TIME' => environment['BUILD_TIME'] }
+      end
+      {}
     end
 
     def operating_system_spec_name
