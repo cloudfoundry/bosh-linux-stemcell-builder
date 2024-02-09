@@ -20,6 +20,7 @@ docker run \
    -it \
    bosh/os-image-stemcell-builder:noble
 # You're now in the the Docker container
+ulimit -n 16384 # only necessary if your host is Fedora
 gem install bundler
 bundle
  # build OS image
