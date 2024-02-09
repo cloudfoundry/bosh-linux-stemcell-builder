@@ -8,7 +8,7 @@ disk image that is used as a template by a BOSH Director to create VMs.
 ```bash
 git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
-git checkout ubuntu-jammy/master
+git checkout ubuntu-noble/master
 mkdir -p tmp
 docker run \
    --privileged \
@@ -16,18 +16,18 @@ docker run \
    --workdir /opt/bosh \
    --user=1000:1000 \
    -it \
-   bosh/os-image-stemcell-builder:jammy
+   bosh/os-image-stemcell-builder:noble
 # You're now in the the Docker container
 gem install bundler
 bundle
  # build OS image
-bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz] # build OS image
+bundle exec rake stemcell:build_os_image[ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz] # build OS image
  # build vSphere stemcell
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz]
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
-and place it in the `ci/docker/os-image-stemcell-builder-jammy/` directory. See
+and place it in the `ci/docker/os-image-stemcell-builder-noble/` directory. See
 [External Assets](#external-assets) for download instructions.
 
 ### OS image
@@ -43,7 +43,7 @@ installed in the operating system or when making changes to the configuration
 of those packages.
 
 ```bash
-bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build_os_image[ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz]
 ```
 
 The arguments to the `stemcell:build_os_image` rake task follow:
@@ -51,9 +51,9 @@ The arguments to the `stemcell:build_os_image` rake task follow:
 0. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
    Determines which package repository and packaging tool will be used to
    download and assemble the files. Currently, only `ubuntu` is recognized.
-0. *`operating_system_version`* (`jammy`): an identifier that the system may use
+0. *`operating_system_version`* (`noble`): an identifier that the system may use
    to decide which release of the OS to download. Acceptable values depend on
-   the operating system. For `ubuntu`, use `jammy`.
+   the operating system. For `ubuntu`, use `noble`.
 0. *`os_image_path`* (`$PWD/tmp/ubuntu_base_image.tgz`): the path to write the
    finished OS image tarball to. If a file exists at this path already, it will
    be overwritten without warning.
@@ -64,7 +64,7 @@ Rebuild the stemcell when you are making and testing BOSH-specific
 changes such as a new BOSH agent.
 
 ```bash
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
 ```
 
 The arguments to `stemcell:build_with_local_os_image` are:
@@ -75,8 +75,8 @@ The arguments to `stemcell:build_with_local_os_image` are:
    target: `aws` → `xen-hvm`, `azure` → `hyperv`, `google` → `kvm`, `openstack` →
    `kvm`, `vsphere` → `esxi`
 0. `operating_system_name` (`ubuntu`): Type of OS. Same as
-0. `stemcell:build_os_image`. Can optionally include a variant suffix (`jammy-fips`)
-0. `operating_system_version` (`jammy`): OS release. Same as
+0. `stemcell:build_os_image`. Can optionally include a variant suffix (`noble-fips`)
+0. `operating_system_version` (`noble`): OS release. Same as
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
 0. `build_number` (`0.0.8`): Stemcell version. Pro-tip: take the version number
@@ -88,16 +88,16 @@ The arguments to `stemcell:build_with_local_os_image` are:
 You can find the resulting stemcell in the `tmp/` directory of the host, or in
 the `/opt/bosh/tmp` directory in the Docker container. Using the above example,
 the stemcell would be at
-`tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz`. You can
+`tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-noble-go_agent.tgz`. You can
 upload the stemcell to a vSphere BOSH Director:
 
 ```bash
-bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz
+bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-noble-go_agent.tgz
 ```
 
 ## Testing
 
-_[Fixme: update Testing section to Jammy]_
+_[Fixme: update Testing section to noble]_
 
 ### How to run tests for OS Images
 
@@ -108,12 +108,12 @@ the rake task the first time you create your docker container, but everytime
 after, as long as you do not destroy the container, you should be able to run
 the specific tests.
 
-To run the `ubuntu_jammy_spec.rb` tests (**assuming you've already built the OS
+To run the `ubuntu_noble_spec.rb` tests (**assuming you've already built the OS
 image** at the `tmp/ubuntu_base_image.tgz` and you're within the Docker
 container):
 
     cd /opt/bosh/bosh-stemcell
-    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_jammy_spec.rb
+    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_noble_spec.rb
 
 ### How to Run Tests for Stemcell
 
@@ -129,8 +129,8 @@ STEMCELL_IMAGE=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/vsphere-esxi-ubuntu.
 STEMCELL_WORKDIR=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot \
 OS_NAME=ubuntu \
 bundle exec rspec -fd --tag ~exclude_on_vsphere \
-spec/os_image/ubuntu_jammy_spec.rb \
-spec/stemcells/ubuntu_jammy_spec.rb \
+spec/os_image/ubuntu_noble_spec.rb \
+spec/stemcells/ubuntu_noble_spec.rb \
 spec/stemcells/go_agent_spec.rb \
 spec/stemcells/vsphere_spec.rb \
 spec/stemcells/stig_spec.rb \
@@ -186,7 +186,7 @@ If you find yourself debugging any of the above processes, here is what you need
    Example usage:
 
    ```shell
-   bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
+   bundle exec rake stemcell:build_os_image[ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
    ```
 
 ## Pro Tips
@@ -206,7 +206,7 @@ If you find yourself debugging any of the above processes, here is what you need
 The ovftool installer from VMWare can be found at
 [my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL410&productId=489).
 
-The ovftool installer must be copied into the [ci/docker/os-image-stemcell-builder-jammy](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile or you will receive the error
+The ovftool installer must be copied into the [ci/docker/os-image-stemcell-builder-noble](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile or you will receive the error
 
     Step 24/30 : ADD ${OVF_TOOL_INSTALLER} /tmp/ovftool_installer.bundle
     ADD failed: stat /var/lib/docker/tmp/docker-builder389354746/VMware-ovftool-4.1.0-2459827-lin.x86_64.bundle: no such file or directory

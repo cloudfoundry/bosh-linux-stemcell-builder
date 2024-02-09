@@ -1,6 +1,6 @@
 # Creating a new stemcell line
 
-1. Create a new branch from the passing commit you want to release from. Use `{os_name}-{os_version}/{major}.x` format for branch name (e.g. `ubuntu-xenial/1.x`).
+1. Create a new branch from the passing commit you want to release from. Use `{os_name}-{os_version}/{major}.x` format for branch name (e.g. `ubuntu-noble/1.x`).
 
     `git checkout -b <<BRANCH_NAME>> {commit}`
 
