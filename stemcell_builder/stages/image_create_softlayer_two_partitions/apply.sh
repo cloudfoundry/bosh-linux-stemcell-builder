@@ -27,6 +27,13 @@ until kpartx -dv ${disk_image}; do
 done
 "
 
+# create 64 loopback mappings. This fixes failures with losetup --show --find ${disk_image}
+for i in $(seq 0 64); do
+  if ! mknod -m 0660 /dev/loop$i b 7 $i; then
+    break
+  fi
+done
+
 # Map partition in image to loopback
 device=$(losetup --show --find ${disk_image})
 add_on_exit "losetup --verbose --detach ${device}"
