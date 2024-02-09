@@ -10,6 +10,8 @@ git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
 git checkout ubuntu-noble/master
 mkdir -p tmp
+docker build -t bosh/os-image-stemcell-builder:noble \
+  ci/docker/os-image-stemcell-builder-noble/
 docker run \
    --privileged \
    -v "$(pwd):/opt/bosh" \
