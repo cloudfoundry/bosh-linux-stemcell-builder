@@ -168,10 +168,9 @@ EOF
   end
 
   context 'PAM configuration' do
-    # NOBLE_TODO: craclib packages i not available in yet in the noble repos
-    # describe file('/lib/x86_64-linux-gnu/security/pam_cracklib.so') do
-    #   it { should be_file }
-    # end
+    describe file('/lib/x86_64-linux-gnu/security/pam_pwquality.so') do
+      it { should be_file }
+    end
 
     describe file('/etc/pam.d/common-password') do
       it'must prohibit the reuse of passwords within twenty-four iterations (stig: V-38658)' do
@@ -182,10 +181,9 @@ EOF
         expect(subject.content).to match /password.*pam_unix\.so.*minlen=14/
       end
 
-      # NOBLE_TODO: craclib packages i not available in yet in the noble repos
-      # it'must use the cracklib library to set correct password requirements (CIS-9.2.1)' do
-      #   expect(subject.content).to match /password.*pam_cracklib\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/
-      # end
+      it'must use the pwquality library to set correct password requirements (CIS-9.2.1)' do
+        expect(subject.content).to match /password.*pam_pwquality\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/
+      end
     end
 
     describe file('/etc/pam.d/common-account') do

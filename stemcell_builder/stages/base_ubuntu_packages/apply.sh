@@ -16,7 +16,7 @@ cmake uuid-dev libgcrypt-dev ca-certificates \
 scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk chrony dbus nvme-cli rng-tools fdisk \
-ethtool" # NOBLE_TODO: libpam-cracklib # is not availble on noble yet
+ethtool libpam-pwquality"
 
 debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 

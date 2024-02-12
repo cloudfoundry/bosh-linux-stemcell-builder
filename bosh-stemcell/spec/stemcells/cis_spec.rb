@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-# NOBLE_TODO: removed CIS-9.2.1 due to libpam-cracklib
 describe 'CIS test case verification', {stemcell_image: true, security_spec: true} do
   let(:base_cis_test_cases) do %W{
         CIS-2.18
@@ -40,6 +39,7 @@ describe 'CIS test case verification', {stemcell_image: true, security_spec: tru
         CIS-9.1.6
         CIS-9.1.7
         CIS-9.1.8
+        CIS-9.2.1
         CIS-9.4
         CIS-9.5
         CIS-10.2

@@ -31,9 +31,7 @@ strip_trailing_whitespace_from $chroot/etc/pam.d/common-auth
 patch -p1 $chroot/etc/pam.d/common-auth < $assets_dir/ubuntu/common-auth.patch
 
 strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
-# NOBLE_TODO: libpam-crack is not installed so this patch will fail
-patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password-temp.patch
-# patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
+patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
 
 strip_trailing_whitespace_from $chroot/etc/pam.d/login
 patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch

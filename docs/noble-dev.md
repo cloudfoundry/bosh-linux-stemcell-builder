@@ -5,6 +5,7 @@ all todos or known issues are tagged as `noble_TODO:`
 
 #### stemcell_builder/stages/base-ubuntu-package/apply.sh
 - libpam-cracklib not availble (yet) installed in | PAM module to enable cracklib support
+FIXED: with changing to libpam-pwquality
 - rsyslog-mmjsonparse rsyslog-mmnormalize not availble as adiscon does not have a noble repo
 
 #### stemcell_builder/stages/passowrd_policies/apply.sh
