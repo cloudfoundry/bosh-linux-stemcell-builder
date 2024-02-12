@@ -35,6 +35,8 @@ PACKAGES=( \
   gcc-8 \
   gcc-10 \
   gcc-11 \
+  gcc-12 \
+  gcc-13 \
   gcc-5-base \
   gcc-6-base \
   gcc-7-base \
@@ -42,6 +44,8 @@ PACKAGES=( \
   gcc-9-base \
   gcc-10-base \
   gcc-11-base \
+  gcc-12-base \
+  gcc-13-base \
   clang \
   clang-14 \
   lib32gcc-s1 \
