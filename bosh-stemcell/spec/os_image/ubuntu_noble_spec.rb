@@ -376,44 +376,44 @@ HERE
     end
 
 # NOBLE_TODO: can't get a propper diff match
-#     describe file('/etc/shadow') do
-#       shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
-# \Aroot:(.+):(\d{5}):0:99999:7:::
-# daemon:\*:(\d{5}):0:99999:7:::
-# bin:\*:(\d{5}):0:99999:7:::
-# sys:\*:(\d{5}):0:99999:7:::
-# sync:\*:(\d{5}):0:99999:7:::
-# games:\*:(\d{5}):0:99999:7:::
-# man:\*:(\d{5}):0:99999:7:::
-# lp:\*:(\d{5}):0:99999:7:::
-# mail:\*:(\d{5}):0:99999:7:::
-# news:\*:(\d{5}):0:99999:7:::
-# uucp:\*:(\d{5}):0:99999:7:::
-# proxy:\*:(\d{5}):0:99999:7:::
-# www-data:\*:(\d{5}):0:99999:7:::
-# backup:\*:(\d{5}):0:99999:7:::
-# list:\*:(\d{5}):0:99999:7:::
-# irc:\*:(\d{5}):0:99999:7:::
-# _apt:\*:(\d{5}):0:99999:7:::
-# nobody:\*:(\d{5}):0:99999:7:::
-# systemd-network:!\*:(\d{5})::::::
-# systemd-timesync:!\*:(\d{5})::::::
-# dhcpcd:!:(\d{5})::::::
-# messagebus:!:(\d{5}):::::
-# syslog:!:(\d{5})::::::
-# systemd-resolve:!\*:(\d{5})::::::
-# uuidd:!:(\d{5})::::::
-# _chrony:!:(\d{5})::::::
-# runit-log:!:(\d{5})::::::
-# _runit-log:!:(\d{5})::::::
-# sshd:!:(\d{5})::::::
-# tcpdump:!:(\d{5})::::::
-# polkitd:!\*:(\d{5})::::::
-# vcap:(.+):(\d{5}):1:99999:7:::\Z
-# END_SHADOW
+    describe file('/etc/shadow') do
+      shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
+root:(.+):(\d{5}):0:99999:7:::
+daemon:\*:(\d{5}):0:99999:7:::
+bin:\*:(\d{5}):0:99999:7:::
+sys:\*:(\d{5}):0:99999:7:::
+sync:\*:(\d{5}):0:99999:7:::
+games:\*:(\d{5}):0:99999:7:::
+man:\*:(\d{5}):0:99999:7:::
+lp:\*:(\d{5}):0:99999:7:::
+mail:\*:(\d{5}):0:99999:7:::
+news:\*:(\d{5}):0:99999:7:::
+uucp:\*:(\d{5}):0:99999:7:::
+proxy:\*:(\d{5}):0:99999:7:::
+www-data:\*:(\d{5}):0:99999:7:::
+backup:\*:(\d{5}):0:99999:7:::
+list:\*:(\d{5}):0:99999:7:::
+irc:\*:(\d{5}):0:99999:7:::
+_apt:\*:(\d{5}):0:99999:7:::
+nobody:\*:(\d{5}):0:99999:7:::
+systemd-network:!\*:(\d{5})::::::
+systemd-timesync:!\*:(\d{5})::::::
+dhcpcd:!:(\d{5})::::::
+messagebus:!:(\d{5})::::::
+syslog:!:(\d{5})::::::
+systemd-resolve:!\*:(\d{5})::::::
+uuidd:!:(\d{5})::::::
+_chrony:!:(\d{5})::::::
+runit-log:!:(\d{5})::::::
+_runit-log:!:(\d{5})::::::
+sshd:!:(\d{5})::::::
+tcpdump:!:(\d{5})::::::
+polkitd:!\*:(\d{5})::::::
+vcap:(.+):(\d{5}):1:99999:7:::
+END_SHADOW
 
-#       its(:content) { should match(shadow_match) }
-#     end
+      its(:content) { should match(shadow_match) }
+    end
 
     describe file('/etc/group') do
       its(:content) { should eql(<<HERE) }

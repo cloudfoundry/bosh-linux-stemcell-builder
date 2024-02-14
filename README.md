@@ -67,7 +67,7 @@ Rebuild the stemcell when you are making and testing BOSH-specific
 changes such as a new BOSH agent.
 
 ```bash
-bundle exec rake stemcell:build_with_local_os_image[google,kvm,ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
 ```
 
 The arguments to `stemcell:build_with_local_os_image` are:
