@@ -361,16 +361,16 @@ nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
 systemd-network:x:998:998:systemd Network Management:/:/usr/sbin/nologin
 systemd-timesync:x:996:996:systemd Time Synchronization:/:/usr/sbin/nologin
 dhcpcd:x:100:65534:DHCP Client Daemon,,,:/usr/lib/dhcpcd:/bin/false
-messagebus:x:101:105::/nonexistent:/usr/sbin/nologin
-syslog:x:102:106::/nonexistent:/usr/sbin/nologin
-systemd-resolve:x:995:995:systemd Resolver:/:/usr/sbin/nologin
-uuidd:x:103:108::/run/uuidd:/usr/sbin/nologin
-_chrony:x:104:110:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
-runit-log:x:999:994:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
-_runit-log:x:997:993:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
+messagebus:x:101:101::/nonexistent:/usr/sbin/nologin
+syslog:x:102:102::/nonexistent:/usr/sbin/nologin
+systemd-resolve:x:991:991:systemd Resolver:/:/usr/sbin/nologin
+uuidd:x:103:104::/run/uuidd:/usr/sbin/nologin
+_chrony:x:104:106:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+runit-log:x:999:990:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
+_runit-log:x:997:989:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
 sshd:x:105:65534::/run/sshd:/usr/sbin/nologin
-tcpdump:x:106:112::/nonexistent:/usr/sbin/nologin
-polkitd:x:992:992:User for polkitd:/:/usr/sbin/nologin
+tcpdump:x:106:108::/nonexistent:/usr/sbin/nologin
+polkitd:x:988:988:User for polkitd:/:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
@@ -459,23 +459,23 @@ systemd-journal:x:999:
 systemd-network:x:998:
 crontab:x:997:
 systemd-timesync:x:996:
-input:x:101:
-sgx:x:102:
-kvm:x:103:
-render:x:104:
-messagebus:x:105:
-syslog:x:106:
-systemd-resolve:x:995:
-netdev:x:107:
-uuidd:x:108:
-_ssh:x:109:
-_chrony:x:110:
-runit-log:x:994:
-_runit-log:x:993:
-rdma:x:111:
-tcpdump:x:112:
-polkitd:x:992:
-admin:x:991:vcap
+input:x:995:
+sgx:x:994:
+kvm:x:993:
+render:x:992:
+messagebus:x:101:
+syslog:x:102:
+systemd-resolve:x:991:
+netdev:x:103:
+uuidd:x:104:
+_ssh:x:105:
+_chrony:x:106:
+runit-log:x:990:
+_runit-log:x:989:
+rdma:x:107:
+tcpdump:x:108:
+polkitd:x:988:
+admin:x:987:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
 bosh_sudoers:x:1002:
@@ -526,10 +526,10 @@ systemd-journal:!*::
 systemd-network:!*::
 crontab:!*::
 systemd-timesync:!*::
-input:!::
-sgx:!::
-kvm:!::
-render:!::
+input:!*::
+sgx:!*::
+kvm:!*::
+render:!*::
 messagebus:!::
 syslog:!::
 systemd-resolve:!*::
