@@ -40,6 +40,10 @@ function ua_enable_fips() {
     run_in_chroot_without_apt ${chroot} "ua enable --assume-yes fips-preview"
 }
 
+function ua_enable_usg() {
+    run_in_chroot_without_apt ${chroot} "ua enable --assume-yes usg"
+}
+
 function run_in_chroot_without_apt() {
     local chroot=${1}
     local script=${2}
