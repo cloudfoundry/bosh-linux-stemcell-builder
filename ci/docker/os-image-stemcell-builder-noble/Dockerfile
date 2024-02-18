@@ -18,6 +18,7 @@ RUN \
     curl \
     debootstrap \
     dnsutils \
+    dosfstools \
     git \
     golang \
     jq \
