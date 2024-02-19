@@ -49,6 +49,5 @@ mkdir -p ${image_mount_point}/boot/efi
 mount ${loopback_efi_dev} ${image_mount_point}/boot/efi
 add_on_exit "umount ${image_mount_point}/boot/efi"
 
-# Copy root
+# Copy root, don't cross mount-points, skipping /boot/efi is okay; it's empty
 time rsync -axHA $chroot/ ${image_mount_point}
-time rsync -axHA $chroot/boot/efi ${image_mount_point}/boot/efi

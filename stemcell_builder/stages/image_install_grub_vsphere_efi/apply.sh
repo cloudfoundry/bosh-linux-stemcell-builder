@@ -43,8 +43,10 @@ add_on_exit "umount ${image_mount_point}/boot/efi"
 #      eg: /mnt/stemcells/aws/xen/centos/work/work/aws-xen-centos.raw
 # device: path to the loopback devide mapped to the entire disk image
 #      eg: /dev/loop0
-# loopback_dev: device node mapped to the main partition in disk_image
+# loopback_efi_dev: device node mapped to the EFI boot ("/boot/efi") partition in disk_image
 #      eg: /dev/mapper/loop0p1
+# loopback_root_dev: device node mapped to the root partition ("/") in disk_image
+#      eg: /dev/mapper/loop0p2
 # image_mount_point: place where loopback_dev is mounted as a filesystem
 #      eg: /mnt/stemcells/aws/xen/centos/work/work/mnt
 
@@ -55,10 +57,13 @@ touch ${image_mount_point}${device}
 mount --bind ${device} ${image_mount_point}${device}
 add_on_exit "umount ${image_mount_point}${device}"
 
-mkdir -p `dirname ${image_mount_point}${loopback_dev}`
-touch ${image_mount_point}${loopback_dev}
-mount --bind ${loopback_dev} ${image_mount_point}${loopback_dev}
-add_on_exit "umount ${image_mount_point}${loopback_dev}"
+touch ${image_mount_point}${loopback_root_dev}
+mount --bind ${loopback_root_dev} ${image_mount_point}${loopback_root_dev}
+add_on_exit "umount ${image_mount_point}${loopback_root_dev}"
+
+touch ${image_mount_point}${loopback_efi_dev}
+mount --bind ${loopback_efi_dev} ${image_mount_point}${loopback_efi_dev}
+add_on_exit "umount ${image_mount_point}${loopback_efi_dev}"
 
 # GRUB 2 needs /sys and /proc to do its job
 mount -t proc none ${image_mount_point}/proc
@@ -99,20 +104,22 @@ EOF" >> ${image_mount_point}/etc/grub.d/00_header
 run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true grub-mkconfig -o /boot/grub/grub.cfg"
 
 # set the correct root filesystem; use the ext2 filesystem's UUID
-device_uuid=$(dumpe2fs $loopback_dev | grep UUID | awk '{print $3}')
-sed -i s%root=${loopback_dev}%root=UUID=${device_uuid}%g ${image_mount_point}/boot/grub/grub.cfg
+device_uuid=$(dumpe2fs $loopback_root_dev | grep UUID | awk '{print $3}')
+sed -i s%root=${loopback_root_dev}%root=UUID=${device_uuid}%g ${image_mount_point}/boot/grub/grub.cfg
 
 rm ${image_mount_point}/device.map
 
 # Figure out uuid of partition
-uuid=$(blkid -c /dev/null -sUUID -ovalue ${loopback_dev})
+uuid_root=$(blkid -c /dev/null -sUUID -ovalue ${loopback_root_dev})
+uuid_efi=$(blkid -c /dev/null -sUUID -ovalue ${loopback_efi_dev})
 kernel_version=$(basename $(ls -rt ${image_mount_point}/boot/vmlinuz-* |tail -1) |cut -f2-8 -d'-')
 initrd_file="initrd.img-${kernel_version}"
 os_name=$(source ${image_mount_point}/etc/lsb-release ; echo -n ${DISTRIB_DESCRIPTION})
 
 cat > ${image_mount_point}/etc/fstab <<FSTAB
 # /etc/fstab Created by BOSH Stemcell Builder
-UUID=${uuid} / ext4 defaults 1 1
+UUID=${uuid_root} / ext4 defaults 0 1
+UUID=${uuid_efi} /boot/efi vfat umask=0077 0 1
 FSTAB
 
 chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
