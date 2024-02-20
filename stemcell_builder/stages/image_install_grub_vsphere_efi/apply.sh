@@ -43,8 +43,10 @@ add_on_exit "umount ${image_mount_point}/boot/efi"
 #      eg: /mnt/stemcells/aws/xen/centos/work/work/aws-xen-centos.raw
 # device: path to the loopback devide mapped to the entire disk image
 #      eg: /dev/loop0
-# loopback_dev: device node mapped to the main partition in disk_image
+# loopback_efi_dev: device node mapped to the EFI boot ("/boot/efi") partition in disk_image
 #      eg: /dev/mapper/loop0p1
+# loopback_root_dev: device node mapped to the root partition ("/") in disk_image
+#      eg: /dev/mapper/loop0p2
 # image_mount_point: place where loopback_dev is mounted as a filesystem
 #      eg: /mnt/stemcells/aws/xen/centos/work/work/mnt
 
@@ -64,7 +66,6 @@ mkdir -p `dirname ${image_mount_point}${loopback_efi_dev}`
 touch ${image_mount_point}${loopback_efi_dev}
 mount --bind ${loopback_efi_dev} ${image_mount_point}${loopback_efi_dev}
 add_on_exit "umount ${image_mount_point}${loopback_efi_dev}"
-
 
 # GRUB 2 needs /sys and /proc to do its job
 mount -t proc none ${image_mount_point}/proc
@@ -123,8 +124,8 @@ os_name=$(source ${image_mount_point}/etc/lsb-release ; echo -n ${DISTRIB_DESCRI
 
 cat > ${image_mount_point}/etc/fstab <<FSTAB
 # /etc/fstab Created by BOSH Stemcell Builder
-UUID=${uuid_efi} /boot/efi ext4 defaults 1 1
-UUID=${uuid_root} / ext4 defaults 1 1
+UUID=${uuid_root} / ext4 defaults 0 1
+UUID=${uuid_efi} /boot/efi vfat umask=0077 0 1
 FSTAB
 
 chown -fLR root:root ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
