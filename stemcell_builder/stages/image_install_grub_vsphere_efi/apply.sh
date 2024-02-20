@@ -55,10 +55,16 @@ touch ${image_mount_point}${device}
 mount --bind ${device} ${image_mount_point}${device}
 add_on_exit "umount ${image_mount_point}${device}"
 
-mkdir -p `dirname ${image_mount_point}${loopback_dev}`
-touch ${image_mount_point}${loopback_dev}
-mount --bind ${loopback_dev} ${image_mount_point}${loopback_dev}
-add_on_exit "umount ${image_mount_point}${loopback_dev}"
+mkdir -p `dirname ${image_mount_point}${loopback_root_dev}`
+touch ${image_mount_point}${loopback_root_dev}
+mount --bind ${loopback_root_dev} ${image_mount_point}${loopback_root_dev}
+add_on_exit "umount ${image_mount_point}${loopback_root_dev}"
+
+mkdir -p `dirname ${image_mount_point}${loopback_efi_dev}`
+touch ${image_mount_point}${loopback_efi_dev}
+mount --bind ${loopback_efi_dev} ${image_mount_point}${loopback_efi_dev}
+add_on_exit "umount ${image_mount_point}${loopback_efi_dev}"
+
 
 # GRUB 2 needs /sys and /proc to do its job
 mount -t proc none ${image_mount_point}/proc
@@ -67,10 +73,10 @@ add_on_exit "umount ${image_mount_point}/proc"
 mount -t sysfs none ${image_mount_point}/sys
 add_on_exit "umount ${image_mount_point}/sys"
 
-echo "(hd0) ${device}" > ${image_mount_point}/device.map
+echo "(hd0) ${device}" > ${image_mount_point}/boot/grub/device.map
 
 # install bootsector into disk image file
-run_in_chroot ${image_mount_point} "grub-install --target=x86_64-efi --efi-directory=/boot/efi -v --no-floppy ${device}"
+run_in_chroot ${image_mount_point} "grub-install --target=x86_64-efi --efi-directory=/boot/efi --boot-directory=/boot/efi/EFI --removable -v --no-floppy ${device}"
 
 grub_suffix=""
 case "${stemcell_infrastructure}" in
@@ -82,41 +88,44 @@ cloudstack)
   ;;
 esac
 
+## TODO: investigate why we need this fix https://github.com/systemd/systemd/issues/13477
+# fixes the monit helper script for finding the net_cls group see line stages/bosh_monit/moint-access-helper.sh:16
+CGROUP_FIX="systemd.unified_cgroup_hierarchy=false"
 cat >${image_mount_point}/etc/default/grub <<EOF
 GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1 cgroup_enable=memory swapaccount=1 ${grub_suffix} ${CGROUP_FIX}"
 EOF
 
-# we use a random password to prevent user from editing the boot menu
-pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
-echo "\
-cat << EOF
-set superusers=vcap
-set root=(hd0,0)
-password_pbkdf2 vcap $pbkdf2_password
-EOF" >> ${image_mount_point}/etc/grub.d/00_header
+# # we use a random password to prevent user from editing the boot menu
+# @TODO this causes EFI to ask for password on boot
+# pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
+# echo "\
+# cat << EOF
+# set superusers=vcap
+# set root=(hd0,0)
+# password_pbkdf2 vcap $pbkdf2_password
+# EOF" >> ${image_mount_point}/etc/grub.d/00_header
 
 # assemble config file that is read by grub2 at boot time
-run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true grub-mkconfig -o /boot/grub/grub.cfg"
+run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true grub-mkconfig -o /boot/efi/EFI/grub/grub.cfg"
 
 # set the correct root filesystem; use the ext2 filesystem's UUID
-device_uuid=$(dumpe2fs $loopback_dev | grep UUID | awk '{print $3}')
-sed -i s%root=${loopback_dev}%root=UUID=${device_uuid}%g ${image_mount_point}/boot/grub/grub.cfg
-
-rm ${image_mount_point}/device.map
+device_uuid=$(dumpe2fs $loopback_root_dev | grep UUID | awk '{print $3}')
+sed -i s%root=${loopback_root_dev}%root=UUID=${device_uuid}%g ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
+cat ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
+rm ${image_mount_point}/boot/grub/device.map
 
 # Figure out uuid of partition
-uuid=$(blkid -c /dev/null -sUUID -ovalue ${loopback_dev})
+uuid_efi=$(blkid -c /dev/null -sUUID -ovalue ${loopback_efi_dev})
+uuid_root=$(blkid -c /dev/null -sUUID -ovalue ${loopback_root_dev})
 kernel_version=$(basename $(ls -rt ${image_mount_point}/boot/vmlinuz-* |tail -1) |cut -f2-8 -d'-')
 initrd_file="initrd.img-${kernel_version}"
 os_name=$(source ${image_mount_point}/etc/lsb-release ; echo -n ${DISTRIB_DESCRIPTION})
 
 cat > ${image_mount_point}/etc/fstab <<FSTAB
 # /etc/fstab Created by BOSH Stemcell Builder
-UUID=${uuid} / ext4 defaults 1 1
+UUID=${uuid_efi} /boot/efi ext4 defaults 1 1
+UUID=${uuid_root} / ext4 defaults 1 1
 FSTAB
 
-chown -fLR root:root ${image_mount_point}/boot/grub/grub.cfg
-chmod 600 ${image_mount_point}/boot/grub/grub.cfg
-
-run_in_chroot ${image_mount_point} "rm -f /boot/grub/menu.lst"
-run_in_chroot ${image_mount_point} "ln -s ./grub.cfg /boot/grub/menu.lst"
+chown -fLR root:root ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
+chmod 600 ${image_mount_point}/boot/efi/EFI/grub/grub.cfg

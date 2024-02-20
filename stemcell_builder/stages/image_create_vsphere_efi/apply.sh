@@ -50,5 +50,6 @@ mount ${loopback_efi_dev} ${image_mount_point}/boot/efi
 add_on_exit "umount ${image_mount_point}/boot/efi"
 
 # Copy root
-time rsync -axHA $chroot/ ${image_mount_point}
-time rsync -axHA $chroot/boot/efi ${image_mount_point}/boot/efi
+pushd $chroot
+time rsync -aHA $(ls | grep -v boot/efi | xargs) ${image_mount_point}
+popd
