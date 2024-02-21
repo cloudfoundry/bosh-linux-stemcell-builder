@@ -12,10 +12,10 @@ if [ -z ${UBUNTU_ADVANTAGE_TOKEN} ]; then
     exit 1
 fi
 
-# verify that UBUNTU_IAAS_KERNEL is valid if set
-if [ ! -z ${UBUNTU_IAAS_KERNEL} ] && [ "$UBUNTU_IAAS_KERNEL" != "aws" ]; then
+# verify that IAAS kernel is a valid option (i.e. aws for now)
+if [ ! -z ${UBUNTU_FIPS_USE_IAAS_KERNEL} ] && [ "$stemcell_infrastructure" != "aws" ]; then
     echo "'aws' is the only currently-supported IAAS kernel."
-    echo "please unset UBUNTU_IAAS_KERNEL or set it to 'aws'"
+    echo "please unset UBUNTU_FIPS_USE_IAAS_KERNEL for non-aws builds"
     exit 1
 fi
 

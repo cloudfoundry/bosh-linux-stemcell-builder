@@ -45,8 +45,8 @@ function update_kernel_static_libraries {
   major_kernel_version=${2}
 
   suffix=$kernel_suffix
-  if [ ! -z "$UBUNTU_IAAS_KERNEL" ]; then
-    suffix=-$UBUNTU_IAAS_KERNEL$kernel_suffix
+  if [ ! -z "$UBUNTU_FIPS_USE_IAAS_KERNEL" ]; then
+    suffix=-$stemcell_infrastructure$kernel_suffix
   fi
   kernel_version=$(find $chroot/usr/src/ -name "linux-headers-$major_kernel_version.*$kernel_suffix" | grep -o "[0-9].*-[0-9]*$suffix")
   sed -i "s/__KERNEL_VERSION__/$kernel_version/g" $chroot/var/vcap/bosh/etc/static_libraries_list
