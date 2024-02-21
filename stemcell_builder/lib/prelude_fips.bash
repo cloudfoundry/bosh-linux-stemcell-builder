@@ -19,16 +19,6 @@ if [ ! -z ${UBUNTU_IAAS_KERNEL} ] && [ "$UBUNTU_IAAS_KERNEL" != "aws" ]; then
     exit 1
 fi
 
-function write_ua_client_config() {
-    local iaas=${1}
-
-    # overwrite the cloud type so the correct kernel gets installed
-    if [ -z "${iaas}" ]; then
-        echo "settings_overrides:" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
-        echo "  cloud_type: ${iaas}" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
-    fi
-}
-
 function ua_attach() {
     echo "Setting up Ubuntu Advantage ..."
 
