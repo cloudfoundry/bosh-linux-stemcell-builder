@@ -23,6 +23,7 @@ module Bosh::Stemcell
     let(:version) { '1234' }
     let(:os_image_tarball_path) { '/some/os_image.tgz' }
 
+    let(:build_time_marker_file) { '/fake/path/to/build/time/marker/file' }
     let(:stemcell_builder_source_dir) { '/fake/path/to/stemcell_builder' }
     let(:stemcell_specs_dir) { '/fake/path/to/stemcell/specs/dir' }
 
@@ -68,6 +69,7 @@ module Bosh::Stemcell
     before do
       allow(Bosh::Core::Shell).to receive(:new).and_return(shell)
       allow(BuilderOptions).to receive(:new).and_return(stemcell_builder_options)
+      stub_const('Bosh::Stemcell::BuildEnvironment::BUILD_TIME_MARKER_FILE', build_time_marker_file)
       stub_const('Bosh::Stemcell::BuildEnvironment::STEMCELL_BUILDER_SOURCE_DIR', stemcell_builder_source_dir)
       stub_const('Bosh::Stemcell::BuildEnvironment::STEMCELL_SPECS_DIR', stemcell_specs_dir)
     end
@@ -325,6 +327,33 @@ module Bosh::Stemcell
           expect(subject.command_env).to eq(
             "env http_proxy='fake-http-proxy' https_proxy='fake-https-proxy' no_proxy='fake-no-proxy'"
           )
+        end
+      end
+
+      context 'when a build time env var is configured' do
+        let(:env) do
+          {
+            'BUILD_TIME' => 'timestamp_from_env',
+          }
+        end
+
+        it 'includes the timestamp from env' do
+          expect(subject.command_env).to eq(
+            "env BUILD_TIME='timestamp_from_env'"
+          )
+        end
+
+        context 'when a build time marker file exists' do
+          before do
+            allow(File).to receive(:exist?).with(build_time_marker_file).and_return(true)
+            allow(File).to receive(:read).with(build_time_marker_file).and_return('timestamp_from_file')
+          end
+
+          it 'includes the timestamp from the file' do
+            expect(subject.command_env).to eq(
+              "env BUILD_TIME='timestamp_from_file'"
+            )
+          end
         end
       end
     end
