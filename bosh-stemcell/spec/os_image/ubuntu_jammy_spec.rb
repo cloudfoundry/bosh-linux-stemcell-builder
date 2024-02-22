@@ -32,9 +32,9 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
 
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
-      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu jammy main universe multiverse' }
-      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu jammy-updates main universe multiverse' }
-      its(:content) { should match 'deb http://security.ubuntu.com/ubuntu jammy-security main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) jammy main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) jammy-updates main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) jammy-security main universe multiverse' }
     end
 
     describe file('/lib/systemd/system/runit.service') do
