@@ -9,7 +9,7 @@ mount --bind /sys "$chroot/sys"
 add_on_exit "umount $chroot/sys"
 
 # check if current git branch is a tag and use snapshot date from the last commit message in that tag
-if [ -n "${BUILD_TIME}" ]; then
+if [ -n "${BUILD_TIME:-}" ]; then
   cat > "$chroot/etc/apt/sources.list" <<EOS
   deb http://snapshot.ubuntu.com/ubuntu/${BUILD_TIME} $DISTRIB_CODENAME main universe multiverse
   deb http://snapshot.ubuntu.com/ubuntu/${BUILD_TIME} $DISTRIB_CODENAME-updates main universe multiverse
