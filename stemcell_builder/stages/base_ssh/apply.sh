@@ -67,13 +67,24 @@ sed "/^ *DenyUsers/d" -i $chroot/etc/ssh/sshd_config
 echo 'DenyUsers root' >> $chroot/etc/ssh/sshd_config
 
 sed "/^[ #]*HostKey \/etc\/ssh\/ssh_host_dsa_key/d" -i $chroot/etc/ssh/sshd_config
-for type in {rsa,ecdsa,ed25519}; do
+for type in {rsa,ed25519}; do
   sed "s/^[ #]*HostKey \/etc\/ssh\/ssh_host_${type}_key/HostKey \/etc\/ssh\/ssh_host_${type}_key/" -i $chroot/etc/ssh/sshd_config
 done
 
 #  Allow only 3DES and AES series ciphers
 sed "/^ *Ciphers/d" -i $chroot/etc/ssh/sshd_config
 echo 'Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' >> $chroot/etc/ssh/sshd_config
+
+# Allow only rsa-sha2-512,rsa-sha2-256,ssh-ed25519 Host Key Algorithms
+sed "/^ *HostKeyAlgorithms/d" -i $chroot/etc/ssh/sshd_config
+echo 'HostKeyAlgorithms ssh-ed25519,rsa-sha2-512,rsa-sha2-256
+' >> $chroot/etc/ssh/sshd_config
+
+# Allow only safe kex algorithms
+sed "/^ *KexAlgorithms/d" -i $chroot/etc/ssh/sshd_config
+echo 'sntrup761x25519-sha512@openssh.com,curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,diffie-hellman-group-exchange-sha256,kex-strict-s-v00@openssh.com
+' >> $chroot/etc/ssh/sshd_config
+echo 'curve25519-sha256,curve25519-sha256@libssh.org,sntrup761x25519-sha512@openssh.com,diffie-hellman-group-exchange-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,kex-strict-s-v00@openssh.com'
 
 # Disallow Weak MACs
 sed "/^ *MACs/d" -i $chroot/etc/ssh/sshd_config

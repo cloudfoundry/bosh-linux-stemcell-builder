@@ -215,10 +215,10 @@ shared_examples_for 'every OS image' do
       expect(sshd_config.content).to_not match(/HostKey \/etc\/ssh\/ssh_host_dsa_key$/)
     end
 
-    it 'enables RSA, ECDSA, ED25519 host keys', exclude_on_fips: true do
-      matches = sshd_config.content.scan(/^HostKey.*/)
+    it 'enables RSA, ED25519 host keys', exclude_on_fips: true do
+      matches = sshd_config.content.scan(/^HostKey \/.*/)
 
-      expect(matches).to contain_exactly('HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_ecdsa_key', 'HostKey /etc/ssh/ssh_host_ed25519_key')
+      expect(matches).to contain_exactly('HostKey /etc/ssh/ssh_host_rsa_key', 'HostKey /etc/ssh/ssh_host_ed25519_key')
     end
 
     it 'disallows X11 forwarding' do
