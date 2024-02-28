@@ -132,7 +132,7 @@ module Bosh::Stemcell
 
     def build_time_settings
       if File.exist?(BUILD_TIME_MARKER_FILE)
-        return { 'BUILD_TIME' => File.read(BUILD_TIME_MARKER_FILE) }
+        return { 'BUILD_TIME' => File.read(BUILD_TIME_MARKER_FILE).chomp }
       elsif environment['BUILD_TIME']
         return { 'BUILD_TIME' => environment['BUILD_TIME'] }
       end
