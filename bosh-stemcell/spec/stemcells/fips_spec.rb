@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe 'FIPS Stemcell', os_image: true do
+  use_iaas_kernel = ENV.fetch('UBUNTU_FIPS_USE_IAAS_KERNEL', 'false') != 'true'
   context 'installed by system_kernel' do
     infrastructure = ENV['STEMCELL_INFRASTRUCTURE']
-    use_iaas_kernel = ENV['UBUNTU_FIPS_USE_IAAS_KERNEL']
     describe package(use_iaas_kernel ? "linux-image-#{infrastructure}-fips" : "linux-image-fips") do
       it { should be_installed }
     end
@@ -39,7 +39,7 @@ describe 'FIPS Stemcell', os_image: true do
     describe file('/boot/grub/grub.cfg') do
       it { should be_file }
       its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-fips root=UUID=\S* ro } }
-      if ENV.key?("UBUNTU_FIPS_USE_IAAS_KERNEL")
+      if use_iaas_kernel
         its(:content) { should match %r{initrd\t/boot/microcode.cpio /boot/initrd.img-\S+-fips} }
       else
         its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
@@ -61,6 +61,7 @@ describe 'FIPS Stemcell', os_image: true do
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-azure-additions.txt')).map(&:chop) }
     let(:dpkg_list_cloudstack_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-cloudstack-additions.txt')).map(&:chop) }
     let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-softlayer-additions.txt')).map(&:chop) }
+    let(:infrastructure) { ENV['STEMCELL_INFRASTRUCTURE'] }
 
     describe command(dpkg_list_packages), {
       exclude_on_alicloud: true,
@@ -72,11 +73,8 @@ describe 'FIPS Stemcell', os_image: true do
       exclude_on_openstack: true,
       exclude_on_softlayer: true,
     } do
-      let(:infrastructure) { ENV['STEMCELL_INFRASTRUCTURE'] }
-      let(:use_iaas_kernel) { ENV['UBUNTU_FIPS_USE_IAAS_KERNEL'] }
-
       it 'contains only the base set of packages plus aws-specific kernel packages' do
-        skip "Test skipped due to non-aws kernel" if (use_iaas_kernel && infrastructure != 'aws')
+        skip "Test skipped due to generic kernel" unless use_iaas_kernel
         pkg_list = dpkg_list_ubuntu.concat(dpkg_list_aws_fips_ubuntu)
         pkg_list.delete('linux-firmware')
         pkg_list.delete('wireless-regdb')
@@ -92,8 +90,6 @@ describe 'FIPS Stemcell', os_image: true do
       exclude_on_azure: true,
       exclude_on_softlayer: true,
     } do
-      let(:use_iaas_kernel) { ENV['UBUNTU_FIPS_USE_IAAS_KERNEL'] }
-
       it 'contains only the base set of packages for alicloud, aws, openstack, warden' do
         skip "Test skipped due to IAAS-specific kernel" if use_iaas_kernel
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_fips_ubuntu))
