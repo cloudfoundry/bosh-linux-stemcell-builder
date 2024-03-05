@@ -16,3 +16,8 @@ FIXED: with changing to libpam-pwquality
 - gnats user/group is removed (i don't know why)
 - rescan-scsi-bus does not exists anymore in noble and it seems to be a relic from the past when we used in bosh
 
+resolvconf package is not availble anymore and is probably not going to be backported
+systemd-resolve is installed now by default
+the agent forces a symlink see https://github.com/cloudfoundry/bosh-agent/blob/main/platform/net/ubuntu_net_manager.go#L477
+this should not happen. also we need to change how we update resolv.conf as
+nameserver=1.1.1.1 nameserver=8.8.8.8 is now DNS=1.1.1.1,8.8.8.8
