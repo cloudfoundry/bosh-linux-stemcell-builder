@@ -10,7 +10,7 @@ source $base_dir/etc/settings.bash
 cp -p "${assets_dir}/${DISTRIB_CODENAME}_static_libraries_list.txt" $chroot/var/vcap/bosh/etc/static_libraries_list
 
 kernel_suffix="-generic"
-major_kernel_version="6.6"
+major_kernel_version="6.8"
 
 if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
     # TODO use iaas specific kernel
