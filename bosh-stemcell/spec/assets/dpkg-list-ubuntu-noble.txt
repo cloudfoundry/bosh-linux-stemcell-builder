@@ -89,6 +89,7 @@ gdb
 gdisk
 gettext
 gettext-base
+gir1.2-girepository-2.0:amd64
 gir1.2-glib-2.0:amd64
 gir1.2-packagekitglib-1.0
 gpg
@@ -98,6 +99,7 @@ gpgv
 grep
 groff-base
 grub-common
+grub-efi-amd64-bin
 grub-gfxpayload-lists
 grub-pc
 grub-pc-bin
@@ -222,7 +224,6 @@ libhogweed6:amd64
 libhwasan0:amd64
 libibverbs1:amd64
 libicu-dev:amd64
-libicu72:amd64
 libicu74:amd64
 libidn2-0:amd64
 libinih1:amd64
@@ -438,6 +439,8 @@ python3-wadllib
 python3-yaml
 python3.11
 python3.11-minimal
+python3.12
+python3.12-minimal
 quota
 readline-common
 rng-tools-debian
@@ -473,6 +476,7 @@ tzdata
 tzdata-legacy
 ubuntu-advantage-tools
 ubuntu-keyring
+ubuntu-pro-client
 ubuntu-pro-client-l10n
 ucf
 udev
