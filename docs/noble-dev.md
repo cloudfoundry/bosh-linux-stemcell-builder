@@ -16,6 +16,9 @@ FIXED: with changing to libpam-pwquality
 - gnats user/group is removed (i don't know why)
 - rescan-scsi-bus does not exists anymore in noble and it seems to be a relic from the past when we used in bosh
 
+#### src/ipv4director/autitd/smoke_test.go
+behaviour changed on auditd it now exits 1 if error with `sudo auditctl -w /etc/network -p wa -k system-locale-story-50315687`
+
 resolvconf package is not availble anymore and is probably not going to be backported
 systemd-resolve is installed now by default
 the agent forces a symlink see https://github.com/cloudfoundry/bosh-agent/blob/main/platform/net/ubuntu_net_manager.go#L477
