@@ -10,5 +10,5 @@ source $base_dir/etc/settings.bash
 
 mkdir -p $chroot/tmp
 
-pkg_mgr install initramfs-tools linux-generic-hwe-22.04
+pkg_mgr install initramfs-tools linux-generic
 
