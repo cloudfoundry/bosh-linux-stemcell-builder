@@ -436,7 +436,7 @@ HERE
   end
 
   context 'installed by system_kernel', exclude_on_fips: true  do
-    describe package('linux-generic-hwe-22.04') do
+    describe package('linux-generic') do
       it { should be_installed }
     end
   end
