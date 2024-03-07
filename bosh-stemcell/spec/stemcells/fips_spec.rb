@@ -5,7 +5,7 @@ describe 'FIPS Stemcell', os_image: true do
     describe package('linux-image-fips') do
       it { should be_installed }
     end
-    describe package('linux-generic-hwe-22.04') do
+    describe package('linux-generic') do
       it { should_not be_installed }
     end
     describe package('linux-image-5.19.0-109-generic') do

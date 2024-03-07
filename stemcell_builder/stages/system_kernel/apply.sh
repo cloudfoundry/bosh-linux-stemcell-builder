@@ -14,7 +14,7 @@ mkdir -p $chroot/tmp
 if [[  "${DISTRIB_CODENAME}" == "bionic" ]]; then
   pkg_mgr install linux-generic-hwe-18.04
 elif [[  "${DISTRIB_CODENAME}" == "jammy" ]]; then
-  pkg_mgr install initramfs-tools linux-generic-hwe-22.04
+  pkg_mgr install initramfs-tools linux-generic
 elif [[ "${DISTRIB_CODENAME}" == "xenial" ]]; then
   pkg_mgr install linux-generic-hwe-16.04
 else
