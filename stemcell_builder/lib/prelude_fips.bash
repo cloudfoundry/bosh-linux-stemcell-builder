@@ -15,7 +15,7 @@ fi
 function ua_attach() {
     echo "Setting up Ubuntu Advantage ..."
 
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ubuntu-advantage-tools"
+    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ubuntu-pro-client"
 
     run_in_chroot ${chroot} "ua attach --no-auto-enable ${UBUNTU_ADVANTAGE_TOKEN}"
 }
