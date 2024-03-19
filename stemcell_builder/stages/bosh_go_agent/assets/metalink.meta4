@@ -1,31 +1,31 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
-  <file name="bosh-agent-2.640.0-linux-amd64">
-    <hash type="sha-512">fa28596604a76cf2befc1d5d09f5f9205bd0c5b5dba1b9806755c8d5c74d45bc0af450c4aa1e2e695bef420344ff3fea71a203421fdda61c6c64da49efff9b17</hash>
-    <hash type="sha-256">ca78f2e5135afea8a3006d74aa89c8e8bccd4a57d23832dabd8a5b6597ba9d08</hash>
-    <hash type="sha-1">3d0873858e8cfcbaf5394ef882e4b0f43f7a5eb5</hash>
-    <hash type="md5">e9c85e9d2274fffb727973f7792ae1a2</hash>
-    <size>20930576</size>
-    <url>https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-2.640.0-linux-amd64</url>
-    <version>2.640.0</version>
+  <file name="bosh-agent-2.641.0-linux-amd64">
+    <hash type="sha-512">f740e8f8f6e7d371628a5921e753c98ce8138709d2f93a5e64c2cba3c415d2641df3c092dd3574c09c055bab93d36cc37066e5d66d963b4a83149b7478d3e5c5</hash>
+    <hash type="sha-256">736cdacb286c5c39c9424eb08791f1d7ae825acd7b8e4a645b60a0902385cbdd</hash>
+    <hash type="sha-1">b63dfcadfd6f94a028b79d4aa0429a326be47204</hash>
+    <hash type="md5">1d1ca5b330f45676daf04616b571f06e</hash>
+    <size>20929984</size>
+    <url>https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-2.641.0-linux-amd64</url>
+    <version>2.641.0</version>
   </file>
-  <file name="bosh-agent-2.640.0-windows-amd64.exe">
-    <hash type="sha-512">c5c172098b41aaebc6ef1840e58619a0a1e51c449c76be0dde1bb2d9c92b527785ae55ae680d8a033978893b505f66fefa87f67821ffe0d627d3a22b593d8fe0</hash>
-    <hash type="sha-256">529f1d0f20e07d81398d5bfa2fd5e742e4536cbdfe17827af823593a10b8be76</hash>
-    <hash type="sha-1">99b97828ab82a7591aff2717f3e2cc73fb6ed858</hash>
-    <hash type="md5">8aae8af177aebfb81deeed3dd5e839cf</hash>
-    <size>19336192</size>
-    <url>https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-2.640.0-windows-amd64.exe</url>
-    <version>2.640.0</version>
+  <file name="bosh-agent-2.641.0-windows-amd64.exe">
+    <hash type="sha-512">7759c10b0aa3d364efefb606fce177ee97f70abc84ef3b2207e64be10d97c5caedb44506421421840ba53fbd21f6663e7c443c4a1c8ab566d0de309d1fd995ff</hash>
+    <hash type="sha-256">ae257149e63807eced9f0875178b48952b217ad978ae7d909d3cd79e10436545</hash>
+    <hash type="sha-1">3179c16d7aa314de707c5793beb3ef6438433faf</hash>
+    <hash type="md5">86b5233f7022c281bf10688c84ff60e9</hash>
+    <size>19327488</size>
+    <url>https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-2.641.0-windows-amd64.exe</url>
+    <version>2.641.0</version>
   </file>
-  <file name="bosh-agent-pipe-2.640.0-windows-amd64.exe">
-    <hash type="sha-512">5b3f443f80474e283f7b1287c7c15fdabb32ce3630017f7568779f4b9cfd741d9574305aa65f1f597c6309a8fdac5e900e49f0638df6c434572b23ef20270fc4</hash>
-    <hash type="sha-256">4060740516e55e9ef3c79c3159c2f13bbb06f869af021b67e3b49c789f253615</hash>
-    <hash type="sha-1">37debb8ea5b473003a4683399ab58681344a04c6</hash>
-    <hash type="md5">4a627ff0f60ed365ad5fb5af3514cbbb</hash>
+  <file name="bosh-agent-pipe-2.641.0-windows-amd64.exe">
+    <hash type="sha-512">ccc26acbc12764165581d198e144585e5d95ec51aaf38049ad14e04cc46ff6e9de775640c6b376a4171a1d9c6ab7ad9c2db662900884df580001b7f89a97a897</hash>
+    <hash type="sha-256">4a0847cc4779984acbed7b26c92c5529e157f0df2e0f4a881cf7f9c9a95170b3</hash>
+    <hash type="sha-1">eb1ef1a4c6f63ebc2effb17761b3d61b1dabd948</hash>
+    <hash type="md5">222df2b7baa91406f1063c942b3433df</hash>
     <size>7590912</size>
-    <url>https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-pipe-2.640.0-windows-amd64.exe</url>
-    <version>2.640.0</version>
+    <url>https://s3-external-1.amazonaws.com/bosh-agent-binaries/bosh-agent-pipe-2.641.0-windows-amd64.exe</url>
+    <version>2.641.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2024-03-15T02:18:21.701616416Z</published>
+  <published>2024-03-19T19:24:20.470589355Z</published>
 </metalink>
