@@ -12,7 +12,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
       $(get_partitioner_type_mapping)
       "CreatePartitionIfNoEphemeralDisk": true,
       "ScrubEphemeralDisk": true,
-      "DevicePathResolutionType": "iscsi"
+      "DevicePathResolutionType": "iscsi",
+      "DNSResolverType": "systemd"
     }
   },
   "Infrastructure": {

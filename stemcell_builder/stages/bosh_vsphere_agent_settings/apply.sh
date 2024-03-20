@@ -9,7 +9,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
   "Platform": {
     "Linux": {
       $(get_partitioner_type_mapping)
-      "DevicePathResolutionType": "scsi"
+      "DevicePathResolutionType": "scsi",
+      "DNSResolverType": "systemd"
     }
   },
   "Infrastructure": {

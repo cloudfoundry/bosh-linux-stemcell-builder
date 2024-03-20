@@ -11,7 +11,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
       "CreatePartitionIfNoEphemeralDisk": true,
       $(get_partitioner_type_mapping)
       "DevicePathResolutionType": "virtio",
-      "VirtioDevicePrefix": "google"
+      "VirtioDevicePrefix": "google",
+      "DNSResolverType": "systemd"
     }
   },
   "Infrastructure": {
