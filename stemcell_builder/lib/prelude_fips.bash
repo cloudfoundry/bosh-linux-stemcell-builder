@@ -12,6 +12,13 @@ if [ -z ${UBUNTU_ADVANTAGE_TOKEN} ]; then
     exit 1
 fi
 
+# verify that IAAS kernel is a valid option (i.e. aws for now)
+if [ ! -z ${UBUNTU_FIPS_USE_IAAS_KERNEL} ] && [ "$stemcell_infrastructure" != "aws" ]; then
+    echo "'aws' is the only currently-supported IAAS kernel."
+    echo "please unset UBUNTU_FIPS_USE_IAAS_KERNEL for non-aws builds"
+    exit 1
+fi
+
 function ua_attach() {
     echo "Setting up Ubuntu Advantage ..."
 

@@ -52,6 +52,7 @@ module Bosh::Stemcell
         "cd #{STEMCELL_SPECS_DIR};",
         "STEMCELL_IMAGE=#{image_file_path}",
         "STEMCELL_WORKDIR=#{work_path}",
+        "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}",
         "OS_NAME=#{operating_system.name}",
         "OS_VERSION=#{operating_system.version}",
         "CANDIDATE_BUILD_NUMBER=#{@version}",
