@@ -56,6 +56,9 @@ RUN groupadd -o -g ${GROUP_ID} ubuntu                  \
   && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
   && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 
+# install syft for sbom generation
+RUN curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
 # we install a local ruby (3.x) because Jammy is lagging at 2.7
 ENV RUBY_SHA256="d2f4577306e6dd932259693233141e5c3ec13622c95b75996541b8d5b68b28b4"
 ENV RUBY_VERSION="3.2.0"
