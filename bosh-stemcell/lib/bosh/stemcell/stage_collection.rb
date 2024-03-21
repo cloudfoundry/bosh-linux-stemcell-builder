@@ -107,6 +107,7 @@ module Bosh::Stemcell
         bosh_clean_ssh
         image_create
         image_install_grub
+        sbom_create
       ]
     end
 
@@ -124,6 +125,7 @@ module Bosh::Stemcell
         bosh_clean_ssh
         image_create
         image_install_grub
+        sbom_create
       ]
     end
 
@@ -144,6 +146,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
+        :sbom_create,
       ]
     end
 
@@ -162,6 +165,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
+        :sbom_create,
       ]
     end
 
@@ -176,6 +180,7 @@ module Bosh::Stemcell
         bosh_clean_ssh
         image_create
         image_install_grub
+        sbom_create
       ]
     end
 
@@ -194,6 +199,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
+        :sbom_create,
       ]
     end
 
@@ -209,6 +215,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
+        :sbom_create,
       ]
     end
 
@@ -228,6 +235,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
+        :sbom_create,
       ]
     end
 
