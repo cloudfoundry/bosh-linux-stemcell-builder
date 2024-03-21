@@ -77,6 +77,8 @@ describe Bosh::Stemcell::StemcellPackager do
     File.write(packages, 'i am stemcell dpkg_l')
     dev_tools_file_list = File.join(work_dir, 'stemcell/dev_tools_file_list.txt')
     File.write(dev_tools_file_list, 'i am dev_tools_file_list')
+    sbom = File.join(work_dir, 'stemcell/sbom.spdx.json')
+    File.write(sbom, 'i am sbom')
   end
   after { FileUtils.rm_rf(tmp_dir) }
 
@@ -170,6 +172,7 @@ describe Bosh::Stemcell::StemcellPackager do
 packages.txt
 dev_tools_file_list.txt
 image
+sbom.spdx.json
 '
       )
     end
