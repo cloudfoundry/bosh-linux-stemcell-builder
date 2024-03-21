@@ -206,6 +206,7 @@ module Bosh::Stemcell
           "cd #{stemcell_specs_dir};",
           "STEMCELL_IMAGE=#{File.join(work_path, 'fake-root-disk-image.raw')}",
           "STEMCELL_WORKDIR=#{work_path}",
+          "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}",
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
           "CANDIDATE_BUILD_NUMBER=#{version}",
