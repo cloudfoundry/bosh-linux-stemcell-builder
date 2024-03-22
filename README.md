@@ -88,11 +88,11 @@ The arguments to `stemcell:build_with_local_os_image` are:
 You can find the resulting stemcell in the `tmp/` directory of the host, or in
 the `/opt/bosh/tmp` directory in the Docker container. Using the above example,
 the stemcell would be at
-`tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz`. You can
+`tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy.tgz`. You can
 upload the stemcell to a vSphere BOSH Director:
 
 ```bash
-bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz
+bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy.tgz
 ```
 
 ## Testing

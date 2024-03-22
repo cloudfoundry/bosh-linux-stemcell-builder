@@ -82,7 +82,7 @@ module Bosh::Stemcell
     describe '#stemcell_name' do
       it 'builds a name from the infrastructure, hypervisor, os, and disk format' do
         expect(definition.stemcell_name('disk-format')).to eq(
-          'infrastructure-name-hypervisor-operating-system-name-operating_system_version-go_agent-disk-format'
+          'infrastructure-name-hypervisor-operating-system-name-operating_system_version-disk-format'
         )
       end
 
@@ -91,7 +91,7 @@ module Bosh::Stemcell
 
         it 'leaves off the os version' do
           expect(definition.stemcell_name('disk-format')).to eq(
-            'infrastructure-name-hypervisor-operating-system-name-go_agent-disk-format'
+            'infrastructure-name-hypervisor-operating-system-name-disk-format'
           )
         end
       end
@@ -101,7 +101,7 @@ module Bosh::Stemcell
 
         it 'leaves off the os version' do
           expect(definition.stemcell_name('disk-format')).to eq(
-            'infrastructure-name-hypervisor-operating-system-name-operating_system_version-variant-go_agent-disk-format'
+            'infrastructure-name-hypervisor-operating-system-name-operating_system_version-variant-disk-format'
           )
         end
       end
@@ -109,7 +109,7 @@ module Bosh::Stemcell
       context 'the disk format is the default' do
         it 'leaves it off' do
           expect(definition.stemcell_name('default-disk-format')).to eq(
-            'infrastructure-name-hypervisor-operating-system-name-operating_system_version-go_agent'
+            'infrastructure-name-hypervisor-operating-system-name-operating_system_version'
           )
         end
       end
