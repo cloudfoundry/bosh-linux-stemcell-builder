@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'FIPS Stemcell', os_image: true do
-  use_iaas_kernel = ENV.fetch('UBUNTU_FIPS_USE_IAAS_KERNEL', 'false') != 'true'
+  use_iaas_kernel = ENV.fetch('UBUNTU_FIPS_USE_IAAS_KERNEL', 'false') == 'true'
   context 'installed by system_kernel' do
     infrastructure = ENV['STEMCELL_INFRASTRUCTURE']
     describe package(use_iaas_kernel ? "linux-image-#{infrastructure}-fips" : "linux-image-fips") do
