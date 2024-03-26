@@ -12,12 +12,14 @@ mount --bind /sys "$chroot/sys"
 add_on_exit "umount $chroot/sys"
 
 FIPS_PKGS="openssh-client openssh-server openssl openssl-fips-module-3 libssl3 libssl-dev libgcrypt20 libgcrypt20-hmac libgcrypt20-dev"
+USG_PKGS="usg bsdmainutils libopenscap8 ncal usg usg-benchmarks-1"
 
 mock_grub_probe
 ua_attach
 ua_enable_fips
+ua_enable_usg
 write_fips_cmdline_conf
-pkg_mgr install --allow-downgrades "${FIPS_PKGS}"
+pkg_mgr install --allow-downgrades "${FIPS_PKGS}" "${USG_PKGS}"
 ua_detach
 unmock_grub_probe
 
