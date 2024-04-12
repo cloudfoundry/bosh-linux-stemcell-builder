@@ -42,7 +42,6 @@ module Bosh::Stemcell
             :restrict_su_command,
             :tty_config,
             :rsyslog_config,
-            :delay_monit_start,
             :system_grub,
             :vim_tiny,
             :cron_config,
