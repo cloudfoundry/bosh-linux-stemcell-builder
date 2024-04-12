@@ -16,9 +16,7 @@ cmake uuid-dev libgcrypt-dev ca-certificates \
 scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk chrony dbus nvme-cli rng-tools fdisk \
-ethtool libpam-pwquality"
-
-debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
+ethtool libpam-pwquality gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
 pkg_mgr purge netplan.io
 run_in_chroot $chroot "
@@ -38,12 +36,6 @@ pkg_mgr install $debs
 # pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
 pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-relp"
 
-
-# Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
-install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
-
-cp "$(dirname "$0")/assets/runit.service" "${chroot}/lib/systemd/system/"
-run_in_chroot "${chroot}" "systemctl enable runit"
 run_in_chroot "${chroot}" "systemctl enable systemd-logind"
 run_in_chroot "${chroot}" "systemctl enable systemd-networkd"
 pkgs_to_purge="iw mg wireless-regdb"

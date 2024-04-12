@@ -1,0 +1,16 @@
+[Unit]
+Description=Bosh agent service
+After=network.target
+JoinsNamespaceOf=monit.service
+
+[Service]
+WorkingDirectory=/var/vcap/bosh
+ExecStart=/bin/bash -c 'PATH=/var/vcap/bosh/bin:$PATH \
+    exec nice -n -15 /var/vcap/bosh/bin/bosh-agent \
+    -P $(cat /var/vcap/bosh/etc/operating_system) \
+    -C /var/vcap/bosh/agent.json'
+Restart=always
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

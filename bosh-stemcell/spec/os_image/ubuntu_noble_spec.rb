@@ -36,8 +36,14 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
       its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu noble-updates main universe multiverse' }
       its(:content) { should match 'deb http://security.ubuntu.com/ubuntu noble-security main universe multiverse' }
     end
+    # NOBLE_TODO: bosh-agent is not installed in os_image stage
+    # describe file('/lib/systemd/system/bosh-agent.service') do
+    #   it { should be_file }
+    #   its(:content) { should match 'Restart=always' }
+    #   its(:content) { should match 'KillMode=process' }
+    # end
 
-    describe file('/lib/systemd/system/runit.service') do
+    describe file('/lib/systemd/system/monit.service') do
       it { should be_file }
       its(:content) { should match 'Restart=always' }
       its(:content) { should match 'KillMode=process' }

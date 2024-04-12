@@ -1,0 +1,12 @@
+[Unit]
+Description=Monit service
+After=network.target
+ConditionPathExists=/var/vcap/data/sys/run
+
+[Service]
+ExecStart=/bin/bash -c 'PATH=/var/vcap/bosh/bin:$PATH exec nice -n -10 /var/vcap/bosh/bin/monit -I -c /var/vcap/bosh/etc/monitrc'
+Restart=always
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
