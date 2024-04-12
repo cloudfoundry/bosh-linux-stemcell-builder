@@ -1,12 +1,12 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-noble.tgz">
-    <hash type="sha-512">e7b88606bcbc002b2958d2a2791276c7c3a59126ecb151f43f4c57198d6fd9ceafc1d3cc0f91f82e8e4eb415f3c6b424dcc3bd1f9fa44956e1afe832b410e3f2</hash>
-    <hash type="sha-256">7668f0e6b639b4f721d2c87b46b5b8233cff07fbbbdbd78f7b746f171c8d63c8</hash>
-    <hash type="sha-1">87bbef7fd1fabf94271ade7d418a3623c5c15717</hash>
-    <hash type="md5">dc4febff7ffa74b72fdda1a5d6aafdd7</hash>
-    <size>454299777</size>
+    <hash type="sha-512">84bc28f103a8e45a8ab84976325acc18b4c49ecc2809916ffedc26af85b2665a2d0eda7dcdd1c16de01c083fc53d49688b997c0484c8765c0c3c3db50cf9896d</hash>
+    <hash type="sha-256">285cb82c4108e328e5929c796934a01c0878326f37d8deb6a9e3d4d309856b21</hash>
+    <hash type="sha-1">f174541b4f0597cdaf4d5b1e07dba29234d51313</hash>
+    <hash type="md5">deaea24e286bdb4b759c46bbd92f0434</hash>
+    <size>445702506</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu_noble_poc/ubuntu-noble.tgz</url>
-    <version>12.0.0</version>
+    <version>13.0.0</version>
   </file>
   <file name="usn-log.json">
     <hash type="sha-512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
@@ -14,8 +14,8 @@
     <hash type="sha-1">da39a3ee5e6b4b0d3255bfef95601890afd80709</hash>
     <hash type="md5">d41d8cd98f00b204e9800998ecf8427e</hash>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu_noble_poc/usn-log.json</url>
-    <version>12.0.0</version>
+    <version>13.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2024-03-20T19:17:08.756661767Z</published>
+  <published>2024-04-12T08:43:38.977465307Z</published>
 </metalink>
