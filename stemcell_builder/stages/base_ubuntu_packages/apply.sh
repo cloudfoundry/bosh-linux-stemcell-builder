@@ -11,12 +11,13 @@ curl wget bison libreadline6-dev rng-tools \
 libxml2 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
 flex psmisc apparmor-utils iptables sysstat \
 rsync openssh-server traceroute libncurses5-dev quota \
-libaio1 gdb libcap2-bin libcap2-dev libbz2-dev \
+ gdb libcap2-bin libcap2-dev libbz2-dev \
 cmake uuid-dev libgcrypt-dev ca-certificates \
 scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk chrony dbus nvme-cli rng-tools fdisk \
 ethtool libpam-pwquality gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
+# NOBLE_TODO: libaio1 add when availble again
 
 pkg_mgr purge netplan.io
 run_in_chroot $chroot "
