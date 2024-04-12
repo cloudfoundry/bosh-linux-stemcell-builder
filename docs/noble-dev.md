@@ -19,8 +19,24 @@ FIXED: with changing to libpam-pwquality
 #### src/ipv4director/autitd/smoke_test.go
 behaviour changed on auditd it now exits 1 if error with `sudo auditctl -w /etc/network -p wa -k system-locale-story-50315687`
 
+### src/ipv4director/ipv6basic/basic_test.go
+fails due to missing sshd in `netstat -lnp` output
+solved: in https://github.com/cloudfoundry/bosh-linux-stemcell-builder/commit/8d8d68ae337d2d49a8b15176b8a0cd1b9a433a59
+
+
+
+#### dns resolver
 resolvconf package is not availble anymore and is probably not going to be backported
 systemd-resolve is installed now by default
 the agent forces a symlink see https://github.com/cloudfoundry/bosh-agent/blob/main/platform/net/ubuntu_net_manager.go#L477
 this should not happen. also we need to change how we update resolv.conf as
 nameserver=1.1.1.1 nameserver=8.8.8.8 is now DNS=1.1.1.1,8.8.8.8
+
+the new bosh-agent noble fix does not seem to fix the dns resolver.
+
+#### restrict monit access
+we need to restrict access to monit API we need to investigate systemds capabilities to do this
+
+
+#### NAMESPACING!!!!
+https://github.com/cloudfoundry/bosh-stemcells-ci/issues/12
