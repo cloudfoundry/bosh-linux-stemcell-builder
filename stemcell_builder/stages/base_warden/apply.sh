@@ -5,6 +5,12 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
+# Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
+install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
+
+cp "$(dirname "$0")/assets/runit.service" "${chroot}/lib/systemd/system/"
+run_in_chroot "${chroot}" "systemctl enable runit"
+
 # Explicit make the mount point for bind-mount
 # Otherwise using none ubuntu host will fail creating vm
 mkdir -p $chroot/warden-cpi-dev
