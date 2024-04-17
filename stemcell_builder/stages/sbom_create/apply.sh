@@ -33,4 +33,4 @@ mount ${loopback_dev} ${image_mount_point}
 add_on_exit "umount ${image_mount_point}"
 
 # Generate sbom
-syft ${image_mount_point} -o spdx-json > $work/stemcell/sbom.spdx.json
+syft ${image_mount_point} -o spdx-json=$work/stemcell/sbom.spdx.json -o cyclonedx-json=$work/stemcell/sbom.cdx.json
