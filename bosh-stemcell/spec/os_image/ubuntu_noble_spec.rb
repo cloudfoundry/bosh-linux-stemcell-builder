@@ -372,11 +372,10 @@ syslog:x:102:102::/nonexistent:/usr/sbin/nologin
 systemd-resolve:x:991:991:systemd Resolver:/:/usr/sbin/nologin
 uuidd:x:103:104::/run/uuidd:/usr/sbin/nologin
 _chrony:x:104:106:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
-runit-log:x:999:990:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
-_runit-log:x:997:989:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
+_runit-log:x:999:990:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
 sshd:x:105:65534::/run/sshd:/usr/sbin/nologin
 tcpdump:x:106:108::/nonexistent:/usr/sbin/nologin
-polkitd:x:988:988:User for polkitd:/:/usr/sbin/nologin
+polkitd:x:989:989:User for polkitd:/:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
@@ -410,7 +409,6 @@ syslog:!:(\d{5})::::::
 systemd-resolve:!\*:(\d{5})::::::
 uuidd:!:(\d{5})::::::
 _chrony:!:(\d{5})::::::
-runit-log:!:(\d{5})::::::
 _runit-log:!:(\d{5})::::::
 sshd:!:(\d{5})::::::
 tcpdump:!:(\d{5})::::::
@@ -476,12 +474,11 @@ netdev:x:103:
 uuidd:x:104:
 _ssh:x:105:
 _chrony:x:106:
-runit-log:x:990:
-_runit-log:x:989:
+_runit-log:x:990:
 rdma:x:107:
 tcpdump:x:108:
-polkitd:x:988:
-admin:x:987:vcap
+polkitd:x:989:
+admin:x:988:vcap
 vcap:x:1000:syslog
 bosh_sshers:x:1001:vcap
 bosh_sudoers:x:1002:
@@ -543,7 +540,6 @@ netdev:!::
 uuidd:!::
 _ssh:!::
 _chrony:!::
-runit-log:!::
 _runit-log:!::
 rdma:!::
 tcpdump:!::
