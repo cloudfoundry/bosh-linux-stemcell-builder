@@ -1,7 +1,6 @@
 [Unit]
 Description=Bosh agent service
 After=network.target
-JoinsNamespaceOf=monit.service
 
 [Service]
 WorkingDirectory=/var/vcap/bosh

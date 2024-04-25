@@ -9,7 +9,7 @@ source $base_dir/etc/settings.bash
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
 curl wget bison libreadline6-dev rng-tools \
 libxml2 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
-flex psmisc apparmor-utils iptables sysstat \
+flex psmisc apparmor-utils iptables nftables sysstat \
 rsync openssh-server traceroute libncurses5-dev quota \
 libaio1t64 gdb libcap2-bin libcap2-dev libbz2-dev \
 cmake uuid-dev libgcrypt-dev ca-certificates \
