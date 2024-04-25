@@ -175,6 +175,7 @@ packages.txt
 dev_tools_file_list.txt
 image
 sbom.spdx.json
+sbom.cdx.json
 '
       )
     end
