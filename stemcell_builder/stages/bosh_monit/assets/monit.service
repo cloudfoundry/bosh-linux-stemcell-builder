@@ -6,7 +6,7 @@ ConditionPathExists=/var/vcap/data/sys/run
 [Service]
 ExecStartPre=/usr/sbin/nft -f /etc/nftables/monit.nft
 ExecStart=/bin/bash -c 'PATH=/var/vcap/bosh/bin:$PATH exec nice -n -10 /var/vcap/bosh/bin/monit -I -c /var/vcap/bosh/etc/monitrc'
-ExecStartPost=/usr/sbin/nft flush tables
+ExecStopPost=/usr/sbin/nft flush ruleset
 Restart=always
 KillMode=process
 
