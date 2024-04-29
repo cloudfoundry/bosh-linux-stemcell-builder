@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
+describe 'Ubuntu 24.04 stemcell image', stemcell_image: true do
   it_behaves_like 'All Stemcells'
   it_behaves_like 'a Linux kernel based OS image'
   it_behaves_like 'a Linux kernel module configured OS image'
@@ -552,7 +552,7 @@ HERE
   end
 end
 
-describe 'Ubuntu 22.04 stemcell tarball', stemcell_tarball: true do
+describe 'Ubuntu 24.04 stemcell tarball', stemcell_tarball: true do
   context 'installed by bosh_dpkg_list stage' do
     describe file("#{ENV['STEMCELL_WORKDIR']}/stemcell/packages.txt", ShelloutTypes::Chroot.new('/')) do
       it { should be_file }

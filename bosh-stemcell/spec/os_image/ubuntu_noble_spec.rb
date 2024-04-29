@@ -2,7 +2,7 @@ require 'bosh/stemcell/arch'
 require 'spec_helper'
 require 'shellout_types/file'
 
-describe 'Ubuntu 22.04 OS image', os_image: true do
+describe 'Ubuntu 24.04 OS image', os_image: true do
   it_behaves_like 'every OS image' do
     let (:syslog_config) { file('/etc/audit/plugins.d/syslog.conf') }
   end
