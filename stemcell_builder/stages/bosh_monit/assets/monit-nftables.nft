@@ -1,6 +1,6 @@
 table inet filter {
     # Chain rules
-    chain output {
+    chain monit_output {
         type filter hook output priority 0; policy accept;
 
         # Allow established and related connections
@@ -8,6 +8,6 @@ table inet filter {
 
         socket cgroupv2 level 2 "system.slice/bosh-agent.service" ip daddr 127.0.0.1 tcp dport 2822 log prefix "Matched cgroup bosh-agent monit rule: " accept
         skuid 0 ip daddr 127.0.0.1 tcp dport 2822 log prefix "Matched skuid monit rule:" accept
-        ip daddr 127.0.0.1 tcp dport 2822 log prefix "dropped rule:" drop
+        ip daddr 127.0.0.1 tcp dport 2822 log prefix "dropped monit rule:" drop
     }
 }
