@@ -11,7 +11,7 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
       "CreatePartitionIfNoEphemeralDisk": true,
       "DevicePathResolutionType": "scsi",
       "PartitionerType": "parted",
-      "DNSResolverType": "systemd"
+      "ServiceManager": "systemd"
     }
   },
   "Infrastructure": {

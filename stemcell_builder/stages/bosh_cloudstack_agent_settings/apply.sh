@@ -13,7 +13,7 @@ cat > $agent_settings_file <<JSON
       $(get_partitioner_type_mapping)
       "CreatePartitionIfNoEphemeralDisk": true,
       "DevicePathResolutionType": "virtio",
-      "DNSResolverType": "systemd"
+      "ServiceManager": "systemd"
     }
   },
   "Infrastructure": {
