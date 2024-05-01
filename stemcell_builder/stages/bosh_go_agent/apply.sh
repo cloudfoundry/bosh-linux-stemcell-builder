@@ -19,7 +19,7 @@ cd $assets_dir
 # mv bosh-agent $chroot/var/vcap/bosh/bin/
 
 #TODO: uncomment above and remove the line below once we have a the bosha-agent is fixed upstream to use systemd-resolve
-mv $assets_dir/bosh-agent $chroot/var/vcap/bosh/bin/bosh-agent
+cp $assets_dir/bosh-agent $chroot/var/vcap/bosh/bin/bosh-agent
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
 

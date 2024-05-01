@@ -2,6 +2,7 @@
 Description=Bosh agent service
 After=network.target
 
+
 [Service]
 WorkingDirectory=/var/vcap/bosh
 ExecStart=/bin/bash -c 'PATH=/var/vcap/bosh/bin:$PATH \
@@ -13,3 +14,4 @@ KillMode=process
 
 [Install]
 WantedBy=multi-user.target
+Alias=agent.service
