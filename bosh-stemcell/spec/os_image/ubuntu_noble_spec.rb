@@ -426,7 +426,7 @@ daemon:x:1:
 bin:x:2:
 sys:x:3:
 adm:x:4:vcap
-tty:x:5:
+tty:x:5:syslog
 disk:x:6:
 lp:x:7:
 mail:x:8:
@@ -492,7 +492,7 @@ daemon:*::
 bin:*::
 sys:*::
 adm:*::vcap
-tty:*::
+tty:*::syslog
 disk:*::
 lp:*::
 mail:*::
