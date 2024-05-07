@@ -136,7 +136,7 @@ shared_examples_for 'every OS image' do
       it { should be_file }
 
       it 'should reload rsyslog on rotate' do
-        expect(subject.content).to match /sudo kill -SIGHUP \$\(cat \/var\/run\/rsyslogd\.pid\)/
+        expect(subject.content).to match /sudo systemctl kill -s HUP rsyslog.service/
       end
 
       it 'should not restart rsyslog on rotate so that logs are not lost' do

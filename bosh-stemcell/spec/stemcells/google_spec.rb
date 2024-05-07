@@ -6,8 +6,7 @@ describe 'Google Stemcell', stemcell_image: true do
   context 'rsyslog conf directory only contains files installed by rsyslog_config stage and google-compute-engine package' do
     describe command('ls -A /etc/rsyslog.d') do
       it 'match expected list of rsyslog configs' do
-        expected_rsyslog_confs = %w(50-default.conf
-90-google.conf
+        expected_rsyslog_confs = %w(50-default.conf 90-bosh-agent.conf 90-google.conf
 )
 
 
