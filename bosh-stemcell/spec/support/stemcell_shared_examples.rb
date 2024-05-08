@@ -91,6 +91,7 @@ shared_examples_for 'All Stemcells' do
       its (:stdout) do
         should eq(<<~FILELIST)
           50-default.conf
+          90-bosh-agent.conf
         FILELIST
       end
     end
