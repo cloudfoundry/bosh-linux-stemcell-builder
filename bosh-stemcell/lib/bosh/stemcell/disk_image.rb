@@ -14,17 +14,12 @@ module Bosh::Stemcell
     end
 
     def mount
-      if efi_image
-        shell.run("sudo mount #{stemcell_loopback_boot_name} #{image_mount_point}", output_command: verbose)
-        shell.run("sudo mount -o umask=0177 #{stemcell_loopback_efi_name} #{image_mount_point}/boot/efi", output_command: verbose)
-      else
-        shell.run("sudo mount #{stemcell_loopback_device_name} #{image_mount_point}", output_command: verbose)
-      end
+      mount_image
     rescue => e
-      raise e
+      raise e unless e.message.include?("sudo mount")
 
       sleep 0.5
-      shell.run(mount_command, output_command: verbose)
+      mount_image
     end
 
     def unmount
@@ -37,6 +32,15 @@ module Bosh::Stemcell
     private
 
     attr_reader :image_file_path, :verbose, :shell, :device
+
+    def mount_image
+      if efi_image
+        shell.run("sudo mount #{stemcell_loopback_boot_name} #{image_mount_point}", output_command: verbose)
+        shell.run("sudo mount -o umask=0177 #{stemcell_loopback_efi_name} #{image_mount_point}/boot/efi", output_command: verbose)
+      else
+        shell.run("sudo mount #{stemcell_loopback_device_name} #{image_mount_point}", output_command: verbose)
+      end
+    end
 
     def efi_image
       return map_image.lines.length > 1
@@ -62,7 +66,6 @@ module Bosh::Stemcell
     def map_image
       return @map_image if @map_image
       @device = shell.run("sudo losetup --show --find #{image_file_path}", output_command: verbose)
-      shell.run("sudo kpartx -sav #{device}", output_command: verbose)
       @map_image = shell.run("sudo kpartx -sav #{device}", output_command: verbose)
       @map_image
     end

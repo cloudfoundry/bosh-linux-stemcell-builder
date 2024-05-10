@@ -5,6 +5,9 @@ module Bosh::Stemcell
   describe DiskImage do
     let(:shell) { instance_double('Bosh::Core::Shell', run: nil) }
     let(:kpartx_map_output) { 'add map FAKE_LOOP1p1 (252:3): 0 3997984 linear /dev/loop1 63' }
+    let(:kpartx_map_output_efi) {
+      "add map FAKE_LOOP1p1 (252:3): 0 3997984 linear /dev/loop1 63\nadd map FAKE_LOOP1p2 (252:3): 0 3997984 linear /dev/loop1 63"
+    }
     let(:options) do
       {
         image_file_path: '/path/to/FAKE_IMAGE',
@@ -50,6 +53,18 @@ module Bosh::Stemcell
         allow(shell).to receive(:run).
                            with('sudo kpartx -sav /dev/loop0', output_command: false).and_return(kpartx_map_output)
         expect(shell).to receive(:run).with('sudo mount /dev/mapper/FAKE_LOOP1p1 /fake/mnt', output_command: false)
+
+        disk_image.mount
+      end
+
+
+      it 'mounts efi image on the loop device' do
+        losetup_commad = 'sudo losetup --show --find /path/to/FAKE_IMAGE'
+        allow(shell).to receive(:run).with(losetup_commad, output_command: false).and_return('/dev/loop0')
+        allow(shell).to receive(:run).
+                           with('sudo kpartx -sav /dev/loop0', output_command: false).and_return(kpartx_map_output_efi)
+        expect(shell).to receive(:run).with('sudo mount /dev/mapper/FAKE_LOOP1p2 /fake/mnt', output_command: false)
+        expect(shell).to receive(:run).with('sudo mount -o umask=0177 /dev/mapper/FAKE_LOOP1p1 /fake/mnt/boot/efi', output_command: false)
 
         disk_image.mount
       end
@@ -111,6 +126,22 @@ module Bosh::Stemcell
       end
 
       it 'unmounts the loop device and then unmaps the file' do
+        losetup_commad = 'sudo losetup --show --find /path/to/FAKE_IMAGE'
+        allow(shell).to receive(:run).with(losetup_commad, output_command: false).and_return('/dev/loop0')
+        expect(shell).to receive(:run).
+                           with('sudo kpartx -sav /dev/loop0', output_command: false).and_return(kpartx_map_output)
+        expect(shell).to receive(:run).with('sudo umount /fake/mnt', output_command: false).ordered
+        expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
+        expect(shell).to receive(:run).with('sudo losetup -v -d /dev/loop0', output_command: false).ordered
+
+        disk_image.unmount
+      end
+
+      it 'unmounts efi image on the loop device and then unmaps the file' do
+        losetup_commad = 'sudo losetup --show --find /path/to/FAKE_IMAGE'
+        allow(shell).to receive(:run).with(losetup_commad, output_command: false).and_return('/dev/loop0')
+        expect(shell).to receive(:run).
+                           with('sudo kpartx -sav /dev/loop0', output_command: false).and_return(kpartx_map_output_efi)
         expect(shell).to receive(:run).with('sudo umount /fake/mnt', output_command: false).ordered
         expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
         expect(shell).to receive(:run).with('sudo losetup -v -d /dev/loop0', output_command: false).ordered
@@ -119,6 +150,10 @@ module Bosh::Stemcell
       end
 
       it 'unmaps the file even if unmounting the device fails' do
+        losetup_commad = 'sudo losetup --show --find /path/to/FAKE_IMAGE'
+        allow(shell).to receive(:run).with(losetup_commad, output_command: false).and_return('/dev/loop0')
+        expect(shell).to receive(:run).
+                           with('sudo kpartx -sav /dev/loop0', output_command: false).and_return(kpartx_map_output)
         expect(shell).to receive(:run).with('sudo umount /fake/mnt', output_command: false).and_raise
         expect(shell).to receive(:run).with('sudo kpartx -dv /dev/loop0', output_command: false).ordered
         expect(shell).to receive(:run).with('sudo losetup -v -d /dev/loop0', output_command: false).ordered

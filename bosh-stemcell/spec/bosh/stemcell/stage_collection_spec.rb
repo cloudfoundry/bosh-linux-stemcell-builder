@@ -91,8 +91,8 @@ module Bosh::Stemcell
             :bosh_aws_agent_settings,
             :bosh_clean_ssh,
             :udev_aws_rules,
-            :image_create,
-            :image_install_grub,
+            :image_create_efi,
+            :image_install_grub_efi,
             :bosh_package_list,
           ]
         }
@@ -153,8 +153,8 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_google_agent_settings,
             :bosh_clean_ssh,
-            :image_create,
-            :image_install_grub,
+            :image_create_efi,
+            :image_install_grub_efi,
             :bosh_package_list
           ]
         }
@@ -247,8 +247,8 @@ module Bosh::Stemcell
               :bosh_enable_password_authentication,
               :bosh_vsphere_agent_settings,
               :bosh_clean_ssh,
-              :image_create,
-              :image_install_grub,
+              :image_create_efi,
+              :image_install_grub_efi,
               :bosh_package_list
             ]
           )
@@ -274,8 +274,8 @@ module Bosh::Stemcell
                 :bosh_enable_password_authentication,
                 :bosh_vsphere_agent_settings,
                 :bosh_clean_ssh,
-                :image_create,
-                :image_install_grub,
+                :image_create_efi,
+                :image_install_grub_efi,
                 :bosh_package_list,
             ]
             )
