@@ -93,24 +93,19 @@ cat >${image_mount_point}/etc/default/grub <<EOF
 GRUB_CMDLINE_LINUX="vconsole.keymap=us net.ifnames=0 biosdevname=0 crashkernel=auto selinux=0 plymouth.enable=0 console=ttyS0,115200n8 earlyprintk=ttyS0 rootdelay=300 ipv6.disable=1 audit=1 cgroup_enable=memory swapaccount=1 ${grub_suffix}"
 EOF
 
-# # we use a random password to prevent user from editing the boot menu
-# @TODO this causes EFI to ask for password on boot
-# pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
-# echo "\
-# cat << EOF
-# set superusers=vcap
-# set root=(hd0,0)
-# password_pbkdf2 vcap $pbkdf2_password
-# EOF" >> ${image_mount_point}/etc/grub.d/00_header
+# we use a random password to prevent user from editing the boot menu
+pbkdf2_password=`run_in_chroot ${image_mount_point} "echo -e '${random_password}\n${random_password}' | grub-mkpasswd-pbkdf2 | grep -Eo 'grub.pbkdf2.sha512.*'"`
+echo "\
+cat << EOF
+set superusers=vcap
+password_pbkdf2 vcap $pbkdf2_password
+EOF" >> ${image_mount_point}/etc/grub.d/00_header
+
+# Setup menuentry
+sed -i -e 's/--class os/--class os --unrestricted/g' ${image_mount_point}/etc/grub.d/10_linux
 
 # assemble config file that is read by grub2 at boot time
 run_in_chroot ${image_mount_point} "GRUB_DISABLE_RECOVERY=true grub-mkconfig -o /boot/efi/EFI/grub/grub.cfg"
-
-# set the correct root filesystem; use the ext2 filesystem's UUID
-device_uuid=$(dumpe2fs $loopback_root_dev | grep UUID | awk '{print $3}')
-sed -i s%root=${loopback_root_dev}%root=UUID=${device_uuid}%g ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
-cat ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
-rm ${image_mount_point}/boot/grub/device.map
 
 # Figure out uuid of partition
 uuid_efi=$(blkid -c /dev/null -sUUID -ovalue ${loopback_efi_dev})
@@ -119,11 +114,13 @@ kernel_version=$(basename $(ls -rt ${image_mount_point}/boot/vmlinuz-* |tail -1)
 initrd_file="initrd.img-${kernel_version}"
 os_name=$(source ${image_mount_point}/etc/lsb-release ; echo -n ${DISTRIB_DESCRIPTION})
 
+# set the correct root filesystem; use the ext2 filesystem's UUID
+sed -i s%root=${loopback_root_dev}%root=UUID=${uuid_root}%g ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
+rm ${image_mount_point}/boot/grub/device.map
+
 cat > ${image_mount_point}/etc/fstab <<FSTAB
 # /etc/fstab Created by BOSH Stemcell Builder
-UUID=${uuid_root} / ext4 defaults 0 1
-UUID=${uuid_efi} /boot/efi vfat umask=0077 0 1
+UUID=${uuid_efi} /boot/efi vfat umask=0177 1 1
+UUID=${uuid_root} / ext4 defaults 1 1
 FSTAB
 
-chown -fLR root:root ${image_mount_point}/boot/efi/EFI/grub/grub.cfg
-chmod 600 ${image_mount_point}/boot/efi/EFI/grub/grub.cfg

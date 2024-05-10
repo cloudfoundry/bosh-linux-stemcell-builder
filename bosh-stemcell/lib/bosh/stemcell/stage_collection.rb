@@ -142,8 +142,8 @@ module Bosh::Stemcell
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
+        :image_create_efi,
+        :image_install_grub_efi,
       ]
     end
 
@@ -160,8 +160,8 @@ module Bosh::Stemcell
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
+        :image_create_efi,
+        :image_install_grub_efi,
       ]
     end
 
@@ -192,8 +192,8 @@ module Bosh::Stemcell
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
-        :image_create,
-        :image_install_grub,
+        :image_create_efi,
+        :image_install_grub_efi,
       ]
     end
 

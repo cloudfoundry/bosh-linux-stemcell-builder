@@ -9,14 +9,14 @@ describe 'Ubuntu 24.04 stemcell image', stemcell_image: true do
   linux_version_regex = 's/linux-(.+)-([0-9]+).([0-9]+).([0-9]+)-([0-9]+)/linux-\1-\2.\3/'
 
   context 'installed by image_install_grub', {
-    exclude_on_softlayer: true
+    exclude_on_softlayer: true,
+    exclude_on_vsphere: true,
+    exclude_on_google: true,
+    exclude_on_aws: true,
   } do
     context 'for cloudstack infrastructure and xen hypervisor', {
         exclude_on_alicloud: true,
-        exclude_on_aws: true,
         exclude_on_vcloud: true,
-        exclude_on_vsphere: true,
-        exclude_on_google: true,
         exclude_on_warden: true,
         exclude_on_azure: true,
         exclude_on_openstack: true,
@@ -43,6 +43,43 @@ describe 'Ubuntu 24.04 stemcell image', stemcell_image: true do
 
     context 'for default kernel', exclude_on_fips: true do
       describe file('/boot/grub/grub.cfg') do
+        it { should be_file }
+        its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
+        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
+      end
+    end
+
+    describe file('/boot/grub/menu.lst') do
+      before { skip 'until alicloud/aws/openstack stop clobbering the symlink with "update-grub"' }
+      it { should be_linked_to('./grub.cfg') }
+    end
+  end
+
+  context 'installed by image_install_grub', {
+    exclude_on_softlayer: true,
+    exclude_on_cloudstack: true,
+    exclude_on_vcloud: true,
+    exclude_on_warden: true,
+    exclude_on_openstack: true,
+    exclude_on_azure: true,
+  } do
+    describe file('/boot/efi/EFI/grub/grub.cfg') do
+      it { should be_file }
+      its(:content) { should match 'set default="0"' }
+      its(:content) { should match ' selinux=0' }
+      its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
+      its(:content) { should match ' console=ttyS0,115200n8' }
+      its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
+
+      it('should set the grub menu password (stig: V-38585)') { expect(subject.content).to match /password_pbkdf2 vcap/ }
+      it('should be of mode 600 (stig: V-38583)') { expect(subject).to be_mode(0600) }
+      it('should be owned by root (stig: V-38579)') { expect(subject).to be_owned_by('root') }
+      it('should be grouped into root (stig: V-38581)') { expect(subject.group).to eq('root') }
+      it('audits processes that start prior to auditd (CIS-8.1.3)') { expect(subject.content).to match ' audit=1' }
+    end
+
+    context 'for default kernel', exclude_on_fips: true do
+      describe file('/boot/efi/EFI/grub/grub.cfg') do
         it { should be_file }
         its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
         its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }

@@ -142,7 +142,10 @@ module Bosh::Stemcell
       end
 
       def additional_cloud_properties
-        {'root_device_name' => '/dev/sda1'}
+        {
+          'root_device_name' => '/dev/sda1',
+          'boot_mode' => 'uefi-preferred',
+        }
       end
     end
 

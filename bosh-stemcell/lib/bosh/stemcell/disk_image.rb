@@ -14,17 +14,21 @@ module Bosh::Stemcell
     end
 
     def mount
-      device_path   = stemcell_loopback_device_name
-      mount_command = "sudo mount #{device_path} #{image_mount_point}"
-      shell.run(mount_command, output_command: verbose)
+      if efi_image
+        shell.run("sudo mount #{stemcell_loopback_boot_name} #{image_mount_point}", output_command: verbose)
+        shell.run("sudo mount -o umask=0177 #{stemcell_loopback_efi_name} #{image_mount_point}/boot/efi", output_command: verbose)
+      else
+        shell.run("sudo mount #{stemcell_loopback_device_name} #{image_mount_point}", output_command: verbose)
+      end
     rescue => e
-      raise e unless e.message.include?(mount_command)
+      raise e
 
       sleep 0.5
       shell.run(mount_command, output_command: verbose)
     end
 
     def unmount
+      shell.run("sudo umount #{image_mount_point}/boot/efi", output_command: verbose) if efi_image
       shell.run("sudo umount #{image_mount_point}", output_command: verbose)
     ensure
       unmap_image
@@ -34,6 +38,10 @@ module Bosh::Stemcell
 
     attr_reader :image_file_path, :verbose, :shell, :device
 
+    def efi_image
+      return map_image.lines.length > 1
+    end
+
     def stemcell_loopback_device_name
       split_output = map_image.split(' ')
       device_name  = split_output[2]
@@ -41,9 +49,22 @@ module Bosh::Stemcell
       File.join('/dev/mapper', device_name)
     end
 
+    def stemcell_loopback_boot_name
+      efi_partition = map_image.lines.last.split(' ')[2]
+      File.join('/dev/mapper', efi_partition)
+    end
+
+    def stemcell_loopback_efi_name
+      efi_partition = map_image.lines.first.split(' ')[2]
+      File.join('/dev/mapper', efi_partition)
+    end
+
     def map_image
+      return @map_image if @map_image
       @device = shell.run("sudo losetup --show --find #{image_file_path}", output_command: verbose)
       shell.run("sudo kpartx -sav #{device}", output_command: verbose)
+      @map_image = shell.run("sudo kpartx -sav #{device}", output_command: verbose)
+      @map_image
     end
 
     def unmap_image
