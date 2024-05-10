@@ -28,9 +28,6 @@ shared_examples_for 'All Stemcells' do
     describe file('/boot/grub/grub.cfg') do
       its(:content) { should match(/^\s+(kernel|linux)\s.*\sipv6\.disable=1\s.*$/) }
     end
-    describe file('/boot/efi/EFI/grub/grub.cfg') do
-      its(:content) { should match(/^\s+(kernel|linux)\s.*\sipv6\.disable=1\s.*$/) }
-    end
   end
 
   context 'ipv6 is disabled in the kernel on EFI', {
