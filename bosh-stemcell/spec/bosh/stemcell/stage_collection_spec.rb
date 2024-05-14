@@ -253,8 +253,8 @@ module Bosh::Stemcell
               :bosh_enable_password_authentication,
               :bosh_vsphere_agent_settings,
               :bosh_clean_ssh,
-              :image_create,
-              :image_install_grub,
+              :image_create_efi,
+              :image_install_grub_efi,
               :sbom_create,
               :bosh_package_list,
             ]
@@ -281,8 +281,8 @@ module Bosh::Stemcell
                 :bosh_enable_password_authentication,
                 :bosh_vsphere_agent_settings,
                 :bosh_clean_ssh,
-                :image_create,
-                :image_install_grub,
+                :image_create_efi,
+                :image_install_grub_efi,
                 :sbom_create,
                 :bosh_package_list,
             ]

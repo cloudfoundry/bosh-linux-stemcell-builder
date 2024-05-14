@@ -14,7 +14,7 @@ else
 fi
 
 if pkg_exists $preferred; then
-  pkg_mgr install $preferred
+  pkg_mgr install $preferred grub-efi-amd64-bin
 elif pkg_exists $fallback; then
   pkg_mgr install $fallback
 else

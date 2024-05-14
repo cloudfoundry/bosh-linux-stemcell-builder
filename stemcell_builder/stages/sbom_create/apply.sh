@@ -21,10 +21,10 @@ done
 device=$(losetup --show --find ${disk_image})
 add_on_exit "losetup --verbose --detach ${device}"
 
-device_partition=$(kpartx -sav ${device} | grep "^add" | cut -d" " -f3)
+device_partition_root=$(kpartx -sav ${device} | cut -d" " -f3 | tail -1)
 add_on_exit "kpartx -dv ${device}"
 
-loopback_dev="/dev/mapper/${device_partition}"
+loopback_dev="/dev/mapper/${device_partition_root}"
 
 # Mount partition
 image_mount_point=${work}/mnt

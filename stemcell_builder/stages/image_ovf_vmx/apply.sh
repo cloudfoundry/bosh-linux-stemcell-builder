@@ -55,7 +55,8 @@ powerType.powerOff = "preset"
 powerType.powerOn = "preset"
 powerType.suspend = "preset"
 powerType.reset = "preset"
-
+firmware = "efi"
+chipset.motherboardLayout = "acpi"
 displayName = "$vm_hostname $vm_arch"
 
 numvcpus = "$vm_cpus"
