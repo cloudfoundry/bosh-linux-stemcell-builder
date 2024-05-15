@@ -1,0 +1,28 @@
+
+name: SBOM upload
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  SBOM-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+    - uses: actions/checkout@v3
+    - name: Generate SBOM
+      run: |
+        mkdir spdx; curl -sL https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-jammy-go_agent \
+        | tar -xz -O sbom.spdx.json > spdx/sbom.spdx.json
+    - uses: actions/upload-artifact@v3
+      with:
+        name: sbom
+        path: spdx/
+    - name: SBOM upload
+      uses: advanced-security/spdx-dependency-submission-action@v0.0.1
+      with:
+        filePath: "spdx/"
