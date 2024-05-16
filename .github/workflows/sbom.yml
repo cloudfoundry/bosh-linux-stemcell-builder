@@ -28,6 +28,13 @@ jobs:
         format: sarif
         output: trivy-results.sarif
 
+    - name: Fix SARIF file uri files
+      run: |
+        jq '.runs | map(.results | map(.locations
+          | map(.physicalLocaion.artifactLocation.uri = "file:///sbom.spdx.json")))' \
+          trivy-results.sarif > tmp.sarif
+        mv tmp.sarif trivy-results.sarif
+
     - uses: actions/upload-artifact@v4
       with:
         name: sbom
