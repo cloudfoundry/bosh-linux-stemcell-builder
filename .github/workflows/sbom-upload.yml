@@ -12,8 +12,6 @@ jobs:
       id-token: write
       contents: write
     steps:
-    - uses: actions/checkout@v3
-
     - name: Generate SBOM
       run: |
         curl -sL https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-jammy-go_agent \
@@ -26,5 +24,3 @@ jobs:
 
     - name: SBOM upload
       uses: advanced-security/spdx-dependency-submission-action@v0.0.1
-      with:
-        filePath: sbom.spdx.json
