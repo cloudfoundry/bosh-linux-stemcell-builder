@@ -1,9 +1,11 @@
-name: SBOM upload
+name: SBOM upload & scan
 
 on:
   workflow_dispatch:
   release:
     types: [published]
+  schedule:
+  - cron: '0 */1 * * *'
 
 jobs:
   SBOM-upload:
@@ -17,6 +19,14 @@ jobs:
         curl -sL https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-jammy-go_agent \
           | tar -xz -O sbom.spdx.json > sbom.spdx.json
 
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: sbom
+        scan-ref: sbom.spdx.json
+        format: sarif
+        output: trivy-results.sarif
+
     - uses: actions/upload-artifact@v4
       with:
         name: sbom
@@ -24,3 +34,8 @@ jobs:
 
     - name: SBOM upload
       uses: advanced-security/spdx-dependency-submission-action@v0.0.1
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
