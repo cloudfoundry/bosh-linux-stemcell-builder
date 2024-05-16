@@ -13,6 +13,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
+      security-events: write
     steps:
     - name: Generate SBOM
       run: |
