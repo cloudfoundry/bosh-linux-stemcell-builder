@@ -12,12 +12,14 @@ jobs:
       id-token: write
       contents: write
     steps:
+    - uses: actions/checkout@v3
+
     - name: Generate SBOM
       run: |
         curl -sL https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-jammy-go_agent \
           | tar -xz -O sbom.spdx.json > sbom.spdx.json
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: sbom
         path: sbom.spdx.json
