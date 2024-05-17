@@ -28,10 +28,10 @@ jobs:
         format: sarif
         output: trivy-results.sarif
 
-    - name: Fix SARIF file uri files
+    - name: Fix SARIF file physicalLocations
       run: |
-        jq '.runs | map(.results | map(.locations
-          | map(.physicalLocaion.artifactLocation.uri = "file:///sbom.spdx.json")))' \
+        jq '.runs = (.runs | map(.results = (.results |
+          map(.locations = (.locations | map(.physicalLocation.artifactLocation = {uri: "file:///sbom.spdx.json"}))))))' \
           trivy-results.sarif > tmp.sarif
         mv tmp.sarif trivy-results.sarif
 
