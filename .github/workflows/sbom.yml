@@ -23,35 +23,48 @@ jobs:
         format: spdx-json
         output: sbom.spdx.json
 
-    - name: Run Trivy vulnerability scanner
+    - name: Run Trivy vulnerability scanner [fix available]
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: sbom
+        scan-ref: sbom.spdx.json
+        ignore-unfixed: true
+        format: sarif
+        output: trivy-results-with-fix.sarif
+
+    - name: Run Trivy vulnerability scanner [all]
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: sbom
         scan-ref: sbom.spdx.json
         format: sarif
-        output: trivy-results.sarif
+        output: trivy-results-all.sarif
 
     - name: Fix SARIF file physicalLocations
       run: |
-        jq '.runs = (.runs | map(.results = (.results |
-          map(.locations = (.locations | map(.physicalLocation.artifactLocation = {uri: "file:///sbom.spdx.json"}))))))' \
-          trivy-results.sarif > tmp.sarif
-        mv tmp.sarif trivy-results.sarif
+        for n in all with-fix; do
+          jq '.runs = (.runs | map(.results = (.results |
+            map(.locations = (.locations | map(.physicalLocation.artifactLocation = {uri: "/sbom.spdx.json"}))))))' \
+            trivy-results-${n}.sarif > tmp.sarif
+          mv tmp.sarif trivy-results-${n}.sarif
+        done
 
     - uses: actions/upload-artifact@v4
       with:
         name: sbom
         path: sbom.spdx.json
 
-    - uses: actions/upload-artifact@v4
-      with:
-        name: sarif
-        path: trivy-results.sarif
-
     - name: SBOM upload
       uses: advanced-security/spdx-dependency-submission-action@v0.0.1
 
-    - name: Upload Trivy scan results to GitHub Security tab
+    - name: Upload Trivy scan results to GitHub Security tab [all]
       uses: github/codeql-action/upload-sarif@v3
       with:
-        sarif_file: 'trivy-results.sarif'
+        sarif_file: 'trivy-results-all.sarif'
+        category: all
+
+    - name: Upload Trivy scan results to GitHub Security tab [fix-available]
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results-with-fix.sarif'
+        category: fix-available
