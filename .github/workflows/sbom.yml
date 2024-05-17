@@ -15,10 +15,13 @@ jobs:
       contents: write
       security-events: write
     steps:
-    - name: Generate SBOM
-      run: |
-        curl -sL https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-jammy-go_agent \
-          | tar -xz -O sbom.spdx.json > sbom.spdx.json
+    - name: Generate SBOM using Trivy from image
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: image
+        image-ref: ghcr.io/cloudfoundry/ubuntu-jammy-stemcell
+        format: spdx-json
+        output: sbom.spdx.json
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
