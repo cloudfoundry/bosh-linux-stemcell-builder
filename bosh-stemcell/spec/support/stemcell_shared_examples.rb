@@ -22,6 +22,7 @@ shared_examples_for 'All Stemcells' do
 
   context 'ipv6 is disabled in the kernel', {
     exclude_on_vsphere: true,
+    exclude_on_vcloud: true,
   } do
     describe file('/boot/grub/grub.cfg') do
       its(:content) { should match(/^\s+(kernel|linux)\s.*\sipv6\.disable=1\s.*$/) }
@@ -31,7 +32,6 @@ shared_examples_for 'All Stemcells' do
   context 'ipv6 is disabled in the kernel on EFI', {
     exclude_on_softlayer: true,
     exclude_on_cloudstack: true,
-    exclude_on_vcloud: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
     exclude_on_azure: true,
