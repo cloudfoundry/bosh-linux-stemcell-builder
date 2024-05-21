@@ -30,6 +30,7 @@ shared_examples_for 'All Stemcells' do
   end
 
   context 'ipv6 is disabled in the kernel on EFI', {
+    exclude_on_alicloud: true,
     exclude_on_softlayer: true,
     exclude_on_cloudstack: true,
     exclude_on_warden: true,
