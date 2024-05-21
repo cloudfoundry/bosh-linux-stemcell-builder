@@ -10,13 +10,14 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
 
   context 'installed by image_install_grub', {
     exclude_on_softlayer: true,
-    exclude_on_vsphere: true,
+    exclude_on_vcloud: true,
     exclude_on_vsphere: true,
   } do
     context 'for cloudstack infrastructure and xen hypervisor', {
         exclude_on_alicloud: true,
         exclude_on_aws: true,
         exclude_on_vcloud: true,
+        exclude_on_vsphere: true,
         exclude_on_google: true,
         exclude_on_warden: true,
         exclude_on_azure: true,
