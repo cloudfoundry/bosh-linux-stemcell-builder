@@ -445,11 +445,8 @@ shared_examples_for 'every OS image' do
   # images to perform theses stages. For the Stemcell suites the exlude flags
   # here apply.
   describe 'exceptions' do
-    context 'unless: vcloud / vsphere / warden / softlayer', {
-      exclude_on_vsphere: true,
-      exclude_on_vcloud: true,
+    context 'unless: warden', {
       exclude_on_warden: true,
-      exclude_on_softlayer: true,
     } do
       it 'disallows password authentication' do
         expect(sshd_config.content).to match(/^PasswordAuthentication no$/)
