@@ -29,7 +29,7 @@ describe 'Google Stemcell', stemcell_image: true do
     end
   end
 
-  context 'installed by bosh_disable_password_authentication' do
+  context 'installed by base_ssh' do
     describe 'disallows password authentication' do
       subject { file('/etc/ssh/sshd_config') }
 

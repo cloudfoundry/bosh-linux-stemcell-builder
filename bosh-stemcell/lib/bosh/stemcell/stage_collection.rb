@@ -136,7 +136,6 @@ module Bosh::Stemcell
         :system_parameters,
         :bosh_clean,
         :bosh_harden,
-        :bosh_enable_password_authentication,
         :bosh_vsphere_agent_settings,
         :bosh_clean_ssh,
         # when adding a stage that changes files in the image, do so before
@@ -240,7 +239,6 @@ module Bosh::Stemcell
         :system_parameters,
         :bosh_clean,
         :bosh_harden,
-        :bosh_enable_password_authentication,
         :bosh_softlayer_agent_settings,
         :bosh_config_root_ssh_login,
         :bosh_clean_ssh,

@@ -9,12 +9,11 @@ describe 'vCloud Stemcell', stemcell_image: true do
     end
   end
 
-  describe 'ssh authentication' do
-    describe 'allows password authentication' do
+  context 'installed by base_ssh' do
+    describe 'disallows password authentication' do
       subject { file('/etc/ssh/sshd_config') }
 
-      its(:content) { should_not match /^PasswordAuthentication no$/ }
-      its(:content) { should match /^PasswordAuthentication yes$/ }
+      its(:content) { should match /^PasswordAuthentication no$/ }
     end
   end
 end
