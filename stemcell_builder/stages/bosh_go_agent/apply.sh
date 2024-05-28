@@ -51,6 +51,9 @@ chmod 0600 /var/vcap/monit/alerts.monitrc
 chown root:root /var/vcap/monit/alerts.monitrc
 "
 
+# set symlink for bosh-agent logs so we can keep the same log locations for our tests
+run_in_chroot $chroot "ln -s /var/log/bosh-agent.log /var/vcap/bosh/log/current"
+
 # Since go agent is always specified with -C provide empty conf.
 # File will be overwritten in whole by infrastructures.
 echo '{}' > $chroot/var/vcap/bosh/agent.json
