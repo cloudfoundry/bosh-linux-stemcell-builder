@@ -4,7 +4,6 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
   it 'confirms all stig test cases ran' do
     expected_base_stig_test_cases = %w[
       V-38443
-      V-38444
       V-38445
       V-38446
       V-38448
@@ -55,10 +54,6 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
       V-38539
       V-38542
       V-38544
-      V-38546
-      V-38548
-      V-38551
-      V-38553
       V-38573
       V-38574
       V-38576

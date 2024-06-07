@@ -36,11 +36,6 @@ shared_examples_for 'a Linux kernel module configured OS image' do
     end
   end
 
-  context 'prevent ipv6 module from being loaded (stig: V-38546) (stig: V-38444) (stig: V-38553) (stig: V-38551)' do
-    describe file('/etc/modprobe.d/blacklist.conf') do
-      its(:content) { should match 'options ipv6 disable=1' }
-    end
-  end
 
   context 'prevent cramfs module from being loaded (CIS-2.18)' do
     describe file('/etc/modprobe.d/blacklist.conf') do

@@ -18,8 +18,7 @@ install hfs /bin/true
 install hfsplus /bin/true
 install squashfs /bin/true
 install udf /bin/true
-install rds /bin/true
-options ipv6 disable=1' >> $chroot/etc/modprobe.d/blacklist.conf
+install rds /bin/true' >> $chroot/etc/modprobe.d/blacklist.conf
 
 echo '# prevent nouveau from loading
 blacklist nouveau

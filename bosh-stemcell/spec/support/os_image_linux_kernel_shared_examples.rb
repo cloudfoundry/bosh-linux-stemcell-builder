@@ -24,9 +24,6 @@ shared_examples_for 'a Linux kernel based OS image' do
         expect(subject.content).to match /^net.ipv4.conf.all.accept_source_route=0$/
       end
 
-      it 'must ignore ICMPv6 redirects by default (stig: V-38548)' do
-        expect(subject.content).to match /^net.ipv6.conf.default.accept_redirects=0$/
-      end
 
       it 'must not accept ICMPv4 secure redirect packets by default (stig: V-38532)' do
         expect(subject.content).to match /^net.ipv4.conf.default.secure_redirects=0$/
@@ -56,17 +53,6 @@ shared_examples_for 'a Linux kernel based OS image' do
         expect(subject.content).to match /^net.ipv4.conf.default.log_martians=1$/
       end
 
-      it 'should disable ipv6 router advertisements on all interfaces (CIS-7.3.1)' do
-        expect(subject.content).to match /^net.ipv6.conf.all.accept_ra=0$/
-      end
-
-      it 'should disable ipv6 router advertisements by default (CIS-7.3.1)' do
-        expect(subject.content).to match /^net.ipv6.conf.default.accept_ra=0$/
-      end
-
-      it 'should flush ipv6 routes (CIS-7.3.1)' do
-        expect(subject.content).to match /^net.ipv6.route.flush=1$/
-      end
 
       it 'should disable response to broadcast requests (CIS-7.2.5)' do
         expect(subject.content).to match /^net.ipv4.icmp_echo_ignore_broadcasts=1$/
