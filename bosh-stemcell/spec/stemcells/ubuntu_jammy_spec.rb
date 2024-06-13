@@ -65,6 +65,7 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
     exclude_on_warden: true,
     exclude_on_openstack: true,
     exclude_on_azure: true,
+    exclude_on_fips: true,
   } do
     describe file('/boot/efi/EFI/grub/grub.cfg') do
       it { should be_file }
