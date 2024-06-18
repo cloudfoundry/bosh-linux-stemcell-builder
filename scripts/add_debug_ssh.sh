@@ -5,7 +5,7 @@ set -e -x
 env
 
 if [ -z ${stemcell_tgz} ]; then
-echo "STEMCELL_LOCATION is not set. export BOSH_DEBUG_PUB_KEY="/home/username/workspace/bosh/bosh-linux-stemcell-builder/tmp/bosh-stemcell-0.0.8-google-kvm-ubuntu-noble-go_agent.tgz""
+echo "stemcell_tgz is not set. export stemcell_tgz="/home/username/workspace/bosh/bosh-linux-stemcell-builder/tmp/bosh-stemcell-0.0.8-google-kvm-ubuntu-noble-go_agent.tgz""
 fi
 # if [ -z ${BOSH_DEBUG_PUB_KEY} ]; then
 # echo "BOSH_DEBUG_PUB_KEY is not set. export BOSH_DEBUG_PUB_KEY="ssh-rsa blahblah""
@@ -28,9 +28,14 @@ cd $image_dir
 tar xvf $stemcell_dir/image
 mnt_dir=$(mktemp -d)
 trap 'rm -rf "${mnt_dir}"' EXIT
-sudo mount -o loop,offset=32256 disk.raw $mnt_dir
+device=$(sudo kpartx -sav disk.raw | grep '^add' | tail -n1 | cut -d' ' -f3)
+sudo mount -o loop,rw /dev/mapper/$device $mnt_dir
+
 # echo -n "0.0.${new_ver}" | sudo tee $mnt_dir/var/vcap/bosh/etc/stemcell_version
-# cp /tmp/build/*/agent-src/bin/bosh-agent $mnt_dir/var/vcap/bosh/bin/bosh-agent
+
+if [ -n "$AGENT_BINARY" ]; then
+    sudo cp $AGENT_BINARY $mnt_dir/var/vcap/bosh/bin/bosh-agent
+fi
 
 if [ -n "$BOSH_DEBUG_PUB_KEY" ]; then
     sudo chroot $mnt_dir /bin/bash <<EOF
@@ -44,6 +49,8 @@ EOF
 fi
 
 sudo umount $mnt_dir
+sudo kpartx -dv disk.raw
+
 tar czvf $stemcell_dir/image *
 
 cd $stemcell_dir
