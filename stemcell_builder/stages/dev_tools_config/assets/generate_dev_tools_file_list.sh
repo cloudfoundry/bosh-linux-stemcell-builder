@@ -29,8 +29,6 @@ PACKAGES=( \
   clang-18 \
   libgcc-s1 \
   libstdc++6 \
-  libc6 \
-  libc6-dev \
   libclang-common-18-dev \
   libclang-cpp18 \
   libclang1-18 \
