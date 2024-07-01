@@ -36,8 +36,13 @@ describe 'FIPS Stemcell', os_image: true do
   end
 
   context 'installed by image_install_grub for fips kernel' do
-    infrastructure = ENV['STEMCELL_INFRASTRUCTURE']
-    describe file(infrastructure == 'vsphere' ? '/boot/efi/EFI/grub/grub.cfg' : '/boot/grub/grub.cfg') do
+    grub_file = if ENV['STEMCELL_INFRASTRUCTURE'] == 'vsphere'
+                  '/boot/efi/EFI/grub/grub.cfg'
+                else
+                  '/boot/grub/grub.cfg'
+                end
+
+    describe file(grub_file) do
       it { should be_file }
       its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-fips root=UUID=\S* ro } }
       if use_iaas_kernel
