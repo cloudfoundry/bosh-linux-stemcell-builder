@@ -23,11 +23,11 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
         exclude_on_azure: true,
         exclude_on_openstack: true,
     } do
-      describe file('/boot/grub/grub.cfg') do
+      describe file(grub_cfg_path) do
         its(:content) { should match ' console=hvc0' }
       end
     end
-    describe file('/boot/grub/grub.cfg') do
+    describe file(grub_cfg_path) do
       it { should be_file }
       its(:content) { should match 'set default="0"' }
       its(:content) { should match(/^set root=\(hd0,0\)$/) }
@@ -44,7 +44,7 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
     end
 
     context 'for default kernel', exclude_on_fips: true do
-      describe file('/boot/grub/grub.cfg') do
+      describe file(grub_cfg_path) do
         it { should be_file }
         its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
         its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
@@ -107,7 +107,7 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       exclude_on_openstack: true,
       exclude_on_azure: true,
   } do
-    describe file('/boot/grub/grub.cfg') do
+    describe file(grub_cfg_path) do
       it { should be_file }
       its(:content) { should match 'set default="0"' }
       its(:content) { should match(/^set root=\(hd0,2\)$/) }
