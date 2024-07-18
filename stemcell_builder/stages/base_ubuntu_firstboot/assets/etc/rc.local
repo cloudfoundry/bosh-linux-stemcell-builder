@@ -2,21 +2,8 @@
 #execute firstboot.sh only once
 if [ ! -e /root/firstboot_done ]; then
     if [ -e /root/firstboot.sh ]; then
-        MAX_RETRIES=5
-        COUNT=0
-        while [ $COUNT -lt $MAX_RETRIES ]; do
-            /root/firstboot.sh
-            if [ $? -eq 0 ]; then
-                touch /root/firstboot_done
-                break
-            fi
-            COUNT=$((COUNT+1))
-            sleep 1
-        done
-        if [ $COUNT -eq $MAX_RETRIES ]; then
-            echo "Max retries reached. Exiting..."
-            exit 1
-        fi
+        /root/firstboot.sh
     fi
+    touch /root/firstboot_done
 fi
 exit 0
