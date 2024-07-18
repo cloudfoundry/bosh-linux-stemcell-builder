@@ -100,7 +100,3 @@ then
 else
   sudo echo "ENABLED=0" >$chroot/etc/default/motd-news
 fi
-
-# add drop-in for sshd service so it will only starts after first boot has been succefully run
-mkdir -p $chroot/lib/systemd/system/ssh.service.d
-cp $assets_dir/10-ssh-firstboot-done.conf $chroot/lib/systemd/system/ssh.service.d/10-ssh-firstboot-done.conf
