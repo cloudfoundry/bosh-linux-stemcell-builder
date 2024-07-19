@@ -24,7 +24,7 @@ shared_examples_for 'All Stemcells' do
     exclude_on_vsphere: true,
     exclude_on_vcloud: true,
   } do
-    describe file('/boot/grub/grub.cfg') do
+    describe file(grub_cfg_path) do
       its(:content) { should match(/^\s+(kernel|linux)\s.*\sipv6\.disable=1\s.*$/) }
     end
   end
