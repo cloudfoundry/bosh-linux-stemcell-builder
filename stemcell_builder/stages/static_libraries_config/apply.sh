@@ -10,13 +10,7 @@ source $base_dir/etc/settings.bash
 cp -p "${assets_dir}/${DISTRIB_CODENAME}_static_libraries_list.txt" $chroot/var/vcap/bosh/etc/static_libraries_list
 
 kernel_suffix="-generic"
-if [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
-    major_kernel_version="5.4"
-elif [[ "${DISTRIB_CODENAME}" == 'jammy' ]]; then
-    major_kernel_version="5.15"
-else
-    major_kernel_version="4.15"
-fi
+major_kernel_version="5.15"
 
 if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
     # TODO use iaas specific kernel
