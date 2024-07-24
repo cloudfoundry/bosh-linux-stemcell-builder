@@ -4,10 +4,7 @@ set -e
 
 bin=$(dirname $0)
 
-echo -e "\n Installing ginkgo..."
-$bin/go install github.com/onsi/ginkgo/v2/ginkgo@v2.2.0
-
 echo -e "\n Testing packages..."
-$bin/env ginkgo --skip-package ./vendor -r "$@"
+$bin/go run github.com/onsi/ginkgo/v2/ginkgo --skip-package ./vendor -r "$@"
 
 echo -e "\n\033[0;32mSUCCESS\033[0m"
