@@ -1,14 +1,12 @@
 package smoke_test
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/onsi/gomega/types"
-
-	"fmt"
-
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
 )
 
 // This matcher is expected to be run with an Eventually, and not an Expect.
