@@ -27,19 +27,9 @@ module ShelloutTypes
       stdout, stderr, status = @chroot.run('cat', '/etc/*release')
       raise RuntimeError, stderr if status != 0
 
-      # TODO: Get off of trusty for these tests
-      # See https://www.pivotaltracker.com/story/show/165516687
-      # We thought production only runs inside the docker image: "main-ubuntu-chroot" which is trusty,
-      # however, we saw a build failure (https://main.bosh-ci.cf-app.com/teams/main/pipelines/bosh:stemcells:ubuntu-bionic/jobs/build-os-image-master/builds/12)
-      # which we think is a result of the same tests running on bionic. Until we can move the docker images off of trusty, we are opting to make this test
-      # trusty-specific instead of fixing the docker images.
-      if stdout.match(/Ubuntu/) && stdout.match(/Trusty/)
-        check_upstart_links(runlevel) || check_init_conf(runlevel)
-      elsif stdout.match /Ubuntu|CentOS|openSUSE/
-        check_is_enabled_systemctl
-      else
-        raise "Cannot determine Linux distribution: #{stdout}"
-      end
+      raise "Cannot determine Linux distribution: #{stdout}" unless stdout.match(/Ubuntu|CentOS|openSUSE/)
+
+      check_is_enabled_systemctl
     end
 
     def check_upstart_links(runlevel)
