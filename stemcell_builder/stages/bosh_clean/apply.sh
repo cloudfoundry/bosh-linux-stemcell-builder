@@ -15,10 +15,12 @@ rm -vrf $chroot/tmp/*
 # instead of removing the file to preserve the link
 cat /dev/null > $chroot/etc/resolv.conf
 
+# TODO: delete or update comment to remove "trusty"
 # Ubuntu Trusty resolvconf package populates /etc/resolv.conf from files below
 if [ -f $chroot/etc/resolvconf/resolv.conf.d/head ]; then
   cat /dev/null > $chroot/etc/resolvconf/resolv.conf.d/head
 fi
+# TODO: delete or update comment to remove "trusty" :END
 
 if [ -f $chroot/etc/resolvconf/resolv.conf.d/base ]; then
   cat /dev/null > $chroot/etc/resolvconf/resolv.conf.d/base
