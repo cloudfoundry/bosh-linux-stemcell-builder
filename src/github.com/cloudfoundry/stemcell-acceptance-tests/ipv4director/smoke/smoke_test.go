@@ -2,7 +2,7 @@ package smoke_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -71,7 +71,7 @@ var _ = Describe("Stemcell", func() {
 	})
 
 	It("#134136191: auth.log should not contain 'No such file or directory' errors", func() {
-		tempFile, err := ioutil.TempFile(os.TempDir(), "auth.log")
+		tempFile, err := os.CreateTemp(os.TempDir(), "auth.log")
 		Expect(err).ToNot(HaveOccurred())
 		authLogAbsPath, err := filepath.Abs(tempFile.Name())
 		Expect(err).ToNot(HaveOccurred())
@@ -84,7 +84,7 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
-		contents, err := ioutil.ReadAll(tempFile)
+		contents, err := io.ReadAll(tempFile)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(contents).ToNot(ContainSubstring("No such file or directory"))
 	})
