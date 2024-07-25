@@ -205,11 +205,11 @@ sbom.cdx.json
     end
 
     context 'when packaging a non standard os variant' do
-      let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('ubuntu', 'bionic-fips') }
+      let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('ubuntu', 'FOO-fips') }
 
       it 'archives the working dir with a different tarball name' do
         packager.package(disk_format)
-        tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-bionic-fips-go_agent.tgz")
+        tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-FOO-fips-go_agent.tgz")
         expect(File.exist?(tarball_path)).to eq(true)
       end
 
@@ -218,8 +218,8 @@ sbom.cdx.json
 
         actual_manifest = YAML.load_file(File.join(work_dir, 'stemcell/stemcell.MF'))
 
-        expect(actual_manifest['name']).to eq('bosh-fake_infra-fake_hypervisor-ubuntu-bionic-fips-go_agent-raw')
-        expect(actual_manifest['operating_system']).to eq('ubuntu-bionic')
+        expect(actual_manifest['name']).to eq('bosh-fake_infra-fake_hypervisor-ubuntu-FOO-fips-go_agent-raw')
+        expect(actual_manifest['operating_system']).to eq('ubuntu-FOO')
       end
     end
   end
