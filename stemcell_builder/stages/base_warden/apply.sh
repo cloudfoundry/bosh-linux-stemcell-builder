@@ -28,8 +28,7 @@ sed -i '/^\\\$SystemLogSocketName /d' /etc/rsyslog.conf
 #ln -s /proc/self/mounts /etc/mtab
 #"
 
-# this version of unshare has the -p flag (trusty has an old version)
-# this is used to launch upstart as PID 1, in tests
+# unshare is used to launch upstart as PID 1, in tests
 # upstart does not run in normal bosh-lite containers
 unshare_binary=$chroot/var/vcap/bosh/bin/unshare
 cp -f $assets_dir/unshare $unshare_binary
