@@ -219,11 +219,14 @@ module ShelloutTypes
     end
 
     describe '#content' do
-      let(:file_with_content) do
+      let(:file_with_content_temp_file) do
         a_file = Tempfile.new('a-file', chroot_dir)
         a_file.write("here is\nmy content")
         a_file.flush
-        described_class.new(::File.basename(a_file), chroot)
+        a_file
+      end
+      let(:file_with_content) do
+        described_class.new(::File.basename(file_with_content_temp_file), chroot)
       end
 
       it 'returns the file content' do
@@ -232,11 +235,14 @@ module ShelloutTypes
     end
 
     describe '#content_as_lines' do
-      let(:file_with_content) do
+      let(:file_with_content_temp_file) do
         a_file = Tempfile.new('a-file', chroot_dir)
         a_file.write("here is\nmy content")
         a_file.flush
-        described_class.new(::File.basename(a_file), chroot)
+        a_file
+      end
+      let(:file_with_content) do
+        described_class.new(::File.basename(file_with_content_temp_file), chroot)
       end
 
       it 'returns the file content as an array of lines' do
@@ -259,12 +265,14 @@ module ShelloutTypes
     end
 
     describe '#group' do
-      let(:group_file) do
+      let(:group_temp_file) do
         group_file = Tempfile.new('a-file', chroot_dir)
         group_file_path_relative_to_chroot = ::File.basename(group_file.path)
         chown(nil, ephemeral_gid, group_file_path_relative_to_chroot)
-
-        described_class.new(::File.basename(group_file.path), chroot)
+        group_file
+      end
+      let(:group_file) do
+        described_class.new(::File.basename(group_temp_file.path), chroot)
       end
 
       it 'returns the group of the file' do
@@ -283,12 +291,14 @@ module ShelloutTypes
 
       context('when the group belonging to the file does not exist') do
         let(:current_group) { rand(100) + 1 * 65535 }
-        let(:testgroup_file) do
+        let(:testgroup_temp_file) do
           testgroup_file = Tempfile.new('a-file', chroot_dir)
           testgroup_file_path_relative_to_chroot = ::File.basename(testgroup_file.path)
           chown(nil, current_group, testgroup_file_path_relative_to_chroot)
-
-          described_class.new(::File.basename(testgroup_file.path), chroot)
+          testgroup_file
+        end
+        let(:testgroup_file) do
+          described_class.new(::File.basename(testgroup_temp_file.path), chroot)
         end
 
         it 'should raise' do
@@ -431,11 +441,14 @@ module ShelloutTypes
 
       context 'when the group belonging to the file does not exist' do
         let(:fake_group) { rand(100) + 1 * 65535 }
-        let(:fake_group_file) {
+        let(:fake_group_temp_file) do
           fake_group_file = Tempfile.new('a-file', chroot_dir)
           fake_group_file_path_chroot = ::File.basename(fake_group_file.path)
           chown(nobody_uid, fake_group, fake_group_file_path_chroot)
-          described_class.new(::File.basename(fake_group_file.path), chroot)
+          fake_group_file
+        end
+        let(:fake_group_file) {
+          described_class.new(::File.basename(fake_group_temp_file.path), chroot)
         }
 
         it 'should raise' do
@@ -595,10 +608,13 @@ module ShelloutTypes
 
     describe '#executable?' do
       context 'when the file is executable' do
-        let(:executable_file) do
+        let(:executable_temp_file) do
           file = Tempfile.new('a-file', chroot_dir)
           chmod("0700", ::File.basename(file.path))
-          described_class.new(::File.basename(file.path), chroot)
+          file
+        end
+        let(:executable_file) do
+          described_class.new(::File.basename(executable_temp_file.path), chroot)
         end
 
         it 'returns true' do
@@ -647,9 +663,9 @@ module ShelloutTypes
       end
 
       context 'when the file is not a symbolic link' do
+        let(:source_temp_file) { Tempfile.new('a-file', chroot_dir) }
         let(:source) do
-          source_file = Tempfile.new('a-file', chroot_dir)
-          described_class.new(::File.basename(source_file.path), chroot)
+          described_class.new(::File.basename(source_temp_file.path), chroot)
         end
         it 'returns false' do
           expect(source.linked_to?(target.path)).to eq(false)
