@@ -6,7 +6,7 @@ releases: []
 stemcells:
 - alias: default
   os: ((os_name))
-  version: ((stemcell_version))
+  version: "((stemcell_version))"
 
 update:
   canaries: 1
