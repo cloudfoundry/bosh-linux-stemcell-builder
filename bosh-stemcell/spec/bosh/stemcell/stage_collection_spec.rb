@@ -93,6 +93,7 @@ module Bosh::Stemcell
             :udev_aws_rules,
             :image_create_efi,
             :image_install_grub_efi,
+            :sbom_create,
             :bosh_package_list,
           ]
         }
@@ -123,6 +124,7 @@ module Bosh::Stemcell
             :bosh_clean_ssh,
             :image_create,
             :image_install_grub,
+            :sbom_create,
             :bosh_package_list,
           ]
         }
@@ -155,6 +157,7 @@ module Bosh::Stemcell
             :bosh_clean_ssh,
             :image_create_efi,
             :image_install_grub_efi,
+            :sbom_create,
             :bosh_package_list
           ]
         }
@@ -190,7 +193,8 @@ module Bosh::Stemcell
               :bosh_clean_ssh,
               :image_create,
               :image_install_grub,
-              :bosh_package_list
+              :sbom_create,
+              :bosh_package_list,
             ]
           )
           expect(stage_collection.package_stemcell_stages('qcow2')).to eq(
@@ -220,7 +224,8 @@ module Bosh::Stemcell
               :bosh_clean_ssh,
               :image_create,
               :image_install_grub,
-              :bosh_package_list
+              :sbom_create,
+              :bosh_package_list,
             ]
           )
           expect(stage_collection.package_stemcell_stages('qcow2')).to eq(
@@ -248,7 +253,8 @@ module Bosh::Stemcell
               :bosh_clean_ssh,
               :image_create_efi,
               :image_install_grub_efi,
-              :bosh_package_list
+              :sbom_create,
+              :bosh_package_list,
             ]
           )
           expect(stage_collection.package_stemcell_stages('ovf')).to eq(vmware_package_stemcell_steps)
@@ -274,6 +280,7 @@ module Bosh::Stemcell
                 :bosh_clean_ssh,
                 :image_create_efi,
                 :image_install_grub_efi,
+                :sbom_create,
                 :bosh_package_list,
             ]
             )
@@ -298,7 +305,8 @@ module Bosh::Stemcell
             :bosh_clean_ssh,
             :image_create,
             :image_install_grub,
-            :bosh_package_list
+            :sbom_create,
+            :bosh_package_list,
           ]
         }
 
@@ -355,6 +363,7 @@ module Bosh::Stemcell
             :bosh_clean_ssh,
             :image_create,
             :image_install_grub,
+            :sbom_create,
             :bosh_package_list
           ]
         }

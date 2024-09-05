@@ -2,17 +2,16 @@ package smoke_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-
 	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 	"github.com/cloudfoundry/bosh-utils/system"
-	"github.com/cloudfoundry/stemcell-acceptance-tests/testhelpers"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 	"gopkg.in/yaml.v2"
+
+	"github.com/cloudfoundry/stemcell-acceptance-tests/testhelpers"
 )
 
 type stemcellManifest struct {
@@ -28,7 +27,7 @@ type stemcellManifest struct {
 func loadStemcellManifest(manifestPath string) (stemcellManifest, error) {
 	ret := stemcellManifest{}
 
-	manifest, err := ioutil.ReadFile(manifestPath)
+	manifest, err := os.ReadFile(manifestPath)
 	if err != nil {
 		return ret, err
 	}
@@ -52,7 +51,7 @@ var _ = Describe("stemcell.tgz", func() {
 		stemcellPath = testhelpers.RequireEnv("STEMCELL_PATH")
 		cmdRunner = system.NewExecCmdRunner(boshlog.NewLogger(boshlog.LevelDebug))
 
-		tmpdir, err = ioutil.TempDir("", "")
+		tmpdir, err = os.MkdirTemp("", "")
 		Expect(err).To(Succeed())
 	})
 

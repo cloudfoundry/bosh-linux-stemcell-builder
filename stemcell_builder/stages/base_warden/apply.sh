@@ -5,7 +5,7 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-# Bionic no longer has "runsvdir-start". The equivalent is /etc/runit/2
+# Noble no longer has "runsvdir-start". The equivalent is /etc/runit/2
 install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
 
 cp "$(dirname "$0")/assets/runit.service" "${chroot}/lib/systemd/system/"
@@ -35,8 +35,7 @@ sed -i '/^\\\$SystemLogSocketName /d' /etc/rsyslog.conf
 #ln -s /proc/self/mounts /etc/mtab
 #"
 
-# this version of unshare has the -p flag (trusty has an old version)
-# this is used to launch upstart as PID 1, in tests
+# unshare is used to launch upstart as PID 1, in tests
 # upstart does not run in normal bosh-lite containers
 unshare_binary=$chroot/var/vcap/bosh/bin/unshare
 cp -f $assets_dir/unshare $unshare_binary

@@ -46,7 +46,6 @@ vm_guestos=ubuntu-64
 cat > $ovf/$vm_hostname.vmx <<EOS
 config.version = "8"
 virtualHW.version = "13"
-firmware = "efi"
 floppy0.present = "FALSE"
 nvram = "nvram"
 deploymentPlatform = "windows"
@@ -56,8 +55,8 @@ powerType.powerOff = "preset"
 powerType.powerOn = "preset"
 powerType.suspend = "preset"
 powerType.reset = "preset"
+firmware = "efi"
 chipset.motherboardLayout = "acpi"
-
 displayName = "$vm_hostname $vm_arch"
 
 numvcpus = "$vm_cpus"

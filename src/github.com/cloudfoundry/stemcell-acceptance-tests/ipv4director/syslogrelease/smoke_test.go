@@ -54,7 +54,7 @@ var _ = Describe("Syslogrelease", func() {
 
 		stdOut, stdErr, exitStatus, err = bosh.Run("ssh", "syslog_storer/0", `cat /var/vcap/store/syslog_storer/syslog.log`)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(exitStatus).To(Equal(0))
+		Expect(exitStatus).To(Equal(0), fmt.Sprintf("Could not read from syslog stdOut: %s \n stdErr: %s", stdOut, stdErr))
 		Expect(stdOut).To(ContainSubstring("test-blackbox-message"))
 	})
 

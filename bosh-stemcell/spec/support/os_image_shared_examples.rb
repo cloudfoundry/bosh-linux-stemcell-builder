@@ -274,8 +274,8 @@ shared_examples_for 'every OS image' do
       expect(sshd_config.content).to match(/^IgnoreRhosts yes$/)
     end
 
-    it 'sets ClientAliveInterval to 900 seconds (CIS-5.2.12)' do
-      expect(sshd_config.content).to match(/^ClientAliveInterval 300$/)
+    it 'sets ClientAliveInterval to 180 seconds (CIS-5.2.12)' do
+      expect(sshd_config.content).to match(/^ClientAliveInterval 180$/)
     end
 
     it 'sets LoginGraceTime to 60 seconds (CIS-5.2.13)' do

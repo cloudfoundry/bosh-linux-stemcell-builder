@@ -77,6 +77,10 @@ describe Bosh::Stemcell::StemcellPackager do
     File.write(packages, 'i am stemcell dpkg_l')
     dev_tools_file_list = File.join(work_dir, 'stemcell/dev_tools_file_list.txt')
     File.write(dev_tools_file_list, 'i am dev_tools_file_list')
+    spdx_sbom = File.join(work_dir, 'stemcell/sbom.spdx.json')
+    File.write(spdx_sbom, 'i am spdx sbom')
+    cyclonedx_sbom = File.join(work_dir, 'stemcell/sbom.cdx.json')
+    File.write(cyclonedx_sbom, 'i am cyclonedx sbom')
   end
   after { FileUtils.rm_rf(tmp_dir) }
 
@@ -170,6 +174,8 @@ describe Bosh::Stemcell::StemcellPackager do
 packages.txt
 dev_tools_file_list.txt
 image
+sbom.spdx.json
+sbom.cdx.json
 '
       )
     end
@@ -199,11 +205,11 @@ image
     end
 
     context 'when packaging a non standard os variant' do
-      let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('ubuntu', 'bionic-fips') }
+      let(:operating_system) { Bosh::Stemcell::OperatingSystem.for('ubuntu', 'FOO-fips') }
 
       it 'archives the working dir with a different tarball name' do
         packager.package(disk_format)
-        tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-bionic-fips-go_agent.tgz")
+        tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-FOO-fips-go_agent.tgz")
         expect(File.exist?(tarball_path)).to eq(true)
       end
 
@@ -212,8 +218,8 @@ image
 
         actual_manifest = YAML.load_file(File.join(work_dir, 'stemcell/stemcell.MF'))
 
-        expect(actual_manifest['name']).to eq('bosh-fake_infra-fake_hypervisor-ubuntu-bionic-fips-go_agent-raw')
-        expect(actual_manifest['operating_system']).to eq('ubuntu-bionic')
+        expect(actual_manifest['name']).to eq('bosh-fake_infra-fake_hypervisor-ubuntu-FOO-fips-go_agent-raw')
+        expect(actual_manifest['operating_system']).to eq('ubuntu-FOO')
       end
     end
   end

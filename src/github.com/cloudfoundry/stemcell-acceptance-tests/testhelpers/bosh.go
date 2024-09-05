@@ -7,7 +7,6 @@ import (
 
 	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 	"github.com/cloudfoundry/bosh-utils/system"
-
 	. "github.com/onsi/gomega"
 )
 

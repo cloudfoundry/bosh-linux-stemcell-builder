@@ -40,7 +40,7 @@ sed "/^ *IgnoreRhosts/d" -i $chroot/etc/ssh/sshd_config
 echo 'IgnoreRhosts yes' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *ClientAliveInterval/d" -i $chroot/etc/ssh/sshd_config
-echo 'ClientAliveInterval 300' >> $chroot/etc/ssh/sshd_config
+echo 'ClientAliveInterval 180' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *LoginGraceTime/d" -i $chroot/etc/ssh/sshd_config
 echo 'LoginGraceTime 60' >> $chroot/etc/ssh/sshd_config

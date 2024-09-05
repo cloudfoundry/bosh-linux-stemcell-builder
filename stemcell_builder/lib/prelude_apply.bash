@@ -44,7 +44,11 @@ function update_kernel_static_libraries {
   kernel_suffix=${1}
   major_kernel_version=${2}
 
-  kernel_version=$(find $chroot/usr/src/ -name "linux-headers-$major_kernel_version.*$kernel_suffix" | grep -o "[0-9].*-[0-9]*$kernel_suffix")
+  suffix=$kernel_suffix
+  if [ ! -z "$UBUNTU_FIPS_USE_IAAS_KERNEL" ]; then
+    suffix=-$stemcell_infrastructure$kernel_suffix
+  fi
+  kernel_version=$(find $chroot/usr/src/ -name "linux-headers-$major_kernel_version.*$kernel_suffix" | grep -o "[0-9].*-[0-9]*$suffix")
   sed -i "s/__KERNEL_VERSION__/$kernel_version/g" $chroot/var/vcap/bosh/etc/static_libraries_list
 
   # since kernel 6.5 the objtool/libsubcmd.a has been moved to objtool/libsubcmd/libsubcmd.a

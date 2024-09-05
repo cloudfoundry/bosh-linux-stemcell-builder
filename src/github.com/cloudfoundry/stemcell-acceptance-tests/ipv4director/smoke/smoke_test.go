@@ -2,14 +2,11 @@ package smoke_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
-
-	"strconv"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -71,7 +68,7 @@ var _ = Describe("Stemcell", func() {
 	})
 
 	It("#134136191: auth.log should not contain 'No such file or directory' errors", func() {
-		tempFile, err := ioutil.TempFile(os.TempDir(), "auth.log")
+		tempFile, err := os.CreateTemp(os.TempDir(), "auth.log")
 		Expect(err).ToNot(HaveOccurred())
 		authLogAbsPath, err := filepath.Abs(tempFile.Name())
 		Expect(err).ToNot(HaveOccurred())
@@ -84,7 +81,7 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
-		contents, err := ioutil.ReadAll(tempFile)
+		contents, err := io.ReadAll(tempFile)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(contents).ToNot(ContainSubstring("No such file or directory"))
 	})
@@ -137,44 +134,6 @@ var _ = Describe("Stemcell", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 		Expect(stdout).To(ContainSubstring("eth0"))
-	})
-
-	Context("when synchronizing the clock on the instance via ntp", func() {
-		It("corrects xenial systemtime via chrony", func() {
-			if os.Getenv("BOSH_os_name") != "ubuntu-xenial" {
-				Skip(`please set BOSH_os_name to "ubuntu-xenial" run this test`)
-			}
-
-			stdout, _, exitStatus, err := bosh.Run(
-				"--column=stdout",
-				"ssh", "default/0", "-r", "-c",
-				`sudo chronyc -a tracking`,
-			)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(exitStatus).To(Equal(0))
-
-			ntpServer := regexp.MustCompile(`Reference ID\s+:(\s[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})`)
-			match := ntpServer.FindAllStringSubmatch(stdout, -1)
-			Expect(match[0][1]).NotTo(Equal("0.0.0.0"))
-
-			systemTime := regexp.MustCompile(`System time\s+:\s(\d\.\d+)`)
-			match = systemTime.FindAllStringSubmatch(stdout, -1)
-
-			drift, err := strconv.ParseFloat(match[0][1], 32)
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(drift).To(BeNumerically("<", 1))
-
-			By("running the sync-time script, we do not see an error", func() {
-				_, _, exitStatus, err := bosh.Run(
-					"--column=stdout",
-					"ssh", "default/0", "-r", "-c",
-					`sudo /var/vcap/bosh/bin/sync-time`,
-				)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(exitStatus).To(Equal(0))
-			})
-		})
 	})
 
 	It("#153391129: removes dev tools and static libraries", func() {
