@@ -37,7 +37,7 @@ function ua_detach() {
 }
 
 function ua_enable_fips() {
-    run_in_chroot_without_apt ${chroot} "ua enable --assume-yes fips-preview"
+    run_in_chroot_without_apt ${chroot} "ua enable --assume-yes fips-updates"
 }
 
 function run_in_chroot_without_apt() {
