@@ -32,9 +32,9 @@ describe 'Ubuntu 24.04 OS image', os_image: true do
 
   describe 'base_apt' do
     describe file('/etc/apt/sources.list') do
-      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu noble main universe multiverse' }
-      its(:content) { should match 'deb http://archive.ubuntu.com/ubuntu noble-updates main universe multiverse' }
-      its(:content) { should match 'deb http://security.ubuntu.com/ubuntu noble-security main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-updates main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-security main universe multiverse' }
     end
     # NOBLE_TODO: bosh-agent is not installed in os_image stage
     # describe file('/lib/systemd/system/bosh-agent.service') do
