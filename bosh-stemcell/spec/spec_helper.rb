@@ -14,7 +14,7 @@ RSpec.configure do |rspec|
 end
 
 def grub_cfg_path
-  if ENV['STEMCELL_INFRASTRUCTURE'] == 'vsphere'
+  if %w[aws google vsphere].include?(ENV['STEMCELL_INFRASTRUCTURE'])
     '/boot/efi/EFI/grub/grub.cfg'
   else
     '/boot/grub/grub.cfg'
