@@ -263,6 +263,7 @@ module Bosh::Stemcell
     def finish_stemcell_stages
       [
         :bosh_package_list,
+        :restore_apt_sources,
       ]
     end
 
