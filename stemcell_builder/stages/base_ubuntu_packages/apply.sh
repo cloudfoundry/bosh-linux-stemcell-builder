@@ -31,9 +31,6 @@ run_in_chroot "${chroot}" "systemctl enable systemd-networkd-resolvconf-update.s
 
 pkg_mgr install $debs
 
-# NOBLE_TODO: adiscon repo does not have noble packages yet
-# run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
-# pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
 pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-relp"
 
 run_in_chroot "${chroot}" "systemctl enable systemd-logind"
