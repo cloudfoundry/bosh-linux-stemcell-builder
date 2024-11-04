@@ -304,7 +304,7 @@ EOF
 
   context 'display the number of unsuccessful logon/access attempts since the last successful logon/access (stig: V-51875)' do
     describe file('/etc/pam.d/common-password') do
-      its(:content) { should match /session\trequired\t\t\tpam_lastlog\.so showfailed/ }
+      its(:content) { should match /session\trequired\t\t\tpam_faillock\.so showfailed/ }
     end
   end
 

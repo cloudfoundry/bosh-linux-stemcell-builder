@@ -16,7 +16,7 @@ cmake uuid-dev libgcrypt-dev ca-certificates \
 scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk chrony dbus nvme-cli rng-tools fdisk \
-ethtool libpam-pwquality gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
+ethtool libpam-modules libpam-pwquality gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
 pkg_mgr purge netplan.io
 run_in_chroot $chroot "
