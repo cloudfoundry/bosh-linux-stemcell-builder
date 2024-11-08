@@ -368,7 +368,6 @@ vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
     end
 
-# NOBLE_TODO: can't get a propper diff match
     describe file('/etc/shadow') do
       shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
 root:(.+):(\d{5}):0:99999:7:::
