@@ -1,10 +1,5 @@
 shared_examples_for 'a systemd-based OS image' do
   context 'systemd services' do
-    # NOBLE_TODO: bosh-agent is not installed in os_image stage
-    # describe service('bosh-agent') do
-    #   it { should be_enabled }
-    # end
-
     describe service('monit') do
       it { should be_enabled }
     end

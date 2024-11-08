@@ -36,12 +36,6 @@ describe 'Ubuntu 24.04 OS image', os_image: true do
       its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-updates main universe multiverse' }
       its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-security main universe multiverse' }
     end
-    # NOBLE_TODO: bosh-agent is not installed in os_image stage
-    # describe file('/lib/systemd/system/bosh-agent.service') do
-    #   it { should be_file }
-    #   its(:content) { should match 'Restart=always' }
-    #   its(:content) { should match 'KillMode=process' }
-    # end
 
     describe file('/lib/systemd/system/monit.service') do
       it { should be_file }

@@ -334,6 +334,17 @@ HERE
     end
   end
 
+  context 'installed by bosh-agent', {} do
+    describe file('/lib/systemd/system/bosh-agent.service') do
+      it { should be_file }
+      its(:content) { should match 'Restart=always' }
+      its(:content) { should match 'KillMode=process' }
+    end
+    describe service('bosh-agent') do
+      it { should be_enabled }
+    end
+   end
+
   context 'installed by bosh_alicloud_agent_settings', {
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
