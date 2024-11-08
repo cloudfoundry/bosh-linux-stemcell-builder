@@ -51,12 +51,6 @@ describe 'Ubuntu 24.04 OS image', os_image: true do
   end
 
   context 'installed by base_ubuntu_packages' do
-    # NOBLE_TODO: this seems to be a relic of the past
-    # describe file('/sbin/rescan-scsi-bus') do
-    #   it { should be_file }
-    #   it { should be_executable }
-    # end
-
     context 'zfs' do
       %w[
        /lib/modules/*/kernel/zfs/
