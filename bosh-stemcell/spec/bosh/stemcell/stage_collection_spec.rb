@@ -92,7 +92,7 @@ module Bosh::Stemcell
             :bosh_clean_ssh,
             :udev_aws_rules,
             :image_create_efi,
-            :image_install_grub_efi,
+            :image_install_grub,
             :sbom_create,
             :bosh_package_list,
           ]
@@ -156,7 +156,7 @@ module Bosh::Stemcell
             :bosh_google_agent_settings,
             :bosh_clean_ssh,
             :image_create_efi,
-            :image_install_grub_efi,
+            :image_install_grub,
             :sbom_create,
             :bosh_package_list
           ]
@@ -252,7 +252,7 @@ module Bosh::Stemcell
               :bosh_vsphere_agent_settings,
               :bosh_clean_ssh,
               :image_create_efi,
-              :image_install_grub_efi,
+              :image_install_grub,
               :sbom_create,
               :bosh_package_list,
             ]
@@ -279,7 +279,7 @@ module Bosh::Stemcell
                 :bosh_vsphere_agent_settings,
                 :bosh_clean_ssh,
                 :image_create_efi,
-                :image_install_grub_efi,
+                :image_install_grub,
                 :sbom_create,
                 :bosh_package_list,
             ]

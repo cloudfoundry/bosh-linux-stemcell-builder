@@ -144,7 +144,7 @@ module Bosh::Stemcell
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
         :image_create_efi,
-        :image_install_grub_efi,
+        :image_install_grub,
         :sbom_create,
       ]
     end
@@ -163,7 +163,7 @@ module Bosh::Stemcell
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
         :image_create_efi,
-        :image_install_grub_efi,
+        :image_install_grub,
         :sbom_create,
       ]
     end
@@ -197,7 +197,7 @@ module Bosh::Stemcell
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
         :image_create_efi,
-        :image_install_grub_efi,
+        :image_install_grub,
         :sbom_create,
       ]
     end
