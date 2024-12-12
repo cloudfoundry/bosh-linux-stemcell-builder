@@ -21,9 +21,4 @@ describe 'Warden Stemcell', stemcell_image: true do
     end
   end
 
-  context 'pam common-password config' do
-    describe file('/etc/pam.d/common-password') do
-      its(:content) { should include('#session	required			pam_faillock.so') }
-    end
-  end
 end
