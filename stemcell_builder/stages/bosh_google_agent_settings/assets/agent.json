@@ -5,7 +5,9 @@
       "PartitionerType": "parted",
       "DevicePathResolutionType": "virtio",
       "VirtioDevicePrefix": "google",
-      "ServiceManager": "systemd"
+      "ServiceManager": "systemd",
+      "DiskIDTransformPattern": "^(disk-.+)$",
+      "DiskIDTransformReplacement": "google-${1}"
     }
   },
   "Infrastructure": {

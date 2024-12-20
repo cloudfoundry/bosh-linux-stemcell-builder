@@ -4,7 +4,9 @@
       "PartitionerType": "parted",
       "DevicePathResolutionType": "virtio",
       "CreatePartitionIfNoEphemeralDisk": true,
-      "ServiceManager": "systemd"
+      "ServiceManager": "systemd",
+      "DiskIDTransformPattern": "^(vol-(.+))$",
+      "DiskIDTransformReplacement": "nvme-Amazon_Elastic_Block_Store_vol${2}"
     }
   },
   "Infrastructure": {

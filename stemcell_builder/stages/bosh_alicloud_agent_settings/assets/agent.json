@@ -3,7 +3,10 @@
     "Linux": {
       "PartitionerType": "parted",
       "CreatePartitionIfNoEphemeralDisk": true,
-      "DevicePathResolutionType": "virtio"
+      "DevicePathResolutionType": "virtio",
+      "ServiceManager": "systemd",
+      "DiskIDTransformPattern": "^d-(.+)$",
+      "DiskIDTransformReplacement": "virtio-${1}"
     }
   },
   "Infrastructure": {
