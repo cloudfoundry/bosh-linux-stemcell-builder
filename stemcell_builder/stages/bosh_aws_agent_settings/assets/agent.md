@@ -1,4 +1,11 @@
-# Disk ID transform rules
+# Introduction
+the problem that we have is that the diskID provided by the IAAS does not correspond with the diskID on the vm
+as you can see in the related information part.
+therefore we are trying to mitigate this issue by diskIdTransformation as you can see in the example below
+
+do not that if this fails. it will always fallback to other means of mounting the disk
+
+## Disk ID transform rules
 the following 2 json entries
 ```
 "DiskIDTransformPattern": "^(vol-(.+))$",
@@ -7,11 +14,11 @@ the following 2 json entries
 
 ## what it does
 the `DiskIDTransformPattern` will match `vol-04b2a40747d7e9625` in to 2 groups `vol-` and `04b2a40747d7e9625`
-
 the `DiskIDTransformReplacement` will match and replace `04b2a40747d7e9625` with `nvme-Amazon_Elastic_Block_Store_vol04b2a40747d7e9625`
 
-## related information
+the agent will then glob and mount `/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_vol04b2a40747d7e9625`
 
+## related information
 contents of persistent_disk_hints.json
 ```
 {
