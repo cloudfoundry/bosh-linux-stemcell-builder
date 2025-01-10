@@ -8,12 +8,12 @@ do not that if this fails. it will always fallback to other means of mounting th
 ## Disk ID transform rules
 the following 2 json entries
 ```
-"DiskIDTransformPattern": "^(vol-(.+))$",
-"DiskIDTransformReplacement": "nvme-Amazon_Elastic_Block_Store_vol${2}"
+"DiskIDTransformPattern": "^vol-(.+)$",
+"DiskIDTransformReplacement": "nvme-Amazon_Elastic_Block_Store_vol${1}"
 ```
 
 ## what it does
-the `DiskIDTransformPattern` will match `vol-04b2a40747d7e9625` in to 2 groups `vol-` and `04b2a40747d7e9625`
+the `DiskIDTransformPattern` will match `vol-04b2a40747d7e9625` in to 1 group `04b2a40747d7e9625`
 the `DiskIDTransformReplacement` will match and replace `04b2a40747d7e9625` with `nvme-Amazon_Elastic_Block_Store_vol04b2a40747d7e9625`
 
 the agent will then glob and mount `/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_vol04b2a40747d7e9625`
