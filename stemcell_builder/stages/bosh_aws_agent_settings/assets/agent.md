@@ -1,6 +1,5 @@
 # Introduction
-The problem that we have is that the diskID provided by the IAAS does not correspond with the diskID on the vm
-as you can see in the related information part.
+The problem that we have is that the diskID provided by the IAAS does not correspond with the diskID on the vm as you can see in the related information part.
 Therefore we are trying to mitigate this issue by using diskIdTransformation as you can see in the example below
 
 Do note that if this fails it will always fallback to other means of mounting the disk
