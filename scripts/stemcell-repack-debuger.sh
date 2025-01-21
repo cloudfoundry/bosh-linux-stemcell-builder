@@ -16,6 +16,7 @@ show_help() {
     echo "  AGENT_BINARY              Path to the agent binary to be copied into the stemcell *OPTIONAL*"
     echo "  AGENT_JSON                Path to the agent JSON configuration file *OPTIONAL*"
     echo "  BOSH_DEBUG_PUB_KEY        Public key for the BOSH debug user in a single line *OPTIONAL*"
+    echo "  OUT                       Path to the patched stemcell tarball *OPTIONAL*"
     echo
     echo "Example:"
     echo "  export stemcell_tgz=\"/home/username/workspace/bosh/bosh-linux-stemcell-builder/tmp/bosh-stemcell-0.0.8-google-kvm-ubuntu-noble-go_agent.tgz\""
@@ -122,6 +123,6 @@ cd $stemcell_dir
 if [ "$bump_version" = true ]; then
     sed -i.bak "s/version: .*/version: 0.0.${new_ver}/" stemcell.MF
 fi
-tar czvf $stemcell_tgz *
+tar czvf ${OUT:-$stemcell_tgz} *
 
 echo "ALL DONE!!!"
