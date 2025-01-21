@@ -17,6 +17,7 @@ show_help() {
     echo "  AGENT_JSON                Path to the agent JSON configuration file *OPTIONAL*"
     echo "  BOSH_DEBUG_PUB_KEY        Public key for the BOSH debug user in a single line *OPTIONAL*"
     echo "  OUT                       Path to the patched stemcell tarball *OPTIONAL*"
+    echo "  TMPDIR                    Path with enough disk space to hold all temporary files for repacking *OPTIONAL*"
     echo
     echo "Example:"
     echo "  export stemcell_tgz=\"/home/username/workspace/bosh/bosh-linux-stemcell-builder/tmp/bosh-stemcell-0.0.8-google-kvm-ubuntu-noble-go_agent.tgz\""
