@@ -73,7 +73,8 @@ temp_dir=$(mktemp -d)
 stemcell_dir=${temp_dir}/stemcell
 image_dir=${temp_dir}/image
 mkdir -p $stemcell_dir $image_dir
-trap 'rm -rf "${temp_dir}"' EXIT
+traps='rm -rf "${temp_dir}";'
+trap "$traps" EXIT
 
 # Repack stemcell
 cd $stemcell_dir
@@ -84,7 +85,8 @@ new_ver=`date +%s`
 cd $image_dir
 tar xvf $stemcell_dir/image
 mnt_dir=$(mktemp -d)
-trap 'rm -rf "${mnt_dir}"' EXIT
+traps+='rm -rf "${mnt_dir}";'
+trap "${traps}" EXIT
 device=$(sudo kpartx -sav disk.raw | grep '^add' | tail -n1 | cut -d' ' -f3)
 sudo mount -o loop,rw /dev/mapper/$device $mnt_dir
 
