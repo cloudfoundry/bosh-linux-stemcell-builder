@@ -86,10 +86,12 @@ new_ver=`date +%s`
 # Update stemcell with new agent
 cd $image_dir
 tar xvf $stemcell_dir/image
+DISK_NAME=disk.raw
+[ -f root.img ] && DISK_NAME=root.img
 mnt_dir=$(mktemp -d)
 traps+='rm -rf "${mnt_dir}";'
 trap "${traps}" EXIT
-device=$(sudo kpartx -sav disk.raw | grep '^add' | tail -n1 | cut -d' ' -f3)
+device=$(sudo kpartx -sav $DISK_NAME | grep '^add' | tail -n1 | cut -d' ' -f3)
 sudo mount -o loop,rw /dev/mapper/$device $mnt_dir
 
 if [ "$bump_version" = true ]; then
@@ -116,7 +118,7 @@ EOF
 fi
 
 sudo umount $mnt_dir
-sudo kpartx -dv disk.raw
+sudo kpartx -dv "$DISK_NAME"
 
 tar czvf $stemcell_dir/image *
 
