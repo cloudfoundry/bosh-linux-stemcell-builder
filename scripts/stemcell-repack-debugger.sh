@@ -9,7 +9,9 @@ show_help() {
     echo "  --help, -h                Show this help message and exit"
     echo "  --debug                   Enable debug mode"
     echo "  --debug_pub_key FILE      Set a multiline public key file"
-    echo "  --bump-version            Bump the version in the stemcell with 0.0.<timestamp>"
+    echo "  --bump-version[=version]  Bump the version in the stemcell to a dev version that will be increased if you use the same stemcell tgz, e.g. <version>+dev.<int>"
+    echo "                            The optional version can be used instead of the stemcell version and increased if it is already a dev version"
+    echo "                            If als OUT is specified and the file is present and a tgz containing stemcell.MF, the version information is automatically used"
     echo
     echo "Environment Variables:"
     echo "  stemcell_tgz              Path to the stemcell tarball *REQUIRED*"
@@ -50,8 +52,13 @@ for arg in "$@"; do
             convert_cert_file="$2"
             shift 2
             ;;
-        --bump-version)
+        --bump-version*)
             bump_version=true
+            if [ -n "$OUT" -a -f "$OUT" ]; then
+                version=$(tar xf "$OUT" stemcell.MF --occurrence=1 -O | yq .version)
+            else
+                version=$(echo "$arg" | awk -F'=' '{print $2}')
+            fi
             shift
             ;;
         *)
@@ -81,7 +88,6 @@ trap "$traps" EXIT
 # Repack stemcell
 cd $stemcell_dir
 tar xvf $stemcell_tgz
-new_ver=`date +%s`
 
 # Update stemcell with new agent
 cd $image_dir
@@ -95,7 +101,20 @@ device=$(sudo kpartx -sav $DISK_NAME | grep '^add' | tail -n1 | cut -d' ' -f3)
 sudo mount -o loop,rw /dev/mapper/$device $mnt_dir
 
 if [ "$bump_version" = true ]; then
-    echo -n "0.0.${new_ver}" | sudo tee "$mnt_dir/var/vcap/bosh/etc/stemcell_version"
+    [ -z "$version" ] && version=$(yq .version < $stemcell_dir/stemcell.MF)
+    base_version=$(echo -n "$version" | awk -F'+' '{print $1}')
+    dev_version=$(echo -n "$version" | awk -F'+' '{print $2}')
+    if [ -n "$dev_version" ]; then
+        dev_version=$(echo -n "$dev_version" | sed -e 's/dev[.]//')
+        dev_version=$((dev_version+1))
+    else
+        dev_version=1
+    fi
+    new_version="${base_version}+dev.${dev_version}"
+sudo cat "$mnt_dir/var/vcap/bosh/etc/stemcell_version"
+    echo -n "${new_version}" | sudo tee "$mnt_dir/var/vcap/bosh/etc/stemcell_version"
+sudo cat "$mnt_dir/var/vcap/bosh/etc/stemcell_version"
+    sed -r -i "s/^([[:space:]]*)version: .*/\1version: ${new_version}/" $stemcell_dir/stemcell.MF
 fi
 
 if [ -n "$AGENT_BINARY" ]; then
@@ -123,9 +142,7 @@ sudo kpartx -dv "$DISK_NAME"
 tar czvf $stemcell_dir/image *
 
 cd $stemcell_dir
-if [ "$bump_version" = true ]; then
-    sed -i.bak "s/version: .*/version: 0.0.${new_ver}/" stemcell.MF
-fi
-tar czvf ${OUT:-$stemcell_tgz} *
+# Change the order of how files are compressed to speed up version detection
+tar czvf ${OUT:-$stemcell_tgz} $(du -b * | sort -n | awk '{print $2}')
 
 echo "ALL DONE!!!"
