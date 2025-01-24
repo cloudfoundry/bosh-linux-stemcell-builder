@@ -129,8 +129,8 @@ STEMCELL_IMAGE=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/vsphere-esxi-ubuntu.
 STEMCELL_WORKDIR=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot \
 OS_NAME=ubuntu \
 bundle exec rspec -fd --tag ~exclude_on_vsphere \
-spec/os_image/ubuntu_jammy_spec.rb \
-spec/stemcells/ubuntu_jammy_spec.rb \
+spec/os_image/ubuntu_spec.rb \
+spec/stemcells/ubuntu_spec.rb \
 spec/stemcells/go_agent_spec.rb \
 spec/stemcells/vsphere_spec.rb \
 spec/stemcells/stig_spec.rb \
