@@ -1,0 +1,30 @@
+package ipv6basic_test
+
+import (
+	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/bosh-linux-stemcell-builder/acceptance-tests/testhelpers"
+)
+
+var (
+	bosh *testhelpers.BOSH
+)
+
+func TestReg(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "ipv6basic")
+}
+
+var _ = BeforeSuite(func() {
+	bosh = testhelpers.NewBOSH()
+	stemcellPath := testhelpers.RequireEnv("STEMCELL_PATH")
+	bosh.UploadStemcell(stemcellPath)
+	bosh.SafeDeploy()
+})
+
+var _ = AfterSuite(func() {
+	bosh.Teardown()
+})

@@ -1,0 +1,18 @@
+name: go
+on:
+  push:
+  pull_request:
+jobs:
+  dry-run-acceptance-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: acceptance-tests/go.mod
+    - uses: golangci/golangci-lint-action@v6
+      with:
+        working-directory: acceptance-tests
+    - name: Dry Run acceptance-tests
+      run: go run github.com/onsi/ginkgo/v2/ginkgo run -r --dry-run .
+      working-directory: acceptance-tests
