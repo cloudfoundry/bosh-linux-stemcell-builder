@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
-set -e
 
-go run github.com/onsi/ginkgo/v2/ginkgo --skip-package vendor -r "$@"
+ACCEPTANCE_TESTS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-echo -e "\n\033[0;32mSUCCESS\033[0m"
+pushd "${ACCEPTANCE_TESTS_ROOT}"
+  go run github.com/onsi/ginkgo/v2/ginkgo run -r "$@"
+  echo -e "\n\033[0;32mSUCCESS\033[0m"
+popd
