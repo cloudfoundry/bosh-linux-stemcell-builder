@@ -8,3 +8,5 @@ optimize_local_ssd = true
 set_host_keys = false
 shutdown = false
 startup = false
+[Core]
+cloud_logging_enabled = false
