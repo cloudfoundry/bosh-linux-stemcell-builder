@@ -24,7 +24,7 @@ git config --global --add safe.directory /opt/bosh
 
 function pkg_mgr {
   run_in_chroot $chroot "apt-get update"
-  run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive; apt-get install --fix-broken --no-install-recommends --assume-yes $*"
+  run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive; apt-get --fix-broken --no-install-recommends --assume-yes $*"
   run_in_chroot $chroot "apt-get clean"
 }
 
