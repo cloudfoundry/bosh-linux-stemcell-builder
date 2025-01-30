@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -eu -o pipefail
-set -e
-
-go run github.com/onsi/ginkgo/v2/ginkgo --skip-package vendor -r "$@"
-
-echo -e "\n\033[0;32mSUCCESS\033[0m"

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -eu -o pipefail
+
+ACCEPTANCE_TESTS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+pushd "${ACCEPTANCE_TESTS_ROOT}"
+  go run github.com/onsi/ginkgo/v2/ginkgo run -r "$@"
+  echo -e "\n\033[0;32mSUCCESS\033[0m"
+popd
