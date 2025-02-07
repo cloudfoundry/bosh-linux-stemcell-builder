@@ -347,22 +347,12 @@ HERE
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E '#{linux_version_regex}'"
     # TODO: maby we can use awk "dpkg --get-selections | awk '!/linux-(.+)-([0-9]+.+)/&&/linux/{print $1}'"
 
-    <<<<<<<< HEAD:bosh-stemcell/spec/stemcells/ubuntu_noble_spec.rb
-    let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-noble.txt')).map(&:chop) }
-    let(:dpkg_list_kernel_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-noble-kernel.txt')).map(&:chop) }
-    let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-noble-google-additions.txt')).map(&:chop) }
-    let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-noble-vsphere-additions.txt')).map(&:chop) }
-    let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-noble-azure-additions.txt')).map(&:chop) }
-    let(:dpkg_list_cloudstack_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-noble-cloudstack-additions.txt')).map(&:chop) }
-    ========
-      let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu.txt')).map(&:chop) }
+    let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu.txt')).map(&:chop) }
     let(:dpkg_list_kernel_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-kernel.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-azure-additions.txt')).map(&:chop) }
     let(:dpkg_list_cloudstack_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-cloudstack-additions.txt')).map(&:chop) }
-    let(:dpkg_list_softlayer_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-softlayer-additions.txt')).map(&:chop) }
-    >>>>>>>> ubuntu-jammy:bosh-stemcell/spec/stemcells/ubuntu_spec.rb
 
     describe command(dpkg_list_packages), {
       exclude_on_fips: true,
