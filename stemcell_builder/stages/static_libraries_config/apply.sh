@@ -7,7 +7,7 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 source $base_dir/etc/settings.bash
 
-cp -p "${assets_dir}/${DISTRIB_CODENAME}_static_libraries_list.txt" $chroot/var/vcap/bosh/etc/static_libraries_list
+cp -p "${assets_dir}/static_libraries_list.txt" $chroot/var/vcap/bosh/etc/static_libraries_list
 
 kernel_suffix="-generic"
 major_kernel_version="5.15"
