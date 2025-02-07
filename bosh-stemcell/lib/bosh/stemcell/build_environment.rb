@@ -141,7 +141,7 @@ module Bosh::Stemcell
     end
 
     def operating_system_spec_name
-      "#{operating_system.name}_#{operating_system.version}"
+      "#{operating_system.name}"
     end
 
     def prepare_build_path
