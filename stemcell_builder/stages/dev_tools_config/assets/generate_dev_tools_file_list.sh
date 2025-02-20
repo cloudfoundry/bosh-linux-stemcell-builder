@@ -24,17 +24,7 @@ PACKAGES=( \
   g++-13 \
   gcc-13 \
   gcc-13-base \
-  gcc-14-base \
-  clang \
-  clang-18 \
-  libclang-common-18-dev \
-  libclang-cpp18 \
-  libclang1-18 \
-  libgc1 \
-  libllvm18 \
-  libobjc-13-dev \
-  libobjc4 \
-  llvm-18-linker-tools \
+  gcc-14-base
 )
 
 for package_name in ${PACKAGES[*]} ; do

@@ -27,8 +27,6 @@ busybox-initramfs
 bzip2
 ca-certificates
 chrony
-clang
-clang-18
 cloud-guest-utils
 cmake
 cmake-data
@@ -163,9 +161,6 @@ libcap2-bin
 libcap2:amd64
 libcbor0.10:amd64
 libcc1-0:amd64
-libclang-common-18-dev:amd64
-libclang-cpp18
-libclang1-18
 libcom-err2:amd64
 libcrack2:amd64
 libcrypt-dev:amd64
@@ -201,7 +196,6 @@ libfile-stripnondeterminism-perl
 libfreetype6:amd64
 libfribidi0:amd64
 libfuse3-3:amd64
-libgc1:amd64
 libgcc-13-dev:amd64
 libgcc-s1:amd64
 libgcrypt20-dev
@@ -242,7 +236,6 @@ libkmod2:amd64
 libkrb5-3:amd64
 libkrb5support0:amd64
 libldap2:amd64
-libllvm18:amd64
 liblmdb0:amd64
 liblocale-gettext-perl
 liblsan0:amd64
@@ -273,8 +266,6 @@ libnl-route-3-200:amd64
 libnpth0t64:amd64
 libnss-systemd:amd64
 libnvme1t64
-libobjc-13-dev:amd64
-libobjc4:amd64
 libp11-kit0:amd64
 libpackagekit-glib2-18:amd64
 libpam-cap:amd64
@@ -363,7 +354,6 @@ libzstd1:amd64
 linux-base
 linux-firmware
 linux-libc-dev:amd64
-llvm-18-linker-tools
 locales
 login
 logrotate
