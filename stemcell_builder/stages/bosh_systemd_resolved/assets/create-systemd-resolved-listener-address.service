@@ -1,0 +1,13 @@
+[Unit]
+Description=Add 169.254.0.53 address so systemd-resolvconf can be accessed by container namespaces
+
+DefaultDependencies=no
+After=systemd-sysctl.service systemd-sysusers.service
+Before=systemd-resolved.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'if ! ip addr show dev lo | grep -q 169.254.0.53; then ip addr add 169.254.0.53 dev lo; fi'
+
+[Install]
+RequiredBy=systemd-resolved.service
