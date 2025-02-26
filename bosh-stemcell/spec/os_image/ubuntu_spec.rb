@@ -538,4 +538,14 @@ bosh_sudoers:!::
 HERE
     end
   end
+
+  describe 'systemd-resolved modifications' do
+    describe file('/lib/systemd/system/create-systemd-resolved-listener-address.service') do
+      its(:content) { should match /ip addr add 169\.254\.0\.53 dev lo/ }
+    end
+
+    describe file('/etc/systemd/resolved.conf.d/add-container-listener-address.conf') do
+      its(:content) { should match /DNSStubListenerExtra=169\.254\.0\.53/ }
+    end
+  end
 end
