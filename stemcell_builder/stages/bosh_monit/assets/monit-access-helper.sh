@@ -14,7 +14,8 @@ monit_isolation_classid=2958295041
 
 permit_monit_access() {
     net_cls_location="$(cat /proc/self/mounts | grep ^cgroup | grep net_cls | awk '{ print $2 }' )"
-    monit_access_cgroup="${net_cls_location}/monit-api-access"
+    net_cls_subproc="$(grep net_cls /proc/self/cgroup | awk -F ":" '{ print $3 }' )"
+    monit_access_cgroup="${net_cls_location}/${net_cls_subproc}/monit-api-access"
 
     mkdir -p "${monit_access_cgroup}"
     echo "${monit_isolation_classid}" > "${monit_access_cgroup}/net_cls.classid"
