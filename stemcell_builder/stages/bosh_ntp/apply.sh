@@ -7,6 +7,7 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
 sed -i "/^pool /d" $chroot/etc/chrony/chrony.conf
+sed -i "s/^makestep .*/makestep 1 -1/" $chroot/etc/chrony/chrony.conf
 cp $dir/assets/chrony-updater $chroot/$bosh_dir/bin/sync-time
 
 chmod 0755 $chroot/$bosh_dir/bin/sync-time
