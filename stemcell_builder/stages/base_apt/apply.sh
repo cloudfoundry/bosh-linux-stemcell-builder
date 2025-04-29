@@ -23,6 +23,8 @@ else
 EOS
 fi
 
+cp $assets_dir/etc/apt/apt.conf.d/50unattended-upgrades  $chroot/etc/apt/apt.conf.d/50unattended-upgrades
+
 # Upgrade systemd/upstart first, to prevent it from messing up our stubs and starting daemons anyway
 pkg_mgr install systemd
 
