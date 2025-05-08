@@ -799,4 +799,14 @@ shared_examples_for 'every OS image' do
       its (:content) { should match /^cron\.\*\s+\/var\/log\/cron\.log$/ }
     end
   end
+
+  describe 'apt removes all software components after updated versions have been installed (stig: V-260477)' do
+    describe file('/etc/apt/apt.conf.d/50unattended-upgrades') do
+      expected = <<-EXPECTED
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+EXPECTED
+      its(:content) { should eq expected.chomp }
+    end
+  end
 end

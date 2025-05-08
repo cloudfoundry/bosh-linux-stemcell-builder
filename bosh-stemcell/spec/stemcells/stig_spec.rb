@@ -137,6 +137,7 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
       V-75779
       V-75865
       V-75851
+      V-260477
       V-260520
     ]
 
