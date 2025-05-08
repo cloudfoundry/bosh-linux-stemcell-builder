@@ -1,15 +1,10 @@
 [Unit]
-Description=random 1 min rotation of log files
+Description=Once per minute rotation of logfiles using logrotate.
 Documentation=man:logrotate(8) man:logrotate.conf(5)
 
 [Timer]
-OnBootSec=1min
-#This was once 'OnUnitActiveSec', but now is not. A Customer problem lead us to discover that it is said that
-#'oneshot' Units are never actually Active, so they will sometimes never be scheduled.
-#See: <https://github.com/systemd/systemd/issues/6680#issuecomment-326228938>
-OnCalendar=*-*-* *:00/15:00
-RandomizedDelaySec=2min
-Persistent=true
+OnCalendar=*-*-* *:*:00/5
+RandomizedDelaySec=1min
 
 [Install]
 WantedBy=timers.target
