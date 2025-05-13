@@ -51,6 +51,7 @@ RUN \
     tar \
     wget \
     xvfb \
+    yq \
   && apt-get clean
 
 # removed `groupadd -o -g ${GROUP_ID} ubuntu` as it already exists
