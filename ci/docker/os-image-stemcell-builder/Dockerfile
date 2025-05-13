@@ -51,6 +51,7 @@ RUN \
     tar \
     wget \
     xvfb \
+    yq \
   && apt-get clean
 
 RUN groupadd -o -g ${GROUP_ID} ubuntu                  \
