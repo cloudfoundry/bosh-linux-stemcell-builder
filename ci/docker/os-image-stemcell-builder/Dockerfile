@@ -51,8 +51,11 @@ RUN \
     tar \
     wget \
     xvfb \
-    yq \
   && apt-get clean
+
+RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+      -O /usr/local/bin/yq \
+    && chmod +x /usr/local/bin/yq
 
 RUN groupadd -o -g ${GROUP_ID} ubuntu                  \
   && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
