@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-jammy.tgz">
-    <hash type="sha-512">b950d941bb28d87ebebf349641b2b3dd750769c6151752fddb28816daaef601e1ef6bdf612fd0fdcf0e159ebe810854f4ee9fa128c6cc9b02f3b9376648a8523</hash>
-    <hash type="sha-256">d007e51fbd1a2d44fdddffca35191e35025db81c03f765e8ff97f88558648dbb</hash>
-    <hash type="sha-1">aabbc62a2b38bcb9d2586292e6d36eea26577344</hash>
-    <hash type="md5">469436529f8c2fbd6f718f10bac17403</hash>
-    <size>431312652</size>
+    <hash type="sha-512">b97546d2da0d35a597705ec1d896e31170b8620848480d193344a6532236fd547cc851fe0a4332208881ff5b9870d179362292db921cc3e2b966ff82b0e5b526</hash>
+    <hash type="sha-256">f51dcb6a62835cbd186db86ab69e73ad1e48ee5e82613c0189677be7784b0378</hash>
+    <hash type="sha-1">8f518dd6bae3d68c3bd05e6c607b722707eed232</hash>
+    <hash type="md5">db30248fd4a3bdb17292deba01ccbe88</hash>
+    <size>431314544</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/ubuntu-jammy.tgz</url>
-    <version>766.0.0</version>
+    <version>767.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">05d9370efbc28a8fb1b68f01b279656a07a044c6bc28dbb505782b4f1cae573d77436964530569c53bdf3c7f0b496b2b39c2b63ae85e41a588257ed1e5b4313d</hash>
-    <hash type="sha-256">586d371127b3172a10d223e87292cee42903ff06096e6a6301bdda12383a2ac7</hash>
-    <hash type="sha-1">c5d5b460eaf8632c873071304f80ac165aee6662</hash>
-    <hash type="md5">bedf59db59b2a46bcfda9634cce8ba97</hash>
-    <size>4129</size>
+    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
+    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
+    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
+    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
+    <size>1</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/usn-log.json</url>
-    <version>766.0.0</version>
+    <version>767.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2025-06-10T21:20:20.31664307Z</published>
+  <published>2025-06-12T17:33:46.513185996Z</published>
 </metalink>
