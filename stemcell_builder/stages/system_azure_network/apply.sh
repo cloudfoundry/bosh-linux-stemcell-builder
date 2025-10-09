@@ -20,3 +20,11 @@ EOS
 # The port 65330 is unusable on Azure
 cp $dir/assets/90-azure-sysctl.conf $chroot/etc/sysctl.d
 chmod 0644 $chroot/etc/sysctl.d/90-azure-sysctl.conf
+
+# Install SR-IOV VF udev rule to mark network interfaces as unmanaged and set ifalias
+cp $dir/assets/10-azure-sriov-unmanaged.rules $chroot/etc/udev/rules.d
+chmod 0644 $chroot/etc/udev/rules.d/10-azure-sriov-unmanaged.rules
+
+# Apply the systemd.network configuration, to ignore unmanaged devices
+cp $dir/assets/01-azure-sriov-unmanaged.network $chroot/etc/systemd/network
+chmod 0644 $chroot/etc/systemd/network/01-azure-sriov-unmanaged.network
