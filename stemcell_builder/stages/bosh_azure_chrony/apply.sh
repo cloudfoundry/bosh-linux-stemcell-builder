@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
-mkdir -p /etc/systemd/system/chrony.service.d
+mkdir -p $chroot/etc/systemd/system/chrony.service.d
 
 cat > $chroot/etc/systemd/system/chrony.service.d/chrony-systemd-override.conf <<EOF
 # created by $0
