@@ -11,6 +11,7 @@ acceptance-tests/syslog-release
 acceptance-tests/os-conf-release
 
 **/*.log
+tmp/
 
 ci/docker/VMware-ovftool-*.bundle
 ci/docker/*/VMware-ovftool-*.bundle
