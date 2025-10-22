@@ -7,6 +7,7 @@ LABEL maintainer="cf-bosh@lists.cloudfoundry.org"
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG DEBIAN_FRONTEND=noninteractive # prevents s3cmd dpkg install asking TZ info
+ARG SYFT_VERSION
 
 RUN \
   apt-get update \
@@ -60,10 +61,10 @@ RUN \
 RUN echo useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
   && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 
-# install syft for sbom generation
-RUN \
-    wget -qO- https://github.com/anchore/syft/releases/download/v1.1.0/syft_1.1.0_linux_amd64.tar.gz | tar xz -C /usr/local/bin syft && \
-    echo "df8c3f2858f04ab95da85e9b7e8e8d6a167f0289e5ced0db534343886482459d  /usr/local/bin/syft" | shasum -a 256 -c
+# Install syft
+RUN curl -sL https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VERSION#v}_linux_amd64.tar.gz \
+        | tar -xz -C /usr/local/bin/ syft \
+    && chmod +x /usr/local/bin/syft
 
 # we install a local ruby (3.x) because Jammy is lagging at 2.7
 # TODO: noble now has ruby 3.2 do we still want to use ruby-install?
