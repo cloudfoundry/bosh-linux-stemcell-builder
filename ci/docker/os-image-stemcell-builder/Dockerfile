@@ -7,6 +7,7 @@ LABEL maintainer="cf-bosh@lists.cloudfoundry.org"
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG DEBIAN_FRONTEND=noninteractive # prevents s3cmd dpkg install asking TZ info
+ARG SYFT_VERSION
 
 RUN \
   apt-get update \
@@ -52,6 +53,11 @@ RUN \
     wget \
     xvfb \
   && apt-get clean
+
+# Install syft
+RUN curl -sL https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VERSION#v}_linux_amd64.tar.gz \
+        | tar -xz -C /usr/local/bin/ syft \
+    && chmod +x /usr/local/bin/syft
 
 # Install yq
 RUN wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
