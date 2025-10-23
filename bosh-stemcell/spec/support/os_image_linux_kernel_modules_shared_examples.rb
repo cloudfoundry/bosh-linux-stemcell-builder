@@ -83,4 +83,10 @@ shared_examples_for 'a Linux kernel module configured OS image' do
       its(:content) { should match 'install rds /bin/true' }
     end
   end
+
+  context 'prevent floppy module from being loaded' do
+    describe file('/etc/modprobe.d/blacklist.conf') do
+      its(:content) { should match 'install floppy /bin/true' }
+    end
+  end
 end
