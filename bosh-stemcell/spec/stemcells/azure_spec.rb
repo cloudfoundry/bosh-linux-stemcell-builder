@@ -56,11 +56,11 @@ describe 'Azure Stemcell', stemcell_image: true do
     describe 'SR-IOV VF udev rules' do
       subject { file('/etc/udev/rules.d/10-azure-sriov-unmanaged.rules') }
 
-      it { should be_mode(644) }
+      it { should be_mode(0644) }
       it { should be_owned_by('root') }
 
       its(:content) { should match /SUBSYSTEM=="net"/ }
-      its(:content) { should match /ATTR\{flags\}=="0\?\?\[89ABCDEF\]\*"/ }
+      its(:content) { should match /ATTR\{flags\}=="0x\?\[89ABCDEF\]\*"/ }
       its(:content) { should match /ENV\{AZURE_UNMANAGED_SRIOV\}="1"/ }
       its(:content) { should match /ENV\{ID_NET_MANAGED_BY\}="unmanaged"/ }
       its(:content) { should match /ENV\{NM_UNMANAGED\}="1"/ }
@@ -70,7 +70,7 @@ describe 'Azure Stemcell', stemcell_image: true do
     describe 'systemd network configuration for unmanaged SR-IOV devices' do
       subject { file('/etc/systemd/network/01-azure-sriov-unmanaged.network') }
 
-      it { should be_mode(644) }
+      it { should be_mode(0644) }
       it { should be_owned_by('root') }
 
       its(:content) { should match /\[Match\]/ }
