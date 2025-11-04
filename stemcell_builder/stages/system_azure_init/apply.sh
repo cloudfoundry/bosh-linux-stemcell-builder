@@ -5,7 +5,8 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-packages="python3 python3-pyasn1 python3-setuptools python3-distro python-is-python3 cloud-init azure-vm-utils"
+packages="python3 python3-pyasn1 python3-setuptools python3-distro python-is-python3 \
+cloud-init azure-vm-utils linux-cloud-tools-common linux-cloud-tools-generic"
 pkg_mgr install $packages
 
 wala_release=2.9.1.1
@@ -70,3 +71,6 @@ cat $chroot/etc/rsyslog.d/21-cloudinit.conf >> $chroot/etc/rsyslog.d/50-default.
 
 rm $chroot/etc/rsyslog.d/21-cloudinit.conf
 
+
+# Enable Hyper-V KVP daemon (installed via linux-cloud-tools)
+run_in_chroot "$chroot" "systemctl enable hv-kvp-daemon.service"
