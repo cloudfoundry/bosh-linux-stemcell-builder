@@ -66,3 +66,7 @@ cat $chroot/etc/rsyslog.d/21-cloudinit.conf >> $chroot/etc/rsyslog.d/50-default.
 
 rm $chroot/etc/rsyslog.d/21-cloudinit.conf
 
+
+# Installing Hyper-V KVP daemon via linux-cloud-tools
+pkg_mgr install "linux-cloud-tools-common linux-cloud-tools-generic"
+run_in_chroot "$chroot" "systemctl enable hv-kvp-daemon.service"
