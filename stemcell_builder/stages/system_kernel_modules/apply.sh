@@ -29,3 +29,5 @@ alias nouveau off
 alias lbm-nouveau off' >> $chroot/etc/modprobe.d/blacklist-nouveau.conf
 
 rm -rf $chroot/lib/modules/*/kernel/zfs $chroot/usr/src/linux-headers-*/zfs
+
+run_in_chroot $chroot "update-initramfs -u -k all"
