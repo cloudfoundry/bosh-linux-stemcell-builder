@@ -99,5 +99,20 @@ describe 'Azure Stemcell', stemcell_image: true do
         it { should be_enabled }
       end
     end
+
+    describe 'WALinuxAgent configuration' do
+      describe file('/etc/waagent.conf') do
+        it { should be_owned_by('root') }
+      end
+
+      describe file('/lib/systemd/system/walinuxagent.service') do
+        it { should be_mode(0644) }
+        it { should be_owned_by('root') }
+      end
+
+      describe service('walinuxagent') do
+        it { should be_enabled }
+      end
+    end
   end
 end
