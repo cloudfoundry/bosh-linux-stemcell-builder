@@ -43,6 +43,18 @@ describe 'Azure Stemcell', stemcell_image: true do
     end
   end
 
+  context 'cloud-init Azure APT mirror configuration' do
+    describe file('/etc/cloud/cloud.cfg.d/90-azure-apt-sources.cfg') do
+      it { should be_file }
+      its(:content) { should include('http://azure.archive.ubuntu.com/ubuntu/') }
+    end
+
+    describe file('/etc/cloud/cloud.cfg') do
+      it { should be_file }
+      its(:content) { should include('apt-configure') }
+    end
+  end
+
   context 'installed by system_azure_network', {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
