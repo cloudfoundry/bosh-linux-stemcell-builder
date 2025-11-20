@@ -79,4 +79,40 @@ describe 'Azure Stemcell', stemcell_image: true do
       its(:content) { should match /Unmanaged=yes/ }
     end
   end
+
+  context 'installed by system_azure_init', {
+    exclude_on_alicloud: true,
+    exclude_on_aws: true,
+    exclude_on_google: true,
+    exclude_on_vcloud: true,
+    exclude_on_vsphere: true,
+    exclude_on_warden: true,
+    exclude_on_openstack: true,
+    exclude_on_softlayer: true,
+  } do
+    describe 'Hyper-V KVP daemon' do
+      describe command('which hv_kvp_daemon') do
+        its(:exit_status) { should eq 0 }
+      end
+
+      describe service('hv-kvp-daemon') do
+        it { should be_enabled }
+      end
+    end
+
+    describe 'WALinuxAgent configuration' do
+      describe file('/etc/waagent.conf') do
+        it { should be_owned_by('root') }
+      end
+
+      describe file('/lib/systemd/system/walinuxagent.service') do
+        it { should be_mode(0644) }
+        it { should be_owned_by('root') }
+      end
+
+      describe service('walinuxagent') do
+        it { should be_enabled }
+      end
+    end
+  end
 end
