@@ -55,7 +55,7 @@ for arg in "$@"; do
         --bump-version*)
             bump_version=true
             if [ -n "$OUT" -a -f "$OUT" ]; then
-                version=$(tar xf "$OUT" stemcell.MF --occurrence=1 -O | yq .version)
+                version=$(bosh int <(tar xf "$OUT" stemcell.MF --occurrence=1 -O) --path /version)
             else
                 version=$(echo "$arg" | awk -F'=' '{print $2}')
             fi
