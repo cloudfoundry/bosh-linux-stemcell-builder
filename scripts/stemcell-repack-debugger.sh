@@ -101,7 +101,7 @@ device=$(sudo kpartx -sav $DISK_NAME | grep '^add' | tail -n1 | cut -d' ' -f3)
 sudo mount -o loop,rw /dev/mapper/$device $mnt_dir
 
 if [ "$bump_version" = true ]; then
-    [ -z "$version" ] && version=$(yq .version < $stemcell_dir/stemcell.MF)
+    [ -z "$version" ] && version=$(bosh int $stemcell_dir/stemcell.MF --path /version)
     base_version=$(echo -n "$version" | awk -F'+' '{print $1}')
     dev_version=$(echo -n "$version" | awk -F'+' '{print $2}')
     if [ -n "$dev_version" ]; then
