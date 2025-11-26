@@ -1,0 +1,15 @@
+[Unit]
+Description=Run first boot tasks
+ConditionPathExists=!/root/firstboot_done
+Before=ssh.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sh -c '/bin/rm -f /etc/ssh/ssh_host*key*'
+ExecStart=/usr/bin/ssh-keygen -A -v
+ExecStartPost=/usr/sbin/dpkg-reconfigure -fnoninteractive sysstat
+ExecStartPost=/usr/bin/touch /root/firstboot_done
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
