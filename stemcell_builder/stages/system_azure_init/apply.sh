@@ -9,8 +9,8 @@ packages="python3 python3-pyasn1 python3-setuptools python3-distro python-is-pyt
 cloud-init linux-cloud-tools-common linux-cloud-tools-generic"
 pkg_mgr install $packages
 
-wala_release=2.14.0.1
-wala_expected_sha1=e8f30e34eedc9280531af1bb1af9efb53d1a1039
+wala_release=2.15.0.1
+wala_expected_sha1=155fd6f326a2bf2ff97b4ea2e2c83dc16a9c1768
 
 curl -L https://github.com/Azure/WALinuxAgent/archive/v${wala_release}.tar.gz > /tmp/wala.tar.gz
 sha1=$(cat /tmp/wala.tar.gz | openssl dgst -sha1  | awk 'BEGIN {FS="="}; {gsub(/ /,"",$2); print $2}')
