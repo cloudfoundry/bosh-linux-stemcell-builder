@@ -33,6 +33,7 @@ run_in_chroot $chroot "
   sudo rm -fr WALinuxAgent-${wala_release}
   rm wala.tar.gz
 "
+mkdir -p $chroot/var/log/azure
 cp -f $dir/assets/etc/waagent/waagent.conf $chroot/etc/waagent.conf
 cp -f $dir/assets/etc/waagent/walinuxagent.service $chroot/lib/systemd/system/walinuxagent.service
 chmod 0644 $chroot/lib/systemd/system/walinuxagent.service
