@@ -188,7 +188,14 @@ module Bosh::Stemcell
       end
 
       def additional_cloud_properties
-        {'root_device_name' => '/dev/sda1'}
+        {
+          'root_device_name' => '/dev/sda1',
+          'generation' => 'gen2',
+          'accelerated_networking' => true,
+          'hibernation' => true,
+          'disk_controller_types' => ['scsi'],
+          'security_type' => 'TrustedLaunchSupported'
+        }
       end
     end
 
