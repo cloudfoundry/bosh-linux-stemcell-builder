@@ -10,6 +10,8 @@
     "Settings": {
       "Sources": [
         {
+          "Type": "VsphereGuestInfo"
+        }, {
           "Type": "CDROM",
           "FileName": "env"
         }
