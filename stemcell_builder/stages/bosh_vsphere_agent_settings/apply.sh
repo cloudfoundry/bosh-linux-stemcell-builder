@@ -16,6 +16,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
     "Settings": {
       "Sources": [
         {
+          "Type": "CloudInit"
+        }, {
           "Type": "CDROM",
           "FileName": "env"
         }
