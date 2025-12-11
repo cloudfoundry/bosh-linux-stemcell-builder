@@ -7,7 +7,7 @@
 [Unit]
 Description=Azure Linux Agent
 
-After=network-online.target
+After=network-online.target cloud-init.service
 Wants=network-online.target sshd.service sshd-keygen.service
 
 ConditionFileIsExecutable=/usr/sbin/waagent
@@ -22,6 +22,7 @@ ExecStart=/usr/bin/python3 -u /usr/sbin/waagent -daemon
 Restart=always
 Slice=azure.slice
 CPUAccounting=yes
+MemoryAccounting=yes
 
 [Install]
 WantedBy=multi-user.target
