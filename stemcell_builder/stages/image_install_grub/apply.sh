@@ -73,6 +73,11 @@ case "${stemcell_infrastructure}" in
 aws)
   grub_suffix="nvme_core.io_timeout=4294967295"
   ;;
+azure)
+  # For NVMe storage, Microsoft recommends setting nvme_core.io_timeout to 240 seconds
+  # to avoid IO timeouts and let Azure handle disk failures or interruptions.
+  grub_suffix="nvme_core.io_timeout=240"
+  ;;
 cloudstack)
   grub_suffix="console=hvc0"
   ;;

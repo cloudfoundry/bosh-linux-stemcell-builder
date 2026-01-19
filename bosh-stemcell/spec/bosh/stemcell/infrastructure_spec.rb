@@ -167,7 +167,7 @@ module Bosh::Stemcell
         'generation' => 'gen2',
         'accelerated_networking' => true,
         'hibernation' => true,
-        'disk_controller_types' => ['scsi'],
+        'disk_controller_types' => ['scsi', 'nvme'],
         'security_type' => 'TrustedLaunchSupported'
       })
     end
