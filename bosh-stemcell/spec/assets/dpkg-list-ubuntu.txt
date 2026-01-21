@@ -98,6 +98,7 @@ grep
 groff-base
 grub-common
 grub-efi-amd64-bin
+grub-efi-amd64-signed
 grub-gfxpayload-lists
 grub-pc
 grub-pc-bin
@@ -366,6 +367,7 @@ man-db
 mawk
 media-types
 module-assistant
+mokutil
 mount
 ncurses-base
 ncurses-bin
@@ -435,10 +437,12 @@ rsyslog-gnutls
 rsyslog-openssl
 rsyslog-relp
 runit
+sbsigntool
 sed
 sensible-utils
 sgml-base
 shared-mime-info
+shim-signed
 software-properties-common
 strace
 sudo
