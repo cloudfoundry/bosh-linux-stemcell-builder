@@ -16,6 +16,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
     "Settings": {
       "Sources": [
         {
+          "Type": "VsphereGuestInfo"
+        }, {
           "Type": "CDROM",
           "FileName": "env"
         }
