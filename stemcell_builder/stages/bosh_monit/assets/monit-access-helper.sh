@@ -13,12 +13,32 @@
 monit_isolation_classid=2958295041
 
 permit_monit_access() {
-    net_cls_location="$(cat /proc/self/mounts | grep ^cgroup | grep net_cls | awk '{ print $2 }' )"
-    net_cls_subproc="$(grep net_cls /proc/self/cgroup | awk -F ":" '{ print $3 }' )"
-    monit_access_cgroup="${net_cls_location}/${net_cls_subproc}/monit-api-access"
+    if grep -q '^0::' /proc/self/cgroup 2>/dev/null; then
+        # cgroupv2 (unified hierarchy)
+        # Create a sub-cgroup under the current process's cgroup and move into it.
+        # The iptables rules match on this cgroup path.
+        cgroup_mount="$(awk '$3 == "cgroup2" { print $2 }' /proc/self/mounts)"
+        current_cgroup="$(grep '^0::' /proc/self/cgroup | cut -d: -f3)"
+        if [ -z "${cgroup_mount}" ] || [ -z "${current_cgroup}" ]; then
+            echo "permit_monit_access: unable to resolve cgroup v2 mount or path" >&2
+            return 1
+        fi
+        monit_access_cgroup="${cgroup_mount}${current_cgroup}/monit-api-access"
 
-    mkdir -p "${monit_access_cgroup}"
-    echo "${monit_isolation_classid}" > "${monit_access_cgroup}/net_cls.classid"
+        mkdir -p "${monit_access_cgroup}"
+        echo $$ > "${monit_access_cgroup}/cgroup.procs"
+    else
+        # cgroupv1 - use net_cls classid
+        net_cls_location="$(cat /proc/self/mounts | grep ^cgroup | grep net_cls | awk '{ print $2 }')"
+        net_cls_subproc="$(grep net_cls /proc/self/cgroup | awk -F ":" '{ print $3 }')"
+        if [ -z "${net_cls_location}" ] || [ -z "${net_cls_subproc}" ]; then
+            echo "permit_monit_access: unable to resolve cgroup v1 net_cls location or path" >&2
+            return 1
+        fi
+        monit_access_cgroup="${net_cls_location}/${net_cls_subproc}/monit-api-access"
 
-    echo $$ > "${monit_access_cgroup}/tasks"
+        mkdir -p "${monit_access_cgroup}"
+        echo "${monit_isolation_classid}" > "${monit_access_cgroup}/net_cls.classid"
+        echo $$ > "${monit_access_cgroup}/tasks"
+    fi
 }
