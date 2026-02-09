@@ -30,9 +30,5 @@ chmod 0700 $chroot/$bosh_dir/etc/monitrc
 mkdir -p $chroot/$bosh_app_dir/monit
 touch $chroot/$bosh_app_dir/monit/empty.monitrc
 
-# nftables rules for monit
-mkdir -p $chroot/etc/nftables
-cp $dir/assets/monit-nftables.nft $chroot/etc/nftables/monit.nft
-
 cp "$(dirname "$0")/assets/monit.service" "${chroot}/lib/systemd/system/"
 run_in_chroot "${chroot}" "systemctl enable monit.service"
