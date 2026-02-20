@@ -162,7 +162,14 @@ module Bosh::Stemcell
     it { should eq Infrastructure.for('azure') }
 
     it 'has azure specific additional cloud properties' do
-      expect(subject.additional_cloud_properties).to eq({'root_device_name' => '/dev/sda1'})
+      expect(subject.additional_cloud_properties).to eq({
+        'root_device_name' => '/dev/sda1',
+        'generation' => 'gen2',
+        'accelerated_networking' => true,
+        'hibernation' => true,
+        'disk_controller_types' => ['scsi', 'nvme'],
+        'security_type' => 'TrustedLaunchSupported'
+      })
     end
   end
 
