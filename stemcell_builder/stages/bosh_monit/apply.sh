@@ -29,3 +29,5 @@ chmod 0700 $chroot/$bosh_dir/etc/monitrc
 # monit refuses to start without an include file present
 mkdir -p $chroot/$bosh_app_dir/monit
 touch $chroot/$bosh_app_dir/monit/empty.monitrc
+
+cp $dir/assets/monit-access-helper.sh $chroot/$bosh_dir/etc/
