@@ -1,3 +1,3 @@
 permit_monit_access() {
-  /var/vcap/bosh/etc/bosh-enable-monit-access
+  /usr/local/sbin/bosh-enable-monit-access
 }
