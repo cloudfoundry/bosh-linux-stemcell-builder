@@ -32,3 +32,5 @@ touch $chroot/$bosh_app_dir/monit/empty.monitrc
 
 cp "$(dirname "$0")/assets/monit.service" "${chroot}/lib/systemd/system/"
 run_in_chroot "${chroot}" "systemctl enable monit.service"
+
+cp $dir/assets/monit-access-helper.sh $chroot/$bosh_dir/etc/
