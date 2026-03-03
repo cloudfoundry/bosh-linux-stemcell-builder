@@ -16,7 +16,8 @@ cmake uuid-dev libgcrypt-dev ca-certificates \
 scsitools mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk libpam-cracklib chrony dbus nvme-cli rng-tools fdisk \
-ethtool"
+ethtool \
+nftables"
 
 debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
