@@ -5,6 +5,10 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
+install -D -m 0755 \
+  $assets_dir/root/firstboot.sh \
+  $chroot/root/firstboot.sh
+
 install -D -m 0644 \
   $assets_dir/etc/systemd/system/firstboot.service \
   $chroot/etc/systemd/system/firstboot.service
