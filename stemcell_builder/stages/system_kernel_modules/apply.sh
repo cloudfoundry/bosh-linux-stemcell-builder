@@ -18,7 +18,8 @@ install hfs /bin/true
 install hfsplus /bin/true
 install squashfs /bin/true
 install udf /bin/true
-install rds /bin/true' >> $chroot/etc/modprobe.d/blacklist.conf
+install rds /bin/true
+install floppy /bin/true' >> $chroot/etc/modprobe.d/blacklist.conf
 
 echo '# prevent nouveau from loading
 blacklist nouveau
@@ -28,3 +29,7 @@ alias nouveau off
 alias lbm-nouveau off' >> $chroot/etc/modprobe.d/blacklist-nouveau.conf
 
 rm -rf $chroot/lib/modules/*/kernel/zfs $chroot/usr/src/linux-headers-*/zfs
+
+mount --bind /sys "$chroot/sys"
+add_on_exit "umount $chroot/sys"
+run_in_chroot $chroot "update-initramfs -u -k all"

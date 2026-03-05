@@ -5,11 +5,12 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-packages="python3 python3-pyasn1 python3-setuptools python3-distro python-is-python3 cloud-init azure-vm-utils"
+packages="python3 python3-pyasn1 python3-setuptools python3-distro python-is-python3 \
+cloud-init azure-vm-utils linux-cloud-tools-common linux-cloud-tools-generic"
 pkg_mgr install $packages
 
-wala_release=2.9.1.1
-wala_expected_sha1=b61bd57f3b2f7b048d6bab2739690bbf1d9c213b
+wala_release=2.15.0.1
+wala_expected_sha1=155fd6f326a2bf2ff97b4ea2e2c83dc16a9c1768
 
 curl -L https://github.com/Azure/WALinuxAgent/archive/v${wala_release}.tar.gz > /tmp/wala.tar.gz
 sha1=$(cat /tmp/wala.tar.gz | openssl dgst -sha1  | awk 'BEGIN {FS="="}; {gsub(/ /,"",$2); print $2}')
@@ -32,6 +33,7 @@ run_in_chroot $chroot "
   sudo rm -fr WALinuxAgent-${wala_release}
   rm wala.tar.gz
 "
+mkdir -p $chroot/var/log/azure
 cp -f $dir/assets/etc/waagent/waagent.conf $chroot/etc/waagent.conf
 cp -f $dir/assets/etc/waagent/walinuxagent.service $chroot/lib/systemd/system/walinuxagent.service
 chmod 0644 $chroot/lib/systemd/system/walinuxagent.service
@@ -70,3 +72,6 @@ cat $chroot/etc/rsyslog.d/21-cloudinit.conf >> $chroot/etc/rsyslog.d/50-default.
 
 rm $chroot/etc/rsyslog.d/21-cloudinit.conf
 
+
+# Enable Hyper-V KVP daemon (installed via linux-cloud-tools)
+run_in_chroot "$chroot" "systemctl enable hv-kvp-daemon.service"
