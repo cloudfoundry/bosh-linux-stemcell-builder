@@ -1,0 +1,12 @@
+[Unit]
+Description=Run first boot tasks
+ConditionFirstBoot=yes
+Before=ssh.service
+
+[Service]
+Type=oneshot
+ExecStart=/root/firstboot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
