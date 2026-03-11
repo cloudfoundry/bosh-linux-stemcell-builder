@@ -47,3 +47,31 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
   }
 }
 JSON
+
+# Rosetta x86_64 emulation compatibility for Apple Silicon Macs
+#
+# When running warden stemcells under Rosetta emulation on Apple Silicon,
+# several systemd services fail because their security hardening features
+# (MemoryDenyWriteExecute, SystemCallFilter, etc.) conflict with Rosetta's
+# JIT compilation which requires writable+executable memory.
+#
+# We create systemd drop-in overrides to disable these security features.
+# This is acceptable for warden stemcells since they run in containerized
+# environments where the host provides security isolation.
+
+rosetta_services=(
+  systemd-journald
+  systemd-resolved
+  systemd-networkd
+  systemd-logind
+  systemd-timesyncd
+  auditd
+)
+
+for service in "${rosetta_services[@]}"; do
+  mkdir -p "$chroot/etc/systemd/system/${service}.service.d"
+  cp "$assets_dir/rosetta-compat.conf" "$chroot/etc/systemd/system/${service}.service.d/rosetta-compat.conf"
+done
+
+# Mask systemd-binfmt.service which fails under Rosetta emulation
+run_in_chroot "$chroot" "systemctl mask systemd-binfmt.service"
