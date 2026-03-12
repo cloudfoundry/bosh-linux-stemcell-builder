@@ -354,6 +354,7 @@ HERE
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
       its(:content) { should match('"Type": "HTTP"') }
+      its(:content) { should match('"UseMonitIptablesFirewall": true') }
     end
   end
 
@@ -371,6 +372,7 @@ HERE
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
       its(:content) { should match('"Type": "HTTP"') }
+      its(:content) { should match('"UseMonitIptablesFirewall": true') }
     end
   end
 
@@ -388,6 +390,7 @@ HERE
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
       its(:content) { should match('"Type": "InstanceMetadata"') }
+      its(:content) { should match('"UseMonitIptablesFirewall": true') }
     end
   end
 
@@ -407,6 +410,7 @@ HERE
       its(:content) { should match('"CreatePartitionIfNoEphemeralDisk": true') }
       its(:content) { should match('"Type": "ConfigDrive"') }
       its(:content) { should match('"Type": "HTTP"') }
+      its(:content) { should match('"UseMonitIptablesFirewall": true') }
     end
   end
 
@@ -424,6 +428,7 @@ HERE
     describe file('/var/vcap/bosh/agent.json') do
       it { should be_valid_json_file }
       its(:content) { should match('"Type": "CDROM"') }
+      its(:content) { should match('"UseMonitIptablesFirewall": true') }
     end
   end
 
@@ -443,6 +448,7 @@ HERE
       its(:content) { should match('"Type": "HTTP"') }
       its(:content) { should match('"UserDataPath": "/rest/v3.1/SoftLayer_Resource_Metadata/getUserMetadata.json"') }
       its(:content) { should match('"UseRegistry": true') }
+      its(:content) { should match('"UseMonitIptablesFirewall": true') }
     end
   end
 
@@ -460,6 +466,7 @@ HERE
       it { should be_valid_json_file }
       its(:content) { should match('"CreatePartitionIfNoEphemeralDisk": true') }
       its(:content) { should match('"Type": "HTTP"') }
+      its(:content) { should match('"UseMonitIptablesFirewall": true') }
     end
   end
 

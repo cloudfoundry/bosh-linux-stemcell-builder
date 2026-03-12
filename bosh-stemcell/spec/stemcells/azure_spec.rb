@@ -40,6 +40,7 @@ describe 'Azure Stemcell', stemcell_image: true do
       its(:content) { should include('"DevicePathResolutionType": "scsi"') }
       its(:content) { should include('"CreatePartitionIfNoEphemeralDisk": true') }
       its(:content) { should include('"PartitionerType": "parted"') }
+      its(:content) { should include('"UseMonitIptablesFirewall": true') }
     end
   end
 

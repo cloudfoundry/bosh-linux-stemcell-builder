@@ -10,7 +10,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
     "Linux": {
       $(get_partitioner_type_mapping)
       "CreatePartitionIfNoEphemeralDisk": true,
-      "DevicePathResolutionType": "virtio"
+      "DevicePathResolutionType": "virtio",
+      "UseMonitIptablesFirewall": true
     }
   },
   "Infrastructure": {
