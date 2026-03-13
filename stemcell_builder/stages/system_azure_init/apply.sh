@@ -48,16 +48,12 @@ cat > $chroot/etc/logrotate.d/waagent <<EOS
 }
 EOS
 
-# Setup cloud-init
+#setup cloud-init
 rm $chroot/etc/cloud/*.cfg
 rm $chroot/etc/cloud/cloud.cfg.d/*.cfg
 cp -f $dir/assets/etc/cloud-init/cloud.cfg $chroot/etc/cloud/cloud.cfg
 cp -f $dir/assets/etc/cloud-init/*-*.cfg $chroot/etc/cloud/cloud.cfg.d/
 
-# Ensures that cloud-init waits until host keys have been regenerated.
-mkdir -p $chroot/etc/systemd/system/cloud-config.service.d
-cp -f $dir/assets/etc/systemd/system/cloud-config.service.d/firstboot-blocker.conf \
-      $chroot/etc/systemd/system/cloud-config.service.d/firstboot-blocker.conf
 
 # this will append the following two relevant lines (plus a few commented out lines)
 # to the default-conf:
