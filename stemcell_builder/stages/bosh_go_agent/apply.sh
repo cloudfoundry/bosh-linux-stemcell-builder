@@ -35,7 +35,6 @@ bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
 /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
 
 mv bosh-agent $chroot/var/vcap/bosh/bin/
-ln --force $chroot/var/vcap/bosh/bin/bosh-agent $chroot/usr/local/sbin/bosh-enable-monit-access
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
 
