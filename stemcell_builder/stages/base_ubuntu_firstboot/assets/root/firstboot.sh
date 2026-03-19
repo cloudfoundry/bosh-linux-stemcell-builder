@@ -1,6 +1,7 @@
 #!/bin/sh
+set -e
 
 rm -f /etc/ssh/ssh_host*key*
+ssh-keygen -A -v
 
-dpkg-reconfigure -fnoninteractive -pcritical openssh-server
 dpkg-reconfigure -fnoninteractive sysstat
