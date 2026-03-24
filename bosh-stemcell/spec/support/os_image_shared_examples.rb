@@ -29,6 +29,18 @@ shared_examples_for 'every OS image' do
     end
   end
 
+  context 'sudo configuration files must be owned by root' do
+    describe file('/etc/sudo.conf') do
+      it { should be_owned_by('root') }
+      its(:group) { should eq('root') }
+    end
+
+    describe file('/usr/libexec/sudo/sudoers.so') do
+      it { should be_owned_by('root') }
+      its(:group) { should eq('root') }
+    end
+  end
+
   context 'effective GID for UID vcap' do
     describe command("id -gn vcap") do
       its (:stdout) { should eq "vcap\n" }
