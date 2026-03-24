@@ -12,4 +12,7 @@ chown root:root $chroot/etc/gshadow
 chmod 0000 $chroot/etc/shadow
 chown root:root $chroot/etc/shadow
 
+chown root:root $chroot/etc/sudo.conf
+chown -R root:root $chroot/usr/libexec/sudo/
+
 restrict_binary_setuid
