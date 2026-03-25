@@ -66,7 +66,8 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
       "UseDefaultTmpDir": true,
       "UsePreformattedPersistentDisk": true,
       "BindMountPersistentDisk": true,
-      "SkipDiskSetup": true
+      "SkipDiskSetup": true,
+      "UseMonitIptablesFirewall": true
     }
   },
   "Infrastructure": {

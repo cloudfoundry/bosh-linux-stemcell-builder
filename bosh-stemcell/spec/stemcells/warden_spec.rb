@@ -45,4 +45,17 @@ describe 'Warden Stemcell', stemcell_image: true do
       it { should be_linked_to '/etc/sv/cron' }
     end
   end
+
+  context 'BOSH Agent configuration' do
+    describe file('/var/vcap/bosh/agent.json') do
+      it { should be_valid_json_file }
+      its(:content) { should include('"Type": "File"') }
+      its(:content) { should include('"SettingsPath": "/var/vcap/bosh/warden-cpi-agent-env.json"') }
+      its(:content) { should include('"UseDefaultTmpDir": true') }
+      its(:content) { should include('"UsePreformattedPersistentDisk": true') }
+      its(:content) { should include('"BindMountPersistentDisk": true') }
+      its(:content) { should include('"SkipDiskSetup": true') }
+      its(:content) { should include('"UseMonitIptablesFirewall": true') }
+    end
+  end
 end
