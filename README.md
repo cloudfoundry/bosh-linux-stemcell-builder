@@ -10,19 +10,23 @@ git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
 git checkout ubuntu-noble/master
 mkdir -p tmp
-docker build -t bosh/os-image-stemcell-builder:noble \
-  ci/docker/os-image-stemcell-builder-noble/
+docker build \
+   --platform linux/amd64 \
+   --build-arg SYFT_VERSION=v1.42.3 \
+   -t bosh/os-image-stemcell-builder:noble \
+   ci/docker/os-image-stemcell-builder/
 docker run \
+   --platform linux/amd64 \
    --privileged \
    -v "$(pwd):/opt/bosh" \
    --workdir /opt/bosh \
    --user=1000:1000 \
    -it \
    bosh/os-image-stemcell-builder:noble
-# You're now in the the Docker container
+# You're now in the Docker container
 ulimit -n 16384 # only necessary if your host is Fedora
 gem install bundler
-bundle
+bundle install
  # build OS image
 bundle exec rake stemcell:build_os_image[ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz] # build OS image
  # build vSphere stemcell
@@ -30,8 +34,9 @@ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,noble,$P
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
-and place it in the `ci/docker/os-image-stemcell-builder-noble/` directory. See
-[External Assets](#external-assets) for download instructions.
+and place it in the `ci/docker/os-image-stemcell-builder/` directory before
+running `docker build`. See [External Assets](#external-assets) for download
+instructions.
 
 ### OS image
 
@@ -209,22 +214,26 @@ If you find yourself debugging any of the above processes, here is what you need
 The ovftool installer from VMWare can be found at
 [my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL410&productId=489).
 
-The ovftool installer must be copied into the [ci/docker/os-image-stemcell-builder-noble](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile or you will receive the error
+The ovftool installer must be copied into [ci/docker/os-image-stemcell-builder/](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile before building the Docker image, or you will receive an error like:
 
-    Step 24/30 : ADD ${OVF_TOOL_INSTALLER} /tmp/ovftool_installer.bundle
-    ADD failed: stat /var/lib/docker/tmp/docker-builder389354746/VMware-ovftool-4.1.0-2459827-lin.x86_64.bundle: no such file or directory
+```
+ADD failed: failed to compute cache key: "/VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle": not found
+```
 
 ## Rebuilding the Docker Image
 
 The Docker image is published to
 [`bosh/os-image-stemcell-builder`](https://hub.docker.com/r/bosh/os-image-stemcell-builder/).
-You will need the ovftool installer present on your filesystem.
+You will need the ovftool installer present in
+`ci/docker/os-image-stemcell-builder/`.
 
-Rebuild the container with the `build` script...
+Rebuild the container with:
 
-    ./build os-image-stemcell-builder
+```bash
+docker build \
+   --platform linux/amd64 \
+   --build-arg SYFT_VERSION=v1.42.3 \
+   -t bosh/os-image-stemcell-builder:noble \
+   ci/docker/os-image-stemcell-builder/
+```
 
-When ready, `push` to DockerHub and use the credentials from LastPass...
-
-    cd os-image-stemcell-builder
-    ./push

@@ -5,12 +5,6 @@ set -e
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
-# Install sfdisk if not available - it works better than parted on Docker Desktop for Apple Silicon
-if ! which sfdisk > /dev/null 2>&1; then
-  echo "Installing fdisk package (provides sfdisk)..."
-  apt-get update -qq && apt-get install -y -qq fdisk
-fi
-
 disk_image=${work}/${stemcell_image_name}
 
 # image_create_disk_size is in MiB
