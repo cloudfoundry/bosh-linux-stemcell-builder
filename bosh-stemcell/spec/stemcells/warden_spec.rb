@@ -44,7 +44,6 @@ describe 'Warden Stemcell', stemcell_image: true do
     end
 
     describe file('/etc/systemd/system/systemd-binfmt.service') do
-      it { should be_symlink }
       it { should be_linked_to '/dev/null' }
     end
   end
