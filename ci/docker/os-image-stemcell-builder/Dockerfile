@@ -20,6 +20,7 @@ RUN \
     debootstrap \
     dnsutils \
     dosfstools \
+    fdisk \
     git \
     golang \
     jq \
