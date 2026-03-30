@@ -9,10 +9,21 @@ disk_image=${work}/${stemcell_image_name}
 
 # image_create_disk_size is in MiB
 dd if=/dev/null of=${disk_image} bs=1M seek=${image_create_disk_size} 2> /dev/null
-parted --script ${disk_image} mklabel msdos
-parted --script ${disk_image} mkpart primary fat32 0% 49MiB
-parted --script ${disk_image} set 1 esp on
-parted --script ${disk_image} mkpart primary ext2 50MiB 100%
+
+# Partition the disk image using sfdisk
+# sfdisk works better than parted in virtualized environments (Docker Desktop on Apple Silicon)
+# Partition layout:
+#   - Partition 1: EFI System Partition (ESP), ~49MiB, type EF (EFI)
+#   - Partition 2: Linux root partition, remaining space, type 83 (Linux)
+sfdisk ${disk_image} <<EOF
+label: dos
+unit: sectors
+
+# First partition: EFI (starts at 2048 sectors = 1MiB, size ~48MiB = 98304 sectors)
+start=2048, size=98304, type=ef, bootable
+# Second partition: Linux root (starts after EFI partition, uses remaining space)
+start=100352, type=83
+EOF
 
 # unmap the loop device in case it's already mapped
 timeout 100 bash -c "
