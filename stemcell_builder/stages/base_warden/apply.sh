@@ -82,3 +82,6 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
   }
 }
 JSON
+
+# Mask systemd-binfmt.service which fails under Rosetta emulation
+run_in_chroot "$chroot" "systemctl mask systemd-binfmt.service"
