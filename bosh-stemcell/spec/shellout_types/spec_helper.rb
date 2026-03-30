@@ -23,6 +23,7 @@ RSpec.configure do |config|
       end
 
       config.after(:suite) do
+        ShelloutTypes::Chroot.unmount_proc
         Bosh::Core::Shell.new.run("sudo rm -rf #{config.os_image_dir}")
       end
     elsif ENV['SHELLOUT_CHROOT_DIR']
