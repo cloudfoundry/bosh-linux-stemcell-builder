@@ -13,6 +13,7 @@ RSpec.configure do |config|
           ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
         end
         config.after(:suite) do |example|
+          ShelloutTypes::Chroot.unmount_proc
           disk_image.unmount
         end
     else

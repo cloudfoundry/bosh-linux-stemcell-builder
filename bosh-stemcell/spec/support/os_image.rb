@@ -16,6 +16,7 @@ RSpec.configure do |config|
         Bosh::Core::Shell.new.run("sudo tar xf #{ENV['OS_IMAGE']} -C #{config.os_image_dir}")
       end
       config.after(:suite) do
+        ShelloutTypes::Chroot.unmount_proc
         Bosh::Core::Shell.new.run("sudo rm -rf #{config.os_image_dir}")
       end
     else
