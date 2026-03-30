@@ -26,6 +26,7 @@ RSpec.configure do |config|
           ShelloutTypes::Chroot.chroot_dir = image_mount_point
         end
         config.after(:suite) do |example|
+          ShelloutTypes::Chroot.unmount_proc
           shell.run("sudo umount #{image_mount_point}/boot", output_command: verbose)
           shell.run("sudo umount #{image_mount_point}", output_command: verbose)
         end
@@ -37,6 +38,7 @@ RSpec.configure do |config|
           ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
         end
         config.after(:suite) do |example|
+          ShelloutTypes::Chroot.unmount_proc
           disk_image.unmount
         end
       end
