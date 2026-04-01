@@ -4,6 +4,9 @@ FROM $BASE_IMAGE
 
 LABEL maintainer="cf-bosh@lists.cloudfoundry.org"
 
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 # BUILD_ARGs
 ARG META4_CLI_URL
 ARG SYFT_CLI_URL
@@ -67,7 +70,15 @@ RUN apt-get update \
         xvfb \
     && locale-gen ${LANG}
 
-RUN echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
+# AppArmor's unix-chkpwd profile can block the Rosetta translator under
+# docker run --privileged on Apple Silicon; use a distinct helper name so PAM still works.
+RUN cp /usr/sbin/unix_chkpwd /usr/sbin/unix_chkpwd_rosetta \
+  && chmod 4755 /usr/sbin/unix_chkpwd_rosetta \
+  && ln -sf unix_chkpwd_rosetta /usr/sbin/unix_chkpwd
+
+RUN (id -u ubuntu &>/dev/null || useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu) \
+  && usermod -p '*' ubuntu \
+  && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 
 RUN temp_dir="/mnt/tmp" \
     && mkdir -p "${temp_dir}" \

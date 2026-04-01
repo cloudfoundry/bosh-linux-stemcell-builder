@@ -47,4 +47,23 @@ describe "Warden Stemcell", stemcell_image: true do
       it { should be_linked_to File::NULL }
     end
   end
+
+  context "SSH without socket activation (warden containers)" do
+    describe file("/etc/systemd/system/ssh.socket") do
+      it { should be_linked_to File::NULL }
+    end
+
+    describe file("/etc/systemd/system/ssh.service.d/warden-no-socket-activation.conf") do
+      it { should be_file }
+      its(:content) { should include("RefuseManualStart=no") }
+    end
+  end
+
+  context "auditd foreground (warden / Docker systemd ENOSYS)" do
+    describe file("/etc/systemd/system/auditd.service.d/warden-auditd-foreground.conf") do
+      it { should be_file }
+      its(:content) { should include("Type=simple") }
+      its(:content) { should include("ExecStart=/usr/sbin/auditd -n") }
+    end
+  end
 end

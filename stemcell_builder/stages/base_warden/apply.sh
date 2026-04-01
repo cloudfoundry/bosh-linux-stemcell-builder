@@ -78,8 +78,12 @@ rosetta_services=(
   systemd-networkd
   systemd-logind
   systemd-timesyncd
+  systemd-udevd
+  logrotate
   auditd
 )
+
+#todo: add udevd test
 
 for service in "${rosetta_services[@]}"; do
   mkdir -p "$chroot/etc/systemd/system/${service}.service.d"
@@ -89,5 +93,61 @@ done
 # Mask systemd-binfmt.service which fails under Rosetta emulation
 run_in_chroot "$chroot" "systemctl mask systemd-binfmt.service"
 
+# auditd: systemd can return ENOSYS when creating pidfd/cgroup references from PIDFile under Docker/Colima
+# ("Failed to create reference to PID ... auditd.pid"). Foreground auditd avoids forking + PIDFile lifecycle quirks.
+mkdir -p "$chroot/etc/systemd/system/auditd.service.d"
+cat > "$chroot/etc/systemd/system/auditd.service.d/warden-auditd-foreground.conf" <<'UNIT'
+[Service]
+Type=simple
+PIDFile=
+ExecStart=
+ExecStart=/usr/sbin/auditd -n
+UNIT
+
+# TODO: maybe this should go up out of warden?
+run_in_chroot "$chroot" "systemctl mask nvmf-autoconnect.service"
+
+
+# Ubuntu enables OpenSSH via ssh.socket (socket activation). systemd's listener stub fork can fail with
+# ENOSYS ("Function not implemented") under Docker/Colima and similar, especially with Rosetta x86_64
+# emulation — see journalctl -u ssh.socket. Use the traditional ssh.service so sshd binds port 22 itself.
+mkdir -p "$chroot/etc/systemd/system/ssh.service.d"
+cat > "$chroot/etc/systemd/system/ssh.service.d/warden-no-socket-activation.conf" <<'UNIT'
+[Unit]
+# When ssh.socket is masked, sshd must start via ssh.service; drop RefuseManualStart from the vendor unit.
+RefuseManualStart=no
+UNIT
+run_in_chroot "$chroot" "systemctl mask ssh.socket"
+run_in_chroot "$chroot" "systemctl enable ssh.service"
 
 run_in_chroot "$chroot" "systemctl mask systemd-udevd.service"
+
+# Fix `su` PAM authentication failures under Colima/Lima (Apple Silicon).
+#
+# Under Lima's Rosetta x86_64 emulation, AppArmor blocks unix-chkpwd
+# (an x86_64 binary) from accessing the Rosetta runtime path
+# /mnt/lima-rosetta/rosetta, causing every `su` invocation to fail with
+# "Authentication failure" — even for root.  The standard PAM config in
+# /etc/pam.d/su includes common-auth, which chains pam_faillock → pam_unix,
+# and pam_unix forks unix-chkpwd to verify passwords.  That fork triggers
+# the AppArmor denial.
+#
+# pam_rootok.so already handles "root switching to any user" correctly on
+# its own, but because pam_unix / pam_faillock come after it in common-auth
+# they still run (pam_rootok is "sufficient" only when it *succeeds* at the
+# auth step level, not at the include level).  Using pam_permit for the
+# remaining auth/account rules means root can always su without unix-chkpwd.
+#
+# This override is safe for warden containers: the host provides isolation,
+# and the container root user is already fully privileged.
+cat > "$chroot/etc/pam.d/su" <<'PAMEOF'
+# PAM configuration for su - warden stemcell override.
+# AppArmor blocks unix-chkpwd under Lima/Rosetta causing su to fail even for root.
+# pam_rootok handles legitimate root → any-user su; pam_permit covers the rest.
+auth       sufficient pam_rootok.so
+auth       required   pam_permit.so
+account    required   pam_permit.so
+session    required   pam_env.so readenv=1
+session    required   pam_limits.so
+PAMEOF
+chmod 0644 "$chroot/etc/pam.d/su"
