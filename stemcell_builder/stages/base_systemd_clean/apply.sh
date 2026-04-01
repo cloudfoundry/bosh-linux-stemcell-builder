@@ -13,6 +13,7 @@ find /etc/systemd/system /lib/systemd/system \
   -not -name '*firstboot*' \
   -not -name '*bosh-agent*' \
   -not -name 'cron*' \
+  -not -name 'monit*' \
   -not -name '*dbus*' \
   -not -name '*journald*' \
   -not -name '*logrotate*' \
