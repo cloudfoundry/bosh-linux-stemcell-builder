@@ -375,6 +375,7 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_clean_ssh,
             :restore_apt_sources,
+            :base_systemd_clean,
             :image_create,
             :image_install_grub,
             :sbom_create,
