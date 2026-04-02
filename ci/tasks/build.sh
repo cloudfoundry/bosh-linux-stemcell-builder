@@ -80,24 +80,13 @@ if [[ -n "$(ls -A "${REPO_PARENT}/os-image-tarball/")" ]]; then
 	OS_IMAGE="$(readlink -f "${REPO_PARENT}/os-image-tarball"/*.tgz)"
 fi
 
-sudo chmod u+s $(which sudo)
+sudo chmod u+s "$(which sudo)"
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
   set -e
 
   cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
-case $OS_VERSION
-in
-# Because of the difference in build environments between Xenial and other Ubuntu stemcell lines (currently only Jammy)
-# we must run 'bundle install' as the root user for it to function correctly.
-"xenial")
-    sudo bundle update --bundler
-    sudo bundle install --local
-    ;;
-*)
-    bundle update --bundler
-    bundle install --local
-    ;;
-esac
+bundle update --bundler
+bundle install --local
 
 if [[ -z "$OS_IMAGE" ]]; then
 	bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,$CANDIDATE_BUILD_NUMBER]
