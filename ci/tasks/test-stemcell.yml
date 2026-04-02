@@ -1,0 +1,17 @@
+platform: linux
+
+
+inputs:
+- name: bosh-linux-stemcell-builder
+- name: bosh-stemcells-ci
+- name: stemcell
+- name: syslog-release
+- name: os-conf-release
+- name: director-state
+
+params:
+  BOSH_os_name: required
+  package: .
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/test-stemcell.sh

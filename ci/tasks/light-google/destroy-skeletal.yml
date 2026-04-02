@@ -1,0 +1,10 @@
+---
+platform: linux
+
+
+inputs:
+  - name: deployment-state
+  - name: bosh-stemcells-ci
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-google/destroy-skeletal.sh

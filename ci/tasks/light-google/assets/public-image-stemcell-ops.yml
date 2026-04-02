@@ -1,0 +1,12 @@
+---
+- path: /sha1?
+  type: replace
+  value: ((packaged_image_stemcell_sha1))
+
+- path: /stemcell_formats?
+  type: replace
+  value: ((stemcell_formats))
+
+- path: /cloud_properties/image_url?
+  type: replace
+  value: ((image_url))

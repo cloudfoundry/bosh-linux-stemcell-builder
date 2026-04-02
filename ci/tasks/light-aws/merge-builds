@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+# merge-builds.rb
+# Merges the tarballs from multiple 'light' stemcell packages
+# from different regions, by concatenating the 'ami' field in
+# the manifest
+
+require 'yaml'
+require "tmpdir"
+
+output_dir=File.expand_path("light-stemcell")
+
+merged_amis =  {}
+
+def run_command(cmd)
+  result = `#{cmd}`
+  if $?.exitstatus > 0
+    abort("Failed to execute #{cmd}")
+  end
+end
+
+Dir['*-stemcell'].each do | tarball_dir |
+  next if tarball_dir == 'light-stemcell'
+  Dir.mktmpdir do | temp_dir |
+    matches = Dir.glob("#{tarball_dir}/*.tgz")
+    if matches.length == 0
+      abort("Empty glob for '#{tarball_dir}/*.tgz'")
+    end
+    tarball_path = matches[0]
+    stemcell_name = File.basename(tarball_path)
+
+    run_command("tar -xvf #{tarball_path} -C #{temp_dir}")
+
+    yaml = YAML.load_file("#{temp_dir}/stemcell.MF")
+    ami = yaml['cloud_properties']['ami']
+    merged_amis = ami.merge(merged_amis)
+    yaml['cloud_properties']['ami'] = merged_amis
+
+    File.open("#{temp_dir}/stemcell.MF",'w') do |s|
+      s.puts yaml.to_yaml
+    end
+
+    Dir.chdir(temp_dir) do
+      run_command("tar -czvf #{output_dir}/#{stemcell_name} *")
+    end
+  end
+end

@@ -1,0 +1,14 @@
+---
+platform: linux
+
+inputs:
+- name: candidate-aws-light-stemcell
+- name: bosh-stemcells-ci
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-aws/tag-aws-ami-light.sh
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_ROLE_ARN:
+  AWS_SECRET_ACCESS_KEY:
+  GREP_PATTERN: grep -v 'gov-\|cn-'

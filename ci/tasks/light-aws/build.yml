@@ -1,0 +1,29 @@
+---
+platform: linux
+
+inputs:
+- name: builder-src
+- name: bosh-stemcells-ci
+- name: input-stemcell
+
+outputs:
+- name: light-stemcell
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-aws/build.sh
+params:
+  bosh_io_bucket_name:        "bosh-aws-light-stemcells"
+  ami_description:            ""
+  ami_virtualization_type:    ""
+  ami_visibility:             ""
+  ami_region:                 ""
+  ami_access_key:             ""
+  ami_secret_key:             ""
+  ami_bucket_name:            ""
+  ami_destinations:           ""
+  ami_excluded_destinations:  ""
+  ami_server_side_encryption: ""
+  ami_kms_key_id:             ""
+  ami_encrypted:              false
+  efi:                        false
+  S3_API_ENDPOINT:            s3.amazonaws.com

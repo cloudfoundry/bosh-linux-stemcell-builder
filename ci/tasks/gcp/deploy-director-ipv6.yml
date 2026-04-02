@@ -1,0 +1,17 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-deployment
+  - name: bosh-stemcells-ci
+  - name: bosh-linux-stemcell-builder
+
+outputs:
+  - name: director-state
+
+params:
+
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/gcp/deploy-director-ipv6.sh

@@ -1,0 +1,20 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-stemcells-ci
+  - name: stemcell
+  - name: base-oss-google-ubuntu-stemcell
+
+outputs:
+  - name: light-stemcell
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-google/create-public-image.sh
+
+params:
+  PROJECT_NAME:
+  GCP_SERVICE_ACCOUNT_KEY:
+  EFI: false
+  GVNIC: true

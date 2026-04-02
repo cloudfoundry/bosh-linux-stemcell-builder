@@ -1,0 +1,17 @@
+---
+platform: linux
+
+outputs:
+- name: message
+
+params:
+  MESSAGE_PREFIX: ~
+
+run:
+  path: /bin/bash
+  args:
+  - -c
+  - |
+    echo "${MESSAGE_PREFIX}" > message/message.txt
+
+    echo "($(date "+%b %e, %Y"))" >> message/message.txt

@@ -1,0 +1,19 @@
+platform: linux
+
+
+inputs:
+  - name: bosh-linux-stemcell-builder
+  - name: bosh-stemcells-ci
+  - name: usn-log
+  - name: usns
+  - name: usn-gh-json
+
+outputs:
+  - name: updated-usn-log
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/check-if-usns-are-applicable.sh
+
+params:
+  OS:
+  ESM_TOKEN:
