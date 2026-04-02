@@ -249,7 +249,6 @@ module Bosh::Stemcell
         :base_apt,
         :base_ubuntu_build_essential,
         :base_ubuntu_packages,
-        :bosh_systemd_resolved,
         :base_file_permission,
         :base_ssh,
         :bosh_sysstat,
