@@ -90,6 +90,8 @@ The arguments to `stemcell:build_with_local_os_image` are:
    of the most recent release and add one, e.g.: "0.0.7" → "0.0.8". If not
    specified, it will default to "0000".
 
+While building a stemcell for development purposes it is possible to set the BOSH_AGENT_BIN_PATH environment variable to inject an agent binary into the stemcell instead of downloading one.
+
 ### The Resulting Stemcell
 
 You can find the resulting stemcell in the `tmp/` directory of the host, or in

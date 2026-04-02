@@ -100,7 +100,10 @@ module Bosh::Stemcell
     end
 
     def command_env
-      "env #{hash_as_bash_env(proxy_settings_from_environment.merge(build_time_settings))}"
+      settings = proxy_settings_from_environment
+        .merge(build_time_settings)
+        .merge(passthrough_settings_from_environment)
+      "env #{hash_as_bash_env(settings)}"
     end
 
     private
@@ -228,6 +231,12 @@ module Bosh::Stemcell
 
     def proxy_settings_from_environment
       keep = %w(HTTP_PROXY HTTPS_PROXY NO_PROXY)
+
+      environment.select { |k| keep.include?(k.upcase) }
+    end
+
+    def passthrough_settings_from_environment
+      keep = %w(BOSH_AGENT_BIN_PATH)
 
       environment.select { |k| keep.include?(k.upcase) }
     end

@@ -23,6 +23,15 @@ rm -f /etc/service/monit
 ln -s /etc/sv/monit /etc/service/monit
 "
 
+# Resolve BOSH_AGENT_BIN_PATH to absolute before cd changes the working directory
+if [[ -n "${BOSH_AGENT_BIN_PATH:-}" ]]; then
+  BOSH_AGENT_BIN_PATH=$(readlink -f "${BOSH_AGENT_BIN_PATH}")
+  if [[ ! -f "${BOSH_AGENT_BIN_PATH}" ]]; then
+    echo "Error: BOSH_AGENT_BIN_PATH '${BOSH_AGENT_BIN_PATH}' does not exist or is not a regular file" >&2
+    exit 1
+  fi
+fi
+
 # Alerts for monit config
 cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
 cd $assets_dir
@@ -31,8 +40,13 @@ wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/v0.2
   && echo "81a592eaf647358563f296aced845ac60d9061a45b30b852d1c3f3674720fe19  /usr/bin/meta4" | shasum -a 256 -c \
   && chmod +x /usr/bin/meta4
 
-bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
-/usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
+if [[ -n "${BOSH_AGENT_BIN_PATH:-}" ]]; then
+  echo "BOSH_AGENT_BIN_PATH is set — using custom bosh-agent binary from: ${BOSH_AGENT_BIN_PATH}"
+  cp "${BOSH_AGENT_BIN_PATH}" bosh-agent
+else
+  bosh_agent_version=$(cat "${assets_dir}/bosh-agent-version")
+  /usr/bin/meta4 file-download --metalink="${assets_dir}/metalink.meta4" --file="bosh-agent-${bosh_agent_version}-linux-amd64" bosh-agent
+fi
 
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 
