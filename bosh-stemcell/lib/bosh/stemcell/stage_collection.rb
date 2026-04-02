@@ -202,7 +202,6 @@ module Bosh::Stemcell
       [
         :system_parameters,
         :base_warden,
-        :base_systemd_clean,
         :bosh_clean,
         :bosh_harden,
         :bosh_clean_ssh,
