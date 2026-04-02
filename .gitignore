@@ -1,7 +1,9 @@
 .DS_Store
-**/*.test
 .idea/
 .vscode
+
+**/*.log
+**/*.test
 
 stemcell_builder/stages/*/assets/settings.bash
 stemcell_builder/public_stemcell_config.yml
@@ -10,7 +12,6 @@ acceptance-tests/stemcell
 acceptance-tests/syslog-release
 acceptance-tests/os-conf-release
 
-**/*.log
+ci/docker/os-image-stemcell-builder/VMware-ovftool-*.bundle
 
-ci/docker/VMware-ovftool-*.bundle
 tmp/

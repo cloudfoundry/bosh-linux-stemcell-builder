@@ -32,18 +32,8 @@ fi
 
 sudo chown -R ubuntu .
 sudo chown -R ubuntu:ubuntu /mnt
-sudo chmod u+s $(which sudo)
+sudo chmod u+s "$(which sudo)"
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
-case $OPERATING_SYSTEM_VERSION
-in
-# Because of the difference in build environments between Xenial and other Ubuntu stemcell lines (currently only Jammy)
-# we must run 'bundle install' as the root user for it to function correctly.
-"xenial")
-    sudo bundle install --local
-    ;;
-*)
-    bundle install --local
-    ;;
-esac
-    bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
+bundle install --local
+bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
 SUDO
