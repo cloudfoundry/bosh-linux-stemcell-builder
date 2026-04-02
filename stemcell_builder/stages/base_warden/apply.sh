@@ -75,8 +75,13 @@ done
 
 # Some services are not compatible with running in a container,
 # so we mask them to prevent systemd from trying to start them and fail.
-services_to_mask=(
+masked_services=(
   systemd-binfmt
 )
-services_to_mask_units=("${services_to_mask[@]%.service}")
-run_in_chroot "$chroot" "systemctl mask ${services_to_mask_units[*]/%/.service}"
+masked_service_units="${masked_services[*]/%/.service}"
+
+echo "base_warden: masking service units: ${masked_service_units}"
+run_in_chroot "$chroot" "systemctl mask ${masked_service_units}"
+
+echo "base_warden: service units kept (not masked):"
+run_in_chroot "$chroot" "systemctl list-unit-files --state=enabled,static --type=service --no-legend | awk '{print \$1}'"
