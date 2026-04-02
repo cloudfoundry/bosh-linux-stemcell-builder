@@ -1,0 +1,21 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-linux-stemcell-builder
+  - name: bosh-stemcells-ci
+  - name: build-time
+    optional: true
+
+outputs:
+- name: os-image
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/os-images/build.sh
+
+params:
+  OPERATING_SYSTEM_NAME:      replace-me
+  OPERATING_SYSTEM_VERSION:   replace-me
+  ESM_TOKEN:
+  UBUNTU_ADVANTAGE_TOKEN:

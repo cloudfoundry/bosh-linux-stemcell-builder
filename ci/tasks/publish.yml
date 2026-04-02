@@ -1,0 +1,33 @@
+---
+platform: linux
+
+
+inputs:
+- name: bosh-stemcells-ci
+- name: bosh-linux-stemcell-builder
+- name: version
+- name: stemcells-index
+
+outputs:
+- name: version-tag
+- name: stemcells-index
+  path: stemcells-index-output
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/publish.sh
+
+params:
+  AWS_ENDPOINT: "https://s3.amazonaws.com"
+  S3_API_ENDPOINT: s3.amazonaws.com
+  AWS_ACCESS_KEY_ID:     required
+  AWS_SECRET_ACCESS_KEY: required
+  AWS_ROLE_ARN:
+  AWS_DEFAULT_REGION:    us-east-1
+  FROM_BUCKET_NAME:      required
+  TO_BUCKET_NAME:        required
+  FROM_INDEX:            required
+  TO_INDEX:              required
+  COMMIT_PREFIX:         publish
+  COPY_KEYS:             required
+  OS_NAME:               required
+  OS_VERSION:            required

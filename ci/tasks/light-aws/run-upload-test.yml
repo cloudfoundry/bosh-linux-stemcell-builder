@@ -1,0 +1,17 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-cpi-src
+  - name: bosh-stemcells-ci
+  - name: environment
+  - name: stemcell
+  - name: director-state
+  - name: builder-src
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-aws/run-upload-test.sh
+
+params:
+  BOSH_DEBUG_LEVEL:     info

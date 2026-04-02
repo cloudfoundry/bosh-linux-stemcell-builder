@@ -1,0 +1,20 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-stemcells-ci
+  - name: stemcell
+
+outputs:
+  - name: raw-stemcell
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-google/make-raw-from-heavy-stemcell.sh
+
+params:
+  BUCKET_NAME:           ""
+  STEMCELL_BUCKET_PATH:  ""
+  AWS_ACCESS_KEY_ID:     ""
+  AWS_SECRET_ACCESS_KEY: ""
+  S3_API_ENDPOINT: s3.amazonaws.com

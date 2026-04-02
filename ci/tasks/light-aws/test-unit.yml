@@ -1,0 +1,8 @@
+---
+platform: linux
+
+inputs:
+- name: builder-src
+- name: bosh-stemcells-ci
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-aws/test-unit.sh

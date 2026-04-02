@@ -1,0 +1,12 @@
+#!/bin/bash
+
+jq -r --slurp < $1 '.[] |
+"
+**Title**: " + .title +"
+**URL**: " + .url +"
+**Priorities**: " + (.priorities | join(",")) +"
+**Description**:
+  " + .description +"
+**CVEs**:
+" + (.cves | map(" - " + .) | join("\n"))
+'

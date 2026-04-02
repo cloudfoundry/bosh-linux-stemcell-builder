@@ -1,0 +1,29 @@
+#@data/values
+---
+stemcell_details:
+  branch: "ubuntu-jammy"
+  include_iaas: [
+    {iaas: alicloud, hypervisor: kvm},
+    {iaas: aws, hypervisor: xen-hvm},
+    {iaas: azure, hypervisor: hyperv},
+    {iaas: google, hypervisor: kvm},
+    {iaas: openstack, hypervisor: kvm},
+    {iaas: vsphere, hypervisor: esxi},
+    {iaas: vcloud, hypervisor: esxi},
+    {iaas: warden, hypervisor: boshlite}
+  ]
+  include_fips_iaas: [
+    {iaas: aws, hypervisor: xen-hvm},
+    {iaas: google, hypervisor: kvm},
+  ]
+  os: jammy
+  os_version: "22.04"
+  os_name: ubuntu-jammy
+  subnet_int: "3"
+
+blobstore_types:
+- dav
+- gcs
+- s3
+- azure-storage
+
