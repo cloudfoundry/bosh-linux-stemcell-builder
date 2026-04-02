@@ -131,7 +131,7 @@ jobs:
             - put: high-critical-cves-processed
     - task: verify-check-usn-was-successful
       image: os-image-stemcell-builder-registry-image
-      file: bosh-shared-ci/ci/tasks/release/ensure-task-succeeded.yml
+      file: bosh-shared-ci/tasks/release/ensure-task-succeeded.yml
       input_mapping:
         task-output-folder: updated-usn-log
 
@@ -220,7 +220,7 @@ jobs:
             predefined_acl: publicRead
     - task: verify-check-usn-was-successful
       image: os-image-stemcell-builder-registry-image
-      file: bosh-shared-ci/ci/tasks/release/ensure-task-succeeded.yml
+      file: bosh-shared-ci/tasks/release/ensure-task-succeeded.yml
       input_mapping:
         task-output-folder: updated-usn-log
 
