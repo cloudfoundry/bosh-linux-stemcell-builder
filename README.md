@@ -28,7 +28,7 @@ ulimit -n 16384 # only necessary if your host is Fedora
 gem install bundler
 bundle install
  # build OS image
-bundle exec rake stemcell:build_os_image[ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz] # build OS image
+bundle exec rake stemcell:build_os_image[ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz]
  # build vSphere stemcell
 bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,noble,$PWD/tmp/ubuntu_base_image.tgz]
 ```

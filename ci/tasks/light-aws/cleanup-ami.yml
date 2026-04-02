@@ -1,0 +1,19 @@
+---
+platform: linux
+
+
+inputs:
+- name: bosh-stemcells-ci
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-aws/cleanup-ami.sh
+params:
+  ami_region:                 "eu-central-1" # AWS default region
+  ami_access_key:             ""
+  ami_secret_key:             ""
+  ami_role_arn:               ""
+  ami_older_than_days:        "60" # Number of days AMI to keep excluding those currently being running
+  ami_keep_latest:            "5"  # Number of previous AMI to keep excluding those currently being running
+  os_name:                    ""   # e.g ubuntu-jammy
+  snapshot_id:                ""   # Snapshot id to delete
+  remove_public_images:       "false"

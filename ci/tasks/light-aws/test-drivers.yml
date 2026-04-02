@@ -1,0 +1,23 @@
+---
+platform: linux
+
+inputs:
+- name: builder-src
+- name: bosh-stemcells-ci
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-aws/test-drivers.sh
+params:
+  aws_account_id:                        ""
+  access_key:                            ""
+  secret_key:                            ""
+  bucket_name:                           ""
+  region:                                ""
+  copy_region:                           ""
+  ami_fixture_id:                        ""
+  private_ami_fixture_id:                ""
+  kms_key_id:                            ""
+  kms_multi_region_key:                  ""
+  kms_multi_region_key_replication_test: ""
+  existing_volume_id:                    ""
+  existing_snapshot_id:                  ""
+  uploaded_machine_image_url:            ""

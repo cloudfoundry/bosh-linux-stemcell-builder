@@ -1,0 +1,1083 @@
+#@ load("@ytt:data", "data")
+#@yaml/text-templated-strings
+
+groups:
+- name: build
+  jobs:
+  - build-stemcell
+  - test-unit
+  - build-os-image
+
+  #@ for iaas in data.values.stemcell_details.include_iaas:
+  - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+  #@ end
+  #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+  - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+  #@ end
+
+  - bats
+  - test-stemcells-ipv4
+    #! - test-stemcells-ipv6
+  - aggregate-candidate-stemcells
+
+- name: auto-bumps
+  jobs:
+  - bump-bosh-agent
+  #@ for blobstore_type in data.values.blobstore_types:
+  - bump-bosh-blobstore-(@= blobstore_type @)
+  #@ end
+
+- name: automatic-triggers
+  jobs:
+  - process-high-critical-cves
+  - check-usn-packages-are-available
+  - log-low-medium-cves
+  - notify-of-usn
+- name: docker
+  jobs:
+  - build-os-image-stemcell-builder
+
+#@yaml/text-templated-strings
+jobs:
+- name: build-os-image-stemcell-builder
+  public: true
+  serial: true
+  plan:
+    - get: bosh-stemcells-ci
+    - get: os-image-stemcell-builder-registry-image
+    - get: bosh-integration-image
+    - get: bosh-linux-stemcell-builder-in
+      trigger: true
+      resource: os-image-stemcell-builder-dockerfile
+    - get: bosh-os-image-builder-vmware-ovftool
+    - get: syft-github-release
+      trigger: true
+      params:
+        globs:
+          - "no-files-needed"
+    - task: copy-ovf
+      image: bosh-integration-image
+      config:
+        platform: linux
+        run:
+          path: /bin/bash
+          args:
+          - -cex
+          - |
+            git clone bosh-linux-stemcell-builder-in bosh-linux-stemcell-builder
+            cp bosh-os-image-builder-vmware-ovftool/*.bundle bosh-linux-stemcell-builder/ci/docker/os-image-stemcell-builder/
+        inputs:
+        - name: bosh-os-image-builder-vmware-ovftool
+        - name: bosh-linux-stemcell-builder-in
+        outputs:
+        - name: bosh-linux-stemcell-builder
+    - task: build-docker-args
+      file: bosh-stemcells-ci/ci/tasks/build-docker-args.yml
+      image: os-image-stemcell-builder-registry-image #! TODO: image should be stock ubuntu
+    - put: os-image-stemcell-builder-docker-image
+      no_get: true
+      params:
+        build: bosh-linux-stemcell-builder/ci/docker/os-image-stemcell-builder
+        build_args_file: docker-build-args/docker-build-args.json
+      get_params:
+        skip_download: true
+
+- name: process-high-critical-cves
+  serial_groups: [log-cves]
+  plan:
+    - in_parallel:
+      - get: bosh-stemcells-ci
+      - get: bosh-shared-ci
+      - get: os-image-stemcell-builder-registry-image
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder
+      - get: (@= data.values.stemcell_details.os @)-usn
+        version: every
+        trigger: true
+      - get: (@= data.values.stemcell_details.os @)-usn-gh-json
+      - get: usn-log
+      - get: high-critical-unfound-usns
+    - task: check-if-usn-is-in-github
+      file: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.yml
+      image: os-image-stemcell-builder-registry-image
+      input_mapping:
+        usn: (@= data.values.stemcell_details.os @)-usn
+        usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+        unfound-usns: high-critical-unfound-usns
+      vars:
+        image_os_tag: (@= data.values.stemcell_details.os @)
+    - put: high-critical-unfound-usns
+      params:
+        file: updated-unfound-usns/usns.json
+        predefined_acl: publicRead
+    - try:
+        task: check-if-usns-are-applicable
+        file: bosh-stemcells-ci/ci/tasks/check-if-usns-are-applicable.yml
+        image: os-image-stemcell-builder-registry-image
+        input_mapping:
+          usns: found-usns
+          usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+        params:
+          OS: (@= data.values.stemcell_details.os @)
+        vars:
+          image_os_tag: (@= data.values.stemcell_details.os @)
+        on_success:
+          in_parallel:
+            steps:
+            - put: usn-log
+              params:
+                file: updated-usn-log/usn-log.json
+                predefined_acl: publicRead
+            - put: high-critical-cves-processed
+    - task: verify-check-usn-was-successful
+      image: os-image-stemcell-builder-registry-image
+      file: bosh-shared-ci/tasks/release/ensure-task-succeeded.yml
+      input_mapping:
+        task-output-folder: updated-usn-log
+
+- name: check-usn-packages-are-available
+  plan:
+    - in_parallel:
+      - get: bosh-stemcells-ci
+      - get: os-image-stemcell-builder-registry-image
+      - get: bosh-integration-image
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder
+      - get: usn-log
+        passed:
+          - process-high-critical-cves
+        trigger: true
+      #! - get: high-critical-cves-processed
+      #!   trigger: true
+      #!   passed:
+      #!     - process-high-critical-cves
+      - get: (@= data.values.stemcell_details.os @)-usn-gh-json
+        passed:
+          - process-high-critical-cves
+    - task: check-usn-packages
+      file: bosh-stemcells-ci/ci/tasks/check-usn-packages.yml
+      image: os-image-stemcell-builder-registry-image
+      input_mapping:
+        usn-log-in: usn-log
+        usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+      params:
+        OS: (@= data.values.stemcell_details.os @)
+      vars:
+        image_os_tag: (@= data.values.stemcell_details.os @)
+    - task: write-message
+      file: bosh-stemcells-ci/ci/tasks/write-bump-message.yml
+      image: bosh-integration-image
+      params:
+        MESSAGE_PREFIX: CVE Trigger
+    - put: stemcell-trigger
+      params:
+        file: message/message.txt
+        predefined_acl: publicRead
+
+- name: log-low-medium-cves
+  serial_groups: [log-cves]
+  plan:
+    - in_parallel:
+      - get: bosh-stemcells-ci
+      - get: bosh-shared-ci
+      - get: os-image-stemcell-builder-registry-image
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder
+      - get: (@= data.values.stemcell_details.os @)-usn-low-medium
+        version: every
+        trigger: true
+      - get: usn-log
+      - get: (@= data.values.stemcell_details.os @)-usn-gh-json
+      - get: low-medium-unfound-usns
+    - task: check-if-usn-is-in-github
+      file: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.yml
+      image: os-image-stemcell-builder-registry-image
+      input_mapping:
+        usn: (@= data.values.stemcell_details.os @)-usn-low-medium
+        usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+        unfound-usns: low-medium-unfound-usns
+      vars:
+        image_os_tag: (@= data.values.stemcell_details.os @)
+    - put: low-medium-unfound-usns
+      params:
+        file: updated-unfound-usns/usns.json
+        predefined_acl: publicRead
+    - try:
+        task: check-if-usns-are-applicable
+        file: bosh-stemcells-ci/ci/tasks/check-if-usns-are-applicable.yml
+        image: os-image-stemcell-builder-registry-image
+        input_mapping:
+          usns: found-usns
+          usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+        params:
+          OS: (@= data.values.stemcell_details.os @)
+        vars:
+          image_os_tag: (@= data.values.stemcell_details.os @)
+        on_success:
+          put: usn-log
+          params:
+            file: updated-usn-log/usn-log.json
+            predefined_acl: publicRead
+    - task: verify-check-usn-was-successful
+      image: os-image-stemcell-builder-registry-image
+      file: bosh-shared-ci/tasks/release/ensure-task-succeeded.yml
+      input_mapping:
+        task-output-folder: updated-usn-log
+
+- name: build-os-image
+  plan:
+  - put: build-time
+  - get: bosh-stemcells-ci
+  - get: os-image-stemcell-builder-registry-image
+  - get: bosh-linux-stemcell-builder
+    resource: bosh-linux-stemcell-builder
+    trigger: true
+  - get: version
+    params:
+      bump: "major"
+    resource: os-image-version
+  - get: usn-log
+  - get: stemcell-trigger
+    trigger: true
+  - task: build
+    file: bosh-stemcells-ci/ci/tasks/os-images/build.yml
+    image: os-image-stemcell-builder-registry-image
+    params:
+      OPERATING_SYSTEM_NAME: ubuntu
+      OPERATING_SYSTEM_VERSION: (@= data.values.stemcell_details.os @)
+    privileged: true
+    vars:
+      image_os_tag: (@= data.values.stemcell_details.os @)
+  - put: os-image-tarball
+    params:
+      files:
+      - os-image/(@= data.values.stemcell_details.os_name @).tgz
+      - usn-log/usn-log.json
+      rename: (@= data.values.stemcell_details.branch @)/(@= data.values.stemcell_details.os_name @).meta4
+      options:
+        author_email: ci@localhost
+        author_name: CI Bot
+        message: '[ci skip] bump OS image'
+      version: version/version
+  - put: os-image-version
+    params:
+      file: version/number
+
+- name: test-unit
+  plan:
+  - get: bosh-stemcells-ci
+  - get: bosh-integration-image
+  - get: bosh-linux-stemcell-builder
+    resource: bosh-linux-stemcell-builder
+    trigger: true
+    passed:
+    - build-os-image
+  - get: build-time
+    passed:
+      - build-os-image
+    trigger: true
+  - get: os-image-tarball
+    resource: os-image-tarball
+    passed:
+    - build-os-image
+  - task: test-unit
+    file: bosh-stemcells-ci/ci/tasks/test-unit.yml
+    image: bosh-integration-image
+    privileged: true
+  serial: true
+
+- name: build-stemcell
+  plan:
+  - get: bosh-stemcells-ci
+  - get: bosh-linux-stemcell-builder
+    passed:
+    - test-unit
+    - build-os-image
+    resource: bosh-linux-stemcell-builder
+    trigger: true
+  - get: build-time
+    passed:
+      - test-unit
+    trigger: true
+  - get: version
+    params:
+      bump: minor
+    resource: version
+  - put: version
+    params:
+      file: version/number
+  serial: true
+
+- name: test-stemcells-ipv4
+  plan:
+  - do:
+    - in_parallel:
+      - get: version
+        passed:
+      #@ for iaas in data.values.stemcell_details.include_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+      #@ end
+      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+      #@ end
+        resource: version
+        trigger: true
+      - get: bosh-stemcells-ci
+      - get: bosh-integration-image
+      - get: bosh-linux-stemcell-builder
+        resource: bosh-linux-stemcell-builder
+      - get: bosh-deployment
+      - get: syslog-release
+      - get: os-conf-release
+      - get: stemcell
+        passed:
+        - build-google-kvm
+        resource: google-kvm
+      - get: build-time
+        passed:
+          - build-os-image
+      #@ for iaas in data.values.stemcell_details.include_iaas:
+          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+      #@ end
+      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+      #@ end
+        trigger: true
+    - do:
+      - task: deploy-director
+        file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director.yml
+        image: bosh-integration-image
+        params:
+          GCP_PROJECT_ID: ((gcp_project_id))
+          GCP_ZONE: europe-north2-a
+          GCP_PREEMPTIBLE: true
+          GCP_NETWORK_NAME: bosh-concourse
+          GCP_SUBNET_NAME: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          GCP_JSON_KEY: ((gcp_json_key))
+          INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).10
+          INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
+          INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
+          RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).9, 10.100.(@= data.values.stemcell_details.subnet_int @).62 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
+          TAG: test-stemcells-ipv4
+          DEFAULT_VM_TYPE: e2-standard-2
+      - task: test-stemcell
+        attempts: 3
+        file: bosh-stemcells-ci/ci/tasks/test-stemcell.yml
+        image: bosh-integration-image
+        params:
+          BOSH_os_name: (@= data.values.stemcell_details.os_name @)
+          package: ipv4director
+    ensure:
+      do:
+      - task: teardown
+        file: bosh-stemcells-ci/ci/tasks/teardown.yml
+        image: bosh-integration-image
+        attempts: 3
+        timeout: 15m
+  serial: true
+
+#!- name: test-stemcells-ipv6
+#!  plan:
+#!  - do:
+#!    - in_parallel:
+#!      - get: version
+#!        passed:
+#!      #@ for iaas in data.values.stemcell_details.include_iaas:
+#!        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+#!      #@ end
+#!      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+#!        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+#!      #@ end
+#!        resource: version
+#!        trigger: true
+#!      - get: bosh-stemcells-ci
+#!      - get: bosh-integration-image
+#!      - get: bosh-linux-stemcell-builder
+#!        resource: bosh-linux-stemcell-builder
+#!      - get: bosh-deployment
+#!      - get: syslog-release
+#!      - get: os-conf-release
+#!      - get: stemcell
+#!        passed:
+#!        - build-google-kvm
+#!        resource: google-kvm
+#!      - get: build-time
+#!        passed:
+#!          - build-os-image
+#!          #@ for iaas in data.values.stemcell_details.include_iaas:
+#!          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+#!          #@ end
+#!          #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+#!          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+#!          #@ end
+#!        trigger: true
+#!    - do:
+#!      - task: deploy-director-ipv6
+#!        file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director-ipv6.yml
+#!        image: bosh-integration-image
+#!        params:
+#!          GCP_PROJECT_ID: ((gcp_project_id))
+#!          GCP_ZONE: europe-north2-a
+#!          GCP_NETWORK_NAME: ipv6-test
+#!          GCP_SUBNET_NAME: bosh-integration-ipv6-(@= data.values.stemcell_details.subnet_int @)
+#!          GCP_JSON_KEY: ((gcp_json_key))
+#!          INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).10
+#!          INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
+#!          INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
+#!          RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).9, 10.100.(@= data.values.stemcell_details.subnet_int @).62 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
+#!          SECOND_INTERNAL_CIDR: fd20:ecb:bcac:4000:0:0:0:0/64
+#!          SECOND_INTERNAL_GW: fd20:ecb:bcac:4000::1
+#!          SECOND_INTERNAL_IP: fd20:ecb:bcac:4000::10
+#!          TAG: test-stemcells-ipv6
+#!      - task: test-stemcell-ipv6
+#!        attempts: 3
+#!        file: bosh-stemcells-ci/ci/tasks/test-stemcell.yml
+#!        image: bosh-integration-image
+#!        params:
+#!          BOSH_os_name: (@= data.values.stemcell_details.os_name @)
+#!          package: ipv6director
+#!    ensure:
+#!      do:
+#!      - task: teardown
+#!        file: bosh-stemcells-ci/ci/tasks/teardown.yml
+#!        image: bosh-integration-image
+#!        attempts: 3
+#!        timeout: 15m
+#!  serial: true
+
+#@ def build_stemcell(IAAS, HYPERVISOR, FIPS=""):
+  name: build-(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+  plan:
+  - in_parallel:
+    - get: version
+      passed:
+      - build-stemcell
+      resource: version
+      trigger: true
+    - get: bosh-stemcells-ci
+    - get: os-image-stemcell-builder-registry-image
+    - get: build-time
+      passed:
+      - build-stemcell
+      trigger: true
+    - get: bosh-linux-stemcell-builder
+      passed:
+      - build-stemcell
+      resource: bosh-linux-stemcell-builder
+    - get: stemcells-index
+    - get: os-image-tarball
+      resource: os-image-tarball
+      passed:
+      - build-os-image
+  - task: create-stemcell
+    attempts: 3
+    file: bosh-stemcells-ci/ci/tasks/build.yml
+    image: os-image-stemcell-builder-registry-image
+    params:
+      HYPERVISOR: #@ HYPERVISOR
+      IAAS: #@ IAAS
+      OS_NAME: ubuntu
+      S3_API_ENDPOINT: storage.googleapis.com
+      OS_VERSION: (@= data.values.stemcell_details.os @)(@= FIPS @)
+      STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
+      AGENT_SUFFIX: ""
+      #@ if/end FIPS != "":
+      UBUNTU_ADVANTAGE_TOKEN: ((ubuntu_advantage_token))
+    privileged: true
+    vars:
+      image_os_tag: (@= data.values.stemcell_details.os @)
+  - in_parallel:
+    - put: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+      attempts: 3
+      params:
+        files:
+        - stemcell/*.tgz
+        rename: "{{.Version}}/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @).meta4"
+        options:
+          author_email: ci@localhost
+          author_name: CI Bot
+          message: 'dev: (@= data.values.stemcell_details.os_name @)'
+        version: candidate-build-number/number
+#@ end
+
+#@ for iaas in data.values.stemcell_details.include_iaas:
+- #@ build_stemcell(iaas.iaas, iaas.hypervisor)
+#@ end
+#@ for iaas in data.values.stemcell_details.include_fips_iaas:
+- #@ build_stemcell(iaas.iaas, iaas.hypervisor, "-fips")
+#@ end
+
+- name: bats
+  serial: true
+  plan:
+  - do:
+    - in_parallel:
+      - get: stemcell
+        passed:
+        - build-google-kvm
+        resource: google-kvm
+        trigger: true
+      - get: bats
+      - get: bosh-deployment
+      - get: bosh-stemcells-ci
+      - get: bosh-integration-image
+      - get: bosh-linux-stemcell-builder
+        passed:
+      #@ for iaas in data.values.stemcell_details.include_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+      #@ end
+      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+      #@ end
+        resource: bosh-linux-stemcell-builder
+      - get: version
+        passed:
+      #@ for iaas in data.values.stemcell_details.include_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+      #@ end
+      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+      #@ end
+        resource: version
+      - get: build-time
+        passed:
+      #@ for iaas in data.values.stemcell_details.include_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+      #@ end
+      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+      #@ end
+        trigger: true
+    - do:
+      - task: cleanup-bats-vms
+        file: bosh-stemcells-ci/ci/tasks/gcp/cleanup-bats-vms.yml
+        image: bosh-integration-image
+        params:
+          GCP_JSON_KEY: ((gcp_json_key))
+          GCP_PROJECT_ID: ((gcp_project_id))
+          GCP_ZONE: europe-north2-a
+          GCP_SUBNET_NAME: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          TAG: test-stemcells-bats
+      - task: deploy-director
+        file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director.yml
+        image: bosh-integration-image
+        params:
+          GCP_PROJECT_ID: ((gcp_project_id))
+          GCP_ZONE: europe-north2-a
+          GCP_PREEMPTIBLE: true
+          GCP_NETWORK_NAME: bosh-concourse
+          GCP_SUBNET_NAME: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          GCP_JSON_KEY: ((gcp_json_key))
+          INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).66
+          INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
+          INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
+          RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).63, 10.100.(@= data.values.stemcell_details.subnet_int @).126 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
+          TAG: test-stemcells-bats
+      - task: prepare-bats
+        file: bosh-stemcells-ci/ci/tasks/bats/iaas/gcp/prepare-bats-config.yml
+        image: bosh-integration-image
+        params:
+          VARS_STEMCELL_NAME: bosh-google-kvm-ubuntu-(@= data.values.stemcell_details.os @)
+          VARS_NETWORK_DEFAULT: bosh-concourse
+          VARS_AVAILABILITY_ZONE: europe-north2-a
+          VARS_MACHINE_TYPE: e2-standard-2
+          VARS_ZONE: europe-north2-a
+          VARS_PREEMPTIBLE: true
+          VARS_SUBNETWORK_DEFAULT: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          VARS_CIDR_DEFAULT: "10.100.(@= data.values.stemcell_details.subnet_int @).0/24"
+          VARS_RESERVED_DEFAULT: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).129, 10.100.(@= data.values.stemcell_details.subnet_int @).190 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
+          VARS_STATIC_DEFAULT: '10.100.(@= data.values.stemcell_details.subnet_int @).130 - 10.100.(@= data.values.stemcell_details.subnet_int @).155'
+          VARS_STATIC_IP_DEFAULT: 10.100.(@= data.values.stemcell_details.subnet_int @).130
+          VARS_STATIC_IP_DEFAULT-2: 10.100.(@= data.values.stemcell_details.subnet_int @).132
+          VARS_GATEWAY_DEFAULT: 10.100.(@= data.values.stemcell_details.subnet_int @).1
+          VARS_TAG: test-stemcells-bats
+      - task: run-bats
+        file: bats/ci/tasks/run-bats.yml
+        image: bosh-integration-image
+    ensure:
+      do:
+      - task: teardown
+        file: bosh-stemcells-ci/ci/tasks/teardown.yml
+        image: bosh-integration-image
+        attempts: 3
+        timeout: 15m
+
+- name: aggregate-candidate-stemcells
+  serial: true
+  plan:
+  - in_parallel:
+    - get: version
+      passed:
+      - test-stemcells-ipv4
+      - bats
+      resource: version
+      trigger: true
+    - get: bosh-stemcells-ci
+    - get: bosh-integration-image
+    - get: bosh-linux-stemcell-builder
+      passed:
+      - bats
+      resource: bosh-linux-stemcell-builder
+    - get: stemcells-index
+    - get: build-time
+      passed:
+      - test-stemcells-ipv4
+      - bats
+      trigger: true
+    - get: os-image-stemcell-builder-registry-image
+  - task: commit-build-time
+    file: bosh-stemcells-ci/ci/tasks/commit-build-time.yml
+    image: os-image-stemcell-builder-registry-image
+  #@ if len(data.values.stemcell_details.include_fips_iaas) > 0:
+  - task: copy-fips-artifacts
+    file: bosh-stemcells-ci/ci/tasks/publish.yml
+    image: bosh-integration-image
+    params:
+      AWS_ACCESS_KEY_ID: ((hmac_accesskey))
+      AWS_SECRET_ACCESS_KEY: ((hmac_secret))
+      COMMIT_PREFIX: candidate
+      COPY_KEYS:
+      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+        - (@= iaas.iaas @)/bosh-stemcell-%s-(@= iaas.iaas @)-(@= iaas.hypervisor @)-(@= data.values.stemcell_details.os_name @)-fips.tgz
+      #@ end
+      FROM_BUCKET_NAME: bosh-core-stemcells-candidate-fips
+      FROM_INDEX: dev
+      OS_NAME: ubuntu
+      OS_VERSION: (@= data.values.stemcell_details.os @)-fips
+      TO_BUCKET_NAME: bosh-core-stemcells-candidate-fips
+      TO_INDEX: candidate
+      AWS_ENDPOINT: "https://storage.googleapis.com"
+      S3_API_ENDPOINT: storage.googleapis.com
+  #@ end
+  - task: copy-artifacts
+    file: bosh-stemcells-ci/ci/tasks/publish.yml
+    image: bosh-integration-image
+    params:
+      AWS_ACCESS_KEY_ID: ((hmac_accesskey))
+      AWS_SECRET_ACCESS_KEY: ((hmac_secret))
+      COMMIT_PREFIX: candidate
+      COPY_KEYS:
+      #@ for iaas in data.values.stemcell_details.include_iaas:
+        - (@= iaas.iaas @)/bosh-stemcell-%s-(@= iaas.iaas @)-(@= iaas.hypervisor @)-(@= data.values.stemcell_details.os_name @).tgz
+      #@ end
+      FROM_BUCKET_NAME: bosh-core-stemcells-candidate
+      FROM_INDEX: dev
+      OS_NAME: ubuntu
+      OS_VERSION: (@= data.values.stemcell_details.os @)
+      TO_BUCKET_NAME: bosh-core-stemcells-candidate
+      TO_INDEX: candidate
+      AWS_ENDPOINT: "https://storage.googleapis.com"
+      S3_API_ENDPOINT: storage.googleapis.com
+  - in_parallel:
+    - put: bosh-linux-stemcell-builder-push-tags
+      no_get: true
+      params:
+        only_tag: true
+        repository: bosh-linux-stemcell-builder
+        tag: version-tag/tag
+    - put: stemcells-index
+      params:
+        rebase: true
+        repository: stemcells-index
+
+- name: notify-of-usn
+  plan:
+  - get: (@= data.values.stemcell_details.os @)-usn
+    passed:
+      - process-high-critical-cves
+  - get: bosh-integration-image
+  - get: high-critical-cves-processed
+    passed:
+      - process-high-critical-cves
+    trigger: true
+  - task: build-slack-message
+    image: bosh-integration-image
+    config:
+      inputs:
+      - name: (@= data.values.stemcell_details.os @)-usn
+      outputs:
+      - name: slack-message
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          set -exu -o pipefail
+          cat <<EOF > template.json
+          {
+            "attachments": {
+              "color": "#ff0000",
+                "thumb_url": "https://www.free-icons-download.net/images/lock-icon-66412.png",
+                "footer": "USN Notification",
+                "footer_icon": "https://i.imgur.com/7H8ZIq1.png",
+                "mrkdwn_in": ["fields"],
+                "fields": [
+                {"title": "Priorities", "short": true, "value": (.priorities | join(", "))},
+                {"title": "Date", "short": true, "value": .date},
+                {"title": "Description", "short": false, "value": .description},
+                {"title": "CVEs", "short": false, "value": (.cves | join("\n"))}
+                ]
+            }
+          }
+          EOF
+          cat (@= data.values.stemcell_details.os @)-usn/usn.json | jq -r "$(cat template.json)" | tee slack-message/attachments
+          cat (@= data.values.stemcell_details.os @)-usn/usn.json | jq -r '"New USN for (@= data.values.stemcell_details.os @): *<\(.url)|\(.title)>*"' | tee slack-message/message
+        path: /bin/bash
+  - put: slack-alert
+    params:
+      attachments_file: slack-message/attachments
+      channel: ((usn_notifications_slack_channel_name))
+      icon_url: https://i.imgur.com/A0Vlw5t.png
+      text_file: slack-message/message
+
+- name: bump-bosh-agent
+  plan:
+  - get: bosh-agent
+    params:
+      skip_download: true
+    resource: bosh-agent
+    trigger: true
+  - get: bosh-stemcells-ci
+  - get: bosh-integration-image
+  - get: bosh-linux-stemcell-builder
+    resource: bosh-linux-stemcell-builder
+  - task: bump
+    file: bosh-stemcells-ci/ci/tasks/bump-bosh-agent.yml
+    image: bosh-integration-image
+  - put: bosh-linux-stemcell-builder-push
+    params:
+      rebase: true
+      repository: bosh-linux-stemcell-builder
+  serial: true
+  #@ for blobstore_type in data.values.blobstore_types:
+- name: bump-bosh-blobstore-(@= blobstore_type @)
+  plan:
+  - get: bosh-blobstore-cli
+    resource:  bosh-blobstore-(@= blobstore_type @)
+    trigger: true
+  - get: bosh-stemcells-ci
+  - get: bosh-integration-image
+  - get: bosh-linux-stemcell-builder
+    resource: bosh-linux-stemcell-builder
+  - task: bump-bosh-blobstore-cli
+    file: bosh-stemcells-ci/ci/tasks/bump-bosh-blobstore-cli.yml
+    image: bosh-integration-image
+    params:
+      BLOBSTORE_TYPE: (@= blobstore_type @)
+  - put: bosh-linux-stemcell-builder-push
+    params:
+      rebase: true
+      repository: bosh-linux-stemcell-builder
+  serial: true
+  #@ end
+
+resource_types:
+- name: ami-resource
+  type: registry-image
+  source:
+    repository: pivotalgreenhouse/ami-resource
+    tag: latest
+- name: github-status
+  type: registry-image
+  source:
+    repository: dpb587/github-status-resource
+    tag: master
+- name: usn
+  source:
+    repository: bosh/usn-resource
+  type: registry-image
+- name: metalink-repository
+  source:
+    repository: dpb587/metalink-repository-resource
+    tag: latest
+  type: registry-image
+- name: slack-notification
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
+  type: registry-image
+- name: gcs-resource
+  type: registry-image
+  source:
+    repository: frodenas/gcs-resource
+
+#@yaml/text-templated-strings
+resources:
+- name: bosh-agent
+  type: metalink-repository
+  source:
+    uri: git+https://github.com/cloudfoundry/bosh-agent-index.git/
+    version: "*"
+
+#@ def metalink_resource(IAAS, HYPERVISOR, FIPS=""):
+  name: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+  type: metalink-repository
+  source:
+    mirror_files:
+    - destination: s3://storage.googleapis.com/bosh-core-stemcells-candidate(@= FIPS @)/(@= IAAS @)/{{.Name}}
+    options:
+      private_key: ((github_deploy_key_bosh-io-stemcells-core-index.private_key))
+    filters:
+    - repositorypath: "*/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @).meta4"
+    uri: git+ssh://git@github.com:cloudfoundry/bosh-io-stemcells-core-index.git//dev/(@= data.values.stemcell_details.os_name @)(@= FIPS @)/
+    url_handlers:
+    - include:
+      - (s3|https)://.*
+      options:
+        access_key: ((hmac_accesskey))
+        secret_key: ((hmac_secret))
+      type: s3
+#@ end
+
+#@ for iaas in data.values.stemcell_details.include_iaas:
+- #@ metalink_resource(iaas.iaas, iaas.hypervisor)
+#@ end
+#@ for iaas in data.values.stemcell_details.include_fips_iaas:
+- #@ metalink_resource(iaas.iaas, iaas.hypervisor, "-fips")
+#@ end
+
+- name: os-image-tarball
+  type: metalink-repository
+  source:
+    mirror_files:
+    - destination: s3://storage.googleapis.com/bosh-os-images/(@= data.values.stemcell_details.branch @)/{{.Name}}
+    options:
+      private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
+    filters:
+    - repositorypath: "(@= data.values.stemcell_details.branch @)/(@= data.values.stemcell_details.os_name @).meta4"
+    uri: git+ssh://git@github.com/cloudfoundry/bosh-linux-stemcell-builder.git//bosh-stemcell/image-metalinks/#(@= data.values.stemcell_details.branch @)
+    url_handlers:
+    - include:
+      - (s3|https)://.*
+      options:
+        access_key: ((hmac_accesskey))
+        secret_key: ((hmac_secret))
+      type: s3
+
+- name: version
+  type: semver
+  source:
+    json_key: ((gcp_json_key))
+    bucket: bosh-core-stemcells-candidate
+    driver: gcs
+    key: bosh-stemcell/(@= data.values.stemcell_details.branch @)/1.x/1.x-version
+
+- name: os-image-version
+  type: semver
+  source:
+    json_key: ((gcp_json_key))
+    bucket: bosh-core-stemcells-candidate
+    driver: gcs
+    key: os-image/(@= data.values.stemcell_details.branch @)/1.x/1.x-version
+
+- name: bosh-linux-stemcell-builder-push
+  type: git
+  source:
+    branch: (@= data.values.stemcell_details.branch @)
+    private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
+    uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+
+- name: bosh-linux-stemcell-builder
+  type: git
+  source:
+    branch: (@= data.values.stemcell_details.branch @)
+    ignore_paths:
+    - VERSION
+    - ci
+    uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
+
+- name: bosh-shared-ci
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry/bosh-shared-ci.git
+    private_key: ((github_deploy_key_bosh-shared-ci.private_key))
+
+- name: usn-log
+  type: gcs-resource
+  source:
+    bucket: bosh-stemcell-triggers
+    json_key: ((gcp_json_key))
+    versioned_file: (@= data.values.stemcell_details.branch @)/usn-log.json
+    initial_content_text: ""
+    initial_version: '0'
+
+- name: high-critical-unfound-usns
+  type: gcs-resource
+  source:
+    bucket: bosh-stemcell-triggers
+    json_key: ((gcp_json_key))
+    versioned_file: (@= data.values.stemcell_details.branch @)/high-critical-unfound/usns.json
+    initial_content_text: ""
+    initial_version: '0'
+
+- name: low-medium-unfound-usns
+  type: gcs-resource
+  source:
+    bucket: bosh-stemcell-triggers
+    json_key: ((gcp_json_key))
+    versioned_file: (@= data.values.stemcell_details.branch @)/low-medium-unfound/usns.json
+    initial_content_text: ""
+    initial_version: '0'
+
+- name: stemcell-trigger
+  type: gcs-resource
+  source:
+    json_key: ((gcp_json_key))
+    bucket: bosh-stemcell-triggers
+    versioned_file: (@= data.values.stemcell_details.branch @)/stemcell-trigger
+    initial_content_text: ""
+    initial_version: '0'
+
+- name: bosh-linux-stemcell-builder-push-tags
+  type: git
+  source:
+    fake_param_to_bust_global_resource_cache: true
+    private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
+    uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+
+- name: os-image-stemcell-builder-dockerfile
+  type: git
+  source:
+    branch:  (@= data.values.stemcell_details.branch @)
+    paths:
+      ci/docker/**/*
+    uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
+
+- name: build-time
+  type: time
+
+- name: high-critical-cves-processed
+  type: time
+
+- name: bosh-stemcells-ci
+  type: git
+  source:
+    branch: (@= data.values.stemcell_details.branch @)
+    paths:
+      - ci
+    uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder.git
+
+- name: bats
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-acceptance-tests.git
+
+- name: bosh-integration-image
+  type: registry-image
+  source:
+    repository: ghcr.io/cloudfoundry/bosh/integration
+    tag: main
+    username: ((github_read_write_packages.username))
+    password: ((github_read_write_packages.password))
+
+- name: stemcells-index
+  type: git
+  source:
+    branch: main
+    private_key: ((github_deploy_key_bosh-io-stemcells-core-index.private_key))
+    uri: git@github.com:cloudfoundry/bosh-io-stemcells-core-index.git
+
+- name: syslog-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/syslog-release
+
+- name: os-conf-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/os-conf-release
+- name: bosh-deployment
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-deployment
+- name: (@= data.values.stemcell_details.os @)-usn-low-medium
+  type: usn
+  source:
+    os: ubuntu-(@= data.values.stemcell_details.os_version @)-lts
+    priorities:
+    - low
+    - medium
+- name: (@= data.values.stemcell_details.os @)-usn
+  type: usn
+  source:
+    os: ubuntu-(@= data.values.stemcell_details.os_version @)-lts
+    priorities:
+    - high
+    - critical
+    severities:
+    - high
+    - critical
+- name: (@= data.values.stemcell_details.os @)-usn-gh-json
+  type: git
+  source:
+    branch: main
+    uri: https://github.com/canonical/ubuntu-security-notices.git
+    paths:
+    - usn
+- name: slack-alert
+  type: slack-notification
+  source:
+    url: ((slack_hook_url))
+
+- name: syft-github-release
+  type: github-release
+  source:
+    owner: anchore
+    repository: syft
+
+- name: os-image-stemcell-builder-registry-image
+  type: registry-image
+  source:
+    repository: bosh/os-image-stemcell-builder
+    tag: (@= data.values.stemcell_details.os @)
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
+
+- name: os-image-stemcell-builder-docker-image
+  type: docker-image
+  source:
+    repository: bosh/os-image-stemcell-builder
+    tag: (@= data.values.stemcell_details.os @)
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
+
+- name: bosh-os-image-builder-vmware-ovftool
+  type: gcs-resource
+  source:
+    json_key: ((gcp_json_key))
+    bucket: bosh-vmware-ovftool
+    regexp: (@= data.values.stemcell_details.os @)/(.*).bundle
+
+- name: bosh-blobstore-dav
+  type: s3
+  source:
+    regexp: davcli-(.*)-linux-amd64
+    bucket: bosh-davcli-artifacts
+    access_key_id: ((bosh_davcli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_davcli_pipeline_aws_access_key.password))
+
+- name: bosh-blobstore-gcs
+  type: s3
+  source:
+    regexp: bosh-gcscli-(.*)-linux-amd64
+    bucket: bosh-gcscli-artifacts
+    access_key_id: ((bosh_gcscli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_gcscli_pipeline_aws_access_key.password))
+
+- name: bosh-blobstore-s3
+  type: s3
+  source:
+    regexp: s3cli-(.*)-linux-amd64
+    bucket: bosh-s3cli-artifacts
+    access_key_id: ((bosh_s3cli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_s3cli_pipeline_aws_access_key.password))
+
+- name: bosh-blobstore-azure-storage
+  type: s3
+  source:
+    regexp: azure-storage-cli-(.*)-linux-amd64
+    bucket: bosh-azure-storage-cli-artifacts
+    access_key_id: ((bosh_azure_storage_cli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_azure_storage_cli_pipeline_aws_access_key.password))

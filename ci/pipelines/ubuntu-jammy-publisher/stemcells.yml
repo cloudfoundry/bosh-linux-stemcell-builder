@@ -1,0 +1,13 @@
+#@data/values
+---
+lts: []
+
+oss:
+- os: ubuntu-jammy
+  version: 1
+  os_name: ubuntu
+  os_version: jammy
+  branch: "ubuntu-jammy"
+  build_aws: true
+  build_fips: true
+  efi: false

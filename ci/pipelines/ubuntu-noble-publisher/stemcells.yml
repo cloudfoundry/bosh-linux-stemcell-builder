@@ -1,0 +1,13 @@
+#@data/values
+---
+lts: []
+
+oss:
+- os: ubuntu-noble
+  version: 1
+  os_name: ubuntu
+  os_version: noble
+  branch: "ubuntu-noble"
+  build_aws: true
+  build_fips: false
+  efi: true

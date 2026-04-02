@@ -1,0 +1,11 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-linux-stemcell-builder
+  - name: bosh-stemcells-ci
+  - name: os-image-tarball
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/test-unit.sh
