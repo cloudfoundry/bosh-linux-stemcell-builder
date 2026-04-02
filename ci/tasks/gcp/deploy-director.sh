@@ -75,7 +75,7 @@ export BOSH_CLIENT_SECRET=`bosh int "${REPO_PARENT}/director-creds.yml" --path /
 
 bosh -n update-cloud-config "${REPO_PARENT}/bosh-deployment/gcp/cloud-config.yml" \
           --ops-file "${REPO_PARENT}/default-vm-type-opsfile.yml" \
-          --ops-file "${REPO_ROOT}/ops-files/reserve-ips.yml" \
-          --ops-file "${REPO_ROOT}/ops-files/disable-ephemeral-ip.yml" \
+          --ops-file "${REPO_ROOT}/ci/ops-files/reserve-ips.yml" \
+          --ops-file "${REPO_ROOT}/ci/ops-files/disable-ephemeral-ip.yml" \
           --vars-file "${REPO_PARENT}/network-variables.yml" \
           --vars-file "${REPO_PARENT}/director-vars.yml"

@@ -40,7 +40,7 @@ bosh interpolate "${REPO_PARENT}/bosh-deployment/bosh.yml" \
   -o "${REPO_PARENT}/bosh-deployment/jumpbox-user.yml" \
   -o "${REPO_PARENT}/bosh-deployment/misc/ipv6/bosh.yml" \
   -o "${REPO_PARENT}/bosh-deployment/misc/second-network.yml" \
-  -o "${REPO_ROOT}/ops-files/ipv6-director.yml" \
+  -o "${REPO_ROOT}/ci/ops-files/ipv6-director.yml" \
   --vars-store "${REPO_PARENT}/director-creds.yml" \
   --vars-file "${REPO_PARENT}/director-vars.yml" \
   --var-file gcp_credentials_json="${REPO_PARENT}/gcp_creds.json" \
@@ -67,9 +67,9 @@ export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=`bosh int "${REPO_PARENT}/director-creds.yml" --path /admin_password`
 
 bosh -n update-cloud-config "${REPO_PARENT}/bosh-deployment/gcp/cloud-config.yml" \
-          --ops-file "${REPO_ROOT}/ops-files/reserve-ips.yml" \
-          --ops-file "${REPO_ROOT}/ops-files/disable-ephemeral-ip.yml" \
-          --ops-file "${REPO_ROOT}/ops-files/ipv6-cc.yml" \
-          --ops-file "${REPO_ROOT}/ops-files/resource-pool-cc.yml" \
+          --ops-file "${REPO_ROOT}/ci/ops-files/reserve-ips.yml" \
+          --ops-file "${REPO_ROOT}/ci/ops-files/disable-ephemeral-ip.yml" \
+          --ops-file "${REPO_ROOT}/ci/ops-files/ipv6-cc.yml" \
+          --ops-file "${REPO_ROOT}/ci/ops-files/resource-pool-cc.yml" \
           --vars-file "${REPO_PARENT}/network-variables.yml" \
           --vars-file "${REPO_PARENT}/director-vars.yml"
