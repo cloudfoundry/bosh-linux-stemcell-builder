@@ -1,0 +1,30 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-linux-stemcell-builder
+  - name: bosh-stemcells-ci
+  - name: version
+  - name: stemcells-index
+  - name: os-image-tarball
+    optional: true
+
+outputs:
+  - name: stemcell
+  - name: stemcells-index
+    path: stemcells-index-output
+  - name: candidate-build-number
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/build.sh
+
+params:
+  IAAS:            replace-me
+  HYPERVISOR:      replace-me
+  OS_NAME:         replace-me
+  OS_VERSION:      replace-me
+  STEMCELL_BUCKET: replace-me
+  S3_API_ENDPOINT: s3.amazonaws.com
+  ESM_TOKEN:
+  AGENT_SUFFIX: -go_agent

@@ -1,0 +1,19 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-stemcells-ci
+  - name: bosh-cpi-release
+  - name: light-stemcell
+  - name: terraform
+
+outputs:
+  - name: deployment-state
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/light-google/deploy-skeletal.sh
+
+params:
+  SSH_PRIVATE_KEY:      ""
+  GCE_CREDENTIALS_JSON: ""

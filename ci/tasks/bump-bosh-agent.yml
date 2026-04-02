@@ -1,0 +1,15 @@
+---
+platform: linux
+
+
+inputs:
+- name: bosh-linux-stemcell-builder
+- name: bosh-stemcells-ci
+- name: bosh-agent
+
+outputs:
+- name: bosh-linux-stemcell-builder
+  path: bosh-linux-stemcell-builder-out
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/bump-bosh-agent.sh

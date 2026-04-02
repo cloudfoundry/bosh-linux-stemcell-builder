@@ -1,0 +1,25 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-stemcells-ci
+  - name: bosh-linux-stemcell-builder
+  - name: candidate-stemcell
+  - name: stemcell-metalink
+  - name: stemcell-trigger
+    optional: true
+
+outputs:
+  - name: release-metadata
+  - name: bosh-linux-stemcell-builder
+  - name: usn-log
+
+params:
+  OS_NAME: ~
+  OS_VERSION: ~
+  BRANCH: ~
+  KERNEL_PACKAGE: ~
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/build-release-metadata.sh

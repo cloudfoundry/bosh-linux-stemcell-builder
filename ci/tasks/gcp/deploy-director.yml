@@ -1,0 +1,18 @@
+---
+platform: linux
+
+
+inputs:
+  - name: bosh-deployment
+  - name: bosh-stemcells-ci
+  - name: bosh-linux-stemcell-builder
+
+outputs:
+  - name: director-state
+
+params:
+  DEFAULT_VM_TYPE: n1-standard-2 # chosen to match what is currently in https://github.com/cloudfoundry/bosh-deployment/blob/master/gcp/cloud-config.yml#L15
+
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/gcp/deploy-director.sh

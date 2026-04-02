@@ -1,0 +1,13 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-linux-stemcell-builder
+  - name: bosh-stemcells-ci
+  - name: build-time
+
+outputs:
+  - name: bosh-linux-stemcell-builder
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/commit-build-time.sh

@@ -1,0 +1,15 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-stemcells-ci
+
+params:
+  GCP_JSON_KEY:
+  GCP_PROJECT_ID:
+  GCP_ZONE:
+  GCP_SUBNET_NAME:
+  TAG:
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/gcp/cleanup-bats-vms.sh

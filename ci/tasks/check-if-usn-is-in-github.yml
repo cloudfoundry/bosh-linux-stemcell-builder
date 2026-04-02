@@ -1,0 +1,16 @@
+platform: linux
+
+
+inputs:
+  - name: bosh-stemcells-ci
+  - name: usn
+  - name: usn-gh-json
+  - name: unfound-usns
+
+outputs:
+  - name: found-usns
+  - name: updated-unfound-usns
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.sh
+
