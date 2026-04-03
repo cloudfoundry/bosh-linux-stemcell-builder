@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
+STEMCELL_LINE="ubuntu-noble"
+
 REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
 if [[ -n "${DEBUG:-}" ]]; then
@@ -16,10 +18,10 @@ until "${fly}" -t "${concourse_target}" status; do
 done
 
 pipelines_dir="${REPO_ROOT}/ci/pipelines"
-data_file_name="stemcells.yml"
+vars_file_name="vars.yml"
 
 mapfile -t available_pipelines < \
-  <( find "${pipelines_dir}" -maxdepth 2 -type f -name '*.yml' | grep -v "${data_file_name}" | sort )
+  <( find "${pipelines_dir}" -maxdepth 1 -type f -name '*.yml' | grep -v "${vars_file_name}" | sort )
 
 if (( ${#available_pipelines[@]} == 0 )); then
   echo "No pipelines found under '${pipelines_dir}'" >&2
@@ -47,15 +49,13 @@ if [ ! -f "${pipeline_file}" ]; then
   exit 1
 fi
 
-pipeline_name=$(echo "${pipeline_file#"${pipelines_dir}/"}" | cut -d/ -f 1)
-if [[ ! "${pipeline_name}" =~ "-publisher" ]]; then
-  pipeline_name="stemcells-${pipeline_name}"
-fi
+pipeline_name=$(basename "${pipeline_file%".yml"}")
 
 echo "Configuring '${pipeline_name}' using '${pipeline_file#"${pipelines_dir}/"}'..."
+echo ""
 
-rendered_template="$(ytt --dangerous-allow-all-symlink-destinations -f "$(dirname "${pipeline_file}")")"
+rendered_template="$(ytt -f "${pipeline_file}" -f "${pipelines_dir}/${vars_file_name}")"
 
 "${fly}" -t "${concourse_target}" set-pipeline \
-  -p "${pipeline_name}" \
+  -p "${STEMCELL_LINE}-${pipeline_name}" \
   -c <(echo "${rendered_template}")

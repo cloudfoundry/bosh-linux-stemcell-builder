@@ -1,7 +1,19 @@
 #@data/values
 ---
+lts: []
+
+oss:
+  - os: ubuntu-noble
+    version: 1
+    os_name: ubuntu
+    os_version: noble
+    branch: "ubuntu-noble"
+    build_aws: true
+    build_fips: false
+    efi: true
+
 stemcell_details:
-  branch: "ubuntu-jammy"
+  branch: "ubuntu-noble"
   include_iaas: [
     {iaas: alicloud, hypervisor: kvm},
     {iaas: aws, hypervisor: xen-hvm},
@@ -9,17 +21,13 @@ stemcell_details:
     {iaas: google, hypervisor: kvm},
     {iaas: openstack, hypervisor: kvm},
     {iaas: vsphere, hypervisor: esxi},
-    {iaas: vcloud, hypervisor: esxi},
     {iaas: warden, hypervisor: boshlite}
   ]
-  include_fips_iaas: [
-    {iaas: aws, hypervisor: xen-hvm},
-    {iaas: google, hypervisor: kvm},
-  ]
-  os: jammy
-  os_version: "22.04"
-  os_name: ubuntu-jammy
-  subnet_int: "3"
+  include_fips_iaas: []
+  os: noble
+  os_version: "24.04"
+  os_name: ubuntu-noble
+  subnet_int: "0"
 
 blobstore_types:
 - dav
