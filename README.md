@@ -255,10 +255,18 @@ Rebuild the container with:
 export short_name="jammy"
 
 docker build \
-   --platform linux/amd64 \
-   --build-arg SYFT_VERSION=v1.42.3 \
-   -t bosh/os-image-stemcell-builder:${short_name} \
-   ci/docker/os-image-stemcell-builder/
+    --platform linux/amd64 \
+    --build-arg BASE_IMAGE="ubuntu:${short_name}" \
+    --build-arg META4_CLI_URL="https://github.com/dpb587/metalink/releases/download/v0.5.0/meta4-0.5.0-linux-amd64" \
+    --build-arg SYFT_CLI_URL="https://github.com/anchore/syft/releases/download/v1.42.3/syft_1.42.3_linux_amd64.tar.gz" \
+    --build-arg YQ_CLI_URL="https://github.com/mikefarah/yq/releases/download/v4.52.5/yq_linux_amd64" \
+    --build-arg RUBY_INSTALL_URL="https://github.com/postmodern/ruby-install/releases/download/v0.10.2/ruby-install-0.10.2.tar.gz" \
+    --build-arg RUBY_VERSION="$(cat .ruby-version)" \
+    --build-arg GEM_HOME="/usr/local/bundle" \
+    --build-arg OVF_TOOL_INSTALLER="VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle" \
+    --build-arg OVF_TOOL_INSTALLER_SHA1="6c24e473be49c961cfc3bb16774b52b48e822991" \
+    -t bosh/os-image-stemcell-builder:${short_name} \
+    ci/docker/os-image-stemcell-builder/
 ```
 
 ## CI Infrastructure
