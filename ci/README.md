@@ -15,30 +15,9 @@ gsutil cp VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle gs://bosh-vmware-ovfto
 ```
 
 ## AWS
-Concourse will want to publish its artifacts. Create an IAM user with the [required policy](iam_policy.json). 
+Concourse will want to publish its artifacts. Create an IAM user with the
+[bosh-core-stemcells iam policy file](bosh-core-stemcells_iam.json).
 Create buckets for stemcells, then give it a public-read policy...
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::bosh-core-stemcells-dev/*"
-        },
-        {
-            "Sid": "",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::bosh-core-stemcells-dev"
-        }
-    ]
-}
-```
 
 # OS Images
 When switching from the old pipeline to the new one, don't forget to...
@@ -49,39 +28,10 @@ When switching from the old pipeline to the new one, don't forget to...
 
 ## AWS
 
-Concourse will want to publish its artifacts. Create an IAM user with the [required policy](iam_policy.json).
+Concourse will want to publish its artifacts. Create an IAM user with the
+[bosh-os-images iam policy file](bosh-os-images_iam.json).
 Create buckets for OS Images, then give it a public-read policy...
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": [
-              "s3:PutObject",
-              "s3:GetObjectAcl",
-              "s3:GetObject",
-              "s3:GetObjectVersionAcl",
-              "s3:PutObjectAcl",
-              "s3:GetObjectVersion"
-            ],
-            "Resource": "arn:aws:s3:::bosh-os-images/*"
-        },
-        {
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": [
-              "s3:ListBucketVersions",
-              "s3:ListBucket",
-              "s3:GetBucketVersioning"
-            ],
-            "Resource": "arn:aws:s3:::bosh-os-images"
-        }
-    ]
-}
-```
 
 ## GCP
 The stemcell pipelines currently run on a Concourse instance configured here:
@@ -130,14 +80,15 @@ Set versioning on the stemcell trigger bucket
 gsutil versioning set on gs://bosh-stemcell-triggers
 ```
 
-the `default-allow-internal` should have the following subnet `10.0.0.0/8` on all ports
+The `default-allow-internal` should have the following subnet `10.0.0.0/8` on all ports
 
 ```shell
 gcloud compute firewall-rules update default-allow-internal --source-ranges 10.0.0.0/8
 ```
 
-create the bosh-integration networks for our tests and bats tests
-each stemcell line should get its own subnet that will correspond to its subnet_int
+Create the bosh-integration networks for our tests and bats tests
+
+Each stemcell line should get its own subnet that will correspond to its `subnet_int`.
 
 example:
 - subnet_id=44

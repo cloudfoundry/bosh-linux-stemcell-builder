@@ -6,14 +6,16 @@ disk image that is used as a template by a BOSH Director to create VMs.
 ## Quick Start: Building a Stemcell Locally
 
 ```bash
+export short_name="jammy"
+
 git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
-git checkout ubuntu-jammy/master
+git checkout ubuntu-${short_name}/master
 mkdir -p tmp
 docker build \
    --platform linux/amd64 \
    --build-arg SYFT_VERSION=v1.42.3 \
-   -t bosh/os-image-stemcell-builder:jammy \
+   -t bosh/os-image-stemcell-builder:${short_name} \
    ci/docker/os-image-stemcell-builder/
 docker run \
    --platform linux/amd64 \
@@ -22,14 +24,17 @@ docker run \
    --workdir /opt/bosh \
    --user=1000:1000 \
    -it \
-   bosh/os-image-stemcell-builder:jammy
+   bosh/os-image-stemcell-builder:${short_name}
+
 # You're now in the Docker container
 gem install bundler
 bundle install
+
  # build OS image
-bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
+
  # build vSphere stemcell
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
@@ -50,43 +55,51 @@ installed in the operating system or when making changes to the configuration
 of those packages.
 
 ```bash
-bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz]
+export short_name="jammy"
+
+bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
 ```
 
 The arguments to the `stemcell:build_os_image` rake task follow:
 
-0. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
+1. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
    Determines which package repository and packaging tool will be used to
    download and assemble the files. Currently, only `ubuntu` is recognized.
-0. *`operating_system_version`* (`jammy`): an identifier that the system may use
+2. *`operating_system_version`* (`<short_name>`): an identifier that the system may use
    to decide which release of the OS to download. Acceptable values depend on
-   the operating system. For `ubuntu`, use `jammy`.
-0. *`os_image_path`* (`$PWD/tmp/ubuntu_base_image.tgz`): the path to write the
+   the operating system. For `ubuntu`, use `<short_name>`.
+3. *`os_image_path`* (`${PWD}/tmp/ubuntu_base_image.tgz`): the path to write the
    finished OS image tarball to. If a file exists at this path already, it will
    be overwritten without warning.
 
 ### Building a Stemcell
 
-Rebuild the stemcell when you are making and testing BOSH-specific
-changes such as a new BOSH agent.
+Rebuild the stemcell when you are making and testing BOSH-specific changes such as a new BOSH agent.
 
 ```bash
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz,"0.0.8"]
+export short_name="jammy"
+export build_number"0.0.8"
+
+bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz,${build_number}]
 ```
 
 The arguments to `stemcell:build_with_local_os_image` are:
 
-0. `infrastructure_name`: Which IaaS you are producing the stemcell for.
+1. `infrastructure_name`: Which IaaS you are producing the stemcell for.
    Determines which virtualization tools to package on top of the stemcell.
-0. `hypervisor_name`: Depending on what the IAAS supports, which hypervisor to
-   target: `aws` → `xen-hvm`, `azure` → `hyperv`, `google` → `kvm`, `openstack` →
-   `kvm`, `vsphere` → `esxi`
-0. `operating_system_name` (`ubuntu`): Type of OS. Same as
-0. `stemcell:build_os_image`. Can optionally include a variant suffix (`jammy-fips`)
-0. `operating_system_version` (`jammy`): OS release. Same as
-0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
+2. `hypervisor_name`: Depending on what the IAAS supports, which hypervisor to
+   target:
+   - `aws` → `xen-hvm`
+   - `azure` → `hyperv`
+   - `google` → `kvm`
+   - `openstack` → `kvm`
+   - `vsphere` → `esxi`
+3. `operating_system_name` (`ubuntu`): Type of OS. Same as
+4. `stemcell:build_os_image`. Can optionally include a variant suffix (`<short_name>-fips`)
+5. `operating_system_version` (`<short_name>`): OS release. Same as
+6. `os_image_path` (`${PWD}/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
-0. `build_number` (`0.0.8`): Stemcell version. Pro-tip: take the version number
+7. `build_number` (`0.0.8`): Stemcell version. Pro-tip: take the version number
    of the most recent release and add one, e.g.: "0.0.7" → "0.0.8". If not
    specified, it will default to "0000".
 
@@ -95,16 +108,18 @@ The arguments to `stemcell:build_with_local_os_image` are:
 You can find the resulting stemcell in the `tmp/` directory of the host, or in
 the `/opt/bosh/tmp` directory in the Docker container. Using the above example,
 the stemcell would be at
-`tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz`. You can
+`tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-<short_name>-go_agent.tgz`. You can
 upload the stemcell to a vSphere BOSH Director:
 
 ```bash
-bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-jammy-go_agent.tgz
+export short_name="jammy"
+
+bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-${short_name}-go_agent.tgz
 ```
 
 ## Testing
 
-_[Fixme: update Testing section to Jammy]_
+_[Fixme: update Testing section to SHORT_NAME]_
 
 ### How to run tests for OS Images
 
@@ -115,12 +130,15 @@ the rake task the first time you create your docker container, but everytime
 after, as long as you do not destroy the container, you should be able to run
 the specific tests.
 
-To run the `ubuntu_jammy_spec.rb` tests (**assuming you've already built the OS
-image** at the `tmp/ubuntu_base_image.tgz` and you're within the Docker
+To run the `ubuntu_${short_name}_spec.rb` tests (**assuming you've already built 
+the OS image** at the `tmp/ubuntu_base_image.tgz` and you're within the Docker
 container):
 
-    cd /opt/bosh/bosh-stemcell
-    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_jammy_spec.rb
+```shell
+  export short_name="jammy"
+  cd /opt/bosh/bosh-stemcell
+  OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_${short_name}_spec.rb
+```
 
 ### How to Run Tests for Stemcell
 
@@ -179,10 +197,10 @@ bundle exec rspec spec/
 
 If you find yourself debugging any of the above processes, here is what you need to know:
 
-0. Most of the action happens in Bash scripts, which are referred to as
+1. Most of the action happens in Bash scripts, which are referred to as
    _stages_, and can be found in
    `stemcell_builder/stages/<stage_name>/apply.sh`.
-0. While debugging a particular stage that is failing, you can resume the
+2. While debugging a particular stage that is failing, you can resume the
    process from that stage by adding `resume_from=<stage_name>` to the end of
    your `bundle exec rake` command. When a stage's `apply.sh` fails, you should
    see a message of the form `Can't find stage '<stage>' to resume from.
@@ -193,7 +211,9 @@ If you find yourself debugging any of the above processes, here is what you need
    Example usage:
 
    ```shell
-   bundle exec rake stemcell:build_os_image[ubuntu,jammy,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
+   export short_name="jammy"
+   
+   bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
    ```
 
 ## Pro Tips
@@ -215,7 +235,7 @@ The ovftool installer from VMWare can be found at
 
 The ovftool installer must be copied into [ci/docker/os-image-stemcell-builder/](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile before building the Docker image, or you will receive an error like:
 
-```
+```shell
 ADD failed: failed to compute cache key: "/VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle": not found
 ```
 
@@ -228,11 +248,13 @@ You will need the ovftool installer present in
 
 Rebuild the container with:
 
-```bash
+```shell
+export short_name="jammy"
+
 docker build \
    --platform linux/amd64 \
    --build-arg SYFT_VERSION=v1.42.3 \
-   -t bosh/os-image-stemcell-builder:jammy \
+   -t bosh/os-image-stemcell-builder:${short_name} \
    ci/docker/os-image-stemcell-builder/
 ```
 
