@@ -1,15 +1,22 @@
 # BOSH Stemcells
 
 ## docker images and vmware ofvtool
-when creating a new lts stemcell e.g: bionic, jammy etc
-you will need to create a folder and upload the appropiate ofvtool in to the gcp bucket `bosh-vmware-ovftool`
-`gsutil cp MY_OVFTOOL_FILE gs://bosh-vmware-ovftool/MYOS/`
+When creating a new lts stemcell  you will need to create a folder and upload the appropriate ofvtool
+in to the gcp bucket `bosh-vmware-ovftool`
+
+```shell
+gsutil cp MY_OVFTOOL_FILE gs://bosh-vmware-ovftool/MYOS/
+```
+
 example:
-`gsutil cp VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle gs://bosh-vmware-ovftool/jammy/`
+
+```shell
+gsutil cp VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle gs://bosh-vmware-ovftool/jammy/
+```
 
 ## AWS
-
-Concourse will want to publish its artifacts. Create an IAM user with the [required policy](iam_policy.json). Create buckets for stemcells, then give it a public-read policy...
+Concourse will want to publish its artifacts. Create an IAM user with the [required policy](iam_policy.json). 
+Create buckets for stemcells, then give it a public-read policy...
 
 ```json
 {
@@ -34,7 +41,6 @@ Concourse will want to publish its artifacts. Create an IAM user with the [requi
 ```
 
 # OS Images
-
 When switching from the old pipeline to the new one, don't forget to...
 
  * update `pipeline.yml` and change the bucket from `bosh-os-images-dev` to whatever the public bucket should be
@@ -43,7 +49,8 @@ When switching from the old pipeline to the new one, don't forget to...
 
 ## AWS
 
-Concourse will want to publish its artifacts. Create an IAM user with the [required policy](iam_policy.json). Create buckets for OS Images, then give it a public-read policy...
+Concourse will want to publish its artifacts. Create an IAM user with the [required policy](iam_policy.json).
+Create buckets for OS Images, then give it a public-read policy...
 
 ```json
 {
@@ -77,14 +84,14 @@ Concourse will want to publish its artifacts. Create an IAM user with the [requi
 ```
 
 ## GCP
-as from the bionic line we are hosting the the creating of the stemcells on gcp
-the pipeline it self is currently running on a gke hosted concourse see https://github.com/cloudfoundry/bosh-community-stemcell-ci-infra
-
+The stemcell pipelines currently run on a Concourse instance configured here:
+- https://github.com/cloudfoundry/concourse-infra-for-fiwg
 
 Concourse will want to publish its artifacts on gcs.
 
 Create the needed buckets
-```
+
+```shell
 gsutil mb -l europe-west4  gs://bosh-aws-light-stemcells
 gsutil mb -l europe-west4  gs://bosh-aws-light-stemcells-candidate
 
@@ -103,7 +110,8 @@ gsutil mb -l europe-west4  gs://bosh-gce-light-stemcell-ci-terraform-state
 ```
 
 Make buckets publicly readable
-```
+
+```shell
 gsutil iam ch allUsers:objectViewer gs://bosh-os-images
 
 gsutil iam ch allUsers:objectViewer gs://bosh-core-stemcell
@@ -117,23 +125,26 @@ gsutil iam ch allUsers:objectViewer gs://bosh-gce-light-stemcells-candidate
 ```
 
 Set versioning on the stemcell trigger bucket
-```
+
+```shell
 gsutil versioning set on gs://bosh-stemcell-triggers
 ```
 
 the `default-allow-internal` should have the following subnet `10.0.0.0/8` on all ports
-```
+
+```shell
 gcloud compute firewall-rules update default-allow-internal --source-ranges 10.0.0.0/8
 ```
 
-create the bosh-intergration networks for our tests and bats tests
-each stemcell line should get its own subnet that will corrosponds with its subnet_int
+create the bosh-integration networks for our tests and bats tests
+each stemcell line should get its own subnet that will correspond to its subnet_int
+
 example:
 - subnet_id=44
 -- subnet_range=10.100.44.0/24
 -- subnet_name=bosh-integration-44
 
-```
+```shell
 # master
 gcloud compute networks subnets create --network default --range 10.100.0.0/24 bosh-integration-0
 # 1.x
