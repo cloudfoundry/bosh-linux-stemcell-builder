@@ -3,7 +3,6 @@ platform: linux
 
 inputs:
   - name: bosh-stemcells-ci
-  - name: syft-github-release
 
 outputs:
   - name: docker-build-args
