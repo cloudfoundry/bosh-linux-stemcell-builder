@@ -16,7 +16,7 @@ export LANG="en_US.UTF-8"
 export LC_ALL="${LANG}"
 export TZ="Etc/UTC"
 apt-get update -y
-apt-get install -y --no-install-recommends ca-certificates curl jq yq
+apt-get install -y --no-install-recommends ca-certificates curl jq
 
 meta4_cli_url="$(curl -s https://api.github.com/repos/dpb587/metalink/releases/latest \
                 | jq -r '.assets[] | select(.name | match("meta4-[0-9]+.[0-9]+.[0-9]+-linux-amd64")) | .browser_download_url')"
