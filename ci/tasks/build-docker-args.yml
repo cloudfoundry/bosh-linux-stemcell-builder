@@ -2,10 +2,10 @@
 platform: linux
 
 inputs:
-  - name: os-image-stemcell-builder-dockerfile
+  - name: bosh-stemcells-ci
 
 outputs:
   - name: docker-build-args
 
 run:
-  path: os-image-stemcell-builder-dockerfile/ci/tasks/build-docker-args.sh
+  path: bosh-stemcells-ci/ci/tasks/build-docker-args.sh
