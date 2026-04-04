@@ -49,6 +49,7 @@ jobs:
     - get: os-image-stemcell-builder-dockerfile
       trigger: true
     - get: bosh-os-image-builder-vmware-ovftool
+    - get: bosh-stemcells-ci
     - task: copy-ovf
       image: ubuntu_base
       config:
@@ -66,7 +67,7 @@ jobs:
         outputs:
         - name: os-image-stemcell-builder-dockerfile
     - task: build-docker-args
-      file: os-image-stemcell-builder-dockerfile/ci/tasks/build-docker-args.yml
+      file: bosh-stemcells-ci/ci/tasks/build-docker-args.yml
       image: ubuntu_base
     - put: os-image-stemcell-builder-docker-image
       no_get: true
