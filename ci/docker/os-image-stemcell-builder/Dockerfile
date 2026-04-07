@@ -96,6 +96,11 @@ RUN meta4_cli_path="/usr/local/bin/meta4" \
       > "${meta4_cli_path}" \
     && chmod +x "${meta4_cli_path}"
 
+ENV GEM_HOME="${GEM_HOME}" \
+    BUNDLE_APP_CONFIG="${GEM_HOME}" \
+    BUNDLE_SILENCE_ROOT_WARNING=1
+ENV PATH="${GEM_HOME}/bin:${PATH}"
+
 RUN cd /tmp  \
     && curl --show-error -sL "${RUBY_INSTALL_URL}" \
       | tar -xzf - \
@@ -108,9 +113,8 @@ RUN cd /tmp  \
     && ruby-install --jobs=${NUM_CPUS} --cleanup --system ruby ${RUBY_VERSION} \
       -- --disable-install-doc --disable-install-rdoc \
     && gem update --system \
-    && bundle config --global path "${GEM_HOME}" \
-    && bundle config --global bin "${GEM_HOME}/bin"
-ENV PATH=${GEM_HOME}/bin:${PATH}
+    && mkdir -p "${GEM_HOME}/bin" \
+    && chown -R ubuntu:ubuntu "${GEM_HOME}"
 
 RUN syft_cli_path="/usr/local/bin/syft" \
     && curl --show-error -sL "${SYFT_CLI_URL}" \
