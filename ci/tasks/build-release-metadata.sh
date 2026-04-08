@@ -16,17 +16,20 @@ mkdir -p "${REPO_PARENT}/release-metadata"
 echo -n "${OS_NAME} ${OS_VERSION} v$version" > "${REPO_PARENT}/release-metadata/name"
 echo -n "${OS_NAME}-${OS_VERSION}/v$version" > "${REPO_PARENT}/release-metadata/tag"
 
-install_jq() {
-  pushd "$(mktemp -d)"
-    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
-    echo "c6b3a7d7d3e7b70c6f51b706a3b90bd01833846c54d32ca32f0027f00226ff6d  jq-linux64" > jq.txt
-    shasum -c jq.txt
-    chmod +x jq-linux64
-    mv jq-linux64 /usr/bin/jq
-  popd
-}
+format_usn_log() {
+  local usn_data=${1}
 
-install_jq
+  jq -r --slurp < "${usn_data}" '.[] |
+  "
+  **Title**: " + .title +"
+  **URL**: " + .url +"
+  **Priorities**: " + (.priorities | join(",")) +"
+  **Description**:
+    " + .description +"
+  **CVEs**:
+  " + (.cves | map(" - " + .) | join("\n"))
+  '
+}
 
 pushd "${REPO_PARENT}/candidate-stemcell"
   tar xvf bosh-stemcell-*-warden-boshlite-"${OS_NAME}"-"${OS_VERSION}"*.tgz packages.txt
@@ -57,7 +60,7 @@ if [[ "${OS_NAME}" == "ubuntu" ]]; then
   {
     echo ""
     echo "## USNs:"
-    "${REPO_ROOT}/ci/bin/format-usn-log" "${usn_log_json_file}"
+    format_usn_log "${usn_log_json_file}"
   } >> "${REPO_PARENT}/release-metadata/body"
 fi
 
