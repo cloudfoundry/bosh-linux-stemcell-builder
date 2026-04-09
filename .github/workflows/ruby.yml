@@ -1,0 +1,15 @@
+name: Run Specs
+on: [ push, pull_request ]
+
+jobs:
+  unit_specs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with: { lfs: true }
+    - uses: ruby/setup-ruby@v1
+    - name: test-bosh-stemcell
+      run: |
+        bundle install
+        bundle exec rspec
+      working-directory: bosh-stemcell/

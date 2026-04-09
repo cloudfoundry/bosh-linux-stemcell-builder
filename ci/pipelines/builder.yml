@@ -22,6 +22,7 @@ groups:
 
 - name: auto-bumps
   jobs:
+  - bump-deps
   - bump-bosh-agent
   #@ for blobstore_type in data.values.blobstore_types:
   - bump-bosh-blobstore-(@= blobstore_type @)
@@ -729,6 +730,40 @@ jobs:
       icon_url: https://i.imgur.com/A0Vlw5t.png
       text_file: slack-message/message
 
+- name: bump-deps
+  plan:
+    - in_parallel:
+        - get: bosh-linux-stemcell-builder
+        - get: bosh-stemcells-ci
+        - get: ruby-release
+        - get: bosh-ruby-release-registry-image
+        - get: weekly
+          trigger: true
+        - get: bosh-integration-image
+    - load_var: ruby_version
+      file: bosh-linux-stemcell-builder/.ruby-version
+      reveal: true
+    - task: bump-gems
+      image: bosh-ruby-release-registry-image
+      file: ruby-release/ci/tasks/shared/bump-gems.yml
+      input_mapping:
+        input-repo: bosh-linux-stemcell-builder
+      output_mapping:
+        output-repo: bosh-linux-stemcell-builder
+      params:
+        GIT_USER_NAME: CI Bot
+        GIT_USER_EMAIL: bots@cloudfoundry.org
+        PACKAGE: ruby-((.:ruby_version))
+        VENDOR: true
+    - task: test-unit
+      file: bosh-stemcells-ci/ci/tasks/test-unit.yml
+      image: bosh-integration-image
+      privileged: true
+    - put: bosh-linux-stemcell-builder-push
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
+
 - name: bump-bosh-agent
   plan:
   - get: bosh-agent
@@ -807,6 +842,14 @@ resources:
   source:
     initial_version: true
     interval: 24h
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 4:30 -0700
+    days:
+      - Saturday
+    initial_version: true
 
 - name: bosh-agent
   type: metalink-repository
@@ -1025,6 +1068,17 @@ resources:
   type: slack-notification
   source:
     url: ((slack_hook_url))
+
+- name: bosh-ruby-release-registry-image
+  type: registry-image
+  source:
+    repository: bosh/ruby-release
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
+- name: ruby-release
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/bosh-package-ruby-release.git
 
 - name: ubuntu_base
   type: registry-image
