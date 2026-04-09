@@ -17,8 +17,8 @@ resources:
   source:
     name: bosh-aws-xen-hvm-ubuntu-jammy-fips-go_agent
     auth:
-        access_key: hmac-access_key
-        secret_key: hmac-secret_key
+        access_key: ((access_key-credhub_ref))
+        secret_key: ((secret_key-credhub_ref))
 ```
 
 for this you need a service account setup with hmac keys
@@ -39,14 +39,15 @@ requirements:
 - [gcloud](https://cloud.google.com/sdk/docs/install)
 - [gsutil](https://cloud.google.com/storage/docs/gsutil_install)
 
-Login to the `cloud-foundry-310819` GCP project `gcloud auth login`
-
-setup access for cross project cloud buckets. reference: https://cloud.google.com/dataprep/docs/concepts/gcs-buckets
-replace PLACEHOLDER with the service account that is created in the previous steps for example 
-`test-dev@myproject.iam.gserviceaccount.com`
+Login to the `cloud-foundry-310819` GCP project `gcloud auth login` and setup
+access for cross-project buckets. In the example below replace PLACEHOLDER with
+the service account that is created in the previous steps. 
+Ex: `test-dev@myproject.iam.gserviceaccount.com`
 
 ```shell
 gsutil defacl ch -u PLACEHOLDER:READER gs://bosh-core-stemcells-fips
 gsutil acl ch -u PLACEHOLDER:READER gs://bosh-core-stemcells-fips
 gsutil -m acl ch -r -u PLACEHOLDER:READER gs://bosh-core-stemcells-fips
 ```
+
+Reference: https://cloud.google.com/dataprep/docs/concepts/gcs-buckets
