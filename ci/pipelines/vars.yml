@@ -1,19 +1,13 @@
 #@data/values
 ---
-lts: []
-
-oss:
-  - os: ubuntu-jammy
-    version: 1
-    os_name: ubuntu
-    os_version: jammy
-    branch: "ubuntu-jammy"
-    build_aws: true
-    build_fips: true
-    efi: false
 
 stemcell_details:
-  branch: "ubuntu-jammy"
+  branch: ubuntu-jammy
+  major_version: 1
+  os_version: "22.04"
+  os_name: ubuntu-jammy
+  os_short_name: jammy
+  use_efi: false
   include_iaas: [
     {iaas: alicloud, hypervisor: kvm},
     {iaas: aws, hypervisor: xen-hvm},
@@ -28,9 +22,6 @@ stemcell_details:
     {iaas: aws, hypervisor: xen-hvm},
     {iaas: google, hypervisor: kvm},
   ]
-  os: jammy
-  os_version: "22.04"
-  os_name: ubuntu-jammy
   subnet_int: "3"
 
 blobstore_types:
