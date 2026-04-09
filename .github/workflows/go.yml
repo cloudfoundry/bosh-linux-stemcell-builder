@@ -10,7 +10,7 @@ jobs:
     - uses: actions/setup-go@v6
       with:
         go-version-file: acceptance-tests/go.mod
-    - uses: golangci/golangci-lint-action@v6
+    - uses: golangci/golangci-lint-action@v9
       with:
         working-directory: acceptance-tests
     - name: Dry Run acceptance-tests
