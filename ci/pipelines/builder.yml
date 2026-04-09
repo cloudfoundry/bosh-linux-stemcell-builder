@@ -277,7 +277,6 @@ jobs:
       - build-os-image
     trigger: true
   - get: os-image-tarball
-    resource: os-image-tarball
     passed:
     - build-os-image
   - task: test-unit
@@ -466,7 +465,6 @@ jobs:
       resource: bosh-linux-stemcell-builder
     - get: stemcells-index
     - get: os-image-tarball
-      resource: os-image-tarball
       passed:
       - build-os-image
   - task: create-stemcell
@@ -740,6 +738,9 @@ jobs:
         - get: weekly
           trigger: true
         - get: bosh-integration-image
+        - get: os-image-tarball
+          passed:
+            - build-os-image
     - load_var: ruby_version
       file: bosh-linux-stemcell-builder/.ruby-version
       reveal: true
