@@ -12,8 +12,11 @@
 
     ```yaml
     #@data/values
-    oss:
-    - os: ubuntu-jammy
+    stemcell_details:
+      branch: ubuntu-jammy
+    # ...
+    blobstore_types:
+      - dav
     # ...
     ```
 
