@@ -5,7 +5,7 @@ jobs:
   unit_specs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with: { lfs: true }
     - uses: ruby/setup-ruby@v1
     - name: test-bosh-stemcell
