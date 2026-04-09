@@ -23,6 +23,7 @@ groups:
 - name: auto-bumps
   jobs:
   - bump-deps
+  - bump-golang-deps
   - bump-bosh-agent
   #@ for blobstore_type in data.values.blobstore_types:
   - bump-bosh-blobstore-(@= blobstore_type @)
@@ -765,6 +766,43 @@ jobs:
         repository: bosh-linux-stemcell-builder
         rebase: true
 
+- name: bump-golang-deps
+  plan:
+    - get: weekly
+      trigger: true
+    - get: bosh-stemcells-ci
+    - get: bosh-linux-stemcell-builder
+    - get: bosh-integration-image
+    - get: golang-release
+    - task: bump-deps
+      file: golang-release/ci/tasks/shared/bump-deps.yml
+      input_mapping:
+        input_repo: bosh-linux-stemcell-builder
+      output_mapping:
+        output_repo: bosh-linux-stemcell-builder
+      params:
+        SOURCE_PATH: acceptance-tests/
+    - task: acceptance-tests-dry-run
+      image: bosh-integration-image
+      config:
+        platform: linux
+        inputs:
+          - name: bosh-linux-stemcell-builder
+        run:
+          path: /bin/bash
+          args:
+            - -c
+            - |
+              set -eu -o pipefail
+              cd bosh-linux-stemcell-builder/acceptance-tests/
+              go run github.com/onsi/ginkgo/v2/ginkgo run -r --dry-run .
+        outputs:
+          - name: os-image-stemcell-builder-dockerfile
+    - put: bosh-linux-stemcell-builder-push
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
+
 - name: bump-bosh-agent
   plan:
   - get: bosh-agent
@@ -1080,6 +1118,12 @@ resources:
   type: git
   source:
     uri: https://github.com/cloudfoundry/bosh-package-ruby-release.git
+
+- name: golang-release
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/bosh-package-golang-release.git
+    branch: main
 
 - name: ubuntu_base
   type: registry-image
