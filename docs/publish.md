@@ -1,20 +1,27 @@
 # Publish a stemcell
 
-## Verify stemcell builds
+## Verify stemcells have built
 
-Whenever a USN (Ubuntu Security Notice) is published, a ticket is automatically
-created in the community-stemcell board
-(https://github.com/orgs/cloudfoundry/projects/4).
-There would also be a notification in the #bosh-private channel of the 
-Cloud Foundry slack.
+The following CI build groups process USN(s), and post a message to the 
+`#bosh-private` channel in the
+[Cloud Foundry slack](https://cloudfoundry.slack.com)
+- https://bosh.ci.cloudfoundry.org/teams/stemcell/pipelines/ubuntu-jammy-builder?group=automatic-triggers
+- https://bosh.ci.cloudfoundry.org/teams/stemcell/pipelines/ubuntu-noble-builder?group=automatic-triggers
 
-A USN triggers the stemcell build pipeline, when everything is successfully
-built, we can publish the new candidate stemcell version.
-Please check the latest build of the aggregate-candidate-stemcells job of the
-stemcell line you need to release (aggregate-candidate-stemcells),
-you should see a successful build which was triggered by the USN notice.
-Then, in the stemcells-publisher pipeline, check if google and aws light
-stemcells were successfully built as a result of the USN.
+A USN triggers the stemcell build pipeline to pick up newer packages which
+address the USN(s). Before publishing a new stemcell verify the latest build of
+`aggregate-candidate-stemcells` job for the stemcell line in question:
+- https://bosh.ci.cloudfoundry.org/teams/stemcell/pipelines/ubuntu-jammy-builder/jobs/aggregate-candidate-stemcells
+- https://bosh.ci.cloudfoundry.org/teams/stemcell/pipelines/ubuntu-noble-builder/jobs/aggregate-candidate-stemcells
+
+Look for a successful build triggered by the USN(s).
+
+In the publisher pipelines:
+- https://bosh.ci.cloudfoundry.org/teams/stemcell/pipelines/ubuntu-jammy-publisher
+- https://bosh.ci.cloudfoundry.org/teams/stemcell/pipelines/ubuntu-noble-publisher
+
+verify that the lite stemcell builds for Google and AWS have been successfully
+triggered by the USN(s).
 
 ## Publish stemcells
 
