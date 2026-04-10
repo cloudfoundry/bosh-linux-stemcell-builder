@@ -37,6 +37,7 @@ RUN apt-get update \
         dosfstools \
         fdisk \
         git \
+        git-lfs \
         golang \
         jq \
         kpartx \
