@@ -1,30 +1,40 @@
 # Creating a new stemcell line
 
-1. Create a new branch from the passing commit you want to release from. Use `{os_name}-{os_version}/{major}.x` format for branch name (e.g. `ubuntu-noble/1.x`).
+1. Create a new branch from the passing commit you want to release from. Use `ubuntu-${short_name}` format for branch name.
 
-    `git checkout -b <<BRANCH_NAME>> {commit}`
+   ```shell
+   export short_name="jammy"
+   
+   git switch -c ubuntu-${short_name} {commit}
+   ```
 
-1. Add, commit, and push the new branch.
+2. Update `ci/pipelines/vars.yml` with the appropriate values
 
-    ```
-    git push origin <<BRANCH_NAME>>
-    ```
-
-1. Switch back to master branch
-
-    ```
-    git checkout master
-    ```
-
-1. On master, update `ci/{os_name}-{os_version}/configure-aggregated-pipeline.sh` with the new branch details using the previous release branch as an example. Specifically, be sure to update the interpolated variables for the correct branch. For `initial_version`, use the same value of the stemcell produced by the commit in the `master` pipeline (e.g. `2.0.0`).
-
-    ```
-    ./ci/{os_name}-{os_version}/configure-aggregated-pipeline.sh
+    ```yaml
+    #@data/values
+    stemcell_details:
+      branch: ubuntu-jammy
+    # ...
+    blobstore_types:
+      - dav
+    # ...
     ```
 
-1. Once configured, the stemcell should automatically trigger and create the next minor version of the stemcell (e.g. `2.1.0`).
+3. Update `STEMCELL_LINE` in `ci/configure.sh`:
+ 
+    ```shell
+    STEMCELL_LINE="ubuntu-${short_name}"
+    ```
 
+4. Add, commit, and push the new branch.
 
-# References
+    ```shell
+    git push --set-upstream origin HEAD
+    ```
+5. Configure the new pipeline:
 
-* [Stemcell Support Matrix](https://docs.google.com/spreadsheets/d/11LgvmuR-XxXpKB-UVi91FL0nkITGhoB-G1NHPwfnweo/edit) (internal only)
+    ```shell
+    ./ci/configure.sh
+    ```
+
+6. Once configured, the stemcell pipeline should automatically trigger.

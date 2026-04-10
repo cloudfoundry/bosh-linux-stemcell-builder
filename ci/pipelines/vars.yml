@@ -1,19 +1,12 @@
 #@data/values
 ---
-lts: []
-
-oss:
-  - os: ubuntu-noble
-    version: 1
-    os_name: ubuntu
-    os_version: noble
-    branch: "ubuntu-noble"
-    build_aws: true
-    build_fips: false
-    efi: true
-
 stemcell_details:
-  branch: "ubuntu-noble"
+  branch: ubuntu-noble
+  major_version: 1
+  os_version: "24.04"
+  os_name: ubuntu-noble
+  os_short_name: noble
+  use_efi: true
   include_iaas: [
     {iaas: alicloud, hypervisor: kvm},
     {iaas: aws, hypervisor: xen-hvm},
@@ -24,9 +17,6 @@ stemcell_details:
     {iaas: warden, hypervisor: boshlite}
   ]
   include_fips_iaas: []
-  os: noble
-  os_version: "24.04"
-  os_name: ubuntu-noble
   subnet_int: "0"
 
 blobstore_types:
@@ -34,4 +24,3 @@ blobstore_types:
 - gcs
 - s3
 - azure-storage
-
