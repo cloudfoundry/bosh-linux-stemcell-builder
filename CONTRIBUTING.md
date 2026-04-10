@@ -11,3 +11,4 @@ an "Ubuntu SHORT_NAME" based stemcell will be on the branch:
 As of `2026-04-03` the following stemcell lines / branches are supported:
 - Ubuntu Jammy / `ubuntu-jammy`
 - Ubuntu Noble / `ubuntu-noble`
+- Ubuntu Resolute / `ubuntu-resolute`

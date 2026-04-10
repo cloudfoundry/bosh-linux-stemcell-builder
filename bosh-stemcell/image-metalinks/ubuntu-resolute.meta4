@@ -1,0 +1,19 @@
+<metalink xmlns="urn:ietf:params:xml:ns:metalink">
+  <file name="ubuntu-resolute.tgz">
+    <hash type="sha-512">placeholder-update-when-resolute-os-image-is-published</hash>
+    <hash type="sha-256">placeholder</hash>
+    <hash type="sha-1">placeholder</hash>
+    <size>0</size>
+    <url>https://storage.googleapis.com/bosh-os-images/ubuntu-resolute/ubuntu-resolute.tgz</url>
+    <version>0.0.0</version>
+  </file>
+  <file name="usn-log.json">
+    <hash type="sha-512">placeholder</hash>
+    <hash type="sha-256">placeholder</hash>
+    <size>1</size>
+    <url>https://storage.googleapis.com/bosh-os-images/ubuntu-resolute/usn-log.json</url>
+    <version>0.0.0</version>
+  </file>
+  <generator>metalink-repository-resource/0.0.0</generator>
+  <published>1970-01-01T00:00:00Z</published>
+</metalink>

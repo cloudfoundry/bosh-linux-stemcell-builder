@@ -2,7 +2,7 @@ require "bosh/stemcell/arch"
 require "spec_helper"
 require "shellout_types/file"
 
-describe "Ubuntu 24.04 OS image", os_image: true do
+describe "Ubuntu 26.04 OS image", os_image: true do
   it_behaves_like "every OS image" do
     let(:syslog_config) { file("/etc/audit/plugins.d/syslog.conf") }
   end
@@ -32,9 +32,9 @@ describe "Ubuntu 24.04 OS image", os_image: true do
 
   describe "base_apt" do
     describe file("/etc/apt/sources.list") do
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-updates main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-security main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) resolute main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) resolute-updates main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) resolute-security main universe multiverse' }
     end
 
     describe file("/lib/systemd/system/monit.service") do
@@ -149,14 +149,14 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   context "package signature verification (stig: V-38462) (stig: V-38483)" do
-    # verify default behavior was not changed
     describe command("grep -R AllowUnauthenticated /etc/apt/apt.conf.d/") do
       its(:stdout) { should eq("") }
     end
   end
 
   context "official Ubuntu gpg key is installed (stig: V-38476)" do
-    describe command("apt-key list") do
+    # apt-key is deprecated in Resolute; keys live in /usr/share/keyrings as binary GPG files.
+    describe command("gpg --no-default-keyring --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --list-keys 2>/dev/null") do
       its(:stdout) { should include("Ubuntu Archive Automatic Signing Key") }
     end
   end
@@ -193,6 +193,12 @@ describe "Ubuntu 24.04 OS image", os_image: true do
     end
   end
 
+  context "display the number of unsuccessful logon/access attempts since the last successful logon/access (stig: V-51875)" do
+    describe file("/etc/pam.d/common-password") do
+      its(:content) { should match(/^session\toptional\t\t\tpam_lastlog2\.so showfailed/) }
+    end
+  end
+
   # V-38498 and V-38495 are the package defaults and cannot be configured
   context "ensure auditd is installed (stig: V-38498) (stig: V-38495)" do
     describe package("auditd") do
@@ -201,15 +207,16 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   context "ensure auditd file permissions and ownership (stig: V-38663) (stig: V-38664) (stig: V-38665)" do
+    # auvirt (/usr/bin/auvirt) and autrace (/sbin/autrace) were removed from the
+    # auditd package in Ubuntu 26.04. auvirt was deprecated upstream; autrace was
+    # dropped when audit transitioned away from the legacy ptrace-based tracing model.
     [[0o644, "/usr/share/lintian/overrides/auditd"],
-      [0o755, "/usr/bin/auvirt"],
       [0o755, "/usr/bin/ausyscall"],
       [0o755, "/usr/bin/aulastlog"],
       [0o755, "/usr/bin/aulast"],
       [0o750, "/var/log/audit"],
       [0o755, "/sbin/aureport"],
       [0o755, "/sbin/auditd"],
-      [0o755, "/sbin/autrace"],
       [0o755, "/sbin/ausearch"],
       [0o755, "/sbin/augenrules"],
       [0o755, "/sbin/auditctl"],
@@ -295,12 +302,6 @@ describe "Ubuntu 24.04 OS image", os_image: true do
     end
   end
 
-  context "display the number of unsuccessful logon/access attempts since the last successful logon/access (stig: V-51875)" do
-    describe file("/etc/pam.d/common-password") do
-      its(:content) { should match(/session\toptional\t\t\tpam_lastlog2\.so showfailed/) }
-    end
-  end
-
   context "ensure whoopsie and apport are not installed (CIS-4.1)" do
     describe package("apport") do
       it { should_not be_installed }
@@ -314,9 +315,15 @@ describe "Ubuntu 24.04 OS image", os_image: true do
     describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
       it("exits 0") { expect(subject.exit_status).to eq(0) }
     end
+    describe command("getent group wheel") do
+      its(:exit_status) { should eq(0) }
+      its(:stdout) { should match(/root/) }
+      its(:stdout) { should match(/vcap/) }
+    end
     describe user("vcap") do
       it { should exist }
       it { should be_in_group "sudo" }
+      it { should be_in_group "wheel" }
     end
   end
 
@@ -357,17 +364,16 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         _apt:x:42:65534::/nonexistent:/usr/sbin/nologin
         nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
         systemd-network:x:998:998:systemd Network Management:/:/usr/sbin/nologin
-        systemd-timesync:x:996:996:systemd Time Synchronization:/:/usr/sbin/nologin
-        dhcpcd:x:100:65534:DHCP Client Daemon,,,:/usr/lib/dhcpcd:/bin/false
-        messagebus:x:101:101::/nonexistent:/usr/sbin/nologin
-        syslog:x:102:102::/nonexistent:/usr/sbin/nologin
-        systemd-resolve:x:991:991:systemd Resolver:/:/usr/sbin/nologin
-        uuidd:x:103:104::/run/uuidd:/usr/sbin/nologin
-        _chrony:x:104:106:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
-        _runit-log:x:999:990:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
-        sshd:x:105:65534::/run/sshd:/usr/sbin/nologin
-        tcpdump:x:106:108::/nonexistent:/usr/sbin/nologin
-        polkitd:x:989:989:User for polkitd:/:/usr/sbin/nologin
+        dhcpcd:x:996:996:DHCP Client Daemon:/usr/lib/dhcpcd:/bin/false
+        messagebus:x:995:995:System Message Bus:/nonexistent:/usr/sbin/nologin
+        syslog:x:100:101::/nonexistent:/usr/sbin/nologin
+        systemd-resolve:x:989:989:systemd Resolver:/:/usr/sbin/nologin
+        _chrony:x:988:988:Chrony Daemon:/var/lib/chrony:/usr/sbin/nologin
+        uuidd:x:101:103::/run/uuidd:/usr/sbin/nologin
+        _runit-log:x:987:987:runit svlogd user:/nonexistent:/usr/sbin/nologin
+        sshd:x:986:65534:sshd user:/run/sshd:/usr/sbin/nologin
+        tcpdump:x:985:985:tcpdump:/nonexistent:/usr/sbin/nologin
+        polkitd:x:984:984:User for polkitd:/:/usr/sbin/nologin
         vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
       HERE
     end
@@ -392,17 +398,16 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         irc:\*:(\d{5}):0:99999:7:::
         _apt:\*:(\d{5}):0:99999:7:::
         nobody:\*:(\d{5}):0:99999:7:::
-        systemd-network:!\*:(\d{5})::::::
-        systemd-timesync:!\*:(\d{5})::::::
-        dhcpcd:!:(\d{5})::::::
-        messagebus:!:(\d{5})::::::
+        systemd-network:!\*:(\d{5}):::::1:
+        dhcpcd:!\*:(\d{5}):::::1:
+        messagebus:!\*:(\d{5})::::::
         syslog:!:(\d{5})::::::
-        systemd-resolve:!\*:(\d{5})::::::
+        systemd-resolve:!\*:(\d{5}):::::1:
+        _chrony:!\*:(\d{5})::::::
         uuidd:!:(\d{5})::::::
-        _chrony:!:(\d{5})::::::
-        _runit-log:!:(\d{5})::::::
-        sshd:!:(\d{5})::::::
-        tcpdump:!:(\d{5})::::::
+        _runit-log:!\*:(\d{5})::::::
+        sshd:!\*:(\d{5})::::::
+        tcpdump:!\*:(\d{5}):::::1:
         polkitd:!\*:(\d{5})::::::
         vcap:(.+):(\d{5}):1:99999:7:::
       END_SHADOW
@@ -453,26 +458,28 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         systemd-journal:x:999:
         systemd-network:x:998:
         crontab:x:997:
-        systemd-timesync:x:996:
-        input:x:995:
-        sgx:x:994:
-        kvm:x:993:
-        render:x:992:
-        messagebus:x:101:
-        syslog:x:102:
-        systemd-resolve:x:991:
-        netdev:x:103:
-        uuidd:x:104:
-        _ssh:x:105:
-        _chrony:x:106:
-        _runit-log:x:990:
-        rdma:x:107:
-        tcpdump:x:108:
-        polkitd:x:989:
-        admin:x:988:vcap
+        dhcpcd:x:996:
+        messagebus:x:995:
+        syslog:x:101:
+        input:x:994:
+        sgx:x:993:
+        clock:x:992:
+        kvm:x:991:
+        render:x:990:
+        systemd-resolve:x:989:
+        _chrony:x:988:
+        netdev:x:102:
+        uuidd:x:103:
+        _ssh:x:104:
+        _runit-log:x:987:
+        rdma:x:105:
+        tcpdump:x:985:
+        polkitd:x:984:
+        admin:x:986:vcap
         vcap:x:1000:syslog
         bosh_sshers:x:1001:vcap
         bosh_sudoers:x:1002:
+        wheel:x:1003:root,vcap
       HERE
     end
 
@@ -519,26 +526,28 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         systemd-journal:!*::
         systemd-network:!*::
         crontab:!*::
-        systemd-timesync:!*::
+        dhcpcd:!*::
+        messagebus:!*::
+        syslog:!::
         input:!*::
         sgx:!*::
+        clock:!*::
         kvm:!*::
         render:!*::
-        messagebus:!::
-        syslog:!::
         systemd-resolve:!*::
+        _chrony:!*::
         netdev:!::
         uuidd:!::
         _ssh:!::
-        _chrony:!::
-        _runit-log:!::
+        _runit-log:!*::
         rdma:!::
-        tcpdump:!::
+        tcpdump:!*::
         polkitd:!*::
         admin:!::vcap
         vcap:!::syslog
         bosh_sshers:!::vcap
         bosh_sudoers:!::
+        wheel:!::root,vcap
       HERE
     end
   end

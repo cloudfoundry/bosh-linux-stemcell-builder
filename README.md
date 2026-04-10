@@ -3,10 +3,14 @@
 This repo contains tools for creating BOSH stemcells. A stemcell is a bootable
 disk image that is used as a template by a BOSH Director to create VMs.
 
+This branch builds stemcells for **Ubuntu 26.04 LTS (Resolute)**. For other
+Ubuntu releases, switch to the appropriate branch (for example `ubuntu-noble`
+for 24.04).
+
 ## Quick Start: Building a Stemcell Locally
 
 ```bash
-export short_name="noble"
+export short_name="resolute"
 
 git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
@@ -14,7 +18,15 @@ git checkout ubuntu-${short_name}
 mkdir -p tmp
 docker build \
    --platform linux/amd64 \
-   --build-arg SYFT_VERSION=v1.42.3 \
+   --build-arg BASE_IMAGE="ubuntu:${short_name}" \
+   --build-arg META4_CLI_URL="https://github.com/dpb587/metalink/releases/download/v0.5.0/meta4-0.5.0-linux-amd64" \
+   --build-arg SYFT_CLI_URL="https://github.com/anchore/syft/releases/download/v1.42.3/syft_1.42.3_linux_amd64.tar.gz" \
+   --build-arg YQ_CLI_URL="https://github.com/mikefarah/yq/releases/download/v4.52.5/yq_linux_amd64" \
+   --build-arg RUBY_INSTALL_URL="https://github.com/postmodern/ruby-install/releases/download/v0.10.2/ruby-install-0.10.2.tar.gz" \
+   --build-arg RUBY_VERSION="$(cat .ruby-version)" \
+   --build-arg GEM_HOME="/usr/local/bundle" \
+   --build-arg OVF_TOOL_INSTALLER="VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle" \
+   --build-arg OVF_TOOL_INSTALLER_SHA1="6c24e473be49c961cfc3bb16774b52b48e822991" \
    -t bosh/os-image-stemcell-builder:${short_name} \
    ci/docker/os-image-stemcell-builder/
 docker run \
@@ -56,7 +68,7 @@ installed in the operating system or when making changes to the configuration
 of those packages.
 
 ```bash
-export short_name="noble"
+export short_name="resolute"
 
 bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
 ```
@@ -78,7 +90,7 @@ The arguments to the `stemcell:build_os_image` rake task follow:
 Rebuild the stemcell when you are making and testing BOSH-specific changes such as a new BOSH agent.
 
 ```bash
-export short_name="noble"
+export short_name="resolute"
 export build_number="0.0.8"
 
 bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz,${build_number}]
@@ -95,6 +107,7 @@ The arguments to `stemcell:build` are:
     - `google` → `kvm`
     - `openstack` → `kvm`
     - `vsphere` → `esxi`
+    - `warden` → `warden`
 3. `operating_system_name` (`ubuntu`): Type of OS. Same as
    `stemcell:build_os_image`.
 4. `operating_system_version` (`<short_name>`): OS release. Same as
@@ -114,7 +127,7 @@ the stemcell would be at
 upload the stemcell to a vSphere BOSH Director:
 
 ```bash
-export short_name="noble"
+export short_name="resolute"
 
 bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-${short_name}-go_agent.tgz
 ```
@@ -135,7 +148,6 @@ the OS image** at the `tmp/ubuntu_base_image.tgz` and you're within the Docker
 container):
 
 ```shell
-  export short_name="noble"
   cd /opt/bosh/bosh-stemcell
   bundle install
   OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_spec.rb
@@ -208,7 +220,7 @@ If you find yourself debugging any of the above processes, here is what you need
    Example usage:
 
    ```shell
-   export short_name="noble"
+   export short_name="resolute"
    
    bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
    ```
@@ -219,8 +231,8 @@ If you find yourself debugging any of the above processes, here is what you need
   modifications you can rerun the tests (without rebuilding OS image). Details
   in section `How to run tests for OS Images`
 * If the Stemcell has been built, and you are only updating tests, you do not
-  need to re-build the stemcell. You can simply rerun the tests - without
-  rebuilding Stemcell. Details in section `How to run tests for Stemcell`
+  need to re-build the stemcell. You can simply rerun the tests (without
+  rebuilding Stemcell). Details in section `How to run tests for Stemcell`
 * It's possible to verify OS/Stemcell changes without making a deployment using
   the stemcell. For a vSphere-specific Ubuntu stemcell, the filesystem is
   available at `/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot`
@@ -249,7 +261,7 @@ You will need the ovftool installer present in
 Rebuild the container with:
 
 ```shell
-export short_name="noble"
+export short_name="resolute"
 
 docker build \
     --platform linux/amd64 \
@@ -280,7 +292,7 @@ gsutil cp MY_OVFTOOL_FILE gs://bosh-vmware-ovftool/MY_OS/
 Example:
 
 ```shell
-export short_name="noble"
+export short_name="resolute"
 
 gsutil cp VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle gs://bosh-vmware-ovftool/${short_name}/
 ```
@@ -387,4 +399,3 @@ When switching from the old pipeline to the new one, don't forget to:
   whatever the public bucket should be
 * update the tasks YAML to point to tasks in the `os-images` directory
 * rename this directory from `new`
-

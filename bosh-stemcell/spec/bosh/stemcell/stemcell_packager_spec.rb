@@ -205,6 +205,20 @@ sbom.cdx.json
       end
     end
 
+    context "when packaging Ubuntu Resolute (26.04)" do
+      let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "resolute") }
+
+      it "writes stemcell.MF with ubuntu-resolute and returns resolute tarball path" do
+        expect(packager.package("raw")).to eq(
+          File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-resolute-raw.tgz")
+        )
+
+        actual_manifest = YAML.load_file(File.join(work_dir, "stemcell/stemcell.MF"))
+        expect(actual_manifest["name"]).to eq("bosh-fake_infra-fake_hypervisor-ubuntu-resolute-raw")
+        expect(actual_manifest["operating_system"]).to eq("ubuntu-resolute")
+      end
+    end
+
     context "when packaging a non standard os variant" do
       let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "FOO-fips") }
 

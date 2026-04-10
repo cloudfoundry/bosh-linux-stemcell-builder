@@ -3,7 +3,7 @@
 # See the man page for details on how to write a sudoers file.
 # Defaults
 
-Defaults        !lecture,tty_tickets,!fqdn
+Defaults        !lecture,!fqdn
 
 # Uncomment to allow members of group sudo to not need a password
 # %sudo ALL=NOPASSWD: ALL

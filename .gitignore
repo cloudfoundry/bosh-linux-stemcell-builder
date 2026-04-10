@@ -13,5 +13,7 @@ acceptance-tests/syslog-release
 acceptance-tests/os-conf-release
 
 ci/docker/os-image-stemcell-builder/VMware-ovftool-*.bundle
+ci/docker/VMware-ovftool-*.bundle
+ci/docker/*/VMware-ovftool-*.bundle
 
 tmp/

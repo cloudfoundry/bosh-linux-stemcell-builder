@@ -6,17 +6,19 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/etc/settings.bash
 
+# TODO: Decide if we want to include runit (which provides chpst) or break a lot of releases and tell them to use BPM or setpriv
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
 curl wget bison libreadline6-dev rng-tools \
-libxml2 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
+libxml2-16 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
 flex psmisc apparmor-utils iptables nftables sysstat \
 rsync openssh-server traceroute libncurses5-dev quota \
 libaio1t64 gdb libcap2-bin libcap2-dev libbz2-dev \
 cmake uuid-dev libgcrypt-dev ca-certificates \
-mg htop module-assistant debhelper runit parted \
+htop debhelper parted \
 cloud-guest-utils anacron software-properties-common \
 xfsprogs gdisk chrony dbus nvme-cli rng-tools fdisk \
-ethtool libpam-pwquality gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
+ethtool libpam-pwquality libpam-lastlog2 gpg-agent libcurl4 libcurl4-openssl-dev \
+resolvconf net-tools ifupdown runit"
 
 pkg_mgr purge netplan.io
 run_in_chroot $chroot "
