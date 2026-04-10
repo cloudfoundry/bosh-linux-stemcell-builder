@@ -22,6 +22,8 @@ groups:
 
 - name: auto-bumps
   jobs:
+  - bump-deps
+  - bump-golang-deps
   - bump-bosh-agent
   #@ for blobstore_type in data.values.blobstore_types:
   - bump-bosh-blobstore-(@= blobstore_type @)
@@ -75,7 +77,7 @@ jobs:
         build: os-image-stemcell-builder-dockerfile/ci/docker/os-image-stemcell-builder
         build_args_file: docker-build-args/docker-build-args.json
         build_args:
-          BASE_IMAGE: ubuntu:(@= data.values.stemcell_details.os @)
+          BASE_IMAGE: ubuntu:(@= data.values.stemcell_details.os_short_name @)
           OVF_TOOL_INSTALLER: "VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle"
           OVF_TOOL_INSTALLER_SHA1: "6c24e473be49c961cfc3bb16774b52b48e822991"
       get_params:
@@ -90,21 +92,21 @@ jobs:
       - get: os-image-stemcell-builder-registry-image
       - get: bosh-linux-stemcell-builder
         resource: bosh-linux-stemcell-builder
-      - get: (@= data.values.stemcell_details.os @)-usn
+      - get: (@= data.values.stemcell_details.os_short_name @)-usn
         version: every
         trigger: true
-      - get: (@= data.values.stemcell_details.os @)-usn-gh-json
+      - get: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
       - get: usn-log
       - get: high-critical-unfound-usns
     - task: check-if-usn-is-in-github
       file: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.yml
       image: os-image-stemcell-builder-registry-image
       input_mapping:
-        usn: (@= data.values.stemcell_details.os @)-usn
-        usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+        usn: (@= data.values.stemcell_details.os_short_name @)-usn
+        usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         unfound-usns: high-critical-unfound-usns
       vars:
-        image_os_tag: (@= data.values.stemcell_details.os @)
+        image_os_tag: (@= data.values.stemcell_details.os_short_name @)
     - put: high-critical-unfound-usns
       params:
         file: updated-unfound-usns/usns.json
@@ -115,11 +117,11 @@ jobs:
         image: os-image-stemcell-builder-registry-image
         input_mapping:
           usns: found-usns
-          usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+          usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         params:
-          OS: (@= data.values.stemcell_details.os @)
+          OS: (@= data.values.stemcell_details.os_short_name @)
         vars:
-          image_os_tag: (@= data.values.stemcell_details.os @)
+          image_os_tag: (@= data.values.stemcell_details.os_short_name @)
         on_success:
           in_parallel:
             steps:
@@ -150,7 +152,7 @@ jobs:
       #!   trigger: true
       #!   passed:
       #!     - process-high-critical-cves
-      - get: (@= data.values.stemcell_details.os @)-usn-gh-json
+      - get: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         passed:
           - process-high-critical-cves
     - task: check-usn-packages
@@ -158,11 +160,11 @@ jobs:
       image: os-image-stemcell-builder-registry-image
       input_mapping:
         usn-log-in: usn-log
-        usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+        usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
       params:
-        OS: (@= data.values.stemcell_details.os @)
+        OS: (@= data.values.stemcell_details.os_short_name @)
       vars:
-        image_os_tag: (@= data.values.stemcell_details.os @)
+        image_os_tag: (@= data.values.stemcell_details.os_short_name @)
     - task: write-message
       file: bosh-stemcells-ci/ci/tasks/write-bump-message.yml
       image: bosh-integration-image
@@ -182,21 +184,21 @@ jobs:
       - get: os-image-stemcell-builder-registry-image
       - get: bosh-linux-stemcell-builder
         resource: bosh-linux-stemcell-builder
-      - get: (@= data.values.stemcell_details.os @)-usn-low-medium
+      - get: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
         version: every
         trigger: true
       - get: usn-log
-      - get: (@= data.values.stemcell_details.os @)-usn-gh-json
+      - get: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
       - get: low-medium-unfound-usns
     - task: check-if-usn-is-in-github
       file: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.yml
       image: os-image-stemcell-builder-registry-image
       input_mapping:
-        usn: (@= data.values.stemcell_details.os @)-usn-low-medium
-        usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+        usn: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
+        usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         unfound-usns: low-medium-unfound-usns
       vars:
-        image_os_tag: (@= data.values.stemcell_details.os @)
+        image_os_tag: (@= data.values.stemcell_details.os_short_name @)
     - put: low-medium-unfound-usns
       params:
         file: updated-unfound-usns/usns.json
@@ -207,11 +209,11 @@ jobs:
         image: os-image-stemcell-builder-registry-image
         input_mapping:
           usns: found-usns
-          usn-gh-json: (@= data.values.stemcell_details.os @)-usn-gh-json
+          usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         params:
-          OS: (@= data.values.stemcell_details.os @)
+          OS: (@= data.values.stemcell_details.os_short_name @)
         vars:
-          image_os_tag: (@= data.values.stemcell_details.os @)
+          image_os_tag: (@= data.values.stemcell_details.os_short_name @)
         on_success:
           put: usn-log
           params:
@@ -243,10 +245,10 @@ jobs:
     image: os-image-stemcell-builder-registry-image
     params:
       OPERATING_SYSTEM_NAME: ubuntu
-      OPERATING_SYSTEM_VERSION: (@= data.values.stemcell_details.os @)
+      OPERATING_SYSTEM_VERSION: (@= data.values.stemcell_details.os_short_name @)
     privileged: true
     vars:
-      image_os_tag: (@= data.values.stemcell_details.os @)
+      image_os_tag: (@= data.values.stemcell_details.os_short_name @)
   - put: os-image-tarball
     params:
       files:
@@ -276,7 +278,6 @@ jobs:
       - build-os-image
     trigger: true
   - get: os-image-tarball
-    resource: os-image-tarball
     passed:
     - build-os-image
   - task: test-unit
@@ -465,7 +466,6 @@ jobs:
       resource: bosh-linux-stemcell-builder
     - get: stemcells-index
     - get: os-image-tarball
-      resource: os-image-tarball
       passed:
       - build-os-image
   - task: create-stemcell
@@ -477,14 +477,14 @@ jobs:
       IAAS: #@ IAAS
       OS_NAME: ubuntu
       S3_API_ENDPOINT: storage.googleapis.com
-      OS_VERSION: (@= data.values.stemcell_details.os @)(@= FIPS @)
+      OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)
       STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
       AGENT_SUFFIX: ""
       #@ if/end FIPS != "":
       UBUNTU_ADVANTAGE_TOKEN: ((ubuntu_advantage_token))
     privileged: true
     vars:
-      image_os_tag: (@= data.values.stemcell_details.os @)
+      image_os_tag: (@= data.values.stemcell_details.os_short_name @)
   - in_parallel:
     - put: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
       attempts: 3
@@ -576,7 +576,7 @@ jobs:
         file: bosh-stemcells-ci/ci/tasks/bats/iaas/gcp/prepare-bats-config.yml
         image: bosh-integration-image
         params:
-          VARS_STEMCELL_NAME: bosh-google-kvm-ubuntu-(@= data.values.stemcell_details.os @)
+          VARS_STEMCELL_NAME: bosh-google-kvm-ubuntu-(@= data.values.stemcell_details.os_short_name @)
           VARS_NETWORK_DEFAULT: bosh-concourse
           VARS_AVAILABILITY_ZONE: europe-north2-a
           VARS_MACHINE_TYPE: e2-standard-2
@@ -642,7 +642,7 @@ jobs:
       FROM_BUCKET_NAME: bosh-core-stemcells-candidate-fips
       FROM_INDEX: dev
       OS_NAME: ubuntu
-      OS_VERSION: (@= data.values.stemcell_details.os @)-fips
+      OS_VERSION: (@= data.values.stemcell_details.os_short_name @)-fips
       TO_BUCKET_NAME: bosh-core-stemcells-candidate-fips
       TO_INDEX: candidate
       AWS_ENDPOINT: "https://storage.googleapis.com"
@@ -662,7 +662,7 @@ jobs:
       FROM_BUCKET_NAME: bosh-core-stemcells-candidate
       FROM_INDEX: dev
       OS_NAME: ubuntu
-      OS_VERSION: (@= data.values.stemcell_details.os @)
+      OS_VERSION: (@= data.values.stemcell_details.os_short_name @)
       TO_BUCKET_NAME: bosh-core-stemcells-candidate
       TO_INDEX: candidate
       AWS_ENDPOINT: "https://storage.googleapis.com"
@@ -681,7 +681,7 @@ jobs:
 
 - name: notify-of-usn
   plan:
-  - get: (@= data.values.stemcell_details.os @)-usn
+  - get: (@= data.values.stemcell_details.os_short_name @)-usn
     passed:
       - process-high-critical-cves
   - get: bosh-integration-image
@@ -693,7 +693,7 @@ jobs:
     image: bosh-integration-image
     config:
       inputs:
-      - name: (@= data.values.stemcell_details.os @)-usn
+      - name: (@= data.values.stemcell_details.os_short_name @)-usn
       outputs:
       - name: slack-message
       platform: linux
@@ -719,8 +719,8 @@ jobs:
             }
           }
           EOF
-          cat (@= data.values.stemcell_details.os @)-usn/usn.json | jq -r "$(cat template.json)" | tee slack-message/attachments
-          cat (@= data.values.stemcell_details.os @)-usn/usn.json | jq -r '"New USN for (@= data.values.stemcell_details.os @): *<\(.url)|\(.title)>*"' | tee slack-message/message
+          cat (@= data.values.stemcell_details.os_short_name @)-usn/usn.json | jq -r "$(cat template.json)" | tee slack-message/attachments
+          cat (@= data.values.stemcell_details.os_short_name @)-usn/usn.json | jq -r '"New USN for (@= data.values.stemcell_details.os_short_name @): *<\(.url)|\(.title)>*"' | tee slack-message/message
         path: /bin/bash
   - put: slack-alert
     params:
@@ -728,6 +728,80 @@ jobs:
       channel: ((usn_notifications_slack_channel_name))
       icon_url: https://i.imgur.com/A0Vlw5t.png
       text_file: slack-message/message
+
+- name: bump-deps
+  plan:
+    - in_parallel:
+        - get: bosh-linux-stemcell-builder
+        - get: bosh-stemcells-ci
+        - get: ruby-release
+        - get: bosh-ruby-release-registry-image
+        - get: weekly
+          trigger: true
+        - get: bosh-integration-image
+        - get: os-image-tarball
+          passed:
+            - build-os-image
+    - load_var: ruby_version
+      file: bosh-linux-stemcell-builder/.ruby-version
+      reveal: true
+    - task: bump-gems
+      image: bosh-ruby-release-registry-image
+      file: ruby-release/ci/tasks/shared/bump-gems.yml
+      input_mapping:
+        input-repo: bosh-linux-stemcell-builder
+      output_mapping:
+        output-repo: bosh-linux-stemcell-builder
+      params:
+        GIT_USER_NAME: CI Bot
+        GIT_USER_EMAIL: bots@cloudfoundry.org
+        PACKAGE: ruby-((.:ruby_version))
+        VENDOR: true
+    - task: test-unit
+      file: bosh-stemcells-ci/ci/tasks/test-unit.yml
+      image: bosh-integration-image
+      privileged: true
+    - put: bosh-linux-stemcell-builder-push
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
+
+- name: bump-golang-deps
+  plan:
+    - get: weekly
+      trigger: true
+    - get: bosh-stemcells-ci
+    - get: bosh-linux-stemcell-builder
+    - get: bosh-integration-image
+    - get: golang-release
+    - task: bump-deps
+      file: golang-release/ci/tasks/shared/bump-deps.yml
+      input_mapping:
+        input_repo: bosh-linux-stemcell-builder
+      output_mapping:
+        output_repo: bosh-linux-stemcell-builder
+      params:
+        SOURCE_PATH: acceptance-tests/
+    - task: acceptance-tests-dry-run
+      image: bosh-integration-image
+      config:
+        platform: linux
+        inputs:
+          - name: bosh-linux-stemcell-builder
+        run:
+          path: /bin/bash
+          args:
+            - -c
+            - |
+              set -eu -o pipefail
+              cd bosh-linux-stemcell-builder/acceptance-tests/
+              go run github.com/onsi/ginkgo/v2/ginkgo run -r --dry-run .
+        outputs:
+          - name: os-image-stemcell-builder-dockerfile
+    - put: bosh-linux-stemcell-builder-push
+      params:
+        repository: bosh-linux-stemcell-builder
+        rebase: true
 
 - name: bump-bosh-agent
   plan:
@@ -807,6 +881,14 @@ resources:
   source:
     initial_version: true
     interval: 24h
+- name: weekly
+  type: time
+  source:
+    start: 3:00 -0700
+    stop: 4:30 -0700
+    days:
+      - Saturday
+    initial_version: true
 
 - name: bosh-agent
   type: metalink-repository
@@ -997,14 +1079,14 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-deployment
-- name: (@= data.values.stemcell_details.os @)-usn-low-medium
+- name: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
   type: usn
   source:
     os: ubuntu-(@= data.values.stemcell_details.os_version @)-lts
     priorities:
     - low
     - medium
-- name: (@= data.values.stemcell_details.os @)-usn
+- name: (@= data.values.stemcell_details.os_short_name @)-usn
   type: usn
   source:
     os: ubuntu-(@= data.values.stemcell_details.os_version @)-lts
@@ -1014,7 +1096,7 @@ resources:
     severities:
     - high
     - critical
-- name: (@= data.values.stemcell_details.os @)-usn-gh-json
+- name: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
   type: git
   source:
     branch: main
@@ -1026,11 +1108,28 @@ resources:
   source:
     url: ((slack_hook_url))
 
+- name: bosh-ruby-release-registry-image
+  type: registry-image
+  source:
+    repository: bosh/ruby-release
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
+- name: ruby-release
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/bosh-package-ruby-release.git
+
+- name: golang-release
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/bosh-package-golang-release.git
+    branch: main
+
 - name: ubuntu_base
   type: registry-image
   source:
     repository: ubuntu
-    tag: (@= data.values.stemcell_details.os @)
+    tag: (@= data.values.stemcell_details.os_short_name @)
     username: ((dockerhub_username))
     password: ((dockerhub_password))
 
@@ -1038,7 +1137,7 @@ resources:
   type: registry-image
   source:
     repository: bosh/os-image-stemcell-builder
-    tag: (@= data.values.stemcell_details.os @)
+    tag: (@= data.values.stemcell_details.os_short_name @)
     username: ((dockerhub_username))
     password: ((dockerhub_password))
 
@@ -1046,7 +1145,7 @@ resources:
   type: docker-image
   source:
     repository: bosh/os-image-stemcell-builder
-    tag: (@= data.values.stemcell_details.os @)
+    tag: (@= data.values.stemcell_details.os_short_name @)
     username: ((dockerhub_username))
     password: ((dockerhub_password))
 
@@ -1055,7 +1154,7 @@ resources:
   source:
     json_key: ((gcp_json_key))
     bucket: bosh-vmware-ovftool
-    regexp: (@= data.values.stemcell_details.os @)/(.*).bundle
+    regexp: (@= data.values.stemcell_details.os_short_name @)/(.*).bundle
 
 - name: bosh-blobstore-dav
   type: s3

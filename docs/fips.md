@@ -1,0 +1,53 @@
+# FIPS stemcells
+
+## access to the fips stemcell buckets
+
+fips stemcells when published in the pipeline
+will be put in a private bucket called `bosh-core-stemcells-fips`
+
+if a working groups needs these fips stemcell the can retrieve them with the
+[bosh-io-stemcell](https://github.com/concourse/bosh-io-stemcell-resource) concourse resource => 1.2.1
+
+by setting
+
+```yaml
+resources:
+- name: stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-jammy-fips-go_agent
+    auth:
+        access_key: ((access_key-credhub_ref))
+        secret_key: ((secret_key-credhub_ref))
+```
+
+for this you need a service account setup with hmac keys
+https://cloud.google.com/storage/docs/authentication/hmackeys
+
+## setup access
+
+setup access permissions for the `bosh-core-stemcells-fips` bucket
+
+### working group actions
+
+a service account should be setup in the working group that want to access the fips stemcells.
+this account should then be enabled with [hmac keys](https://cloud.google.com/storage/docs/authentication/hmackeys)
+
+#### bucket owner actions
+
+requirements:
+- [gcloud](https://cloud.google.com/sdk/docs/install)
+- [gsutil](https://cloud.google.com/storage/docs/gsutil_install)
+
+Login to the `cloud-foundry-310819` GCP project `gcloud auth login` and setup
+access for cross-project buckets. In the example below replace PLACEHOLDER with
+the service account that is created in the previous steps. 
+Ex: `test-dev@myproject.iam.gserviceaccount.com`
+
+```shell
+gsutil defacl ch -u PLACEHOLDER:READER gs://bosh-core-stemcells-fips
+gsutil acl ch -u PLACEHOLDER:READER gs://bosh-core-stemcells-fips
+gsutil -m acl ch -r -u PLACEHOLDER:READER gs://bosh-core-stemcells-fips
+```
+
+Reference: https://cloud.google.com/dataprep/docs/concepts/gcs-buckets
