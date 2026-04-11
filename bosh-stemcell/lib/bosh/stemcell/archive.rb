@@ -1,12 +1,12 @@
-require 'yaml'
-require 'rake/file_utils_ext'
-require 'bosh/stemcell/aws/region'
+require "yaml"
+require "rake/file_utils_ext"
+require "bosh/stemcell/aws/region"
 
 module Bosh::Stemcell
   class Archive
     attr_reader :path
 
-    def initialize(path = '')
+    def initialize(path = "")
       @path = path
       validate_stemcell
     end
@@ -16,25 +16,25 @@ module Bosh::Stemcell
     end
 
     def name
-      manifest.fetch('name')
+      manifest.fetch("name")
     end
 
     def infrastructure
-      cloud_properties.fetch('infrastructure')
+      cloud_properties.fetch("infrastructure")
     end
 
     def version
-      cloud_properties.fetch('version')
+      cloud_properties.fetch("version")
     end
 
     def sha1
-      sha1 = manifest.fetch('sha1')
-      raise 'sha1 must not be nil' unless sha1
+      sha1 = manifest.fetch("sha1")
+      raise "sha1 must not be nil" unless sha1
       sha1.to_s
     end
 
     def light?
-      infrastructure == 'aws' && has_ami?
+      infrastructure == "aws" && has_ami?
     end
 
     def extract(tar_options = {}, &block)
@@ -51,11 +51,11 @@ module Bosh::Stemcell
     private
 
     def has_ami?
-      cloud_properties.has_key? 'ami'
+      cloud_properties.has_key? "ami"
     end
 
     def cloud_properties
-      manifest.fetch('cloud_properties')
+      manifest.fetch("cloud_properties")
     end
 
     def validate_stemcell

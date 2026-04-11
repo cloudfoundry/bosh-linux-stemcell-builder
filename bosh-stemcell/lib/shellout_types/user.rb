@@ -18,7 +18,7 @@ module ShelloutTypes
       return false unless exists?
       stdout, _, status = @chroot_cmd_runner.run("id -Gn #{@user_name}")
       return false unless status == 0
-      groups_for_user = stdout.split(' ')
+      groups_for_user = stdout.split(" ")
       groups_for_user.include?(group_name)
     end
   end

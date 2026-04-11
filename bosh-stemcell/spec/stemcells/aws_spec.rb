@@ -1,40 +1,40 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe 'AWS Stemcell', stemcell_image: true do
-  it_behaves_like 'udf module is disabled'
+describe "AWS Stemcell", stemcell_image: true do
+  it_behaves_like "udf module is disabled"
 
-  context 'installed by system_parameters' do
-    describe file('/var/vcap/bosh/etc/infrastructure') do
-      its(:content) { should match('aws') }
+  context "installed by system_parameters" do
+    describe file("/var/vcap/bosh/etc/infrastructure") do
+      its(:content) { should match("aws") }
     end
   end
 
-  context 'installed by bosh_disable_password_authentication' do
-    describe 'disallows password authentication' do
-      subject { file('/etc/ssh/sshd_config') }
+  context "installed by bosh_disable_password_authentication" do
+    describe "disallows password authentication" do
+      subject { file("/etc/ssh/sshd_config") }
 
-      its(:content) { should match /^PasswordAuthentication no$/ }
+      its(:content) { should match(/^PasswordAuthentication no$/) }
     end
   end
 
-  context 'installed by image_install_grub' do
+  context "installed by image_install_grub" do
     describe file(grub_cfg_path) do
       it { should be_file }
-      its(:content) { should match ' nvme_core.io_timeout=4294967295' }
+      its(:content) { should match " nvme_core.io_timeout=4294967295" }
     end
   end
 
-  describe 'nvme' do
-    describe 'nvme-id finder' do
-      subject { file('/sbin/nvme-id') }
+  describe "nvme" do
+    describe "nvme-id finder" do
+      subject { file("/sbin/nvme-id") }
 
       it { should be_file }
       it { should be_executable }
       its(:content) { should match(/nvme id-ctrl/) }
     end
 
-    describe 'udev rules' do
-      subject { file('/etc/udev/rules.d/70-ec2-nvme-devices.rules') }
+    describe "udev rules" do
+      subject { file("/etc/udev/rules.d/70-ec2-nvme-devices.rules") }
 
       it { should be_file }
       its(:content) { should match %r{/sbin/nvme-id} }

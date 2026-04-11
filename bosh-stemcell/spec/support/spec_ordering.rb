@@ -1,4 +1,3 @@
-
 RSpec.configure do |config|
   config.register_ordering(:global) do |list|
     # make sure that stig test case check will be run at last

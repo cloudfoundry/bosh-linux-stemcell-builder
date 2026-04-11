@@ -1,5 +1,5 @@
-require_relative 'spec_helper'
-require 'shellout_types/package'
+require_relative "spec_helper"
+require "shellout_types/package"
 
 module ShelloutTypes
   describe Package, shellout_types: true do
@@ -8,19 +8,19 @@ module ShelloutTypes
       ShelloutTypes::Chroot.new
     }
 
-    describe '#installed?'  do
-      context 'when a package is installed'  do
-        let(:package_name) { 'dpkg' }
+    describe "#installed?" do
+      context "when a package is installed" do
+        let(:package_name) { "dpkg" }
 
-        it 'returns true' do
+        it "returns true" do
           expect(package.installed?).to eq(true)
         end
       end
 
-      context 'when a package is not_installed'  do
-        let(:package_name) { 'non-existent-package' }
+      context "when a package is not_installed" do
+        let(:package_name) { "non-existent-package" }
 
-        it 'returns false' do
+        it "returns false" do
           expect(package.installed?).to eq(false)
         end
       end

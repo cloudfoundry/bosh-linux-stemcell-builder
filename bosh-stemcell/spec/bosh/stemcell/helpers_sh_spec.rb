@@ -1,70 +1,69 @@
-require 'spec_helper'
+require "spec_helper"
 
-context 'helpers.sh' do
+context "helpers.sh" do
   before do
     skip "This spec requires linux" unless RUBY_PLATFORM.downcase.include?("linux")
   end
 
-  context 'add_on_exit runs cleanup commands in LIFO order' do
+  context "add_on_exit runs cleanup commands in LIFO order" do
     describe ShelloutTypes::Command.new(
       File.expand_path(
-        '../../../assets/on_exit_with_normal_completion.sh',
+        "../../../assets/on_exit_with_normal_completion.sh",
         __FILE__
       ),
-      ShelloutTypes::Chroot.new('/')
+      ShelloutTypes::Chroot.new("/")
     ) do
-      it('describes the on_exit actions in that order') { expect(subject.stdout).to match <<EOF }
-end of script
-Running 4 on_exit items...
-Running cleanup command echo fourth on_exit action (try: 0)
-fourth on_exit action
-Running cleanup command echo third on_exit action (try: 0)
-third on_exit action
-Running cleanup command echo second on_exit action (try: 0)
-second on_exit action
-Running cleanup command echo first on_exit action (try: 0)
-first on_exit action
-EOF
+      it("describes the on_exit actions in that order") { expect(subject.stdout).to match <<~EOF }
+        end of script
+        Running 4 on_exit items...
+        Running cleanup command echo fourth on_exit action (try: 0)
+        fourth on_exit action
+        Running cleanup command echo third on_exit action (try: 0)
+        third on_exit action
+        Running cleanup command echo second on_exit action (try: 0)
+        second on_exit action
+        Running cleanup command echo first on_exit action (try: 0)
+        first on_exit action
+      EOF
     end
 
     describe ShelloutTypes::Command.new(
       File.expand_path(
-        '../../../assets/on_exit_with_error_exit.sh',
+        "../../../assets/on_exit_with_error_exit.sh",
         __FILE__
       ),
-      ShelloutTypes::Chroot.new('/')
+      ShelloutTypes::Chroot.new("/")
     ) do
-      it('describes the on_exit actions in that order') { expect(subject.stdout).to match <<EOF }
-Running 2 on_exit items...
-Running cleanup command echo second on_exit action (try: 0)
-second on_exit action
-Running cleanup command echo first on_exit action (try: 0)
-first on_exit action
-EOF
+      it("describes the on_exit actions in that order") { expect(subject.stdout).to match <<~EOF }
+        Running 2 on_exit items...
+        Running cleanup command echo second on_exit action (try: 0)
+        second on_exit action
+        Running cleanup command echo first on_exit action (try: 0)
+        first on_exit action
+      EOF
     end
   end
 
   describe ShelloutTypes::Command.new(
     File.expand_path(
-      '../../../assets/on_exit_with_failing_cleanup_command.sh',
+      "../../../assets/on_exit_with_failing_cleanup_command.sh",
       __FILE__
     ),
-    ShelloutTypes::Chroot.new('/')
+    ShelloutTypes::Chroot.new("/")
   ) do
-    it('includes a retry count in its output') { expect(subject.stdout).to match <<EOF }
-end of script
-Running 1 on_exit items...
-Running cleanup command false (try: 0)
-Running cleanup command false (try: 1)
-Running cleanup command false (try: 2)
-Running cleanup command false (try: 3)
-Running cleanup command false (try: 4)
-Running cleanup command false (try: 5)
-Running cleanup command false (try: 6)
-Running cleanup command false (try: 7)
-Running cleanup command false (try: 8)
-Running cleanup command false (try: 9)
-EOF
+    it("includes a retry count in its output") { expect(subject.stdout).to match <<~EOF }
+      end of script
+      Running 1 on_exit items...
+      Running cleanup command false (try: 0)
+      Running cleanup command false (try: 1)
+      Running cleanup command false (try: 2)
+      Running cleanup command false (try: 3)
+      Running cleanup command false (try: 4)
+      Running cleanup command false (try: 5)
+      Running cleanup command false (try: 6)
+      Running cleanup command false (try: 7)
+      Running cleanup command false (try: 8)
+      Running cleanup command false (try: 9)
+    EOF
   end
-
 end

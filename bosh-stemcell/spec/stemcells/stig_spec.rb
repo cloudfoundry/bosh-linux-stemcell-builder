@@ -1,7 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe 'Stig test case verification', stemcell_image: true, security_spec: true do
-  it 'confirms all stig test cases ran' do
+describe "Stig test case verification", stemcell_image: true, security_spec: true do
+  it "confirms all stig test cases ran" do
     expected_base_stig_test_cases = %w[
       V-38443
       V-38444
@@ -142,20 +142,20 @@ describe 'Stig test case verification', stemcell_image: true, security_spec: tru
     ]
 
     expected_stig_test_cases = expected_base_stig_test_cases
-    case ENV['OS_NAME']
-    when 'ubuntu'
+    case ENV["OS_NAME"]
+    when "ubuntu"
       expected_stig_test_cases = expected_base_stig_test_cases + [
-        'V-38668'
+        "V-38668"
       ]
     end
 
-    case ENV['IAAS']
-    when 'softlayer'
-      expected_stig_test_cases = expected_stig_test_cases - [
-        'V-38613'
+    case ENV["IAAS"]
+    when "softlayer"
+      expected_stig_test_cases -= [
+        "V-38613"
       ]
     end
 
-    expect($stig_test_cases.to_a).to match_array expected_stig_test_cases
+    expect($stig_test_cases.to_a).to match_array expected_stig_test_cases # standard:disable Style/GlobalVars
   end
 end
