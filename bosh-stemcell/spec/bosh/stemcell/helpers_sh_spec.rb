@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 context 'helpers.sh' do
+  before do
+    skip "This spec requires linux" unless RUBY_PLATFORM.downcase.include?("linux")
+  end
 
   context 'add_on_exit runs cleanup commands in LIFO order' do
     describe ShelloutTypes::Command.new(

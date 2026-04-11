@@ -177,12 +177,6 @@ cd /opt/bosh/bosh-stemcell
 OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rake spec:shellout_types
 ```
 
-If on macOS, run:
-
-```shell
-OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rake spec:shellout_types
-```
-
 ### How to run tests for BOSH Linux Stemcell Builder
 
 The BOSH Linux Stemcell Builder code itself can be tested with the following command's:
