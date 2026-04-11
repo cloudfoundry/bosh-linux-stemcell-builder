@@ -1,0 +1,11 @@
+require "rspec/core/rake_task"
+
+task default: [:spec]
+
+RSpec::Core::RakeTask.new(:spec)
+
+namespace :spec do
+  RSpec::Core::RakeTask.new(:shellout_types) do |t|
+    t.rspec_opts = "--tag shellout_types"
+  end
+end

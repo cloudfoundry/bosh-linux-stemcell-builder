@@ -10,14 +10,13 @@ if [[ -n "${DEBUG:-}" ]]; then
   export BOSH_LOG_PATH="${BOSH_LOG_PATH:-${REPO_PARENT}/bosh-debug.log}"
 fi
 
+os_image="$(readlink -f "${REPO_PARENT}"/os-image-tarball/*.tgz)"
+
 # we need sudo for our chroot operations in the shellout_types tests
 apt install sudo
 
-pushd "${REPO_PARENT}/bosh-linux-stemcell-builder"
-  bundle install --local
-
-  pushd bosh-stemcell
-    bundle exec rspec spec/
-    OS_IMAGE="$(readlink -f ../../os-image-tarball/*.tgz)" bundle exec rspec spec/ --tag shellout_types
-  popd
+pushd "${REPO_ROOT}/bosh-stemcell"
+  bundle install
+  bundle exec rake spec
+  OS_IMAGE="${os_image}" bundle exec rake spec:shellout_types
 popd

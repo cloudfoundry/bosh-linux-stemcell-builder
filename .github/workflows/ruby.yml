@@ -11,5 +11,5 @@ jobs:
     - name: test-bosh-stemcell
       run: |
         bundle install
-        bundle exec rspec
+        bundle exec rake
       working-directory: bosh-stemcell/
