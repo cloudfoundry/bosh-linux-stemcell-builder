@@ -137,6 +137,7 @@ container):
 ```shell
   export short_name="noble"
   cd /opt/bosh/bosh-stemcell
+  bundle install
   OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_${short_name}_spec.rb
 ```
 
@@ -150,6 +151,7 @@ container, you should be able to run the specific tests:
 
 ```shell
 cd /opt/bosh/bosh-stemcell; \
+bundle install \
 STEMCELL_IMAGE=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/vsphere-esxi-ubuntu.raw \
 STEMCELL_WORKDIR=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot \
 OS_NAME=ubuntu \

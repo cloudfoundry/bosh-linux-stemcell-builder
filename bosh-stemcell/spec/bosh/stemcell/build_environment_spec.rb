@@ -185,6 +185,7 @@ module Bosh::Stemcell
         it "returns the correct command" do
           expected_rspec_command = [
             "cd #{stemcell_specs_dir};",
+            "bundle install;",
             "OS_IMAGE=/some/os_image.tgz",
             "bundle exec rspec -fd",
             "spec/os_image/#{operating_system.name}_spec.rb"
@@ -203,6 +204,7 @@ module Bosh::Stemcell
       it "returns the correct command" do
         expected_rspec_command = [
           "cd #{stemcell_specs_dir};",
+          "bundle install;",
           "STEMCELL_IMAGE=#{File.join(work_path, "fake-root-disk-image.raw")}",
           "STEMCELL_WORKDIR=#{work_path}",
           "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}",
