@@ -41,6 +41,7 @@ module Bosh::Stemcell
     def os_image_rspec_command
       [
         "cd #{STEMCELL_SPECS_DIR};",
+        "bundle install;",
         "OS_IMAGE=#{os_image_tarball_path}",
         "bundle exec rspec -fd",
         "spec/os_image/#{operating_system_spec_name}_spec.rb"
@@ -50,6 +51,7 @@ module Bosh::Stemcell
     def stemcell_rspec_command
       cmd = [
         "cd #{STEMCELL_SPECS_DIR};",
+        "bundle install;",
         "STEMCELL_IMAGE=#{image_file_path}",
         "STEMCELL_WORKDIR=#{work_path}",
         "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}",
