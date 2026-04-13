@@ -1,25 +1,25 @@
-require 'spec_helper'
-require 'bosh/stemcell/arch'
-require 'bosh/stemcell/stage_collection'
+require "spec_helper"
+require "bosh/stemcell/arch"
+require "bosh/stemcell/stage_collection"
 
 module Bosh::Stemcell
   describe StageCollection do
     subject(:stage_collection) { StageCollection.new(definition) }
     let(:definition) do
       instance_double(
-        'Bosh::Stemcell::Definition',
+        "Bosh::Stemcell::Definition",
         infrastructure: infrastructure,
-        operating_system: operating_system,
+        operating_system: operating_system
       )
     end
     let(:agent) { double }
     let(:infrastructure) { double }
     let(:operating_system) { double }
 
-    describe '#operating_system_stages' do
-      let(:operating_system) { OperatingSystem.for('ubuntu') }
+    describe "#operating_system_stages" do
+      let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-      it 'has the correct stages' do
+      it "has the correct stages" do
         expect(stage_collection.operating_system_stages).to eq(
           [
             :base_debootstrap,
@@ -49,39 +49,39 @@ module Bosh::Stemcell
             :escape_ctrl_alt_del,
             :bosh_audit_ubuntu,
             :bosh_log_audit_start,
-            :clean_machine_id,
+            :clean_machine_id
           ]
         )
       end
     end
 
-    describe '#agent_stages' do
+    describe "#agent_stages" do
       let(:agent_stages) do
         [
           :bosh_go_agent,
           :blobstore_clis,
           :logrotate_config,
           :dev_tools_config,
-          :static_libraries_config,
+          :static_libraries_config
         ]
       end
 
-      it 'returns the correct stages' do
+      it "returns the correct stages" do
         expect(stage_collection.agent_stages).to eq(agent_stages)
       end
     end
 
-    describe '#build_stemcell_image_stages' do
+    describe "#build_stemcell_image_stages" do
       let(:vmware_package_stemcell_steps) {
         [
           :image_ovf_vmx,
           :image_ovf_generate,
-          :prepare_ovf_image_stemcell,
+          :prepare_ovf_image_stemcell
         ]
       }
 
-      context 'when using AWS' do
-        let(:infrastructure) { Infrastructure.for('aws') }
+      context "when using AWS" do
+        let(:infrastructure) { Infrastructure.for("aws") }
         let(:aws_build_stemcell_image_stages) {
           [
             :system_network,
@@ -96,24 +96,24 @@ module Bosh::Stemcell
             :image_create,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
+            :bosh_package_list
           ]
         }
         let(:aws_package_stemcell_stages) {
           [
-            :prepare_raw_image_stemcell,
+            :prepare_raw_image_stemcell
           ]
         }
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'returns the correct stages' do
+        it "returns the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(aws_build_stemcell_image_stages)
-          expect(stage_collection.package_stemcell_stages('raw')).to eq(aws_package_stemcell_stages)
+          expect(stage_collection.package_stemcell_stages("raw")).to eq(aws_package_stemcell_stages)
         end
       end
 
-      context 'when using Alicloud' do
-        let(:infrastructure) { Infrastructure.for('alicloud') }
+      context "when using Alicloud" do
+        let(:infrastructure) { Infrastructure.for("alicloud") }
 
         let(:alicloud_build_stemcell_image_stages) {
           [
@@ -128,25 +128,25 @@ module Bosh::Stemcell
             :image_create,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
+            :bosh_package_list
           ]
         }
 
         let(:alicloud_package_stemcell_stages) {
           [
-            :prepare_raw_image_stemcell,
+            :prepare_raw_image_stemcell
           ]
         }
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'returns the correct stages' do
+        it "returns the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(alicloud_build_stemcell_image_stages)
-          expect(stage_collection.package_stemcell_stages('raw')).to eq(alicloud_package_stemcell_stages)
+          expect(stage_collection.package_stemcell_stages("raw")).to eq(alicloud_package_stemcell_stages)
         end
       end
 
-      context 'when using Google' do
-        let(:infrastructure) { Infrastructure.for('google') }
+      context "when using Google" do
+        let(:infrastructure) { Infrastructure.for("google") }
 
         let(:google_build_stemcell_image_stages) {
           [
@@ -162,29 +162,29 @@ module Bosh::Stemcell
             :image_create,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
+            :bosh_package_list
           ]
         }
 
         let(:google_package_stemcell_stages) {
           [
-            :prepare_rawdisk_image_stemcell,
+            :prepare_rawdisk_image_stemcell
           ]
         }
 
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'returns the correct stages' do
+        it "returns the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(google_build_stemcell_image_stages)
-          expect(stage_collection.package_stemcell_stages('rawdisk')).to eq(google_package_stemcell_stages)
+          expect(stage_collection.package_stemcell_stages("rawdisk")).to eq(google_package_stemcell_stages)
         end
       end
 
-      context 'when using OpenStack' do
-        let(:infrastructure) { Infrastructure.for('openstack') }
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+      context "when using OpenStack" do
+        let(:infrastructure) { Infrastructure.for("openstack") }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'has the correct stages' do
+        it "has the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(
             [
               :system_network,
@@ -199,22 +199,22 @@ module Bosh::Stemcell
               :image_create,
               :image_install_grub,
               :sbom_create,
-              :bosh_package_list,
+              :bosh_package_list
             ]
           )
-          expect(stage_collection.package_stemcell_stages('qcow2')).to eq(
+          expect(stage_collection.package_stemcell_stages("qcow2")).to eq(
               [
-                :prepare_qcow2_image_stemcell,
+                :prepare_qcow2_image_stemcell
               ]
-          )
+            )
         end
       end
 
-      context 'when using CloudStack' do
-        let(:infrastructure) { Infrastructure.for('cloudstack') }
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+      context "when using CloudStack" do
+        let(:infrastructure) { Infrastructure.for("cloudstack") }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'has the correct stages' do
+        it "has the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(
             [
               :system_network,
@@ -231,22 +231,22 @@ module Bosh::Stemcell
               :image_create,
               :image_install_grub,
               :sbom_create,
-              :bosh_package_list,
+              :bosh_package_list
             ]
           )
-          expect(stage_collection.package_stemcell_stages('qcow2')).to eq(
+          expect(stage_collection.package_stemcell_stages("qcow2")).to eq(
               [
-                :prepare_qcow2_image_stemcell,
+                :prepare_qcow2_image_stemcell
               ]
-          )
+            )
         end
       end
 
-      context 'when using vSphere' do
-        let(:infrastructure) { Infrastructure.for('vsphere') }
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+      context "when using vSphere" do
+        let(:infrastructure) { Infrastructure.for("vsphere") }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'has the correct stages' do
+        it "has the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(
             [
               :system_network,
@@ -262,20 +262,20 @@ module Bosh::Stemcell
               :image_create_efi,
               :image_install_grub_efi,
               :sbom_create,
-              :bosh_package_list,
+              :bosh_package_list
             ]
           )
-          expect(stage_collection.package_stemcell_stages('ovf')).to eq(vmware_package_stemcell_steps)
+          expect(stage_collection.package_stemcell_stages("ovf")).to eq(vmware_package_stemcell_steps)
         end
       end
 
-      context 'when using vCloud' do
-        let(:infrastructure) { Infrastructure.for('vcloud') }
+      context "when using vCloud" do
+        let(:infrastructure) { Infrastructure.for("vcloud") }
 
-        context 'when operating system is Ubuntu' do
-          let(:operating_system) { OperatingSystem.for('ubuntu') }
+        context "when operating system is Ubuntu" do
+          let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-          it 'has the correct stages' do
+          it "has the correct stages" do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
                 :system_network,
@@ -291,16 +291,16 @@ module Bosh::Stemcell
                 :image_create_efi,
                 :image_install_grub_efi,
                 :sbom_create,
-                :bosh_package_list,
-            ]
+                :bosh_package_list
+              ]
             )
-            expect(stage_collection.package_stemcell_stages('ovf')).to eq(vmware_package_stemcell_steps)
+            expect(stage_collection.package_stemcell_stages("ovf")).to eq(vmware_package_stemcell_steps)
           end
         end
       end
 
-      context 'when using Azure' do
-        let(:infrastructure) { Infrastructure.for('azure') }
+      context "when using Azure" do
+        let(:infrastructure) { Infrastructure.for("azure") }
 
         let(:azure_build_stemcell_image_stages) {
           [
@@ -317,30 +317,30 @@ module Bosh::Stemcell
             :image_create,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
+            :bosh_package_list
           ]
         }
 
         let(:azure_package_stemcell_stages) {
           [
-            :prepare_vhd_image_stemcell,
+            :prepare_vhd_image_stemcell
           ]
         }
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'returns the correct stages' do
+        it "returns the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(azure_build_stemcell_image_stages)
-          expect(stage_collection.package_stemcell_stages('vhd')).to eq(azure_package_stemcell_stages)
+          expect(stage_collection.package_stemcell_stages("vhd")).to eq(azure_package_stemcell_stages)
         end
       end
 
-      context 'when using softlayer' do
-        let(:infrastructure) { Infrastructure.for('softlayer') }
+      context "when using softlayer" do
+        let(:infrastructure) { Infrastructure.for("softlayer") }
 
-        context 'when the operating system is Ubuntu' do
-          let(:operating_system) { OperatingSystem.for('ubuntu') }
+        context "when the operating system is Ubuntu" do
+          let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-          it 'has the correct stages' do
+          it "has the correct stages" do
             expect(stage_collection.build_stemcell_image_stages).to eq(
               [
                 :system_network,
@@ -357,16 +357,16 @@ module Bosh::Stemcell
                 :restore_apt_sources,
                 :image_create_softlayer_two_partitions,
                 :image_install_grub_softlayer_two_partitions,
-                :bosh_package_list,
+                :bosh_package_list
               ]
             )
-            expect(stage_collection.package_stemcell_stages('ovf')).to eq(vmware_package_stemcell_steps)
+            expect(stage_collection.package_stemcell_stages("ovf")).to eq(vmware_package_stemcell_steps)
           end
         end
       end
 
-      context 'when using Warden' do
-        let(:infrastructure) { Infrastructure.for('warden') }
+      context "when using Warden" do
+        let(:infrastructure) { Infrastructure.for("warden") }
         let(:build_stemcell_image_stages) {
           [
             :system_parameters,
@@ -378,19 +378,19 @@ module Bosh::Stemcell
             :image_create,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
+            :bosh_package_list
           ]
         }
         let(:package_stemcell_stages) {
           [
-            :prepare_files_image_stemcell,
+            :prepare_files_image_stemcell
           ]
         }
-        let(:operating_system) { OperatingSystem.for('ubuntu') }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
 
-        it 'returns the correct stages' do
+        it "returns the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(build_stemcell_image_stages)
-          expect(stage_collection.package_stemcell_stages('files')).to eq(package_stemcell_stages)
+          expect(stage_collection.package_stemcell_stages("files")).to eq(package_stemcell_stages)
         end
       end
     end

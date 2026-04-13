@@ -10,15 +10,15 @@ module ShelloutTypes
     end
 
     def file?
-      stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
+      stdout, _, _ = @chroot.run("stat", "-c", "%F", true_path_in_chroot)
 
       !stdout.strip.match(/\Aregular (empty )?file\z/).nil?
     rescue RuntimeError
-      return false
+      false
     end
 
     def owner
-      stdout, stderr, status = @chroot.run('stat', '-c', '%u', @path)
+      stdout, stderr, status = @chroot.run("stat", "-c", "%u", @path)
       stdout.strip!
 
       raise stderr if status != 0
@@ -27,7 +27,7 @@ module ShelloutTypes
       raise "user for file #{filepath} does not exist" if status == 2
       raise stderr if status != 0
 
-      passwd_split = stdout.split(':', -1)
+      passwd_split = stdout.split(":", -1)
       raise "passwd has an invalid format: #{stdout}" if passwd_split.size != 7
 
       passwd_split.first
@@ -39,9 +39,9 @@ module ShelloutTypes
 
     def content
       stdout, stderr, status = @chroot.run("cat", @path)
-      raise RuntimeError, stderr if status != 0
+      raise stderr.to_s if status != 0
 
-      return stdout
+      stdout
     end
 
     def content_as_lines
@@ -53,10 +53,10 @@ module ShelloutTypes
     end
 
     def mode
-      stdout, stderr, status = @chroot.run('stat', '-c', '%a', @path)
-      raise RuntimeError, stderr if status != 0
+      stdout, stderr, status = @chroot.run("stat", "-c", "%a", @path)
+      raise stderr.to_s if status != 0
 
-      stdout.strip.to_i(8) & 0777
+      stdout.strip.to_i(8) & 0o777
     end
 
     def group
@@ -64,50 +64,50 @@ module ShelloutTypes
     end
 
     def executable?
-      stdout, stderr, status = @chroot.run('stat', '-c', '%a', @path)
-      raise RuntimeError, stderr if status != 0
+      stdout, stderr, status = @chroot.run("stat", "-c", "%a", @path)
+      raise stderr.to_s if status != 0
 
-      (stdout.strip.to_i(8) & 0111) != 0
+      (stdout.strip.to_i(8) & 0o111) != 0
     end
 
     def directory?
-      stdout, _, _ = @chroot.run('stat', '-c', '%F', true_path_in_chroot)
-      stdout.strip == 'directory'
+      stdout, _, _ = @chroot.run("stat", "-c", "%F", true_path_in_chroot)
+      stdout.strip == "directory"
     end
 
     def readable_by_user?(username)
       this_mode = mode
       if owned_by?(username)
-        return (this_mode & 0400) != 0
+        return (this_mode & 0o400) != 0
       end
 
-      members = group_entry.last.split(',')
+      members = group_entry.last.split(",")
 
       stdout, stderr, status = @chroot.run("getent passwd #{username}")
-      raise RuntimeError, "user #{username} does not exist" if status == 2
-      raise RuntimeError, stderr if status != 0
+      raise "user #{username} does not exist" if status == 2
+      raise stderr.to_s if status != 0
 
-      passwd_split = stdout.strip.split(':', -1)
-      raise RuntimeError, "passwd has an invalid format: #{stdout}" if passwd_split.size != 7
+      passwd_split = stdout.strip.split(":", -1)
+      raise "passwd has an invalid format: #{stdout}" if passwd_split.size != 7
 
       gid_for_username = passwd_split[3]
 
       members.map!(&:strip)
 
       if members.include?(username) || (gid == gid_for_username)
-        return (this_mode & 0040) != 0
+        return (this_mode & 0o040) != 0
       end
-      (mode & 0004) != 0
+      (mode & 0o004) != 0
     end
 
     def writable_by?(by_whom)
       case by_whom
-        when 'group'
-          (mode & 0020) != 0
-        when 'other'
-          (mode & 0002) != 0
-        else
-          raise "#{by_whom} is an invalid input to writable_by?, please specify one of: ['group', 'other']"
+      when "group"
+        (mode & 0o020) != 0
+      when "other"
+        (mode & 0o002) != 0
+      else
+        raise "#{by_whom} is an invalid input to writable_by?, please specify one of: ['group', 'other']"
       end
     end
 
@@ -118,8 +118,8 @@ module ShelloutTypes
     private
 
     def true_path_in_chroot
-      stdout, stderr, status = @chroot.run('readlink', '-m', @path)
-      raise RuntimeError, stderr if status != 0
+      stdout, stderr, status = @chroot.run("readlink", "-m", @path)
+      raise stderr.to_s if status != 0
 
       stdout.strip
     end
@@ -129,8 +129,8 @@ module ShelloutTypes
     end
 
     def gid
-      stdout, stderr, status = @chroot.run('stat', '-c', '%g', @path)
-      raise RuntimeError, stderr if status != 0
+      stdout, stderr, status = @chroot.run("stat", "-c", "%g", @path)
+      raise stderr.to_s if status != 0
 
       stdout.strip
     end
@@ -141,12 +141,12 @@ module ShelloutTypes
 
     def fetch_and_validate_group_entry_for_gid(group_id)
       stdout, stderr, status = @chroot.run("getent group #{group_id}")
-      raise RuntimeError, "group #{group_id} does not exist" if status == 2
-      raise RuntimeError, stderr if status != 0
+      raise "group #{group_id} does not exist" if status == 2
+      raise stderr.to_s if status != 0
 
-      group_split = stdout.split(':', -1)
-      raise RuntimeError, "group entry is an invalid format: #{stdout}" if group_split.size != 4
-      return group_split
+      group_split = stdout.split(":", -1)
+      raise "group entry is an invalid format: #{stdout}" if group_split.size != 4
+      group_split
     end
   end
 end

@@ -1,6 +1,6 @@
-require 'rbconfig'
-require 'forwardable'
-require 'bosh/stemcell/archive_filename'
+require "rbconfig"
+require "forwardable"
+require "bosh/stemcell/archive_filename"
 
 module Bosh::Stemcell
   class BuilderOptions
@@ -17,22 +17,22 @@ module Bosh::Stemcell
 
     def default
       {
-        'stemcell_image_name' => stemcell_image_name,
-        'stemcell_version' => stemcell_version,
-        'stemcell_hypervisor' => infrastructure.hypervisor,
-        'stemcell_infrastructure' => infrastructure.name,
-        'stemcell_operating_system' => operating_system.name,
-        'stemcell_operating_system_version' => operating_system.version,
-        'stemcell_operating_system_variant' => operating_system.variant,
-        'ruby_bin' => ruby_bin,
-        'image_create_disk_size' => image_create_disk_size,
-        'os_image_tgz' => os_image_tgz_path,
+        "stemcell_image_name" => stemcell_image_name,
+        "stemcell_version" => stemcell_version,
+        "stemcell_hypervisor" => infrastructure.hypervisor,
+        "stemcell_infrastructure" => infrastructure.name,
+        "stemcell_operating_system" => operating_system.name,
+        "stemcell_operating_system_version" => operating_system.version,
+        "stemcell_operating_system_variant" => operating_system.variant,
+        "ruby_bin" => ruby_bin,
+        "image_create_disk_size" => image_create_disk_size,
+        "os_image_tgz" => os_image_tgz_path
       }.merge(environment_variables).merge(ovf_options)
     end
 
     attr_reader(
       :stemcell_version,
-      :image_create_disk_size,
+      :image_create_disk_size
     )
 
     private
@@ -41,18 +41,18 @@ module Bosh::Stemcell
       :@definition,
       :infrastructure,
       :operating_system,
-      :agent,
+      :agent
     )
 
     attr_reader(
       :environment,
       :definition,
-      :os_image_tgz_path,
+      :os_image_tgz_path
     )
 
     def ovf_options
-      if infrastructure.name == 'vsphere' || infrastructure.name == 'vcloud'
-        { 'image_ovftool_path' => environment['OVFTOOL'] }
+      if infrastructure.name == "vsphere" || infrastructure.name == "vcloud"
+        {"image_ovftool_path" => environment["OVFTOOL"]}
       else
         {}
       end
@@ -60,10 +60,10 @@ module Bosh::Stemcell
 
     def environment_variables
       {
-        'UBUNTU_ISO' => environment['UBUNTU_ISO'],
-        'UBUNTU_MIRROR' => environment['UBUNTU_MIRROR'],
-        'UBUNTU_ADVANTAGE_TOKEN' => environment['UBUNTU_ADVANTAGE_TOKEN'],
-        'UBUNTU_FIPS_USE_IAAS_KERNEL' => environment['UBUNTU_FIPS_USE_IAAS_KERNEL'],
+        "UBUNTU_ISO" => environment["UBUNTU_ISO"],
+        "UBUNTU_MIRROR" => environment["UBUNTU_MIRROR"],
+        "UBUNTU_ADVANTAGE_TOKEN" => environment["UBUNTU_ADVANTAGE_TOKEN"],
+        "UBUNTU_FIPS_USE_IAAS_KERNEL" => environment["UBUNTU_FIPS_USE_IAAS_KERNEL"]
       }
     end
 
@@ -72,11 +72,11 @@ module Bosh::Stemcell
     end
 
     def ruby_bin
-      environment['RUBY_BIN'] || File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+      environment["RUBY_BIN"] || File.join(RbConfig::CONFIG["bindir"], RbConfig::CONFIG["ruby_install_name"])
     end
 
     def source_root
-      File.expand_path('../../../../..', __FILE__)
+      File.expand_path("../../../../..", __FILE__)
     end
   end
 end

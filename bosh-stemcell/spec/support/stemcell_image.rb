@@ -1,21 +1,22 @@
-require 'bosh/stemcell/disk_image'
-require 'shellout_types/chroot'
-require_relative 'shellout_type_assertions'
+require "bosh/stemcell/disk_image"
+require "shellout_types/chroot"
+require_relative "shellout_type_assertions"
 
 RSpec.configure do |config|
   # do not run stemcell image tests when shellout types tests are executed.
   unless config.inclusion_filter[:shellout_types]
-    if ENV['STEMCELL_IMAGE']
+    if ENV["STEMCELL_IMAGE"]
       # if `config.filter[exclude_on_softlayer]` is set, it means you're building the SoftLayer stemcell.
+      config.filter_run_including stemcell_image: true
+
       if config.filter[:exclude_on_softlayer]
-        config.filter_run_including stemcell_image: true
         shell = Bosh::Core::Shell.new
         verbose = true
-        image_file_path = ENV['STEMCELL_IMAGE']
+        image_file_path = ENV["STEMCELL_IMAGE"]
         device = shell.run("sudo losetup --show --find #{image_file_path}", output_command: verbose)
         kpartx_output = shell.run("sudo kpartx -sav #{device}", output_command: verbose)
-        device_partition1 = kpartx_output.lines.first.split(' ')[2]
-        device_partition2 = kpartx_output.lines.last.split(' ')[2]
+        device_partition1 = kpartx_output.lines.first.split(" ")[2]
+        device_partition2 = kpartx_output.lines.last.split(" ")[2]
         loopback_dev1 = "/dev/mapper/#{device_partition1}"
         loopback_dev2 = "/dev/mapper/#{device_partition2}"
         image_mount_point = Dir.mktmpdir
@@ -31,8 +32,7 @@ RSpec.configure do |config|
           shell.run("sudo umount #{image_mount_point}", output_command: verbose)
         end
       else
-        config.filter_run_including stemcell_image: true
-        disk_image = Bosh::Stemcell::DiskImage.new(image_file_path: ENV['STEMCELL_IMAGE'])
+        disk_image = Bosh::Stemcell::DiskImage.new(image_file_path: ENV["STEMCELL_IMAGE"])
         config.before(:suite) do |example|
           disk_image.mount
           ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
@@ -43,7 +43,7 @@ RSpec.configure do |config|
         end
       end
     else
-      warning = 'All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set'
+      warning = "All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set"
       puts RSpec::Core::Formatters::ConsoleCodes.wrap(warning, :yellow)
       config.filter_run_excluding stemcell_image: true
     end

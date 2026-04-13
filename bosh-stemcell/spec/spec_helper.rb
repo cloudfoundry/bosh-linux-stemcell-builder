@@ -1,10 +1,10 @@
-require 'rspec'
-require 'rspec/its'
-require 'fakefs/spec_helpers'
-require 'support/shellout_type_assertions.rb'
-require 'tmpdir'
+require "rspec"
+require "rspec/its"
+require "fakefs/spec_helpers"
+require "support/shellout_type_assertions"
+require "tmpdir"
 
-Dir.glob(File.expand_path('../support/**/*.rb', __FILE__)).each { |f| require(f) }
+Dir.glob(File.expand_path("../support/**/*.rb", __FILE__)).each { |f| require(f) }
 
 # do not truncate array comparison
 RSpec.configure do |rspec|
@@ -14,9 +14,9 @@ RSpec.configure do |rspec|
 end
 
 def grub_cfg_path
-  if ENV['STEMCELL_INFRASTRUCTURE'] == 'vsphere'
-    '/boot/efi/EFI/grub/grub.cfg'
+  if ENV["STEMCELL_INFRASTRUCTURE"] == "vsphere"
+    "/boot/efi/EFI/grub/grub.cfg"
   else
-    '/boot/grub/grub.cfg'
+    "/boot/grub/grub.cfg"
   end
 end

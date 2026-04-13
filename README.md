@@ -174,13 +174,7 @@ locally, run:
 ```shell
 bundle install --local
 cd /opt/bosh/bosh-stemcell
-OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
-```
-
-If on macOS, run:
-
-```shell
-OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
+OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rake spec:shellout_types
 ```
 
 ### How to run tests for BOSH Linux Stemcell Builder
@@ -188,9 +182,9 @@ OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --
 The BOSH Linux Stemcell Builder code itself can be tested with the following command's:
 
 ```shell
-bundle install --local
 cd /opt/bosh/bosh-stemcell
-bundle exec rspec spec/
+bundle install
+bundle exec rake
 ```
 
 ## Troubleshooting

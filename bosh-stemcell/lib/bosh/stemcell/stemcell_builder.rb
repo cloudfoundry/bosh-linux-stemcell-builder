@@ -1,5 +1,5 @@
-require 'fileutils'
-require 'bosh/stemcell/stage_collection'
+require "fileutils"
+require "bosh/stemcell/stage_collection"
 
 module Bosh::Stemcell
   class StemcellBuilder
@@ -16,7 +16,7 @@ module Bosh::Stemcell
         collection.kernel_stages +
         collection.agent_stages +
         collection.build_stemcell_image_stages
-      runner.configure_and_apply(stemcell_stages, ENV['resume_from'])
+      runner.configure_and_apply(stemcell_stages, ENV["resume_from"])
     end
 
     private

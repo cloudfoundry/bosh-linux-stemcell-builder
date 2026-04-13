@@ -1,7 +1,7 @@
-require 'bosh/stemcell/definition'
-require 'forwardable'
+require "bosh/stemcell/definition"
+require "forwardable"
 
-# rubocop:disable ClassLength
+# rubocop:disable Metrics/ClassLength
 module Bosh::Stemcell
   class StageCollection
     extend Forwardable
@@ -31,7 +31,7 @@ module Bosh::Stemcell
 
     def extract_operating_system_stages
       [
-        :untar_base_os_image,
+        :untar_base_os_image
       ]
     end
 
@@ -47,46 +47,46 @@ module Bosh::Stemcell
 
     def build_stemcell_image_stages
       stages = case infrastructure
-               when Infrastructure::Aws then
-                 aws_stages
-               when Infrastructure::Alicloud then
-                 alicloud_stages
-               when Infrastructure::CloudStack then
-                 cloudstack_stages
-               when Infrastructure::Google then
-                 google_stages
-               when Infrastructure::OpenStack then
-                 openstack_stages
-               when Infrastructure::Vsphere then
-                 vsphere_vcloud_stages
-               when Infrastructure::Vcloud then
-                 vsphere_vcloud_stages
-               when Infrastructure::Warden then
-                 warden_stages
-               when Infrastructure::Azure then
-                 azure_stages
-               when Infrastructure::Softlayer then
-                 softlayer_stages
-               end
+      when Infrastructure::Aws
+        aws_stages
+      when Infrastructure::Alicloud
+        alicloud_stages
+      when Infrastructure::CloudStack
+        cloudstack_stages
+      when Infrastructure::Google
+        google_stages
+      when Infrastructure::OpenStack
+        openstack_stages
+      when Infrastructure::Vsphere
+        vsphere_vcloud_stages
+      when Infrastructure::Vcloud
+        vsphere_vcloud_stages
+      when Infrastructure::Warden
+        warden_stages
+      when Infrastructure::Azure
+        azure_stages
+      when Infrastructure::Softlayer
+        softlayer_stages
+      end
 
       stages.concat(finish_stemcell_stages)
     end
 
     def package_stemcell_stages(disk_format)
       case disk_format
-      when 'raw' then
+      when "raw"
         raw_package_stages
-      when 'rawdisk' then
+      when "rawdisk"
         rawdisk_package_stages
-      when 'qcow2' then
+      when "qcow2"
         qcow2_package_stages
-      when 'ovf' then
+      when "ovf"
         ovf_package_stages
-      when 'vhd' then
+      when "vhd"
         vhd_package_stages
-      when 'vhdx' then
+      when "vhdx"
         vhdx_package_stages
-      when 'files' then
+      when "files"
         files_package_stages
       end
     end
@@ -131,7 +131,6 @@ module Bosh::Stemcell
       ]
     end
 
-
     def vsphere_vcloud_stages
       [
         :system_network,
@@ -149,7 +148,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create_efi,
         :image_install_grub_efi,
-        :sbom_create,
+        :sbom_create
       ]
     end
 
@@ -169,7 +168,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
-        :sbom_create,
+        :sbom_create
       ]
     end
 
@@ -205,7 +204,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
-        :sbom_create,
+        :sbom_create
       ]
     end
 
@@ -222,7 +221,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
-        :sbom_create,
+        :sbom_create
       ]
     end
 
@@ -243,7 +242,7 @@ module Bosh::Stemcell
         # filesystem after it won't apply.
         :image_create,
         :image_install_grub,
-        :sbom_create,
+        :sbom_create
       ]
     end
 
@@ -265,13 +264,13 @@ module Bosh::Stemcell
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
         :image_create_softlayer_two_partitions,
-        :image_install_grub_softlayer_two_partitions,
+        :image_install_grub_softlayer_two_partitions
       ]
     end
 
     def finish_stemcell_stages
       [
-        :bosh_package_list,
+        :bosh_package_list
       ]
     end
 
@@ -297,7 +296,7 @@ module Bosh::Stemcell
         :escape_ctrl_alt_del,
         :bosh_audit_ubuntu,
         :bosh_log_audit_start,
-        :clean_machine_id,
+        :clean_machine_id
       ].flatten
     end
 
@@ -316,19 +315,19 @@ module Bosh::Stemcell
 
     def raw_package_stages
       [
-        :prepare_raw_image_stemcell,
+        :prepare_raw_image_stemcell
       ]
     end
 
     def rawdisk_package_stages
       [
-        :prepare_rawdisk_image_stemcell,
+        :prepare_rawdisk_image_stemcell
       ]
     end
 
     def qcow2_package_stages
       [
-        :prepare_qcow2_image_stemcell,
+        :prepare_qcow2_image_stemcell
       ]
     end
 
@@ -342,21 +341,21 @@ module Bosh::Stemcell
 
     def vhd_package_stages
       [
-        :prepare_vhd_image_stemcell,
+        :prepare_vhd_image_stemcell
       ]
     end
 
     def vhdx_package_stages
       [
-        :prepare_vhdx_image_stemcell,
+        :prepare_vhdx_image_stemcell
       ]
     end
 
     def files_package_stages
       [
-        :prepare_files_image_stemcell,
+        :prepare_files_image_stemcell
       ]
     end
   end
 end
-# rubocop:enable ClassLength
+# rubocop:enable Metrics/ClassLength

@@ -1,5 +1,5 @@
-require 'bosh/stemcell/arch'
-require 'forwardable'
+require "bosh/stemcell/arch"
+require "forwardable"
 
 module Bosh::Stemcell
   class ArchiveFilename
@@ -19,7 +19,7 @@ module Bosh::Stemcell
         definition.stemcell_name(disk_format)
       ]
 
-      "#{stemcell_filename_parts.join('-')}.tgz"
+      "#{stemcell_filename_parts.join("-")}.tgz"
     end
 
     private
@@ -28,7 +28,7 @@ module Bosh::Stemcell
       :base_name,
       :version,
       :definition,
-      :disk_format,
+      :disk_format
     )
   end
 end
