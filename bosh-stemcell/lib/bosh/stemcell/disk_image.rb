@@ -1,16 +1,15 @@
-require 'bosh/core/shell'
-require 'bosh/stemcell/arch'
+require "bosh/core/shell"
+require "bosh/stemcell/arch"
 
 module Bosh::Stemcell
   class DiskImage
-
     attr_reader :image_mount_point
 
     def initialize(options)
-      @image_file_path   = options.fetch(:image_file_path)
+      @image_file_path = options.fetch(:image_file_path)
       @image_mount_point = options.fetch(:image_mount_point, Dir.mktmpdir)
-      @verbose           = options.fetch(:verbose, false)
-      @shell             = Bosh::Core::Shell.new
+      @verbose = options.fetch(:verbose, false)
+      @shell = Bosh::Core::Shell.new
     end
 
     def mount
@@ -43,24 +42,24 @@ module Bosh::Stemcell
     end
 
     def efi_image
-      return map_image.lines.length > 1
+      map_image.lines.length > 1
     end
 
     def stemcell_loopback_device_name
-      split_output = map_image.split(' ')
-      device_name  = split_output[2]
+      split_output = map_image.split(" ")
+      device_name = split_output[2]
 
-      File.join('/dev/mapper', device_name)
+      File.join("/dev/mapper", device_name)
     end
 
     def stemcell_loopback_boot_name
-      efi_partition = map_image.lines.last.split(' ')[2]
-      File.join('/dev/mapper', efi_partition)
+      efi_partition = map_image.lines.last.split(" ")[2]
+      File.join("/dev/mapper", efi_partition)
     end
 
     def stemcell_loopback_efi_name
-      efi_partition = map_image.lines.first.split(' ')[2]
-      File.join('/dev/mapper', efi_partition)
+      efi_partition = map_image.lines.first.split(" ")[2]
+      File.join("/dev/mapper", efi_partition)
     end
 
     def map_image

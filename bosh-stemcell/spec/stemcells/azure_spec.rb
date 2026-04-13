@@ -1,34 +1,34 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe 'Azure Stemcell', stemcell_image: true do
-  context 'installed by system_parameters' do
-    describe file('/var/vcap/bosh/etc/infrastructure') do
-      its(:content) { should include('azure') }
+describe "Azure Stemcell", stemcell_image: true do
+  context "installed by system_parameters" do
+    describe file("/var/vcap/bosh/etc/infrastructure") do
+      its(:content) { should include("azure") }
     end
   end
 
-  context 'installed by base_ssh' do
-    describe 'disallows password authentication' do
-      subject { file('/etc/ssh/sshd_config') }
-      its(:content) { should match /^PasswordAuthentication no$/ }
+  context "installed by base_ssh" do
+    describe "disallows password authentication" do
+      subject { file("/etc/ssh/sshd_config") }
+      its(:content) { should match(/^PasswordAuthentication no$/) }
     end
   end
 
-  context 'udf module should be enabled' do
-    describe file('/etc/modprobe.d/blacklist.conf') do
-      its(:content) { should_not match 'install udf /bin/true' }
+  context "udf module should be enabled" do
+    describe file("/etc/modprobe.d/blacklist.conf") do
+      its(:content) { should_not match "install udf /bin/true" }
     end
   end
 
-  context 'installed by bosh_azure_agent_settings', {
+  context "installed by bosh_azure_agent_settings", {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
-    exclude_on_openstack: true,
+    exclude_on_openstack: true
   } do
-    describe file('/var/vcap/bosh/agent.json') do
+    describe file("/var/vcap/bosh/agent.json") do
       it { should be_valid_json_file }
       its(:content) { should include('"Type": "File"') }
       its(:content) { should include('"MetaDataPath": ""') }
@@ -41,19 +41,19 @@ describe 'Azure Stemcell', stemcell_image: true do
     end
   end
 
-  context 'cloud-init Azure APT mirror configuration' do
-    describe file('/etc/cloud/cloud.cfg.d/90-azure-apt-sources.cfg') do
+  context "cloud-init Azure APT mirror configuration" do
+    describe file("/etc/cloud/cloud.cfg.d/90-azure-apt-sources.cfg") do
       it { should be_file }
-      its(:content) { should include('http://azure.archive.ubuntu.com/ubuntu/') }
+      its(:content) { should include("http://azure.archive.ubuntu.com/ubuntu/") }
     end
 
-    describe file('/etc/cloud/cloud.cfg') do
+    describe file("/etc/cloud/cloud.cfg") do
       it { should be_file }
-      its(:content) { should include('apt-configure') }
+      its(:content) { should include("apt-configure") }
     end
   end
 
-  context 'installed by system_azure_init', {
+  context "installed by system_azure_init", {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
@@ -61,29 +61,29 @@ describe 'Azure Stemcell', stemcell_image: true do
     exclude_on_vsphere: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
-    exclude_on_softlayer: true,
+    exclude_on_softlayer: true
   } do
-    describe 'Hyper-V KVP daemon' do
-      describe command('which hv_kvp_daemon') do
+    describe "Hyper-V KVP daemon" do
+      describe command("which hv_kvp_daemon") do
         its(:exit_status) { should eq 0 }
       end
 
-      describe service('hv-kvp-daemon') do
+      describe service("hv-kvp-daemon") do
         it { should be_enabled }
       end
     end
 
-    describe 'WALinuxAgent configuration' do
-      describe file('/etc/waagent.conf') do
-        it { should be_owned_by('root') }
+    describe "WALinuxAgent configuration" do
+      describe file("/etc/waagent.conf") do
+        it { should be_owned_by("root") }
       end
 
-      describe file('/lib/systemd/system/walinuxagent.service') do
-        it { should be_mode(0644) }
-        it { should be_owned_by('root') }
+      describe file("/lib/systemd/system/walinuxagent.service") do
+        it { should be_mode(0o644) }
+        it { should be_owned_by("root") }
       end
 
-      describe service('walinuxagent') do
+      describe service("walinuxagent") do
         it { should be_enabled }
       end
     end

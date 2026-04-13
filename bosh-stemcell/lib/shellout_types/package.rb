@@ -19,9 +19,9 @@ module ShelloutTypes
     private
 
     def pkg_query
-      stdout, _, _ = @chroot_cmd_runner.run('cat /etc/*release')
-      if stdout.match /Ubuntu/
-        return 'dpkg -s'
+      stdout, _, _ = @chroot_cmd_runner.run("cat /etc/*release")
+      if stdout.match?(/Ubuntu/)
+        "dpkg -s"
       else
         raise "Cannot determine Linux distribution: #{stdout}"
       end

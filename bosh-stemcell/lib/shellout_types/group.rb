@@ -10,7 +10,7 @@ module ShelloutTypes
     end
 
     def exists?
-      _, _, status = @chroot.run('getent', 'group', @group)
+      _, _, status = @chroot.run("getent", "group", @group)
       status == 0
     end
   end
