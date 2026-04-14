@@ -10,12 +10,15 @@ if [[ -n "${DEBUG:-}" ]]; then
   export BOSH_LOG_PATH="${BOSH_LOG_PATH:-${REPO_PARENT}/bosh-debug.log}"
 fi
 
-git clone "${REPO_ROOT}" "${REPO_PARENT}/bosh-linux-stemcell-builder-out"
+git clone "${REPO_PARENT}/bosh-linux-stemcell-builder" \
+  "${REPO_PARENT}/bosh-linux-stemcell-builder-out"
 
 version=$( cat "${REPO_PARENT}/bosh-agent/.resource/version" )
 
-cp "${REPO_PARENT}/bosh-agent/.resource/metalink.meta4" "${REPO_PARENT}/bosh-linux-stemcell-builder-out/stemcell_builder/stages/bosh_go_agent/assets/"
-cp "${REPO_PARENT}/bosh-agent/.resource/version" "${REPO_PARENT}/bosh-linux-stemcell-builder-out/stemcell_builder/stages/bosh_go_agent/assets/bosh-agent-version"
+cp "${REPO_PARENT}/bosh-agent/.resource/metalink.meta4" \
+  "${REPO_PARENT}/bosh-linux-stemcell-builder-out/stemcell_builder/stages/bosh_go_agent/assets/"
+cp "${REPO_PARENT}/bosh-agent/.resource/version" \
+  "${REPO_PARENT}/bosh-linux-stemcell-builder-out/stemcell_builder/stages/bosh_go_agent/assets/bosh-agent-version"
 
 pushd "${REPO_PARENT}/bosh-linux-stemcell-builder-out"
 	if [ "$(git status --porcelain)" != "" ]; then

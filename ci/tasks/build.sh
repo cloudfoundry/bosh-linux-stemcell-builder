@@ -71,7 +71,8 @@ for i in $(seq 0 64); do
   fi
 done
 
-chown -R ubuntu:ubuntu "${REPO_ROOT}"
+chown -R ubuntu:ubuntu "${REPO_ROOT}" # ci resource
+chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 
 OS_IMAGE=""
@@ -84,7 +85,7 @@ sudo chmod u+s "$(which sudo)"
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
 set -e
 
-cd "${REPO_ROOT}"
+cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
 if [[ -z "$OS_IMAGE" ]]; then
@@ -107,7 +108,7 @@ mkdir -p "$( dirname "$meta4_path" )"
 rm -f "$meta4_path"
 meta4 create --metalink="$meta4_path"
 
-raw_images=( "${REPO_ROOT}/tmp"/*-raw.tgz )
+raw_images=( "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw.tgz )
 if [ "${#raw_images[@]}" -ge 2 ]; then
   echo "Found more than one raw image: '${raw_images[*]}'" >&2
   exit 1
@@ -116,14 +117,14 @@ fi
 if [ -e "${raw_images[0]}" ] ; then
   # openstack currently publishes raw files
   raw_stemcell_filename="${stemcell_name}-raw.tgz"
-  mv "${REPO_ROOT}/tmp"/*-raw.tgz "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
+  mv "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw.tgz "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
 
   meta4 import-file --metalink="$meta4_path" --version="${CANDIDATE_BUILD_NUMBER}" "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
   meta4 file-set-url --metalink="$meta4_path" --file="${raw_stemcell_filename}" "https://${S3_API_ENDPOINT}/${STEMCELL_BUCKET}/${IAAS}/${raw_stemcell_filename}"
 fi
 
 stemcell_filename="${stemcell_name}.tgz"
-mv "${REPO_ROOT}/tmp/${stemcell_filename}" "${REPO_PARENT}/stemcell/${stemcell_filename}"
+mv "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp/${stemcell_filename}" "${REPO_PARENT}/stemcell/${stemcell_filename}"
 
 meta4 import-file --metalink="$meta4_path" --version="${CANDIDATE_BUILD_NUMBER}" "${REPO_PARENT}/stemcell/${stemcell_filename}"
 meta4 file-set-url --metalink="$meta4_path" --file="${stemcell_filename}" "https://${S3_API_ENDPOINT}/${STEMCELL_BUCKET}/${IAAS}/${stemcell_filename}"
