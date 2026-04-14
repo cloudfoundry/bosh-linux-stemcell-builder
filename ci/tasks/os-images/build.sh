@@ -35,7 +35,7 @@ sudo chmod u+s "$(which sudo)"
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
 set -e
 
-pushd "${REPO_ROOT}"
+pushd "${REPO_PARENT}/bosh-linux-stemcell-builder"
   bundle install
   bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
 popd

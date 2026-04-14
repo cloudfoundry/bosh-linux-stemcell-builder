@@ -28,7 +28,7 @@ yq_cli_url="$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest 
 ruby_install_url="$(curl -s https://api.github.com/repos/postmodern/ruby-install/releases/latest \
                     | jq -r '.assets[] | select(.name | endswith ("tar.gz")) | .browser_download_url')"
 
-ruby_version="$(cat "${REPO_ROOT}/.ruby-version")"
+ruby_version="$(cat "${REPO_PARENT}/bosh-linux-stemcell-builder/.ruby-version")"
 gem_home="/usr/local/bundle"
 
 cat << EOF > "${REPO_PARENT}/docker-build-args/docker-build-args.json"
