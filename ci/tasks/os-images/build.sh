@@ -32,11 +32,9 @@ sudo chown -R ubuntu .
 sudo chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
-pushd "${REPO_ROOT}/bosh-stemcell"
-  bundle install
-popd
-
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
+set -e
+
 pushd "${REPO_ROOT}/bosh-stemcell"
   bundle install
 popd
