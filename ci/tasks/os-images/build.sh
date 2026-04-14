@@ -32,12 +32,16 @@ sudo chown -R ubuntu .
 sudo chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
-cd "${REPO_ROOT}"
+pushd "${REPO_ROOT}/bosh-stemcell"
+  bundle install
+popd
 
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
 pushd "${REPO_ROOT}/bosh-stemcell"
   bundle install
 popd
 
-bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
+pushd "${REPO_ROOT}"
+  bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
+popd
 SUDO
