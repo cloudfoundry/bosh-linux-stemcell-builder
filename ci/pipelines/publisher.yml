@@ -230,6 +230,11 @@ ensure:
 
 #@yaml/text-templated-strings
 ---
+anchors:
+  ci_bot:
+    email: &ci_bot_email bots@cloudfoundry.org
+    name: &ci_bot_name CI Bot
+
 groups:
 - name: all
   jobs:
@@ -379,8 +384,8 @@ jobs:
       files:
       - light-stemcell/*.tgz
       options:
-        author_email: ci@localhost
-        author_name: CI Bot
+        author_email: *ci_bot_email
+        author_name: *ci_bot_name
         message: 'candidate (light aws): (@= data.values.stemcell_details.os_name @)/(@= str(data.values.stemcell_details.major_version) @).x'
       version: us-input-stemcell/.resource/version
     put: candidate-aws-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
@@ -416,8 +421,8 @@ jobs:
       files:
       - light-stemcell/*.tgz
       options:
-        author_email: ci@localhost
-        author_name: CI Bot
+        author_email: *ci_bot_email
+        author_name: *ci_bot_name
         message: 'candidate (light google): (@= data.values.stemcell_details.os_name @)/(@= str(data.values.stemcell_details.major_version) @).x'
       version: stemcell/.resource/version
     put: candidate-google-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
@@ -487,8 +492,8 @@ jobs:
       files:
       - candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/*.tgz
       options:
-        author_email: ci@localhost
-        author_name: CI Bot
+        author_email: *ci_bot_email
+        author_name: *ci_bot_name
         message: 'publish (heavy): (@= data.values.stemcell_details.os_name @)/(@= str(data.values.stemcell_details.major_version) @).x'
       rename: '{{.Version}}/stemcells.meta4'
       version: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/.resource/version
@@ -498,8 +503,8 @@ jobs:
       files:
       - candidate-(@= data.values.stemcell_details.os_name @)-fips-stemcell-(@= str(data.values.stemcell_details.major_version) @)/*.tgz
       options:
-        author_email: ci@localhost
-        author_name: CI Bot
+        author_email: *ci_bot_email
+        author_name: *ci_bot_name
         message: 'publish (heavy): (@= data.values.stemcell_details.os_name @)-fips/(@= str(data.values.stemcell_details.major_version) @).x'
       rename: '{{.Version}}/stemcells.meta4'
       version: candidate-(@= data.values.stemcell_details.os_name @)-fips-stemcell-(@= str(data.values.stemcell_details.major_version) @)/.resource/version
@@ -508,8 +513,8 @@ jobs:
       files:
       - candidate-aws-light-stemcell/*.tgz
       options:
-        author_email: ci@localhost
-        author_name: CI Bot
+        author_email: *ci_bot_email
+        author_name: *ci_bot_name
         message: 'publish (light aws): (@= data.values.stemcell_details.os_name @)/(@= str(data.values.stemcell_details.major_version) @).x'
       rename: '{{.Version}}/stemcells.aws.meta4'
       version: candidate-aws-light-stemcell/.resource/version
@@ -542,8 +547,8 @@ jobs:
       files:
       - candidate-google-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/*.tgz
       options:
-        author_email: ci@localhost
-        author_name: CI Bot
+        author_email: *ci_bot_email
+        author_name: *ci_bot_name
         message: 'publish (light google): (@= data.values.stemcell_details.os_name @)/(@= str(data.values.stemcell_details.major_version) @).x'
       rename: '{{.Version}}/stemcells.gcp.meta4'
       version: candidate-google-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/.resource/version

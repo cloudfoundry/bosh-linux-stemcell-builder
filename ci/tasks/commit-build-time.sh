@@ -16,7 +16,7 @@ formatted_build_time="$(date --date "${build_time%.*}" +%Y%m%dT%H%M%SZ)"
 pushd "${REPO_PARENT}/bosh-linux-stemcell-builder"
   echo "${formatted_build_time}" > build_time.txt
   git add -A
-  git config --global user.email "ci@localhost"
-  git config --global user.name "CI Bot"
+  git config --global user.email "${GIT_USER_EMAIL}"
+  git config --global user.name "${GIT_USER_NAME}"
   git commit -m "Commit Build Time"
 popd
