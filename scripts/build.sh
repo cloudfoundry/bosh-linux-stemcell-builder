@@ -16,7 +16,7 @@ function build() {
       exit 1
     fi
 
-    bundle install --local
+    bundle install
 
     # TODO(cdutra): build os image
   popd

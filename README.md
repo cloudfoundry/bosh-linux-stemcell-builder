@@ -150,7 +150,7 @@ container, you should be able to run the specific tests:
 
 ```shell
 cd /opt/bosh/bosh-stemcell; \
-bundle install \
+bundle install; \
 STEMCELL_IMAGE=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/vsphere-esxi-ubuntu.raw \
 STEMCELL_WORKDIR=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot \
 OS_NAME=ubuntu \
@@ -174,8 +174,8 @@ an ubuntu chroot environment to run. For this reason, we use the
 locally, run:
 
 ```shell
-bundle install --local
 cd /opt/bosh/bosh-stemcell
+bundle install
 OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rake spec:shellout_types
 ```
 
