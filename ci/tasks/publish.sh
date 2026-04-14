@@ -10,7 +10,8 @@ if [[ -n "${DEBUG:-}" ]]; then
   export BOSH_LOG_PATH="${BOSH_LOG_PATH:-${REPO_PARENT}/bosh-debug.log}"
 fi
 
-export VERSION=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//;s/\.0$//' )
+VERSION=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//;s/\.0$//' )
+export VERSION
 
 #
 # merge all stemcell files into a single metalink for publishing
@@ -23,14 +24,14 @@ meta4_path="${REPO_PARENT}/stemcells-index-output/$TO_INDEX/$OS_NAME-$OS_VERSION
 mkdir -p "$( dirname "$meta4_path" )"
 meta4 create --metalink="$meta4_path"
 
-find "${REPO_PARENT}/stemcells-index-output/$FROM_INDEX/$OS_NAME-$OS_VERSION/$VERSION" -name "*.meta4" \
-  | xargs -n1 -- meta4 import-metalink --metalink="$meta4_path"
+find "${REPO_PARENT}/stemcells-index-output/$FROM_INDEX/$OS_NAME-$OS_VERSION/$VERSION" -name "*.meta4" -print0 \
+  | xargs --null -n1 -- meta4 import-metalink --metalink="$meta4_path"
 
 cd "${REPO_PARENT}/stemcells-index-output"
 
 git add -A
-git config --global user.email "ci@localhost"
-git config --global user.name "CI Bot"
+git config --global user.email "${GIT_USER_EMAIL}"
+git config --global user.name "${GIT_USER_NAME}"
 git commit -m "$COMMIT_PREFIX: $OS_NAME-$OS_VERSION/$VERSION"
 
 cd "${REPO_PARENT}"
@@ -71,7 +72,8 @@ else
 
     # occasionally this fails for unexpected reasons; retry a few times
     for i in {1..4}; do
-      aws --endpoint-url=${AWS_ENDPOINT} s3 cp "s3://$FROM_BUCKET_NAME/$file" "s3://$TO_BUCKET_NAME/$file" \
+      echo "'s3 cp' attempt: ${i}" >&2
+      aws --endpoint-url="${AWS_ENDPOINT}" s3 cp "s3://$FROM_BUCKET_NAME/$file" "s3://$TO_BUCKET_NAME/$file" \
         && break \
         || sleep 5
     done
