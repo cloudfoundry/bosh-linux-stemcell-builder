@@ -15,7 +15,7 @@ os_image="$(readlink -f "${REPO_PARENT}"/os-image-tarball/*.tgz)"
 # we need sudo for our chroot operations in the shellout_types tests
 apt install sudo
 
-pushd "${REPO_ROOT}/bosh-stemcell"
+pushd "${REPO_PARENT}/bosh-linux-stemcell-builder/bosh-stemcell"
   bundle install
   bundle exec rake spec
   OS_IMAGE="${os_image}" bundle exec rake spec:shellout_types
