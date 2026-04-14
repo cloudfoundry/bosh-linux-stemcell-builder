@@ -1,6 +1,7 @@
 require "spec_helper"
-require "timecop"
 require "bosh/stemcell/stage_runner"
+require "timecop"
+require "fakefs/spec_helpers"
 
 module Bosh::Stemcell
   describe StageRunner do
