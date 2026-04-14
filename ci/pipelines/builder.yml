@@ -1,4 +1,10 @@
+anchors:
+  ci_bot:
+    email: &ci_bot_email bots@cloudfoundry.org
+    name: &ci_bot_name CI Bot
+
 #@ load("@ytt:data", "data")
+
 #@yaml/text-templated-strings
 
 groups:
@@ -256,9 +262,9 @@ jobs:
       - usn-log/usn-log.json
       rename: (@= data.values.stemcell_details.branch @)/(@= data.values.stemcell_details.os_name @).meta4
       options:
-        author_email: ci@localhost
-        author_name: CI Bot
-        message: '[ci skip] bump OS image'
+        author_email: *ci_bot_email
+        author_name: *ci_bot_name
+        message: 'Bump os-image tgz'
       version: version/version
   - put: os-image-version
     params:
@@ -493,8 +499,8 @@ jobs:
         - stemcell/*.tgz
         rename: "{{.Version}}/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @).meta4"
         options:
-          author_email: ci@localhost
-          author_name: CI Bot
+          author_email: *ci_bot_email
+          author_name: *ci_bot_name
           message: 'dev: (@= data.values.stemcell_details.os_name @)'
         version: candidate-build-number/number
 #@ end
@@ -627,7 +633,10 @@ jobs:
   - task: commit-build-time
     file: bosh-stemcells-ci/ci/tasks/commit-build-time.yml
     image: os-image-stemcell-builder-registry-image
-  #@ if len(data.values.stemcell_details.include_fips_iaas) > 0:
+    params:
+      GIT_USER_EMAIL: *ci_bot_email
+      GIT_USER_NAME: *ci_bot_name
+    #@ if len(data.values.stemcell_details.include_fips_iaas) > 0:
   - task: copy-fips-artifacts
     file: bosh-stemcells-ci/ci/tasks/publish.yml
     image: bosh-integration-image
@@ -647,7 +656,9 @@ jobs:
       TO_INDEX: candidate
       AWS_ENDPOINT: "https://storage.googleapis.com"
       S3_API_ENDPOINT: storage.googleapis.com
-  #@ end
+      GIT_USER_EMAIL: *ci_bot_email
+      GIT_USER_NAME: *ci_bot_name
+    #@ end
   - task: copy-artifacts
     file: bosh-stemcells-ci/ci/tasks/publish.yml
     image: bosh-integration-image
@@ -667,6 +678,8 @@ jobs:
       TO_INDEX: candidate
       AWS_ENDPOINT: "https://storage.googleapis.com"
       S3_API_ENDPOINT: storage.googleapis.com
+      GIT_USER_EMAIL: *ci_bot_email
+      GIT_USER_NAME: *ci_bot_name
   - in_parallel:
     - put: bosh-linux-stemcell-builder-push-tags
       no_get: true
@@ -753,8 +766,8 @@ jobs:
       output_mapping:
         output-repo: bosh-linux-stemcell-builder
       params:
-        GIT_USER_NAME: CI Bot
-        GIT_USER_EMAIL: bots@cloudfoundry.org
+        GIT_USER_EMAIL: *ci_bot_email
+        GIT_USER_NAME: *ci_bot_name
         PACKAGE: ruby-((.:ruby_version))
         VENDOR: true
     - task: test-unit
@@ -817,6 +830,9 @@ jobs:
   - task: bump
     file: bosh-stemcells-ci/ci/tasks/bump-bosh-agent.yml
     image: bosh-integration-image
+    params:
+      GIT_USER_EMAIL: *ci_bot_email
+      GIT_USER_NAME: *ci_bot_name
   - put: bosh-linux-stemcell-builder-push
     params:
       rebase: true
@@ -837,6 +853,8 @@ jobs:
     image: bosh-integration-image
     params:
       BLOBSTORE_TYPE: (@= blobstore_type @)
+      GIT_USER_EMAIL: *ci_bot_email
+      GIT_USER_NAME: *ci_bot_name
   - put: bosh-linux-stemcell-builder-push
     params:
       rebase: true

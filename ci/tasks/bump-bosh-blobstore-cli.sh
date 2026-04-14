@@ -26,8 +26,8 @@ echo "${sha256sum}" > \
 pushd "${REPO_PARENT}/bosh-linux-stemcell-builder-out"
   if [ "$(git status --porcelain)" != "" ]; then
     git add -A
-    git config --global user.email "ci@localhost"
-    git config --global user.name "CI Bot"
+    git config --global user.email "${GIT_USER_EMAIL}"
+    git config --global user.name "${GIT_USER_NAME}"
     git commit -m "bump bosh-blobstore-${BLOBSTORE_TYPE}/${version}"
   fi
 popd
