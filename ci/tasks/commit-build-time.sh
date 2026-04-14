@@ -13,7 +13,7 @@ fi
 build_time="$(cat "${REPO_PARENT}/build-time/timestamp")"
 formatted_build_time="$(date --date "${build_time%.*}" +%Y%m%dT%H%M%SZ)"
 
-pushd "${REPO_PARENT}/bosh-linux-stemcell-builder"
+pushd "${REPO_ROOT}"
   echo "${formatted_build_time}" > build_time.txt
   git add -A
   git config --global user.email "ci@localhost"

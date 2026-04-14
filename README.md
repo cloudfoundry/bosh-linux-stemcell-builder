@@ -27,8 +27,9 @@ docker run \
    bosh/os-image-stemcell-builder:${short_name}
 
 # You're now in the Docker container
-gem install bundler
-bundle install
+pushd bosh-stemcell
+  bundle install
+popd
 
  # build OS image
 bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]

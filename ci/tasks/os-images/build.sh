@@ -10,8 +10,6 @@ if [[ -n "${DEBUG:-}" ]]; then
   export BOSH_LOG_PATH="${BOSH_LOG_PATH:-${REPO_PARENT}/bosh-debug.log}"
 fi
 
-cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
-
 function check_param() {
   local name=$1
   local value=$(eval echo '$'$name)
@@ -33,7 +31,13 @@ fi
 sudo chown -R ubuntu .
 sudo chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
-bundle install
+
+cd "${REPO_ROOT}"
+
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
+pushd "${REPO_ROOT}/bosh-stemcell"
+  bundle install
+popd
+
 bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
 SUDO
