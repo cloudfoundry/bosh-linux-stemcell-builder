@@ -84,16 +84,14 @@ sudo chmod u+s "$(which sudo)"
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
 set -e
 
-pushd "${REPO_ROOT}/bosh-stemcell"
-  bundle install
-popd
-
 cd "${REPO_ROOT}"
+bundle install
+
 if [[ -z "$OS_IMAGE" ]]; then
-	bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,$CANDIDATE_BUILD_NUMBER]
-	rm -f ./tmp/base_os_image.tgz
+  bundle exec rake stemcell:build[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,$CANDIDATE_BUILD_NUMBER]
+  rm -f ./tmp/base_os_image.tgz
 else
-	bundle exec rake stemcell:build_with_local_os_image[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,$OS_IMAGE,$CANDIDATE_BUILD_NUMBER]
+  bundle exec rake stemcell:build_with_local_os_image[$IAAS,$HYPERVISOR,$OS_NAME,$OS_VERSION,$OS_IMAGE,$CANDIDATE_BUILD_NUMBER]
 fi
 SUDO
 
