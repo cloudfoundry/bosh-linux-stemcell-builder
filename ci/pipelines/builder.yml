@@ -1,9 +1,11 @@
-#@ load("@ytt:data", "data")
-#@yaml/text-templated-strings
 anchors:
   ci_bot:
     email: &ci_bot_email bots@cloudfoundry.org
     name: &ci_bot_name CI Bot
+
+#@ load("@ytt:data", "data")
+
+#@yaml/text-templated-strings
 
 groups:
 - name: build

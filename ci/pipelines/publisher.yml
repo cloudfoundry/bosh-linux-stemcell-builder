@@ -1,8 +1,4 @@
 #@ load("@ytt:data", "data")
-anchors:
-  ci_bot:
-    email: &ci_bot_email bots@cloudfoundry.org
-    name: &ci_bot_name CI Bot
 
 #@ def build_light_aws_stemcell_new(name, stemcell_os, stemcell_version, builder_src, input_stemcell, output_stemcell, prefix, region, bucket_prefix, tag, ami_destinations, efi, ami_excluded_destinations):
 do:
@@ -234,6 +230,11 @@ ensure:
 
 #@yaml/text-templated-strings
 ---
+anchors:
+  ci_bot:
+    email: &ci_bot_email bots@cloudfoundry.org
+    name: &ci_bot_name CI Bot
+
 groups:
 - name: all
   jobs:
