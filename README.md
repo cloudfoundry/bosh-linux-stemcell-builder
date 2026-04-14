@@ -137,6 +137,7 @@ container):
 ```shell
   export short_name="noble"
   cd /opt/bosh/bosh-stemcell
+  bundle install
   OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_${short_name}_spec.rb
 ```
 
@@ -150,6 +151,7 @@ container, you should be able to run the specific tests:
 
 ```shell
 cd /opt/bosh/bosh-stemcell; \
+bundle install; \
 STEMCELL_IMAGE=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/vsphere-esxi-ubuntu.raw \
 STEMCELL_WORKDIR=/mnt/stemcells/vsphere/esxi/ubuntu/work/work/chroot \
 OS_NAME=ubuntu \
@@ -173,15 +175,9 @@ an ubuntu chroot environment to run. For this reason, we use the
 locally, run:
 
 ```shell
-bundle install --local
 cd /opt/bosh/bosh-stemcell
-OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
-```
-
-If on macOS, run:
-
-```shell
-OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --tag shellout_types
+bundle install
+OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rake spec:shellout_types
 ```
 
 ### How to run tests for BOSH Linux Stemcell Builder
@@ -189,9 +185,9 @@ OSX=true OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec spec/ --
 The BOSH Linux Stemcell Builder code itself can be tested with the following command's:
 
 ```shell
-bundle install --local
 cd /opt/bosh/bosh-stemcell
-bundle exec rspec spec/
+bundle install
+bundle exec rake
 ```
 
 ## Troubleshooting

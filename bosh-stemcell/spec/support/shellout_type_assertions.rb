@@ -1,14 +1,14 @@
-require 'shellout_types/file'
-require 'shellout_types/package'
-require 'shellout_types/user'
-require 'shellout_types/command'
-require 'shellout_types/service'
-require 'shellout_types/group'
-require 'shellout_types/chroot'
+require "shellout_types/file"
+require "shellout_types/package"
+require "shellout_types/user"
+require "shellout_types/command"
+require "shellout_types/service"
+require "shellout_types/group"
+require "shellout_types/chroot"
 
 module ShelloutTypes
   module Assertions
-    def file(file_path, chroot=ShelloutTypes::Chroot.new)
+    def file(file_path, chroot = ShelloutTypes::Chroot.new)
       ShelloutTypes::File.new(file_path, chroot)
     end
 
@@ -33,7 +33,7 @@ module ShelloutTypes
     end
 
     def no_chroot
-      ShelloutTypes::Chroot.new('/')
+      ShelloutTypes::Chroot.new("/")
     end
   end
 end

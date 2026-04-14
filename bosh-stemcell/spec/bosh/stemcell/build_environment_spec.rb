@@ -1,8 +1,9 @@
-require 'spec_helper'
-require 'bosh/stemcell/build_environment'
-require 'bosh/stemcell/infrastructure'
-require 'bosh/stemcell/operating_system'
-require 'bosh/stemcell/definition'
+require "spec_helper"
+require "bosh/stemcell/build_environment"
+require "bosh/stemcell/infrastructure"
+require "bosh/stemcell/operating_system"
+require "bosh/stemcell/definition"
+require "fakefs/spec_helpers"
 
 module Bosh::Stemcell
   describe BuildEnvironment do
@@ -14,78 +15,77 @@ module Bosh::Stemcell
 
     let(:definition) do
       instance_double(
-        'Bosh::Stemcell::Definition',
+        "Bosh::Stemcell::Definition",
         infrastructure: infrastructure,
-        operating_system: operating_system,
+        operating_system: operating_system
       )
     end
 
-    let(:version) { '1234' }
-    let(:os_image_tarball_path) { '/some/os_image.tgz' }
+    let(:version) { "1234" }
+    let(:os_image_tarball_path) { "/some/os_image.tgz" }
 
-    let(:build_time_marker_file) { '/fake/path/to/build/time/marker/file' }
-    let(:stemcell_builder_source_dir) { '/fake/path/to/stemcell_builder' }
-    let(:stemcell_specs_dir) { '/fake/path/to/stemcell/specs/dir' }
+    let(:build_time_marker_file) { "/fake/path/to/build/time/marker/file" }
+    let(:stemcell_builder_source_dir) { "/fake/path/to/stemcell_builder" }
+    let(:stemcell_specs_dir) { "/fake/path/to/stemcell/specs/dir" }
 
-    let(:version) { '007' }
+    let(:version) { "007" }
 
     let(:root_dir) do
-      File.join('/mnt/stemcells', infrastructure.name, infrastructure.hypervisor, operating_system.name)
+      File.join("/mnt/stemcells", infrastructure.name, infrastructure.hypervisor, operating_system.name)
     end
 
-    let(:build_path) { File.join(root_dir, 'build', 'build') }
-    let(:settings_file) { File.join(build_path, 'etc', 'settings.bash') }
-    let(:work_root) { File.join(root_dir, 'work') }
-    let(:work_path) { File.join(work_root, 'work') }
+    let(:build_path) { File.join(root_dir, "build", "build") }
+    let(:settings_file) { File.join(build_path, "etc", "settings.bash") }
+    let(:work_root) { File.join(root_dir, "work") }
+    let(:work_path) { File.join(work_root, "work") }
 
     let(:infrastructure) do
-      instance_double('Bosh::Stemcell::Infrastructure::Base',
-                      name: 'fake-infrastructure-name',
-                      hypervisor: 'fake-hypervisor',
-                      default_disk_size: -1,
-      )
+      instance_double("Bosh::Stemcell::Infrastructure::Base",
+        name: "fake-infrastructure-name",
+        hypervisor: "fake-hypervisor",
+        default_disk_size: -1)
     end
 
     let(:stemcell_builder_options) do
-      instance_double('Bosh::Stemcell::BuilderOptions', default: options)
+      instance_double("Bosh::Stemcell::BuilderOptions", default: options)
     end
 
     let(:options) do
       {
-        'hello' => 'world',
-        'stemcell_tgz' => 'fake-stemcell.tgz',
-        'stemcell_image_name' => 'fake-root-disk-image.raw'
+        "hello" => "world",
+        "stemcell_tgz" => "fake-stemcell.tgz",
+        "stemcell_image_name" => "fake-root-disk-image.raw"
       }
     end
 
     let(:operating_system) do
-      instance_double('Bosh::Stemcell::OperatingSystem::Base',
-                      name: 'fake-operating-system-name')
+      instance_double("Bosh::Stemcell::OperatingSystem::Base",
+        name: "fake-operating-system-name")
     end
 
     let(:shell) { instance_double(Bosh::Core::Shell) }
-    let(:run_options) { { ignore_failures: true } }
+    let(:run_options) { {ignore_failures: true} }
 
     before do
       allow(Bosh::Core::Shell).to receive(:new).and_return(shell)
       allow(BuilderOptions).to receive(:new).and_return(stemcell_builder_options)
-      stub_const('Bosh::Stemcell::BuildEnvironment::BUILD_TIME_MARKER_FILE', build_time_marker_file)
-      stub_const('Bosh::Stemcell::BuildEnvironment::STEMCELL_BUILDER_SOURCE_DIR', stemcell_builder_source_dir)
-      stub_const('Bosh::Stemcell::BuildEnvironment::STEMCELL_SPECS_DIR', stemcell_specs_dir)
+      stub_const("Bosh::Stemcell::BuildEnvironment::BUILD_TIME_MARKER_FILE", build_time_marker_file)
+      stub_const("Bosh::Stemcell::BuildEnvironment::STEMCELL_BUILDER_SOURCE_DIR", stemcell_builder_source_dir)
+      stub_const("Bosh::Stemcell::BuildEnvironment::STEMCELL_SPECS_DIR", stemcell_specs_dir)
     end
 
-    it 'constructs stemcell builder options' do
+    it "constructs stemcell builder options" do
       expect(BuilderOptions).to receive(:new).with(
         env: env,
         definition: definition,
         version: version,
-        os_image_tarball: os_image_tarball_path,
+        os_image_tarball: os_image_tarball_path
       )
 
       subject
     end
 
-    describe '#prepare_build' do
+    describe "#prepare_build" do
       before do
         allow(shell).to receive(:run)
 
@@ -94,16 +94,16 @@ module Bosh::Stemcell
           original_cp_r.call(src, dst)
         end
 
-        stemcell_builder_etc_dir = File.join(stemcell_builder_source_dir, 'etc')
+        stemcell_builder_etc_dir = File.join(stemcell_builder_source_dir, "etc")
         FileUtils.mkdir_p(stemcell_builder_etc_dir)
-        File.open(File.join(stemcell_builder_etc_dir, 'settings.bash'), 'w') { |file| file.puts('some=var') }
+        File.open(File.join(stemcell_builder_etc_dir, "settings.bash"), "w") { |file| file.puts("some=var") }
       end
 
-      it 'cleans and prepares the environment' do
-        image_path = File.join(root_dir, 'work/work/mnt/tmp/grub/fake-root-disk-image.raw')
+      it "cleans and prepares the environment" do
+        image_path = File.join(root_dir, "work/work/mnt/tmp/grub/fake-root-disk-image.raw")
         unmount_img_command = "sudo umount #{image_path} 2> /dev/null"
         expect(shell).to receive(:run).with(unmount_img_command, run_options).ordered
-        unmount_dir_command = "sudo umount #{File.join(root_dir, 'work/work/mnt')} 2> /dev/null"
+        unmount_dir_command = "sudo umount #{File.join(root_dir, "work/work/mnt")} 2> /dev/null"
         expect(shell).to receive(:run).with(unmount_dir_command, run_options).ordered
         expect(shell).to receive(:run).with("sudo rm -rf #{root_dir}", run_options).ordered
 
@@ -114,16 +114,16 @@ module Bosh::Stemcell
         expect(File.read(settings_file)).to match(/hello=world/)
       end
 
-      it 'removes any tgz files from current working directory' do
-        FileUtils.touch('leftover.tgz')
+      it "removes any tgz files from current working directory" do
+        FileUtils.touch("leftover.tgz")
         expect {
           subject.prepare_build
-        }.to change { Dir.glob('*.tgz').size }.to(0)
+        }.to change { Dir.glob("*.tgz").size }.to(0)
       end
 
-      it 'cleans the build path' do
+      it "cleans the build path" do
         FileUtils.mkdir_p(build_path)
-        leftover_file = File.join(build_path, 'some_file')
+        leftover_file = File.join(build_path, "some_file")
         FileUtils.touch(leftover_file)
 
         expect {
@@ -131,30 +131,30 @@ module Bosh::Stemcell
         }.to change { File.exist?(leftover_file) }.from(true).to(false)
       end
 
-      it 'creates the work root' do
+      it "creates the work root" do
         expect {
           subject.prepare_build
         }.to change { Dir.exist?(work_root) }.from(false).to(true)
       end
 
-      it 'creates the stemcell path' do
+      it "creates the stemcell path" do
         expect {
           subject.prepare_build
-        }.to change { Dir.exist?(File.join(root_dir, 'work/work/stemcell')) }.from(false).to(true)
+        }.to change { Dir.exist?(File.join(root_dir, "work/work/stemcell")) }.from(false).to(true)
       end
 
-      context 'when resume_from is set' do
+      context "when resume_from is set" do
         before do
-          ENV['resume_from'] = 'stage_1'
+          ENV["resume_from"] = "stage_1"
 
           FileUtils.mkdir_p(build_path)
         end
 
         after do
-          ENV['resume_from'] = nil
+          ENV["resume_from"] = nil
         end
 
-        it 'does not run sanitize' do
+        it "does not run sanitize" do
           expect(shell).to_not receive(:run)
 
           subject.prepare_build
@@ -162,15 +162,15 @@ module Bosh::Stemcell
           expect(Dir.exist?(build_path)).to be(true)
         end
 
-        it 'does not run prepare_build_path' do
-          leftover_file = File.join(build_path, 'some_file')
+        it "does not run prepare_build_path" do
+          leftover_file = File.join(build_path, "some_file")
           FileUtils.touch(leftover_file)
 
           subject.prepare_build
           expect(File.exist?(leftover_file)).to be(true)
         end
 
-        it 'still updates the settings file' do
+        it "still updates the settings file" do
           subject.prepare_build
 
           expect(File.read(settings_file)).to match(/some=var/)
@@ -179,32 +179,32 @@ module Bosh::Stemcell
       end
     end
 
-    describe '#os_image_rspec_command' do
-      context 'when operating system has version' do
-        before { allow(operating_system).to receive(:version).and_return('fake-version') }
+    describe "#os_image_rspec_command" do
+      context "when operating system has version" do
+        before { allow(operating_system).to receive(:version).and_return("fake-version") }
 
-        it 'returns the correct command' do
+        it "returns the correct command" do
           expected_rspec_command = [
             "cd #{stemcell_specs_dir};",
-            'OS_IMAGE=/some/os_image.tgz',
+            "OS_IMAGE=/some/os_image.tgz",
             "bundle exec rspec -fd",
-            "spec/os_image/#{operating_system.name}_spec.rb",
-          ].join(' ')
+            "spec/os_image/#{operating_system.name}_spec.rb"
+          ].join(" ")
 
           expect(subject.os_image_rspec_command).to eq(expected_rspec_command)
         end
       end
     end
 
-    describe '#stemcell_rspec_command' do
-      before { allow(operating_system).to receive(:version).and_return('fake-version') }
+    describe "#stemcell_rspec_command" do
+      before { allow(operating_system).to receive(:version).and_return("fake-version") }
       before { allow(operating_system).to receive(:variant?).and_return(true) }
-      before { allow(operating_system).to receive(:variant).and_return('fips') }
+      before { allow(operating_system).to receive(:variant).and_return("fips") }
 
-      it 'returns the correct command' do
+      it "returns the correct command" do
         expected_rspec_command = [
           "cd #{stemcell_specs_dir};",
-          "STEMCELL_IMAGE=#{File.join(work_path, 'fake-root-disk-image.raw')}",
+          "STEMCELL_IMAGE=#{File.join(work_path, "fake-root-disk-image.raw")}",
           "STEMCELL_WORKDIR=#{work_path}",
           "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}",
           "OS_NAME=#{operating_system.name}",
@@ -217,140 +217,140 @@ module Bosh::Stemcell
           "spec/stemcells/#{infrastructure.name}_spec.rb",
           "spec/stemcells/stig_spec.rb",
           "spec/stemcells/cis_spec.rb",
-          "spec/stemcells/fips_spec.rb",
-        ].join(' ')
+          "spec/stemcells/fips_spec.rb"
+        ].join(" ")
 
         expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
       end
     end
 
-    describe '#build_path' do
-      it 'returns the build path' do
+    describe "#build_path" do
+      it "returns the build path" do
         expect(subject.build_path).to eq(build_path)
       end
     end
 
-    describe '#chroot_dir' do
-      it 'returns the right directory' do
-        expect(subject.chroot_dir).to eq(File.join(work_path, 'chroot'))
+    describe "#chroot_dir" do
+      it "returns the right directory" do
+        expect(subject.chroot_dir).to eq(File.join(work_path, "chroot"))
       end
     end
 
-    describe '#stemcell_files' do
-      it 'returns the right file path' do
-        allow(definition).to receive(:disk_formats) { ['disk-format-1', 'disk-format-2'] }
-        allow(definition).to receive(:stemcell_name).with('disk-format-1') { 'infra-hypervisor-os-version' }
-        allow(definition).to receive(:stemcell_name).
-          with('disk-format-2') { 'infra-hypervisor-os-version-disk-format-2' }
+    describe "#stemcell_files" do
+      it "returns the right file path" do
+        allow(definition).to receive(:disk_formats) { ["disk-format-1", "disk-format-2"] }
+        allow(definition).to receive(:stemcell_name).with("disk-format-1") { "infra-hypervisor-os-version" }
+        allow(definition).to receive(:stemcell_name)
+          .with("disk-format-2") { "infra-hypervisor-os-version-disk-format-2" }
 
         expect(subject.stemcell_files).to eq([
           File.join(work_path, "bosh-stemcell-007-infra-hypervisor-os-version.tgz"),
-          File.join(work_path, "bosh-stemcell-007-infra-hypervisor-os-version-disk-format-2.tgz"),
+          File.join(work_path, "bosh-stemcell-007-infra-hypervisor-os-version-disk-format-2.tgz")
         ])
       end
     end
 
-    describe '#settings_path' do
-      it 'returns the settings path' do
+    describe "#settings_path" do
+      it "returns the settings path" do
         expect(subject.settings_path).to eq(settings_file)
       end
     end
 
-    describe '#work_path' do
-      it 'returns the work path' do
+    describe "#work_path" do
+      it "returns the work path" do
         expect(subject.work_path).to eq(work_path)
       end
     end
 
-    describe '#command_env' do
-      context 'when the environment does not have HTTP_PROXY, HTTPS_PROXY or NO_PROXY variables' do
-        it 'includes no variables' do
-          expect(subject.command_env).to eq('env ')
+    describe "#command_env" do
+      context "when the environment does not have HTTP_PROXY, HTTPS_PROXY or NO_PROXY variables" do
+        it "includes no variables" do
+          expect(subject.command_env).to eq("env ")
         end
       end
 
-      context 'when the environment has HTTP_PROXY and NO_PROXY variables' do
+      context "when the environment has HTTP_PROXY and NO_PROXY variables" do
         let(:env) do
           {
-            'HTTP_PROXY' => 'some_proxy',
-            'NO_PROXY' => 'no_proxy',
-            'SOME_PROXY' => 'other_proxy',
+            "HTTP_PROXY" => "some_proxy",
+            "NO_PROXY" => "no_proxy",
+            "SOME_PROXY" => "other_proxy"
           }
         end
 
-        it 'includes those variables' do
+        it "includes those variables" do
           expect(subject.command_env).to eq("env HTTP_PROXY='some_proxy' NO_PROXY='no_proxy'")
         end
       end
 
-      context 'when the environment has http_proxy and no_proxy variables' do
+      context "when the environment has http_proxy and no_proxy variables" do
         let(:env) do
           {
-            'http_proxy' => 'some_proxy',
-            'no_proxy' => 'no_proxy',
-            'some_proxy' => 'other_proxy',
+            "http_proxy" => "some_proxy",
+            "no_proxy" => "no_proxy",
+            "some_proxy" => "other_proxy"
           }
         end
 
-        it 'includes those variables' do
+        it "includes those variables" do
           expect(subject.command_env).to eq("env http_proxy='some_proxy' no_proxy='no_proxy'")
         end
       end
 
-      context 'when the environment has HTTP_PROXY, HTTPS_PROXY and NO_PROXY variables' do
+      context "when the environment has HTTP_PROXY, HTTPS_PROXY and NO_PROXY variables" do
         let(:env) do
           {
-            'HTTP_PROXY' => 'fake-http-proxy',
-            'HTTPS_PROXY' => 'fake-https-proxy',
-            'NO_PROXY' => 'fake-no-proxy',
-            'SOME_PROXY' => 'fake-other-proxy',
+            "HTTP_PROXY" => "fake-http-proxy",
+            "HTTPS_PROXY" => "fake-https-proxy",
+            "NO_PROXY" => "fake-no-proxy",
+            "SOME_PROXY" => "fake-other-proxy"
           }
         end
 
-        it 'includes those variables' do
+        it "includes those variables" do
           expect(subject.command_env).to eq(
             "env HTTP_PROXY='fake-http-proxy' HTTPS_PROXY='fake-https-proxy' NO_PROXY='fake-no-proxy'"
           )
         end
       end
 
-      context 'when the environment has http_proxy, https_proxy and no_proxy variables' do
+      context "when the environment has http_proxy, https_proxy and no_proxy variables" do
         let(:env) do
           {
-            'http_proxy' => 'fake-http-proxy',
-            'https_proxy' => 'fake-https-proxy',
-            'no_proxy' => 'fake-no-proxy',
-            'some_proxy' => 'fake-other-proxy',
+            "http_proxy" => "fake-http-proxy",
+            "https_proxy" => "fake-https-proxy",
+            "no_proxy" => "fake-no-proxy",
+            "some_proxy" => "fake-other-proxy"
           }
         end
 
-        it 'includes those variables' do
+        it "includes those variables" do
           expect(subject.command_env).to eq(
             "env http_proxy='fake-http-proxy' https_proxy='fake-https-proxy' no_proxy='fake-no-proxy'"
           )
         end
       end
 
-      context 'when a build time env var is configured' do
+      context "when a build time env var is configured" do
         let(:env) do
           {
-            'BUILD_TIME' => 'timestamp_from_env',
+            "BUILD_TIME" => "timestamp_from_env"
           }
         end
 
-        it 'includes the timestamp from env' do
+        it "includes the timestamp from env" do
           expect(subject.command_env).to eq(
             "env BUILD_TIME='timestamp_from_env'"
           )
         end
 
-        context 'when a build time marker file exists' do
+        context "when a build time marker file exists" do
           before do
             allow(File).to receive(:exist?).with(build_time_marker_file).and_return(true)
-            allow(File).to receive(:read).with(build_time_marker_file).and_return('timestamp_from_file')
+            allow(File).to receive(:read).with(build_time_marker_file).and_return("timestamp_from_file")
           end
 
-          it 'includes the timestamp from the file' do
+          it "includes the timestamp from the file" do
             expect(subject.command_env).to eq(
               "env BUILD_TIME='timestamp_from_file'"
             )

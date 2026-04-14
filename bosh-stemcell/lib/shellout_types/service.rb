@@ -1,4 +1,4 @@
-require 'shellout_types/file'
+require "shellout_types/file"
 
 module ShelloutTypes
   class Service
@@ -24,20 +24,20 @@ module ShelloutTypes
     private
 
     def check_service_enabled(runlevel)
-      stdout, stderr, status = @chroot.run('cat', '/etc/*release')
-      raise RuntimeError, stderr if status != 0
+      stdout, stderr, status = @chroot.run("cat", "/etc/*release")
+      raise stderr.to_s if status != 0
 
-      raise "Cannot determine Linux distribution: #{stdout}" unless stdout.match(/Ubuntu/)
+      raise "Cannot determine Linux distribution: #{stdout}" unless /Ubuntu/.match?(stdout)
 
       check_is_enabled_systemctl
     end
 
     def check_upstart_links(runlevel)
-      scripts_list, stderr, status = @chroot.run('ls', '-1', "/etc/rc#{runlevel}.d")
-      raise RuntimeError, stderr if status != 0
+      scripts_list, stderr, status = @chroot.run("ls", "-1", "/etc/rc#{runlevel}.d")
+      raise stderr.to_s if status != 0
 
       script_links = scripts_list.split("\n")
-      script_for_service = script_links.select { |link| link.match(/^S\d\d#{@service}$/) }.first
+      script_for_service = script_links.find { |link| link.match(/^S\d\d#{@service}$/) }
       !script_for_service.nil?
     end
 
@@ -46,17 +46,17 @@ module ShelloutTypes
       return false unless conf_file.file?
 
       start_on_block = conf_file.content.match(/^start on .*(\n[\t ]+.*)*/)[0]
-      if start_on_block.match(/runlevel \[\d*#{runlevel}\d*\]/) || start_on_block.match('startup')
-        return true
+      if start_on_block.match(/runlevel \[\d*#{runlevel}\d*\]/) || start_on_block.match("startup")
+        true
       else
-        return false
+        false
       end
     end
 
     def check_is_enabled_systemctl
-      stdout, _, _ = @chroot.run('systemctl', 'is-enabled', @service)
+      stdout, _, _ = @chroot.run("systemctl", "is-enabled", @service)
 
-      return stdout.match(/^enabled$/) ? true : false
+      /^enabled$/.match?(stdout) || false
     end
   end
 end

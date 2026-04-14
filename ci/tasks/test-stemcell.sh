@@ -40,7 +40,7 @@ if bosh int "${REPO_PARENT}/director-state/director-creds.yml" --path /jumpbox_s
   export BOSH_GW_HOST="${BOSH_ENVIRONMENT}"
 fi
 
-pushd "${REPO_PARENT}/bosh-linux-stemcell-builder/acceptance-tests"
+pushd "${REPO_ROOT}/acceptance-tests"
   # shellcheck disable=SC2154
   go run github.com/onsi/ginkgo/v2/ginkgo --skip-package vendor -r "${package}"
 popd

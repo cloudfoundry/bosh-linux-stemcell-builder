@@ -1,10 +1,9 @@
 module Bosh::Stemcell
   module OperatingSystem
-
     def self.for(operating_system_name, operating_system_version = nil)
       case operating_system_name
-        when 'ubuntu' then Ubuntu.new(operating_system_version)
-        else raise ArgumentError.new("invalid operating system: #{operating_system_name}")
+      when "ubuntu" then Ubuntu.new(operating_system_version)
+      else raise ArgumentError.new("invalid operating system: #{operating_system_name}")
       end
     end
 
@@ -25,8 +24,8 @@ module Bosh::Stemcell
 
     class Ubuntu < Base
       def initialize(version)
-        (version, variant) = version.split('-') if version
-        super(name: 'ubuntu', version: version, variant: variant)
+        (version, variant) = version.split("-") if version
+        super(name: "ubuntu", version: version, variant: variant)
       end
     end
   end

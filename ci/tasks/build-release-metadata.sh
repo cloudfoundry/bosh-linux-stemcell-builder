@@ -36,7 +36,7 @@ pushd "${REPO_PARENT}/candidate-stemcell"
   kernel_version=$(grep "${KERNEL_PACKAGE}" packages.txt | awk '{print $3}')
 popd
 
-bosh_agent_version=$(cat "${REPO_PARENT}/bosh-linux-stemcell-builder/stemcell_builder/stages/bosh_go_agent/assets/bosh-agent-version")
+bosh_agent_version=$(cat "${REPO_ROOT}/stemcell_builder/stages/bosh_go_agent/assets/bosh-agent-version")
 {
   echo "## Metadata:"
   echo "**BOSH Agent Version**: ${bosh_agent_version}"
@@ -45,9 +45,9 @@ bosh_agent_version=$(cat "${REPO_PARENT}/bosh-linux-stemcell-builder/stemcell_bu
 
 if [[ "${OS_NAME}" == "ubuntu" ]]; then
   # Ensure URL for usn-log from metalink exists before attempting to download.
-  usn_log_json_file="${REPO_PARENT}/bosh-linux-stemcell-builder/usn-log.json"
+  usn_log_json_file="${REPO_ROOT}/usn-log.json"
   touch "${usn_log_json_file}"
-  usn_metalink_path="${REPO_PARENT}/bosh-linux-stemcell-builder/bosh-stemcell/image-metalinks/${BRANCH}/${OS_NAME}-${OS_VERSION}.meta4"
+  usn_metalink_path="${REPO_ROOT}/bosh-stemcell/image-metalinks/${BRANCH}/${OS_NAME}-${OS_VERSION}.meta4"
   if [[ -n "$(meta4 file-urls --metalink "${usn_metalink_path}" --file usn-log.json)" ]]; then
     meta4 file-download \
       --skip-hash-verification \

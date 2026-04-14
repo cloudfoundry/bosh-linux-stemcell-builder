@@ -21,12 +21,12 @@ module Bosh::Core
       stdout.puts command if options[:output_command]
       lines = []
 
-      if options[:env]
+      popen_args = if options[:env]
         # Wrap in a shell because existing api to Shell#run takes a string
         # which makes it really hard to pass it to popen with custom environment.
-         popen_args = [options[:env], ENV['SHELL'] || 'bash', '-c', command]
+        [options[:env], ENV["SHELL"] || "bash", "-c", command]
       else
-        popen_args = command
+        command
       end
 
       io = IO.popen(popen_args)
@@ -50,7 +50,7 @@ module Bosh::Core
 
       redacted_cmd = cmd
       if options[:redact]
-        redacted_cmd = redacted_cmd.gsub(/#{options[:redact].join('|')}/, "[REDACTED]")
+        redacted_cmd = redacted_cmd.gsub(/#{options[:redact].join("|")}/, "[REDACTED]")
       end
 
       err_msg = "Failed: '#{redacted_cmd}' from #{pwd}, with exit status #{$?.to_i}\n\n #{command_output}"
@@ -64,7 +64,7 @@ module Bosh::Core
     def pwd
       Dir.pwd
     rescue Errno::ENOENT
-      'a deleted directory'
+      "a deleted directory"
     end
   end
 end

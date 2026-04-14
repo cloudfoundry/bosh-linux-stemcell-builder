@@ -1,4 +1,4 @@
-require 'bosh/core/shell'
+require "bosh/core/shell"
 
 module Bosh::Stemcell
   class BuildReport
@@ -9,7 +9,7 @@ module Bosh::Stemcell
     def measure_configure(name, &block)
       start = Time.now.utc
 
-      puts "== Started configuring '#{name}' at #{start.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
+      puts "== Started configuring '#{name}' at #{start.strftime("%a %b %e %H:%M:%S %Z %Y")} =="
       yield
       @stats << {type: "configure", name: name, duration: Time.now.utc - start}
     end
@@ -17,7 +17,7 @@ module Bosh::Stemcell
     def measure_apply(name, &block)
       start = Time.now.utc
 
-      puts "== Started applying '#{name}' at #{start.strftime('%a %b %e %H:%M:%S %Z %Y')} =="
+      puts "== Started applying '#{name}' at #{start.strftime("%a %b %e %H:%M:%S %Z %Y")} =="
       yield
       @stats << {type: "apply", name: name, duration: Time.now.utc - start}
     end
@@ -31,8 +31,7 @@ module Bosh::Stemcell
   end
 
   class StageRunner
-
-    REQUIRED_UID=1000
+    REQUIRED_UID = 1000
 
     def initialize(options)
       @build_path = options.fetch(:build_path)
@@ -52,7 +51,7 @@ module Bosh::Stemcell
 
     def configure(stages)
       stages.each do |stage|
-        stage_config_script = File.join(build_path, 'stages', stage.to_s, 'config.sh')
+        stage_config_script = File.join(build_path, "stages", stage.to_s, "config.sh")
 
         @report.measure_configure(stage) do
           if File.exist?(stage_config_script) && File.executable?(stage_config_script)
@@ -67,14 +66,12 @@ module Bosh::Stemcell
         FileUtils.mkdir_p(work_path)
 
         @report.measure_apply(stage) do
-          begin
-            stage_apply_script = File.join(build_path, 'stages', stage.to_s, 'apply.sh')
+          stage_apply_script = File.join(build_path, "stages", stage.to_s, "apply.sh")
 
-            run_sudo_with_command_env("#{stage_apply_script} #{work_path}")
-          rescue => _
-            puts "=== You can resume_from the '#{stage}' stage by using resume_from=#{stage} ==="
-            raise
-          end
+          run_sudo_with_command_env("#{stage_apply_script} #{work_path}")
+        rescue => _
+          puts "=== You can resume_from the '#{stage}' stage by using resume_from=#{stage} ==="
+          raise
         end
       end
     end

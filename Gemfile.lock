@@ -2,17 +2,14 @@ PATH
   remote: bosh-stemcell
   specs:
     bosh-stemcell (0.0.0)
+      rake
+      rspec
+      rspec-its
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.6.2)
-    fakefs (3.2.1)
-    little-plugger (1.1.4)
-    logging (2.4.0)
-      little-plugger (~> 1.1)
-      multi_json (~> 1.14)
-    multi_json (1.20.0)
     rake (13.3.1)
     rspec (3.13.2)
       rspec-core (~> 3.13.0)
@@ -23,8 +20,6 @@ GEM
     rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-instafail (1.0.0)
-      rspec
     rspec-its (2.0.0)
       rspec-core (>= 3.13.0)
       rspec-expectations (>= 3.13.0)
@@ -32,20 +27,13 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.7)
-    timecop (0.9.10)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   bosh-stemcell!
-  fakefs
-  logging
   rake
-  rspec
-  rspec-instafail
-  rspec-its
-  timecop
 
 BUNDLED WITH
    2.5.23

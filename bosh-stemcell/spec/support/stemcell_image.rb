@@ -1,23 +1,23 @@
-require 'bosh/stemcell/disk_image'
-require 'shellout_types/chroot'
-require_relative 'shellout_type_assertions'
+require "bosh/stemcell/disk_image"
+require "shellout_types/chroot"
+require_relative "shellout_type_assertions"
 
 RSpec.configure do |config|
   # do not run stemcell image tests when shellout types tests are executed.
   unless config.inclusion_filter[:shellout_types]
-    if ENV['STEMCELL_IMAGE']
-        config.filter_run_including stemcell_image: true
-        disk_image = Bosh::Stemcell::DiskImage.new(image_file_path: ENV['STEMCELL_IMAGE'])
-        config.before(:suite) do |example|
-          disk_image.mount
-          ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
-        end
-        config.after(:suite) do |example|
-          ShelloutTypes::Chroot.unmount_proc
-          disk_image.unmount
-        end
+    if ENV["STEMCELL_IMAGE"]
+      config.filter_run_including stemcell_image: true
+      disk_image = Bosh::Stemcell::DiskImage.new(image_file_path: ENV["STEMCELL_IMAGE"])
+      config.before(:suite) do |example|
+        disk_image.mount
+        ShelloutTypes::Chroot.chroot_dir = disk_image.image_mount_point
+      end
+      config.after(:suite) do |example|
+        ShelloutTypes::Chroot.unmount_proc
+        disk_image.unmount
+      end
     else
-      warning = 'All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set'
+      warning = "All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set"
       puts RSpec::Core::Formatters::ConsoleCodes.wrap(warning, :yellow)
       config.filter_run_excluding stemcell_image: true
     end

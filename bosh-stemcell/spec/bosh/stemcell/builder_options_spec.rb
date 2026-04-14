@@ -1,6 +1,6 @@
-require 'spec_helper'
-require 'bosh/stemcell/builder_options'
-require 'bosh/stemcell/definition'
+require "spec_helper"
+require "bosh/stemcell/builder_options"
+require "bosh/stemcell/definition"
 
 module Bosh::Stemcell
   describe BuilderOptions do
@@ -9,8 +9,8 @@ module Bosh::Stemcell
       {
         env: env,
         definition: definition,
-        version: '007',
-        os_image_tarball: 'fake/os_image.tgz',
+        version: "007",
+        os_image_tarball: "fake/os_image.tgz"
       }
     end
 
@@ -18,131 +18,131 @@ module Bosh::Stemcell
 
     let(:definition) {
       instance_double(
-        'Bosh::Stemcell::Definition',
+        "Bosh::Stemcell::Definition",
         infrastructure: infrastructure,
-        operating_system: operating_system,
+        operating_system: operating_system
       )
     }
 
-    let(:infrastructure) { Infrastructure.for('aws') }
-    let(:operating_system) { OperatingSystem.for('ubuntu', 'penguin-bear') }
-    let(:expected_source_root) { File.expand_path('../../../../..', __FILE__) }
-    let(:archive_filename) { instance_double('Bosh::Stemcell::ArchiveFilename', to_s: 'FAKE_STEMCELL.tgz') }
+    let(:infrastructure) { Infrastructure.for("aws") }
+    let(:operating_system) { OperatingSystem.for("ubuntu", "penguin-bear") }
+    let(:expected_source_root) { File.expand_path("../../../../..", __FILE__) }
+    let(:archive_filename) { instance_double("Bosh::Stemcell::ArchiveFilename", to_s: "FAKE_STEMCELL.tgz") }
 
     before do
       allow(ArchiveFilename).to receive(:new).and_return(archive_filename)
     end
 
-    describe '#default' do
+    describe "#default" do
       let(:default_disk_size) { 2048 }
       let(:rake_args) { {} }
 
-      it 'sets stemcell_image_name' do
+      it "sets stemcell_image_name" do
         result = stemcell_builder_options.default
         expected_image_name = "#{infrastructure.name}-#{infrastructure.hypervisor}-#{operating_system.name}.raw"
-        expect(result['stemcell_image_name']).to eq(expected_image_name)
+        expect(result["stemcell_image_name"]).to eq(expected_image_name)
       end
 
-      it 'sets stemcell_version' do
+      it "sets stemcell_version" do
         result = stemcell_builder_options.default
-        expect(result['stemcell_version']).to eq('007')
+        expect(result["stemcell_version"]).to eq("007")
       end
 
-      it 'sets stemcell operating system version' do
+      it "sets stemcell operating system version" do
         result = stemcell_builder_options.default
-        expect(result['stemcell_operating_system_version']).to eq('penguin')
+        expect(result["stemcell_operating_system_version"]).to eq("penguin")
       end
 
-      it 'sets stemcell operating system variant' do
+      it "sets stemcell operating system variant" do
         result = stemcell_builder_options.default
-        expect(result['stemcell_operating_system_variant']).to eq('bear')
+        expect(result["stemcell_operating_system_variant"]).to eq("bear")
       end
 
-      # rubocop:disable MethodLength
+      # rubocop:disable Metrics/MethodLength
       def self.it_sets_correct_environment_variables
-        describe 'setting enviroment variables' do
+        describe "setting enviroment variables" do
           let(:env) do
             {
-              'UBUNTU_ISO' => 'fake_ubuntu_iso',
-              'UBUNTU_MIRROR' => 'fake_ubuntu_mirror',
-              'RUBY_BIN' => 'fake_ruby_bin',
+              "UBUNTU_ISO" => "fake_ubuntu_iso",
+              "UBUNTU_MIRROR" => "fake_ubuntu_mirror",
+              "RUBY_BIN" => "fake_ruby_bin"
             }
           end
 
-          it 'sets default values for options based in hash' do
+          it "sets default values for options based in hash" do
             result = stemcell_builder_options.default
 
-            expect(result['stemcell_operating_system']).to eq(operating_system.name)
-            expect(result['stemcell_infrastructure']).to eq(infrastructure.name)
-            expect(result['stemcell_hypervisor']).to eq(infrastructure.hypervisor)
-            expect(result['UBUNTU_ISO']).to eq('fake_ubuntu_iso')
-            expect(result['UBUNTU_MIRROR']).to eq('fake_ubuntu_mirror')
-            expect(result['ruby_bin']).to eq('fake_ruby_bin')
-            expect(result['image_create_disk_size']).to eq(default_disk_size)
-            expect(result['os_image_tgz']).to eq('fake/os_image.tgz')
+            expect(result["stemcell_operating_system"]).to eq(operating_system.name)
+            expect(result["stemcell_infrastructure"]).to eq(infrastructure.name)
+            expect(result["stemcell_hypervisor"]).to eq(infrastructure.hypervisor)
+            expect(result["UBUNTU_ISO"]).to eq("fake_ubuntu_iso")
+            expect(result["UBUNTU_MIRROR"]).to eq("fake_ubuntu_mirror")
+            expect(result["ruby_bin"]).to eq("fake_ruby_bin")
+            expect(result["image_create_disk_size"]).to eq(default_disk_size)
+            expect(result["os_image_tgz"]).to eq("fake/os_image.tgz")
           end
 
-          context 'when RUBY_BIN is not set' do
-            before { env.delete('RUBY_BIN') }
+          context "when RUBY_BIN is not set" do
+            before { env.delete("RUBY_BIN") }
 
             before do
-              allow(RbConfig::CONFIG).to receive(:[]).with('bindir').and_return('/a/path/to/')
-              allow(RbConfig::CONFIG).to receive(:[]).with('ruby_install_name').and_return('ruby')
+              allow(RbConfig::CONFIG).to receive(:[]).with("bindir").and_return("/a/path/to/")
+              allow(RbConfig::CONFIG).to receive(:[]).with("ruby_install_name").and_return("ruby")
             end
 
-            it 'uses the RbConfig values' do
+            it "uses the RbConfig values" do
               result = stemcell_builder_options.default
 
-              expect(result['ruby_bin']).to eq('/a/path/to/ruby')
+              expect(result["ruby_bin"]).to eq("/a/path/to/ruby")
             end
           end
 
-          context 'when disk_size is not passed' do
-            it 'defaults to default disk size for infrastructure' do
+          context "when disk_size is not passed" do
+            it "defaults to default disk size for infrastructure" do
               result = stemcell_builder_options.default
 
-              expect(result['image_create_disk_size']).to eq(default_disk_size)
+              expect(result["image_create_disk_size"]).to eq(default_disk_size)
             end
           end
 
-          context 'when disk_size is passed' do
+          context "when disk_size is passed" do
             before { dependencies[:disk_size] = 1234 }
 
-            it 'allows user to override default disk_size' do
+            it "allows user to override default disk_size" do
               result = stemcell_builder_options.default
 
-              expect(result['image_create_disk_size']).to eq(1234)
+              expect(result["image_create_disk_size"]).to eq(1234)
             end
           end
         end
       end
-      # rubocop:enable MethodLength
+      # rubocop:enable Metrics/MethodLength
 
-      describe 'infrastructure variation' do
-        context 'when infrastruture is aws' do
-          let(:infrastructure) { Infrastructure.for('aws') }
+      describe "infrastructure variation" do
+        context "when infrastruture is aws" do
+          let(:infrastructure) { Infrastructure.for("aws") }
           let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
           it 'has no "image_ovftool_path" key' do
-            expect(stemcell_builder_options.default).not_to have_key('image_ovftool_path')
+            expect(stemcell_builder_options.default).not_to have_key("image_ovftool_path")
           end
         end
 
-        context 'when infrastruture is google' do
-          let(:infrastructure) { Infrastructure.for('google') }
+        context "when infrastruture is google" do
+          let(:infrastructure) { Infrastructure.for("google") }
           let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
           it 'has no "image_ovftool_path" key' do
-            expect(stemcell_builder_options.default).not_to have_key('image_ovftool_path')
+            expect(stemcell_builder_options.default).not_to have_key("image_ovftool_path")
           end
         end
 
-        context 'when infrastruture is vsphere' do
-          let(:infrastructure) { Infrastructure.for('vsphere') }
+        context "when infrastruture is vsphere" do
+          let(:infrastructure) { Infrastructure.for("vsphere") }
           let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
@@ -150,39 +150,39 @@ module Bosh::Stemcell
           it 'has an "image_ovftool_path" key' do
             result = stemcell_builder_options.default
 
-            expect(result['image_ovftool_path']).to be_nil
+            expect(result["image_ovftool_path"]).to be_nil
           end
 
-          context 'if you have OVFTOOL set in the environment' do
-            let(:env) { { 'OVFTOOL' => 'fake_ovf_tool_path' } }
+          context "if you have OVFTOOL set in the environment" do
+            let(:env) { {"OVFTOOL" => "fake_ovf_tool_path"} }
 
-            it 'sets image_ovftool_path' do
+            it "sets image_ovftool_path" do
               result = stemcell_builder_options.default
 
-              expect(result['image_ovftool_path']).to eq('fake_ovf_tool_path')
+              expect(result["image_ovftool_path"]).to eq("fake_ovf_tool_path")
             end
           end
         end
 
-        context 'when infrastructure is openstack' do
-          let(:infrastructure) { Infrastructure.for('openstack') }
+        context "when infrastructure is openstack" do
+          let(:infrastructure) { Infrastructure.for("openstack") }
           let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
           it 'has no "image_ovftool_path" key' do
-            expect(stemcell_builder_options.default).not_to have_key('image_ovftool_path')
+            expect(stemcell_builder_options.default).not_to have_key("image_ovftool_path")
           end
         end
 
-        context 'when infrastruture is azure' do
-          let(:infrastructure) { Infrastructure.for('azure') }
+        context "when infrastruture is azure" do
+          let(:infrastructure) { Infrastructure.for("azure") }
           let(:default_disk_size) { 5120 }
 
           it_sets_correct_environment_variables
 
           it 'has no "image_ovftool_path" key' do
-            expect(stemcell_builder_options.default).not_to have_key('image_ovftool_path')
+            expect(stemcell_builder_options.default).not_to have_key("image_ovftool_path")
           end
         end
       end
