@@ -2,7 +2,7 @@
 
 source /var/vcap/bosh/etc/monit-access-helper.sh
 
-if grep -q '^0::' /proc/self/cgroup 2>/dev/null; then
+if monit_using_unified_cgroup_v2; then
     # cgroupv2: dynamically determine the cgroup path for this process.
     # The agent calls permit_monit_access() to join the monit-api-access sub-cgroup.
     current_cgroup="$(grep '^0::' /proc/self/cgroup | cut -d: -f3)"
