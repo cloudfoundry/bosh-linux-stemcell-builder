@@ -6,6 +6,7 @@ stemcell_details:
   os_version: "22.04"
   os_name: ubuntu-jammy
   os_short_name: jammy
+  subnet_int: "22" #! use last two digits of release year: ex 2010 -> 10
   use_efi: false
   include_iaas: [
     {iaas: alicloud, hypervisor: kvm},
@@ -21,7 +22,6 @@ stemcell_details:
     {iaas: aws, hypervisor: xen-hvm},
     {iaas: google, hypervisor: kvm},
   ]
-  subnet_int: "22" #! use last two digits of release year: ex 2000 -> 20
 
 blobstore_types:
 - dav
