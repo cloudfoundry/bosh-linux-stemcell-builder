@@ -21,7 +21,7 @@ stemcell_details:
     {iaas: aws, hypervisor: xen-hvm},
     {iaas: google, hypervisor: kvm},
   ]
-  subnet_int: "3"
+  subnet_int: "22" #! use last two digits of release year: ex 2000 -> 20
 
 blobstore_types:
 - dav
