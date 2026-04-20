@@ -1060,6 +1060,7 @@ resources:
     branch: (@= data.values.stemcell_details.branch @)
     paths:
       - ci
+      - .ruby-version
     uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
 
 - name: bats
