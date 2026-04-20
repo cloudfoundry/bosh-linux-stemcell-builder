@@ -358,7 +358,7 @@ jobs:
           GCP_ZONE: europe-north2-a
           GCP_PREEMPTIBLE: true
           GCP_NETWORK_NAME: bosh-concourse
-          GCP_SUBNET_NAME: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          GCP_SUBNET_NAME: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
           GCP_JSON_KEY: ((gcp_json_key))
           INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).10
           INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
@@ -425,7 +425,7 @@ jobs:
 #!          GCP_PROJECT_ID: ((gcp_project_id))
 #!          GCP_ZONE: europe-north2-a
 #!          GCP_NETWORK_NAME: ipv6-test
-#!          GCP_SUBNET_NAME: bosh-integration-ipv6-(@= data.values.stemcell_details.subnet_int @)
+#!          GCP_SUBNET_NAME: stemcell-builder-integration-ipv6-(@= data.values.stemcell_details.subnet_int @)
 #!          GCP_JSON_KEY: ((gcp_json_key))
 #!          INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).10
 #!          INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
@@ -561,7 +561,7 @@ jobs:
           GCP_JSON_KEY: ((gcp_json_key))
           GCP_PROJECT_ID: ((gcp_project_id))
           GCP_ZONE: europe-north2-a
-          GCP_SUBNET_NAME: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          GCP_SUBNET_NAME: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
           TAG: test-stemcells-bats
       - task: deploy-director
         file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director.yml
@@ -571,7 +571,7 @@ jobs:
           GCP_ZONE: europe-north2-a
           GCP_PREEMPTIBLE: true
           GCP_NETWORK_NAME: bosh-concourse
-          GCP_SUBNET_NAME: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          GCP_SUBNET_NAME: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
           GCP_JSON_KEY: ((gcp_json_key))
           INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).66
           INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
@@ -588,7 +588,7 @@ jobs:
           VARS_MACHINE_TYPE: e2-standard-2
           VARS_ZONE: europe-north2-a
           VARS_PREEMPTIBLE: true
-          VARS_SUBNETWORK_DEFAULT: bosh-integration-(@= data.values.stemcell_details.subnet_int @)
+          VARS_SUBNETWORK_DEFAULT: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
           VARS_CIDR_DEFAULT: "10.100.(@= data.values.stemcell_details.subnet_int @).0/24"
           VARS_RESERVED_DEFAULT: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).129, 10.100.(@= data.values.stemcell_details.subnet_int @).190 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
           VARS_STATIC_DEFAULT: '10.100.(@= data.values.stemcell_details.subnet_int @).130 - 10.100.(@= data.values.stemcell_details.subnet_int @).155'

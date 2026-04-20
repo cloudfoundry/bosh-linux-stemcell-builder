@@ -17,7 +17,7 @@ stemcell_details:
     {iaas: warden, hypervisor: boshlite}
   ]
   include_fips_iaas: []
-  subnet_int: "0"
+  subnet_int: "24" #! use last two digits of release year: ex 2000 -> 20
 
 blobstore_types:
 - dav
