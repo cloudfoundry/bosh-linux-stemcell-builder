@@ -97,7 +97,6 @@ jobs:
       - get: bosh-shared-ci
       - get: os-image-stemcell-builder-registry-image
       - get: bosh-linux-stemcell-builder
-        resource: bosh-linux-stemcell-builder
       - get: (@= data.values.stemcell_details.os_short_name @)-usn
         version: every
         trigger: true
@@ -149,7 +148,6 @@ jobs:
       - get: os-image-stemcell-builder-registry-image
       - get: bosh-integration-image
       - get: bosh-linux-stemcell-builder
-        resource: bosh-linux-stemcell-builder
       - get: usn-log
         passed:
           - process-high-critical-cves
@@ -189,7 +187,6 @@ jobs:
       - get: bosh-shared-ci
       - get: os-image-stemcell-builder-registry-image
       - get: bosh-linux-stemcell-builder
-        resource: bosh-linux-stemcell-builder
       - get: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
         version: every
         trigger: true
@@ -237,7 +234,6 @@ jobs:
   - get: bosh-stemcells-ci
   - get: os-image-stemcell-builder-registry-image
   - get: bosh-linux-stemcell-builder
-    resource: bosh-linux-stemcell-builder
     trigger: true
   - get: version
     params:
@@ -275,7 +271,6 @@ jobs:
   - get: bosh-stemcells-ci
   - get: bosh-integration-image
   - get: bosh-linux-stemcell-builder
-    resource: bosh-linux-stemcell-builder
     trigger: true
     passed:
     - build-os-image
@@ -331,7 +326,6 @@ jobs:
       - get: bosh-stemcells-ci
       - get: bosh-integration-image
       - get: bosh-linux-stemcell-builder
-        resource: bosh-linux-stemcell-builder
       - get: bosh-deployment
       - get: syslog-release
       - get: os-conf-release
@@ -399,7 +393,6 @@ jobs:
       - get: bosh-stemcells-ci
       - get: bosh-integration-image
       - get: bosh-linux-stemcell-builder
-        resource: bosh-linux-stemcell-builder
       - get: bosh-deployment
       - get: syslog-release
       - get: os-conf-release
@@ -826,7 +819,6 @@ jobs:
   - get: bosh-stemcells-ci
   - get: bosh-integration-image
   - get: bosh-linux-stemcell-builder
-    resource: bosh-linux-stemcell-builder
   - task: bump
     file: bosh-stemcells-ci/ci/tasks/bump-bosh-agent.yml
     image: bosh-integration-image
@@ -847,7 +839,6 @@ jobs:
   - get: bosh-stemcells-ci
   - get: bosh-integration-image
   - get: bosh-linux-stemcell-builder
-    resource: bosh-linux-stemcell-builder
   - task: bump-bosh-blobstore-cli
     file: bosh-stemcells-ci/ci/tasks/bump-bosh-blobstore-cli.yml
     image: bosh-integration-image
@@ -987,8 +978,9 @@ resources:
   source:
     branch: (@= data.values.stemcell_details.branch @)
     ignore_paths:
-    - VERSION
     - ci
+    - bosh-stemcell/image-metalinks/
+    - VERSION
     uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
 
 - name: bosh-shared-ci
