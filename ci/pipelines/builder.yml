@@ -485,6 +485,8 @@ jobs:
       S3_API_ENDPOINT: storage.googleapis.com
       OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)
       STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
+      GIT_USER_EMAIL: *ci_bot_email
+      GIT_USER_NAME: *ci_bot_name
       #! AGENT_SUFFIX: ""
       #@ if/end FIPS != "":
       UBUNTU_ADVANTAGE_TOKEN: ((ubuntu_advantage_token))
