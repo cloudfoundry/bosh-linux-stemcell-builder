@@ -446,6 +446,7 @@ jobs:
 
 #@ def build_stemcell(IAAS, HYPERVISOR, FIPS=""):
   name: build-(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+  serial: true
   plan:
   - in_parallel:
     - get: version
@@ -468,7 +469,6 @@ jobs:
       passed:
       - build-os-image
   - task: create-stemcell
-    attempts: 3
     file: bosh-stemcells-ci/ci/tasks/build.yml
     image: os-image-stemcell-builder-registry-image
     params:
