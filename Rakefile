@@ -42,8 +42,8 @@ namespace :stemcell do
     end
   end
 
-  desc 'Build a stemcell using a local pre-built base OS image'
-  task :build_with_local_os_image, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_path, :build_number] do |_, args|
+  desc 'Build a stemcell, requires `os_image_path` pointing at an image created via `stemcell:build_os_image`'
+  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_path, :build_number] do |_, args|
     begin
       require 'bosh/stemcell/build_environment'
       require 'bosh/stemcell/definition'

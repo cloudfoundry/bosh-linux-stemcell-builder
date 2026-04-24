@@ -35,7 +35,7 @@ popd
 bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
 
  # build vSphere stemcell
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
@@ -81,10 +81,10 @@ Rebuild the stemcell when you are making and testing BOSH-specific changes such 
 export short_name="jammy"
 export build_number="0.0.8"
 
-bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz,${build_number}]
+bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz,${build_number}]
 ```
 
-The arguments to `stemcell:build_with_local_os_image` are:
+The arguments to `stemcell:build` are:
 
 1. `infrastructure_name`: Which IaaS you are producing the stemcell for.
    Determines which virtualization tools to package on top of the stemcell.
@@ -143,11 +143,11 @@ container):
 
 ### How to Run Tests for Stemcell
 
-When you run the `stemcell:build_with_local_os_image` rake task, it will create
-a stemcell that it runs the stemcell specific tests against. You will need to
-run the **rake task the first time you create your docker container**, but
-everytime after, as long as you do not destroy the container, you should be
-able to run the specific tests:
+When you run the `stemcell:build` rake task, it will create a stemcell that it
+runs the stemcell-specific tests against. You will need to run the **rake task
+the first time you create your docker container**, but every time after, as
+long as you do not destroy the container, you should be able to run the
+specific tests:
 
 ```shell
 cd /opt/bosh/bosh-stemcell; \
