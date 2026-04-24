@@ -480,7 +480,7 @@ jobs:
       STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
       GIT_USER_EMAIL: *ci_bot_email
       GIT_USER_NAME: *ci_bot_name
-      #! AGENT_SUFFIX: ""
+      AGENT_SUFFIX: (@= data.values.stemcell_details.agent_suffix @)
       #@ if/end FIPS != "":
       UBUNTU_ADVANTAGE_TOKEN: ((ubuntu_advantage_token))
     privileged: true
@@ -577,7 +577,7 @@ jobs:
         file: bosh-stemcells-ci/ci/tasks/bats/iaas/gcp/prepare-bats-config.yml
         image: bosh-integration-image
         params:
-          VARS_STEMCELL_NAME: bosh-google-kvm-ubuntu-(@= data.values.stemcell_details.os_short_name @)
+          VARS_STEMCELL_NAME: bosh-google-kvm-ubuntu-(@= data.values.stemcell_details.os_short_name @)(@= data.values.stemcell_details.agent_suffix @)
           VARS_NETWORK_DEFAULT: bosh-concourse
           VARS_AVAILABILITY_ZONE: europe-north2-a
           VARS_MACHINE_TYPE: e2-standard-2
@@ -641,7 +641,7 @@ jobs:
       COMMIT_PREFIX: candidate
       COPY_KEYS:
       #@ for iaas in data.values.stemcell_details.include_fips_iaas:
-        - (@= iaas.iaas @)/bosh-stemcell-%s-(@= iaas.iaas @)-(@= iaas.hypervisor @)-(@= data.values.stemcell_details.os_name @)-fips.tgz
+        - (@= iaas.iaas @)/bosh-stemcell-%s-(@= iaas.iaas @)-(@= iaas.hypervisor @)-(@= data.values.stemcell_details.os_name @)-fips(@= data.values.stemcell_details.agent_suffix @).tgz
       #@ end
       FROM_BUCKET_NAME: bosh-core-stemcells-candidate-fips
       FROM_INDEX: dev
@@ -663,7 +663,7 @@ jobs:
       COMMIT_PREFIX: candidate
       COPY_KEYS:
       #@ for iaas in data.values.stemcell_details.include_iaas:
-        - (@= iaas.iaas @)/bosh-stemcell-%s-(@= iaas.iaas @)-(@= iaas.hypervisor @)-(@= data.values.stemcell_details.os_name @).tgz
+        - (@= iaas.iaas @)/bosh-stemcell-%s-(@= iaas.iaas @)-(@= iaas.hypervisor @)-(@= data.values.stemcell_details.os_name @)(@= data.values.stemcell_details.agent_suffix @).tgz
       #@ end
       FROM_BUCKET_NAME: bosh-core-stemcells-candidate
       FROM_INDEX: dev
@@ -916,7 +916,7 @@ resources:
     options:
       private_key: ((github_deploy_key_bosh-io-stemcells-core-index.private_key))
     filters:
-    - repositorypath: "*/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @).meta4"
+    - repositorypath: "*/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= data.values.stemcell_details.agent_suffix @).meta4"
     uri: git+ssh://git@github.com:cloudfoundry/bosh-io-stemcells-core-index.git//dev/(@= data.values.stemcell_details.os_name @)(@= FIPS @)/
     url_handlers:
     - include:

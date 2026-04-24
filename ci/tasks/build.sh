@@ -23,7 +23,6 @@ check_param IAAS
 check_param HYPERVISOR
 check_param OS_NAME
 check_param OS_VERSION
-AGENT_SUFFIX="${AGENT_SUFFIX--go_agent}"
 
 export CANDIDATE_BUILD_NUMBER=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//;s/\.0$//' )
 
