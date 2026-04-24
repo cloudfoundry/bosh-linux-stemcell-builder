@@ -246,8 +246,13 @@ describe "Ubuntu 26.04 OS image", os_image: true do
 
     describe file("/lib/systemd/system/auditd.service") do
       it { should be_file }
-      its(:content) { should match(/^ExecStartPost=-\/sbin\/augenrules --load$/) }
-      its(:content) { should match(/^#ExecStartPost=-\/sbin\/auditctl/) }
+      its(:content) { should match(/^Wants=audit-rules\.service$/) }
+      its(:content) { should_not match(/^ExecStartPost=.*auditctl/) }
+    end
+
+    describe file("/lib/systemd/system/audit-rules.service") do
+      it { should be_file }
+      its(:content) { should match(/^ExecStart.*augenrules/) }
     end
   end
 
@@ -549,6 +554,35 @@ describe "Ubuntu 26.04 OS image", os_image: true do
         bosh_sudoers:!::
         wheel:!::root,vcap
       HERE
+    end
+  end
+
+  context "runit removed (Resolute Raccoon: no chpst)" do
+    # Per Resolute RFC #1498, the runit package is removed from the stemcell.
+    # Releases must migrate off chpst (use BPM, su, runuser, or setpriv instead).
+    describe package("runit") do
+      it { should_not be_installed }
+    end
+
+    describe file("/usr/bin/chpst") do
+      it { should_not be_file }
+    end
+
+    describe file("/usr/bin/runsv") do
+      it { should_not be_file }
+    end
+
+    describe file("/usr/sbin/runit") do
+      it { should_not be_file }
+    end
+  end
+
+  context "tmp.mount masked (systemd 259)" do
+    # systemd 259 introduced a static tmp.mount unit that mounts /tmp as a tmpfs.
+    # bosh already configures the VM's /tmp (as a tmpfs, sized smaller than
+    # systemd's default). Mask tmp.mount so systemd cannot override that setup.
+    describe file("/etc/systemd/system/tmp.mount") do
+      it { should be_linked_to File::NULL }
     end
   end
 

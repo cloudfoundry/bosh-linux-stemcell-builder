@@ -590,7 +590,7 @@ shared_examples_for "every OS image" do
 
     describe "events that modify system date and time must be recorded (CIS-8.1.4)" do
       its(:content) { should match(/^-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change$/) }
-      its(:content) { should match(/^-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change$/) }
+      its(:content) { should match(/^-a always,exit -F arch=b32 -S adjtimex -S settimeofday -k time-change$/) }
       its(:content) { should match(/^-a always,exit -F arch=b64 -S clock_settime -k time-change$/) }
       its(:content) { should match(/^-a always,exit -F arch=b32 -S clock_settime -k time-change$/) }
       its(:content) { should match(/^-w \/etc\/localtime -p wa -k time-change$/) }
@@ -634,8 +634,8 @@ shared_examples_for "every OS image" do
     end
 
     describe "record events that modify system network environment (CIS-4.1.6)" do
-      its(:content) { should match(/^-a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale$/) }
-      its(:content) { should match(/^-a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale$/) }
+      its(:content) { should match(/^-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale$/) }
+      its(:content) { should match(/^-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale$/) }
       its(:content) { should match(/^-w \/etc\/issue -p wa -k system-locale$/) }
       its(:content) { should match(/^-w \/etc\/issue\.net -p wa -k system-locale$/) }
       its(:content) { should match(/^-w \/etc\/hosts -p wa -k system-locale$/) }

@@ -198,7 +198,7 @@ module Bosh::Stemcell
     end
 
     def warden_stages
-      [
+      stages = [
         :system_parameters,
         :base_warden,
         :bosh_clean,
@@ -211,6 +211,8 @@ module Bosh::Stemcell
         :image_install_grub,
         :sbom_create
       ]
+      stages.insert(2, :base_ubuntu_warden_rosetta) if operating_system.variant == "rosetta"
+      stages
     end
 
     def azure_stages

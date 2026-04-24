@@ -376,7 +376,8 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
-      exclude_on_azure: true
+      exclude_on_azure: true,
+      exclude_on_rosetta: true
     } do
       it "contains only the base set of packages for alicloud, aws, openstack, warden" do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu))

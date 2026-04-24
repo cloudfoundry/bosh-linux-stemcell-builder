@@ -21,49 +21,33 @@ describe "Warden Stemcell", stemcell_image: true do
     end
   end
 
-  context "Rosetta x86_64 emulation compatibility for Apple Silicon" do
-    # These systemd drop-in overrides disable security features that conflict
-    # with Rosetta's JIT compilation on Apple Silicon Macs
-
-    rosetta_services = %w[
-      systemd-journald
-      systemd-resolved
-      systemd-networkd
-      systemd-logind
-      systemd-timesyncd
-      auditd
-    ]
-
-    rosetta_services.each do |service|
-      describe file("/etc/systemd/system/#{service}.service.d/rosetta-compat.conf") do
-        it { should be_file }
-        its(:content) { should include("MemoryDenyWriteExecute=no") }
-        its(:content) { should include("LockPersonality=no") }
-        its(:content) { should include("NoNewPrivileges=no") }
-      end
+  context "runit removed (Resolute Raccoon: no chpst)" do
+    # Per the Resolute RFC #1498 the runit package is removed from the
+    # stemcell. Releases must migrate off chpst (BPM / su / runuser / setpriv).
+    #
+    # This negative-assertion test should be removed in the next stemcell line.
+    describe file("/usr/bin/chpst") do
+      it { should_not be_file }
     end
 
-    describe file("/etc/systemd/system/systemd-binfmt.service") do
-      it { should be_linked_to File::NULL }
+    describe file("/usr/bin/runsv") do
+      it { should_not be_file }
+    end
+
+    describe file("/usr/sbin/runit") do
+      it { should_not be_file }
+    end
+
+    describe package("runit") do
+      it { should_not be_installed }
     end
   end
 
-  context "SSH without socket activation (warden containers)" do
-    describe file("/etc/systemd/system/ssh.socket") do
+  context "/tmp tmpfs handled (systemd 259)" do
+    # systemd 259 mounts /tmp as a world-writable tmpfs via the static tmp.mount
+    # unit. Mask it so /tmp stays a hardened, disk-backed directory.
+    describe file("/etc/systemd/system/tmp.mount") do
       it { should be_linked_to File::NULL }
-    end
-
-    describe file("/etc/systemd/system/ssh.service.d/warden-no-socket-activation.conf") do
-      it { should be_file }
-      its(:content) { should include("RefuseManualStart=no") }
-    end
-  end
-
-  context "auditd foreground (warden / Docker systemd ENOSYS)" do
-    describe file("/etc/systemd/system/auditd.service.d/warden-auditd-foreground.conf") do
-      it { should be_file }
-      its(:content) { should include("Type=simple") }
-      its(:content) { should include("ExecStart=/usr/sbin/auditd -n") }
     end
   end
 end

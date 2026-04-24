@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
 function write_shared_audit_rules {
-  echo '
+  cat <<'AUDIT_RULES' >> "$chroot/etc/audit/rules.d/audit.rules"
 -w /sbin/insmod -p x -k modules
 -w /sbin/rmmod -p x -k modules
 -w /sbin/modprobe -p x -k modules
@@ -20,7 +20,7 @@ function write_shared_audit_rules {
 
 # Record events that modify system date and time
 -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
--a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
+-a always,exit -F arch=b32 -S adjtimex -S settimeofday -k time-change
 -a always,exit -F arch=b64 -S clock_settime -k time-change
 -a always,exit -F arch=b32 -S clock_settime -k time-change
 -w /etc/localtime -p wa -k time-change
@@ -52,8 +52,8 @@ function write_shared_audit_rules {
 -w /etc/security/opasswd -p wa -k identity
 
 # Record events that modify system network environment
--a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale
--a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
 -w /etc/issue -p wa -k system-locale
 -w /etc/issue.net -p wa -k system-locale
 -w /etc/hosts -p wa -k system-locale
@@ -135,7 +135,7 @@ function write_shared_audit_rules {
 
 # Recorde execution of unix_update
 -a always,exit -F path=/sbin/unix_update -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged-unix-update
-' >> $chroot/etc/audit/rules.d/audit.rules
+AUDIT_RULES
 }
 
 function override_default_audit_variables {
@@ -154,7 +154,6 @@ function override_default_audit_variables {
 }
 
 function record_use_of_privileged_binaries {
-    echo '
-# Record use of privileged commands' >> $chroot/etc/audit/rules.d/audit.rules
+    echo '# Record use of privileged commands' >> $chroot/etc/audit/rules.d/audit.rules
     find $chroot/bin $chroot/sbin $chroot/usr/bin $chroot/usr/sbin $chroot/boot -xdev \( -perm -4000 -o -perm -2000 \) -type f | sed -e s:^${chroot}:: | awk '{print "-a always,exit -F path=" $1 " -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged" }' >> $chroot/etc/audit/rules.d/audit.rules
 }

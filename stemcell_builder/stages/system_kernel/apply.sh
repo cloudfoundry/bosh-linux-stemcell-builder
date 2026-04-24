@@ -16,4 +16,8 @@ mkdir -p $chroot/tmp
 ## and later), don't switch to the HWE kernels unless you have a good reason and
 ## have discussed it with the rest of the team, or whoever is currently responsible
 ## for the Linux Stemcell.
-pkg_mgr install initramfs-tools linux-generic
+#
+# linux-firmware-minimal Provides/Conflicts linux-firmware so we avoid the full
+# vendor firmware meta-package while keeping stock archive packages for microcode
+# and wireless-regdb (see docs/resolute-dev.md).
+pkg_mgr install initramfs-tools linux-firmware-minimal linux-generic
