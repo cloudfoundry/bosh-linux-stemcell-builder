@@ -143,11 +143,11 @@ container):
 
 ### How to Run Tests for Stemcell
 
-When you run the `stemcell:build_with_local_os_image` or `stemcell:build` rake
-task, it will create a stemcell that it runs the stemcell specific tests
-against. You will need to run the **rake task the first time you create your
-docker container**, but everytime after, as long as you do not destroy the
-container, you should be able to run the specific tests:
+When you run the `stemcell:build_with_local_os_image` rake task, it will create
+a stemcell that it runs the stemcell specific tests against. You will need to
+run the **rake task the first time you create your docker container**, but
+everytime after, as long as you do not destroy the container, you should be
+able to run the specific tests:
 
 ```shell
 cd /opt/bosh/bosh-stemcell; \

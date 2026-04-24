@@ -24,6 +24,8 @@ check_param HYPERVISOR
 check_param OS_NAME
 check_param OS_VERSION
 
+OS_IMAGE="$(readlink -f "${REPO_PARENT}/os-image-tarball"/*.tgz)"
+
 export CANDIDATE_BUILD_NUMBER=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//;s/\.0$//' )
 
 git clone "${REPO_PARENT}/stemcells-index" "${REPO_PARENT}/stemcells-index-output"
@@ -74,12 +76,6 @@ chown -R ubuntu:ubuntu "${REPO_ROOT}" # ci resource
 chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 
-OS_IMAGE=""
-mkdir -p "${REPO_PARENT}/os-image-tarball"
-if [[ -n "$(ls -A "${REPO_PARENT}/os-image-tarball/")" ]]; then
-	OS_IMAGE="$(readlink -f "${REPO_PARENT}/os-image-tarball"/*.tgz)"
-fi
-
 sudo chmod u+s "$(which sudo)"
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
 set -e
@@ -87,12 +83,7 @@ set -e
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
-if [[ -z "${OS_IMAGE}" ]]; then
-  bundle exec rake stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${CANDIDATE_BUILD_NUMBER}]
-  rm -f ./tmp/base_os_image.tgz
-else
-  bundle exec rake stemcell:build_with_local_os_image[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]
-fi
+bundle exec rake stemcell:build_with_local_os_image[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]
 SUDO
 
 #
