@@ -296,19 +296,21 @@ Concourse publishes its artifacts to GCS.
 #### Create Buckets
 
 ```shell
-gsutil mb -l europe-west4  gs://bosh-aws-light-stemcells
-gsutil mb -l europe-west4  gs://bosh-aws-light-stemcells-candidate
+export gcp_region="europe-west4"
 
-gsutil mb -l europe-west4  gs://bosh-gce-light-stemcell-ci-terraform-state
+gsutil mb -l "${gcp_region}"  gs://bosh-aws-light-stemcells
+gsutil mb -l "${gcp_region}"  gs://bosh-aws-light-stemcells-candidate
 
-gsutil mb -l europe-west4  gs://bosh-gce-light-stemcells
-gsutil mb -l europe-west4  gs://bosh-gce-light-stemcells-candidate
-gsutil mb -l europe-west4  gs://bosh-gce-raw-stemcells-new
+gsutil mb -l "${gcp_region}"  gs://bosh-gce-light-stemcell-ci-terraform-state
 
-gsutil mb -l europe-west4  gs://bosh-core-stemcells
-gsutil mb -l europe-west4  gs://bosh-core-stemcells-candidate
-gsutil mb -l europe-west4  gs://bosh-os-images
-gsutil mb -l europe-west4  gs://bosh-stemcell-triggers
+gsutil mb -l "${gcp_region}"  gs://bosh-gce-light-stemcells
+gsutil mb -l "${gcp_region}"  gs://bosh-gce-light-stemcells-candidate
+gsutil mb -l "${gcp_region}"  gs://bosh-gce-raw-stemcells-new
+
+gsutil mb -l "${gcp_region}"  gs://bosh-core-stemcells
+gsutil mb -l "${gcp_region}"  gs://bosh-core-stemcells-candidate
+gsutil mb -l "${gcp_region}"  gs://bosh-os-images
+gsutil mb -l "${gcp_region}"  gs://bosh-stemcell-triggers
 ```
 
 #### Make Buckets Publicly Readable
@@ -343,18 +345,28 @@ gcloud compute firewall-rules update default-allow-internal --source-ranges 10.0
 
 #### Create Integration Networks
 
-Create the bosh-integration networks for tests and BATs tests. Each stemcell
-line should get its own subnet corresponding to its `subnet_int`.
+Create a `stemcell-builder-integration-${subnet_int}` subnetworks need by BATs tests.
+Each stemcell line should get its own subnet corresponding to its `subnet_int` equal to
+the two digit release year. For example release year 2010 would have `subnet_int="10"`.
 
-Example:
+Example per [ci/pipelines/vars.yml](ci/pipelines/vars.yml):
 
-- subnet_id=44
-    - subnet_range=10.100.44.0/24
-    - subnet_name=bosh-integration-44
+```yaml
+---
+stemcell_details:
+  # ... snip
+  subnet_int: "10" #! use last two digits of release year: ex 2010 -> 10
+  # ... snip
+```
+
+Would mean creating the following subnet in GCP:
 
 ```shell
 # branch: ubuntu-${short_name}
-gcloud compute networks subnets create --network default --range 10.100.0.0/24 bosh-integration-0
+export subnet_int="10"
+
+gcloud compute networks subnets create --network default \
+  --range "10.100.${subnet_int}.0/24" "stemcell-builder-integration-${subnet_int}"
 ```
 
 ### AWS

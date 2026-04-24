@@ -2,6 +2,8 @@
 
 set -e
 
+example_stemcell_tgz_path="path/to/bosh-linux-stemcell-builder/tmp/bosh-stemcell-VERSION-IAAS-HYPERVISOR-OS_NAME.tgz"
+
 show_help() {
     echo "Usage: $0 [options]"
     echo
@@ -22,7 +24,7 @@ show_help() {
     echo "  TMPDIR                    Path with enough disk space to hold all temporary files for repacking *OPTIONAL*"
     echo
     echo "Example:"
-    echo "  export stemcell_tgz=\"/home/username/workspace/bosh/bosh-linux-stemcell-builder/tmp/bosh-stemcell-0.0.8-google-kvm-ubuntu-noble-go_agent.tgz\""
+    echo "  export stemcell_tgz=\"${example_stemcell_tgz_path}\""
     echo "  export AGENT_BINARY=\"/path/to/bosh-agent\""
     echo "  export AGENT_JSON=\"/path/to/agent.json\""
     echo "  export BOSH_DEBUG_PUB_KEY=\"ssh-rsa AAA... user@hostname\""
@@ -74,7 +76,7 @@ fi
 
 
 if [ -z ${stemcell_tgz} ]; then
-echo "stemcell_tgz is not set. export stemcell_tgz="/home/username/workspace/bosh/bosh-linux-stemcell-builder/tmp/bosh-stemcell-0.0.8-google-kvm-ubuntu-noble-go_agent.tgz""
+echo "stemcell_tgz is not set. export stemcell_tgz=\"${example_stemcell_tgz_path}\""
 fi
 
 # stemcell_tgz=/tmp/stemcell.tgz

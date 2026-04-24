@@ -1,6 +1,7 @@
 #@data/values
 ---
 stemcell_details:
+  agent_suffix: "" #! empty
   branch: ubuntu-noble
   major_version: 1
   os_version: "24.04"
