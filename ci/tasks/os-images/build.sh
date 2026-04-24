@@ -18,25 +18,28 @@ function check_param() {
     exit 1
   fi
 }
+
 check_param OPERATING_SYSTEM_NAME
 check_param OPERATING_SYSTEM_VERSION
 
 OS_IMAGE_NAME=${OPERATING_SYSTEM_NAME}-${OPERATING_SYSTEM_VERSION}
 OS_IMAGE=${REPO_PARENT}/os-image/${OS_IMAGE_NAME}.tgz
+
 if [ -f "${REPO_PARENT}/build-time/timestamp" ]; then
   build_time="$(cat "${REPO_PARENT}/build-time/timestamp")"
   export BUILD_TIME="$(date --date "${build_time%.*}" +%Y%m%dT%H%M%SZ)"
 fi
 
-sudo chown -R ubuntu .
-sudo chown -R ubuntu:ubuntu /mnt
+chown -R ubuntu:ubuntu "${REPO_ROOT}" # ci resource
+chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
+chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
 sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
 set -e
 
-pushd "${REPO_PARENT}/bosh-linux-stemcell-builder"
-  bundle install
-  bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
-popd
+cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
+bundle install
+
+bundle exec rake stemcell:build_os_image[$OPERATING_SYSTEM_NAME,$OPERATING_SYSTEM_VERSION,$OS_IMAGE]
 SUDO

@@ -943,7 +943,7 @@ resources:
       private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
     filters:
     - repositorypath: "(@= data.values.stemcell_details.branch @)/(@= data.values.stemcell_details.os_name @).meta4"
-    uri: git+ssh://git@github.com/cloudfoundry/bosh-linux-stemcell-builder.git//bosh-stemcell/image-metalinks/#(@= data.values.stemcell_details.branch @)
+    uri: git+ssh://git@github.com/cloudfoundry/bosh-linux-stemcell-builder.git//image-metalinks/#(@= data.values.stemcell_details.branch @)
     url_handlers:
     - include:
       - (s3|https)://.*
@@ -981,7 +981,7 @@ resources:
     branch: (@= data.values.stemcell_details.branch @)
     ignore_paths:
     - ci
-    - bosh-stemcell/image-metalinks/
+    - image-metalinks
     - VERSION
     uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
 
