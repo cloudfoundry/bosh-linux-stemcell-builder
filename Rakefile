@@ -42,58 +42,8 @@ namespace :stemcell do
     end
   end
 
-  desc 'Download a remote pre-built base OS image'
-  task :download_os_image, [:operating_system_name, :operating_system_version] do |_, args|
-    begin
-      puts "Using OS image #{args.operating_system_name}-#{args.operating_system_version}"
-
-      mkdir_p('tmp')
-
-      metalink_path = File.join(
-        Dir.pwd,
-        'bosh-stemcell',
-        'image-metalinks',
-        "#{args.operating_system_name}-#{args.operating_system_version}.meta4"
-      )
-
-      os_image_path = File.join(Dir.pwd, 'tmp', 'base_os_image.tgz')
-      `meta4 file-download --file #{args.operating_system_name}-#{args.operating_system_version}.tgz --metalink #{metalink_path} #{os_image_path}`
-      raise 'Failed to download metalink' if $?.exitstatus != 0
-
-      puts "Successfully downloaded OS image to #{os_image_path}"
-    rescue RuntimeError => e
-      print_help
-      raise e
-    end
-  end
-
-  desc 'Build a stemcell with a remote pre-built base OS image'
-  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :build_number] do |_, args|
-    begin
-      Rake::Task['stemcell:download_os_image'].invoke(
-        args.operating_system_name,
-        args.operating_system_version
-      )
-
-      os_image_path = File.join(Dir.pwd, 'tmp', 'base_os_image.tgz')
-      args.with_defaults(build_number: '0000')
-
-      Rake::Task['stemcell:build_with_local_os_image'].invoke(
-        args.infrastructure_name,
-        args.hypervisor_name,
-        args.operating_system_name,
-        args.operating_system_version,
-        os_image_path,
-        args.build_number
-      )
-    rescue RuntimeError => e
-      print_help
-      raise e
-    end
-  end
-
-  desc 'Build a stemcell using a local pre-built base OS image'
-  task :build_with_local_os_image, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_path, :build_number] do |_, args|
+  desc 'Build a stemcell, requires `os_image_path` pointing at an image created via `stemcell:build_os_image`'
+  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_path, :build_number] do |_, args|
     begin
       require 'bosh/stemcell/build_environment'
       require 'bosh/stemcell/definition'

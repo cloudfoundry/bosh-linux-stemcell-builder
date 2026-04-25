@@ -47,7 +47,7 @@ if [[ "${OS_NAME}" == "ubuntu" ]]; then
   # Ensure URL for usn-log from metalink exists before attempting to download.
   usn_log_json_file="${REPO_PARENT}/bosh-linux-stemcell-builder/usn-log.json"
   touch "${usn_log_json_file}"
-  usn_metalink_path="${REPO_PARENT}/bosh-linux-stemcell-builder/bosh-stemcell/image-metalinks/${BRANCH}/${OS_NAME}-${OS_VERSION}.meta4"
+  usn_metalink_path="${REPO_PARENT}/bosh-linux-stemcell-builder/image-metalinks/${BRANCH}/${OS_NAME}-${OS_VERSION}.meta4"
   if [[ -n "$(meta4 file-urls --metalink "${usn_metalink_path}" --file usn-log.json)" ]]; then
     meta4 file-download \
       --skip-hash-verification \
