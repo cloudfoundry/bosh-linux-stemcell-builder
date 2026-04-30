@@ -1,0 +1,15 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-stemcells-ci
+
+params:
+  GCP_JSON_KEY:
+  GCP_PROJECT_ID:
+  GCP_REGION:
+  GCP_NETWORK_NAME:
+  SUBNET_INT:
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/gcp/ensure-integration-network.sh
