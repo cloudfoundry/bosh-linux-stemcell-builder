@@ -89,4 +89,10 @@ shared_examples_for "a Linux kernel module configured OS image" do
       its(:content) { should match "install floppy /bin/true" }
     end
   end
+
+  context "prevent algif_aead module from being loaded" do
+    describe file("/etc/modprobe.d/blacklist.conf") do
+      its(:content) { should match "install algif_aead /bin/true" }
+    end
+  end
 end
