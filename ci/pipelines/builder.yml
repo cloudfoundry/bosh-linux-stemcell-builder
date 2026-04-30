@@ -248,7 +248,7 @@ jobs:
     params:
       OPERATING_SYSTEM_NAME: ubuntu
       OPERATING_SYSTEM_VERSION: (@= data.values.stemcell_details.os_short_name @)
-      UBUNTU_DEBOOTSTRAP_MIRROR: http://gce.archive.ubuntu.com/ubuntu #! Ubuntu's GCP-internal mirror, must change if we change Concourse IaaS!
+      UBUNTU_DEBOOTSTRAP_MIRROR: http://mirrors.edge.kernel.org/ubuntu
     privileged: true
     vars:
       image_os_tag: (@= data.values.stemcell_details.os_short_name @)
