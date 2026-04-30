@@ -13,9 +13,9 @@ then
   persist UBUNTU_ISO
 fi
 
-if [ ! -z "${UBUNTU_MIRROR:-}" ]
+if [ ! -z "${UBUNTU_DEBOOTSTRAP_MIRROR:-}" ]
 then
-  persist UBUNTU_MIRROR
+  persist UBUNTU_DEBOOTSTRAP_MIRROR
 fi
 
 base_debootstrap_arch=amd64
