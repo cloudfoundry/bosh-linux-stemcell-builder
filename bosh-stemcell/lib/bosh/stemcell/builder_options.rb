@@ -61,7 +61,7 @@ module Bosh::Stemcell
     def environment_variables
       {
         "UBUNTU_ISO" => environment["UBUNTU_ISO"],
-        "UBUNTU_MIRROR" => environment["UBUNTU_MIRROR"],
+        "UBUNTU_DEBOOTSTRAP_MIRROR" => environment["UBUNTU_DEBOOTSTRAP_MIRROR"],
         "UBUNTU_ADVANTAGE_TOKEN" => environment["UBUNTU_ADVANTAGE_TOKEN"],
         "UBUNTU_FIPS_USE_IAAS_KERNEL" => environment["UBUNTU_FIPS_USE_IAAS_KERNEL"]
       }

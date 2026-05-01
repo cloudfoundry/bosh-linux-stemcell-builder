@@ -64,7 +64,7 @@ module Bosh::Stemcell
           let(:env) do
             {
               "UBUNTU_ISO" => "fake_ubuntu_iso",
-              "UBUNTU_MIRROR" => "fake_ubuntu_mirror",
+              "UBUNTU_DEBOOTSTRAP_MIRROR" => "fake_ubuntu_mirror",
               "RUBY_BIN" => "fake_ruby_bin"
             }
           end
@@ -76,7 +76,7 @@ module Bosh::Stemcell
             expect(result["stemcell_infrastructure"]).to eq(infrastructure.name)
             expect(result["stemcell_hypervisor"]).to eq(infrastructure.hypervisor)
             expect(result["UBUNTU_ISO"]).to eq("fake_ubuntu_iso")
-            expect(result["UBUNTU_MIRROR"]).to eq("fake_ubuntu_mirror")
+            expect(result["UBUNTU_DEBOOTSTRAP_MIRROR"]).to eq("fake_ubuntu_mirror")
             expect(result["ruby_bin"]).to eq("fake_ruby_bin")
             expect(result["image_create_disk_size"]).to eq(default_disk_size)
             expect(result["os_image_tgz"]).to eq("fake/os_image.tgz")
