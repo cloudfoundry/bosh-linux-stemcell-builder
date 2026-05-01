@@ -22,7 +22,7 @@ fi
 function ua_attach() {
     echo "Setting up Ubuntu Advantage ..."
 
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes ubuntu-pro-client"
+    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get $APT_RETRY_OPTS install --assume-yes ubuntu-pro-client"
 
     run_in_chroot ${chroot} "ua attach --no-auto-enable ${UBUNTU_ADVANTAGE_TOKEN}"
 }
@@ -117,7 +117,7 @@ PSUEDO_GRUB_PROBE
 
 function mock_grub_probe() {
     # make sure /usr/sbin/grub-probe is installed in the chroot
-    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get install --assume-yes grub-common"
+    DEBIAN_FRONTEND=noninteractive run_in_chroot ${chroot} "apt-get $APT_RETRY_OPTS install --assume-yes grub-common"
     gprobe="${chroot}/usr/sbin/grub-probe"
     if [ -f "${gprobe}" ]; then
         mv "${gprobe}" "${gprobe}.dist"

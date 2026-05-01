@@ -22,16 +22,23 @@ fi
 # Mark /opt/bosh as a safe git repo to avoid "fatal: unsafe repository ('/opt/bosh' is owned by someone else)"
 git config --global --add safe.directory /opt/bosh
 
+# Apt retry / timeout options applied to every apt-get invocation during the
+# build. Passed via -o so nothing leaks into the resulting OS image, and so
+# that flaky upstream mirrors (notably snapshot.ubuntu.com) don't take down
+# multi-hour builds on a single transient 503. Acquire::Retries::Delay=true
+# enables exponential backoff (apt >= 2.0).
+APT_RETRY_OPTS='-o Acquire::Retries=10 -o Acquire::Retries::Delay=true -o Acquire::http::Timeout=120 -o Acquire::https::Timeout=120'
+
 function pkg_mgr {
-  run_in_chroot $chroot "apt-get update"
-  run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive; apt-get --fix-broken --no-install-recommends --assume-yes $*"
+  run_in_chroot $chroot "apt-get $APT_RETRY_OPTS update"
+  run_in_chroot $chroot "export DEBIAN_FRONTEND=noninteractive; apt-get $APT_RETRY_OPTS --fix-broken --no-install-recommends --assume-yes $*"
   run_in_chroot $chroot "apt-get clean"
 }
 
 # checks if an OS package with the given name exists in the current database of available packages.
 # returns 0 if package exists (whether or not is is installed); 1 otherwise
 function pkg_exists {
-  run_in_chroot $chroot "apt-get update"
+  run_in_chroot $chroot "apt-get $APT_RETRY_OPTS update"
   result=`run_in_chroot $chroot "if apt-cache show $1 2>/dev/null >/dev/null; then echo exists; else echo does not exist; fi"`
   if [[ "$result" == *"exists"* ]]; then
     return 0

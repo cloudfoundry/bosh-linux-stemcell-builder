@@ -76,7 +76,7 @@ cleanup_debootstrap() {
 }
 trap cleanup_debootstrap EXIT
 
-debootstrap --arch="$base_debootstrap_arch" "$base_debootstrap_suite" "$chroot" ""
+debootstrap --arch="$base_debootstrap_arch" "$base_debootstrap_suite" "$chroot" "${UBUNTU_DEBOOTSTRAP_MIRROR:-}"
 
 cleanup_debootstrap
 trap - EXIT
