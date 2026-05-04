@@ -11,7 +11,9 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
       $(get_partitioner_type_mapping)
       "DevicePathResolutionType": "virtio",
       "CreatePartitionIfNoEphemeralDisk": true,
-      "UseMonitIptablesFirewall": true
+      "UseMonitIptablesFirewall": true,
+      "InstanceStorageDevicePattern": "/dev/nvme*n1",
+      "InstanceStorageManagedVolumePattern": "/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_*"
     }
   },
   "Infrastructure": {
