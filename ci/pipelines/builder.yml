@@ -351,7 +351,7 @@ jobs:
         params:
           GCP_PROJECT_ID: ((gcp_project_id))
           GCP_ZONE: europe-north2-a
-          GCP_PREEMPTIBLE: true
+          GCP_PREEMPTIBLE: false
           GCP_NETWORK_NAME: bosh-concourse
           GCP_SUBNET_NAME: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
           GCP_JSON_KEY: ((gcp_json_key))
@@ -565,7 +565,7 @@ jobs:
         params:
           GCP_PROJECT_ID: ((gcp_project_id))
           GCP_ZONE: europe-north2-a
-          GCP_PREEMPTIBLE: true
+          GCP_PREEMPTIBLE: false
           GCP_NETWORK_NAME: bosh-concourse
           GCP_SUBNET_NAME: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
           GCP_JSON_KEY: ((gcp_json_key))
@@ -583,7 +583,7 @@ jobs:
           VARS_AVAILABILITY_ZONE: europe-north2-a
           VARS_MACHINE_TYPE: e2-standard-2
           VARS_ZONE: europe-north2-a
-          VARS_PREEMPTIBLE: true
+          VARS_PREEMPTIBLE: false
           VARS_SUBNETWORK_DEFAULT: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
           VARS_CIDR_DEFAULT: "10.100.(@= data.values.stemcell_details.subnet_int @).0/24"
           VARS_RESERVED_DEFAULT: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).129, 10.100.(@= data.values.stemcell_details.subnet_int @).190 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
