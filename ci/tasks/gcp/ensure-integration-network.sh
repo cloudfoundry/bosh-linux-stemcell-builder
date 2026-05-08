@@ -20,33 +20,41 @@ gcloud_stderr="$(mktemp)"
 trap 'rm -f "${gcloud_stderr}"' EXIT
 
 echo "Checking for subnet '${SUBNET_NAME}' in region '${GCP_REGION}'..."
-current_subnet="$(gcloud compute networks subnets describe "${SUBNET_NAME}" \
-    --region="${GCP_REGION}" \
+existing_subnet_name="$(gcloud compute networks subnets list \
+    --regions="${GCP_REGION}" \
     --project="${GCP_PROJECT_ID}" \
-    --format='csv[no-heading](network.basename(),ipCidrRange,privateIpGoogleAccess,stackType)' \
-    2>"${gcloud_stderr}")" && subnet_exists=true || subnet_exists=false
+    --filter="name=('${SUBNET_NAME}')" \
+    --format='value(name)' \
+    2>"${gcloud_stderr}")" && subnet_lookup_ok=true || subnet_lookup_ok=false
 
-if ${subnet_exists}; then
-  expected_subnet="${GCP_NETWORK_NAME},${SUBNET_CIDR},True,IPV4_ONLY"
-  if [[ "${current_subnet}" != "${expected_subnet}" ]]; then
-    echo "ERROR: Subnet '${SUBNET_NAME}' exists but is misconfigured."
-    echo "  Expected: ${expected_subnet}"
-    echo "  Actual:   ${current_subnet}"
-    exit 1
+if ${subnet_lookup_ok}; then
+  if [[ -n "${existing_subnet_name}" ]]; then
+    current_subnet="$(gcloud compute networks subnets describe "${SUBNET_NAME}" \
+        --region="${GCP_REGION}" \
+        --project="${GCP_PROJECT_ID}" \
+        --format='csv[no-heading](network.basename(),ipCidrRange,privateIpGoogleAccess,stackType)' \
+        2>"${gcloud_stderr}")"
+    expected_subnet="${GCP_NETWORK_NAME},${SUBNET_CIDR},True,IPV4_ONLY"
+    if [[ "${current_subnet}" != "${expected_subnet}" ]]; then
+      echo "ERROR: Subnet '${SUBNET_NAME}' exists but is misconfigured."
+      echo "  Expected: ${expected_subnet}"
+      echo "  Actual:   ${current_subnet}"
+      exit 1
+    fi
+    echo "Subnet '${SUBNET_NAME}' already exists and matches expected configuration."
+  else
+    echo "Creating subnet '${SUBNET_NAME}'..."
+    gcloud compute networks subnets create "${SUBNET_NAME}" \
+      --network="${GCP_NETWORK_NAME}" \
+      --region="${GCP_REGION}" \
+      --range="${SUBNET_CIDR}" \
+      --enable-private-ip-google-access \
+      --stack-type=IPV4_ONLY \
+      --project="${GCP_PROJECT_ID}"
+    echo "Subnet '${SUBNET_NAME}' created."
   fi
-  echo "Subnet '${SUBNET_NAME}' already exists and matches expected configuration."
-elif grep -q "was not found" "${gcloud_stderr}"; then
-  echo "Creating subnet '${SUBNET_NAME}'..."
-  gcloud compute networks subnets create "${SUBNET_NAME}" \
-    --network="${GCP_NETWORK_NAME}" \
-    --region="${GCP_REGION}" \
-    --range="${SUBNET_CIDR}" \
-    --enable-private-ip-google-access \
-    --stack-type=IPV4_ONLY \
-    --project="${GCP_PROJECT_ID}"
-  echo "Subnet '${SUBNET_NAME}' created."
 else
-  echo "ERROR: gcloud describe failed for subnet '${SUBNET_NAME}':"
+  echo "ERROR: gcloud subnet lookup failed for subnet '${SUBNET_NAME}':"
   cat "${gcloud_stderr}" >&2
   exit 1
 fi
@@ -69,7 +77,13 @@ if ${fw_exists}; then
   current_tags="$(gcloud compute firewall-rules describe "${SUBNET_NAME}" \
     --project="${GCP_PROJECT_ID}" \
     --format='value(targetTags.list())' \
-    | tr ',;' '\n' | LC_ALL=C sort | tr '\n' ',' | sed 's/,$//')"
+    2>"${gcloud_stderr}" \
+    | tr ',;' '\n' | LC_ALL=C sort | tr '\n' ',' | sed 's/,$//')" && current_tags_read=true || current_tags_read=false
+  if ! ${current_tags_read}; then
+    echo "ERROR: gcloud describe failed while reading target tags for firewall rule '${SUBNET_NAME}':"
+    cat "${gcloud_stderr}" >&2
+    exit 1
+  fi
   expected_tags="$(printf '%s\n' ${FIREWALL_TAGS//,/ } | LC_ALL=C sort | tr '\n' ',' | sed 's/,$//')"
   if [[ "${current_tags}" != "${expected_tags}" ]]; then
     echo "ERROR: Firewall rule '${SUBNET_NAME}' has wrong target tags."
