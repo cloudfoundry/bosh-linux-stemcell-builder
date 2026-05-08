@@ -189,7 +189,6 @@ do:
       -o pipelines/shared/assets/ops/remove-hm.yml
       -o bosh-deployment/external-ip-with-registry-not-recommended.yml
       -o bosh-deployment/misc/source-releases/bosh.yml
-      -o pipelines/shared/assets/ops/remove-provider-cert.yml
   task: prepare-director
 - file: bosh-cpi-certification-concourse-tasks/shared/tasks/deploy-director.yml
   image: bosh-integration-registry-image
