@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-noble.tgz">
-    <hash type="sha-512">1c132eebbe8d69e86a91258271eeb1d7c9e536a8c2ee3e4ad989e4e8feb187a3c838bb2085a9d3946e0d4228f444a7a0f7810d119ae183698fffe265e1c65c96</hash>
-    <hash type="sha-256">7efeb418e9fef26295b8c249f32eea785176586a37f5a5babfb94302fc0609cb</hash>
-    <hash type="sha-1">b93aace72ddd5872abd55597ee606c5ac846c132</hash>
-    <hash type="md5">dedefe97ee758489503a12eabafe13bd</hash>
-    <size>377332771</size>
+    <hash type="sha-512">9f79ad5099a10e72cdf54d7f0b61b7189a350a665471e4337590316e7cb7e306766941ceefa5a92dd803d90940663b84b72f9aa97974b5d3dea537a8cc80c5e4</hash>
+    <hash type="sha-256">3377063aa642bb12034047b01b7816fb846d483adcf19ad4bb3ff42795c9e63c</hash>
+    <hash type="sha-1">8b3c1d3a726f919668f95c684b7ae2484637f5f9</hash>
+    <hash type="md5">960a784cdd7cdfb8e38d1271c623d350</hash>
+    <size>377338323</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-noble/ubuntu-noble.tgz</url>
-    <version>91.0.0</version>
+    <version>92.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">6141b8d8925ede89275871b7cf22bcb5a3b1a331689df893c79b833425f9f52b040f9bd6b07b0e1497519f6d8dd11fc833717206a2da5e029197027ad91ac38c</hash>
-    <hash type="sha-256">6a57677c6b80cec6122a19f348163ca236b420b56d8e9288914329cfe6933044</hash>
-    <hash type="sha-1">2b0c5898a6171108a0fbc40ecfe03d2348d6671f</hash>
-    <hash type="md5">97aa2994fe104894e88318460ff26119</hash>
-    <size>1628</size>
+    <hash type="sha-512">2562a68df3dd5fc543ceb05ac5ef139e5149cc09f92985f74964e48d8656188b61821cf51218a67526525a00abcb9d1a7dcb92a8e72153898cf2833fd7c7420b</hash>
+    <hash type="sha-256">2cc1afde68c93927a4773231401e65fc1f08b3b3fbb2525aee27c8075a415522</hash>
+    <hash type="sha-1">6aa73f37fb7323f5fff9e6e7e945e0fd27706217</hash>
+    <hash type="md5">1ff209cb0eb122a74e7b9d7b05e589e6</hash>
+    <size>2605</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-noble/usn-log.json</url>
-    <version>91.0.0</version>
+    <version>92.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2026-05-11T18:53:17.557726629Z</published>
+  <published>2026-05-11T19:20:07.062932422Z</published>
 </metalink>
