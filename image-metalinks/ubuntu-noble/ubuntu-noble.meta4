@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-noble.tgz">
-    <hash type="sha-512">dfdfe0e65970a3602a52015c692d479dde4212ca5e8e3f1b1342c451877ab568b5aedce65f97b6081eddf601254c4119390ea7d4b2406ad8b50f82f8d3efc728</hash>
-    <hash type="sha-256">4ed71ef758d710310028fde82df79a163da725e9a3d59baaa834a4efc1adeb75</hash>
-    <hash type="sha-1">08d8a21de97c8f625592cf231b55d2c49133beef</hash>
-    <hash type="md5">8026fd7f08d75f8757e7cfc968b2e52b</hash>
-    <size>377339658</size>
+    <hash type="sha-512">1c132eebbe8d69e86a91258271eeb1d7c9e536a8c2ee3e4ad989e4e8feb187a3c838bb2085a9d3946e0d4228f444a7a0f7810d119ae183698fffe265e1c65c96</hash>
+    <hash type="sha-256">7efeb418e9fef26295b8c249f32eea785176586a37f5a5babfb94302fc0609cb</hash>
+    <hash type="sha-1">b93aace72ddd5872abd55597ee606c5ac846c132</hash>
+    <hash type="md5">dedefe97ee758489503a12eabafe13bd</hash>
+    <size>377332771</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-noble/ubuntu-noble.tgz</url>
-    <version>90.0.0</version>
+    <version>91.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
-    <hash type="sha-256">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</hash>
-    <hash type="sha-1">adc83b19e793491b1c6ea0fd8b46cd9f32e592fc</hash>
-    <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
-    <size>1</size>
+    <hash type="sha-512">6141b8d8925ede89275871b7cf22bcb5a3b1a331689df893c79b833425f9f52b040f9bd6b07b0e1497519f6d8dd11fc833717206a2da5e029197027ad91ac38c</hash>
+    <hash type="sha-256">6a57677c6b80cec6122a19f348163ca236b420b56d8e9288914329cfe6933044</hash>
+    <hash type="sha-1">2b0c5898a6171108a0fbc40ecfe03d2348d6671f</hash>
+    <hash type="md5">97aa2994fe104894e88318460ff26119</hash>
+    <size>1628</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-noble/usn-log.json</url>
-    <version>90.0.0</version>
+    <version>91.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2026-05-11T18:30:00.131778705Z</published>
+  <published>2026-05-11T18:53:17.557726629Z</published>
 </metalink>
