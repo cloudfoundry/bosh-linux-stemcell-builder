@@ -60,51 +60,78 @@ else
 fi
 
 echo "Checking for firewall rule '${SUBNET_NAME}'..."
-current_fw="$(gcloud compute firewall-rules describe "${SUBNET_NAME}" \
+existing_fw_name="$(gcloud compute firewall-rules list \
     --project="${GCP_PROJECT_ID}" \
-    --format='csv[no-heading](network.basename(),direction,allowed[0].IPProtocol,sourceRanges[0],disabled)' \
-    2>"${gcloud_stderr}")" && fw_exists=true || fw_exists=false
+    --filter="name=('${SUBNET_NAME}')" \
+    --format='value(name)' \
+    2>"${gcloud_stderr}")" && fw_lookup_ok=true || fw_lookup_ok=false
 
-if ${fw_exists}; then
-  expected_fw="${GCP_NETWORK_NAME},INGRESS,all,${SUBNET_CIDR},False"
-  if [[ "${current_fw}" != "${expected_fw}" ]]; then
-    echo "ERROR: Firewall rule '${SUBNET_NAME}' exists but is misconfigured."
-    echo "  Expected: ${expected_fw}"
-    echo "  Actual:   ${current_fw}"
-    exit 1
+if ${fw_lookup_ok}; then
+  if [[ -n "${existing_fw_name}" ]]; then
+    current_fw_json="$(gcloud compute firewall-rules describe "${SUBNET_NAME}" \
+        --project="${GCP_PROJECT_ID}" \
+        --format=json \
+        2>"${gcloud_stderr}")"
+
+    # Validate network, direction, disabled
+    actual_network="$(echo "${current_fw_json}" | jq -r '.network | split("/") | last')"
+    actual_direction="$(echo "${current_fw_json}" | jq -r '.direction')"
+    actual_disabled="$(echo "${current_fw_json}" | jq -r '.disabled')"
+
+    if [[ "${actual_network}" != "${GCP_NETWORK_NAME}" ]] || \
+       [[ "${actual_direction}" != "INGRESS" ]] || \
+       [[ "${actual_disabled}" != "false" ]]; then
+      echo "ERROR: Firewall rule '${SUBNET_NAME}' exists but is misconfigured."
+      echo "  Expected network=${GCP_NETWORK_NAME}, direction=INGRESS, disabled=false"
+      echo "  Actual   network=${actual_network}, direction=${actual_direction}, disabled=${actual_disabled}"
+      exit 1
+    fi
+
+    # Validate allowed (should be exactly [{IPProtocol: "all"}])
+    actual_allowed="$(echo "${current_fw_json}" | jq -c '[.allowed[] | {protocol: .IPProtocol, ports: (.ports // [])}] | sort_by(.protocol)')"
+    expected_allowed='[{"protocol":"all","ports":[]}]'
+    if [[ "${actual_allowed}" != "${expected_allowed}" ]]; then
+      echo "ERROR: Firewall rule '${SUBNET_NAME}' has wrong allowed configuration."
+      echo "  Expected: ${expected_allowed}"
+      echo "  Actual:   ${actual_allowed}"
+      exit 1
+    fi
+
+    # Validate sourceRanges (should be exactly the subnet CIDR)
+    actual_ranges="$(echo "${current_fw_json}" | jq -c '(.sourceRanges // []) | sort')"
+    expected_ranges="$(printf '["%s"]' "${SUBNET_CIDR}")"
+    if [[ "${actual_ranges}" != "${expected_ranges}" ]]; then
+      echo "ERROR: Firewall rule '${SUBNET_NAME}' has wrong source ranges."
+      echo "  Expected: ${expected_ranges}"
+      echo "  Actual:   ${actual_ranges}"
+      exit 1
+    fi
+
+    # Validate targetTags (order-insensitive)
+    actual_tags="$(echo "${current_fw_json}" | jq -c '(.targetTags // []) | sort')"
+    expected_tags="$(printf '%s\n' ${FIREWALL_TAGS//,/ } | jq -R . | jq -sc 'sort')"
+    if [[ "${actual_tags}" != "${expected_tags}" ]]; then
+      echo "ERROR: Firewall rule '${SUBNET_NAME}' has wrong target tags."
+      echo "  Expected: ${expected_tags}"
+      echo "  Actual:   ${actual_tags}"
+      exit 1
+    fi
+
+    echo "Firewall rule '${SUBNET_NAME}' already exists and matches expected configuration."
+  else
+    echo "Creating firewall rule '${SUBNET_NAME}'..."
+    gcloud compute firewall-rules create "${SUBNET_NAME}" \
+      --network="${GCP_NETWORK_NAME}" \
+      --project="${GCP_PROJECT_ID}" \
+      --direction=INGRESS \
+      --priority=1000 \
+      --allow=all \
+      --source-ranges="${SUBNET_CIDR}" \
+      --target-tags="${FIREWALL_TAGS}"
+    echo "Firewall rule '${SUBNET_NAME}' created."
   fi
-  # Validate target tags independently; sort before comparing since order is not deterministic
-  current_tags="$(gcloud compute firewall-rules describe "${SUBNET_NAME}" \
-    --project="${GCP_PROJECT_ID}" \
-    --format='value(targetTags.list())' \
-    2>"${gcloud_stderr}" \
-    | tr ',;' '\n' | LC_ALL=C sort | tr '\n' ',' | sed 's/,$//')" && current_tags_read=true || current_tags_read=false
-  if ! ${current_tags_read}; then
-    echo "ERROR: gcloud describe failed while reading target tags for firewall rule '${SUBNET_NAME}':"
-    cat "${gcloud_stderr}" >&2
-    exit 1
-  fi
-  expected_tags="$(printf '%s\n' ${FIREWALL_TAGS//,/ } | LC_ALL=C sort | tr '\n' ',' | sed 's/,$//')"
-  if [[ "${current_tags}" != "${expected_tags}" ]]; then
-    echo "ERROR: Firewall rule '${SUBNET_NAME}' has wrong target tags."
-    echo "  Expected: ${expected_tags}"
-    echo "  Actual:   ${current_tags}"
-    exit 1
-  fi
-  echo "Firewall rule '${SUBNET_NAME}' already exists and matches expected configuration."
-elif grep -q "was not found" "${gcloud_stderr}"; then
-  echo "Creating firewall rule '${SUBNET_NAME}'..."
-  gcloud compute firewall-rules create "${SUBNET_NAME}" \
-    --network="${GCP_NETWORK_NAME}" \
-    --project="${GCP_PROJECT_ID}" \
-    --direction=INGRESS \
-    --priority=1000 \
-    --allow=all \
-    --source-ranges="${SUBNET_CIDR}" \
-    --target-tags="${FIREWALL_TAGS}"
-  echo "Firewall rule '${SUBNET_NAME}' created."
 else
-  echo "ERROR: gcloud describe failed for firewall rule '${SUBNET_NAME}':"
+  echo "ERROR: gcloud firewall-rules lookup failed for '${SUBNET_NAME}':"
   cat "${gcloud_stderr}" >&2
   exit 1
 fi
