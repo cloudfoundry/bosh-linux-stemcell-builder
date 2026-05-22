@@ -33,7 +33,7 @@ permit_monit_access() {
         nb_matching_cgroup_mounts=$(echo "$cgroup_mount" | grep -c '^.')
         current_cgroup="$(grep '^0::' /proc/self/cgroup | cut -d: -f3)"
         if [ -z "${cgroup_mount}" ] || [ "${nb_matching_cgroup_mounts}" -ne 1 ] || [ -z "${current_cgroup}" ]; then
-            echo "permit_monit_access: unable to resolve cgroup v2 mount or path. current_cgroup=${current_cgroup} cgroup_mount=${cgroup_mount}" >&2
+            echo "permit_monit_access: unable to resolve cgroup v2 mount or path. current_cgroup=${current_cgroup} cgroup_mount=${cgroup_mount} nb_matching_cgroup_mounts=${nb_matching_cgroup_mounts}" >&2
             return 1
         fi
         monit_access_cgroup="${cgroup_mount}${current_cgroup}/monit-api-access"
