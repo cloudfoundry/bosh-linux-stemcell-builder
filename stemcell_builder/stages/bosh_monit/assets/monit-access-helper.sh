@@ -30,7 +30,7 @@ permit_monit_access() {
         # Create a sub-cgroup under the current process's cgroup and move into it.
         # The iptables rules match on this cgroup path.
         cgroup_mount="$(awk '$1 == "cgroup2" && $3 == "cgroup2" { print $2 }' /proc/self/mounts)"
-        nb_matching_cgroup_mounts=$(echo "$cgroup_mount" | wc -l)
+        nb_matching_cgroup_mounts=$(echo "$cgroup_mount" | grep -c '^.')
         current_cgroup="$(grep '^0::' /proc/self/cgroup | cut -d: -f3)"
         if [ -z "${cgroup_mount}" ] || [ "${nb_matching_cgroup_mounts}" -ne 1 ] || [ -z "${current_cgroup}" ]; then
             echo "permit_monit_access: unable to resolve cgroup v2 mount or path. current_cgroup=${current_cgroup} cgroup_mount=${cgroup_mount}" >&2
