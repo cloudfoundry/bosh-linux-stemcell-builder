@@ -44,6 +44,9 @@ groups:
 - name: docker
   jobs:
   - build-os-image-stemcell-builder
+- name: infrastructure
+  jobs:
+  - ensure-integration-network
 
 #@yaml/text-templated-strings
 jobs:
@@ -88,6 +91,25 @@ jobs:
           OVF_TOOL_INSTALLER_SHA1: "6c24e473be49c961cfc3bb16774b52b48e822991"
       get_params:
         skip_download: true
+
+#! Manually triggered job that idempotently ensures the GCP subnetwork and
+#! firewall rule consumed by deploy-director / cleanup-bats-vms / prepare-bats
+#! in the test-stemcells-ipv4 and bats jobs below exist. GCP is the source of
+#! truth — no state file is required.
+- name: ensure-integration-network
+  serial: true
+  plan:
+  - get: bosh-stemcells-ci
+  - get: bosh-integration-image
+  - task: ensure-integration-network
+    file: bosh-stemcells-ci/ci/tasks/gcp/ensure-integration-network.yml
+    image: bosh-integration-image
+    params:
+      GCP_JSON_KEY: ((gcp_json_key))
+      GCP_PROJECT_ID: ((gcp_project_id))
+      GCP_REGION: europe-north2
+      GCP_NETWORK_NAME: bosh-concourse
+      SUBNET_INT: (@= data.values.stemcell_details.subnet_int @)
 
 - name: process-high-critical-cves
   serial_groups: [log-cves]
@@ -885,7 +907,6 @@ resource_types:
   type: registry-image
   source:
     repository: frodenas/gcs-resource
-
 #@yaml/text-templated-strings
 resources:
 - name: daily
