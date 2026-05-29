@@ -467,44 +467,43 @@ jobs:
       KERNEL_PACKAGE: linux-generic
     input_mapping:
       candidate-stemcell: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
+  - task: extract-warden-image
+    image: bosh-integration-registry-image
+    config:
+      inputs:
+        - name: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
+      outputs:
+        - name: stemcell-image
+      platform: linux
+      run:
+        dir: stemcell-image
+        path: /bin/bash
+        args:
+          - -ce
+          - |
+            tar xvf ../candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/bosh-stemcell-*-warden-boshlite-(@= data.values.stemcell_details.os_name @)*.tgz image
+            printf 'FROM scratch\nADD image /\n' > Dockerfile
+  - task: build-stemcell-oci-image
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+        - name: stemcell-image
+      outputs:
+        - name: image
+      params:
+        CONTEXT: stemcell-image
+      run:
+        path: build
+  - put: github-container-registry-(@= data.values.stemcell_details.os_name @)-stemcell
+    params:
+      image: image/image.tar
+      additional_tags: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/.resource/version
   - in_parallel:
-    - do:
-      - task: extract-warden-image
-        image: bosh-integration-registry-image
-        config:
-          inputs:
-            - name: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
-          outputs:
-            - name: stemcell-image
-          platform: linux
-          run:
-            dir: stemcell-image
-            path: /bin/bash
-            args:
-              - -ce
-              - |
-                tar xvf ../candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/bosh-stemcell-*-warden-boshlite-(@= data.values.stemcell_details.os_name @)*.tgz image
-                printf 'FROM scratch\nADD image /\n' > Dockerfile
-      - task: build-stemcell-oci-image
-        privileged: true
-        config:
-          platform: linux
-          image_resource:
-            type: registry-image
-            source:
-              repository: concourse/oci-build-task
-          inputs:
-            - name: stemcell-image
-          outputs:
-            - name: image
-          params:
-            CONTEXT: stemcell-image
-          run:
-            path: build
-      - put: github-container-registry-(@= data.values.stemcell_details.os_name @)-stemcell
-        params:
-          image: image/image.tar
-          additional_tags: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/.resource/version
     - put: published-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
       params:
         files:
