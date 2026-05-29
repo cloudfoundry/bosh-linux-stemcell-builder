@@ -468,7 +468,7 @@ jobs:
     input_mapping:
       candidate-stemcell: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
   - in_parallel:
-    - in_parallel:
+    - do:
       - task: extract-warden-image
         image: bosh-integration-registry-image
         config:
