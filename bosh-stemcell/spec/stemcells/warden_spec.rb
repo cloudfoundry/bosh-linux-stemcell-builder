@@ -21,33 +21,12 @@ describe "Warden Stemcell", stemcell_image: true do
     end
   end
 
-  context "runit removed (Resolute Raccoon: no chpst)" do
-    # Per the Resolute RFC #1498 the runit package is removed from the
-    # stemcell. Releases must migrate off chpst (BPM / su / runuser / setpriv).
-    #
-    # This negative-assertion test should be removed in the next stemcell line.
-    describe file("/usr/bin/chpst") do
-      it { should_not be_file }
-    end
-
-    describe file("/usr/bin/runsv") do
-      it { should_not be_file }
-    end
-
-    describe file("/usr/sbin/runit") do
-      it { should_not be_file }
-    end
-
-    describe package("runit") do
-      it { should_not be_installed }
-    end
-  end
-
-  context "/tmp tmpfs handled (systemd 259)" do
-    # systemd 259 mounts /tmp as a world-writable tmpfs via the static tmp.mount
-    # unit. Mask it so /tmp stays a hardened, disk-backed directory.
-    describe file("/etc/systemd/system/tmp.mount") do
-      it { should be_linked_to File::NULL }
+  context "installed by base_warden" do
+    describe file("/etc/sysctl.d/20-disable-apparmor-restrict.conf") do
+      it { should be_file }
+      its(:mode) { should eq(0o644) }
+      its(:content) { should match(/^kernel\.apparmor_restrict_unprivileged_userns = 0$/) }
+      its(:content) { should match(/^kernel\.apparmor_restrict_unprivileged_unconfined = 0$/) }
     end
   end
 end

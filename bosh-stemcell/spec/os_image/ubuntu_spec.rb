@@ -86,16 +86,20 @@ describe "Ubuntu 26.04 OS image", os_image: true do
 
   context "installed by system_grub" do
     %w[
-      grub2
+      grub-pc-bin
+      grub-efi-amd64-bin
     ].each do |pkg|
       describe package(pkg) do
         it { should be_installed }
       end
     end
-    %w[unicode.pf2 menu.lst gfxblacklist.txt].each do |grub_stage|
-      describe file("/boot/grub/#{grub_stage}") do
-        it { should be_file }
-      end
+    # ubuntu-noble tested unicode.pf2 and gfxblacklist.txt here, which were
+    # installed by the grub2 meta-package (via grub-common). Resolute installs
+    # only grub-pc-bin and grub-efi-amd64-bin (the bare binaries), which do not
+    # include those files. They are written to /boot/grub/ during grub-install at
+    # stemcell build time, after this OS-image phase.
+    describe file("/boot/grub/menu.lst") do
+      it { should be_file }
     end
   end
 
@@ -375,10 +379,9 @@ describe "Ubuntu 26.04 OS image", os_image: true do
         systemd-resolve:x:989:989:systemd Resolver:/:/usr/sbin/nologin
         _chrony:x:988:988:Chrony Daemon:/var/lib/chrony:/usr/sbin/nologin
         uuidd:x:101:103::/run/uuidd:/usr/sbin/nologin
-        _runit-log:x:987:987:runit svlogd user:/nonexistent:/usr/sbin/nologin
-        sshd:x:986:65534:sshd user:/run/sshd:/usr/sbin/nologin
-        tcpdump:x:985:985:tcpdump:/nonexistent:/usr/sbin/nologin
-        polkitd:x:984:984:User for polkitd:/:/usr/sbin/nologin
+        sshd:x:987:65534:sshd user:/run/sshd:/usr/sbin/nologin
+        tcpdump:x:986:986:tcpdump:/nonexistent:/usr/sbin/nologin
+        polkitd:x:985:985:User for polkitd:/:/usr/sbin/nologin
         vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
       HERE
     end
@@ -410,7 +413,6 @@ describe "Ubuntu 26.04 OS image", os_image: true do
         systemd-resolve:!\*:(\d{5}):::::1:
         _chrony:!\*:(\d{5})::::::
         uuidd:!:(\d{5})::::::
-        _runit-log:!\*:(\d{5})::::::
         sshd:!\*:(\d{5})::::::
         tcpdump:!\*:(\d{5}):::::1:
         polkitd:!\*:(\d{5})::::::
@@ -476,11 +478,10 @@ describe "Ubuntu 26.04 OS image", os_image: true do
         netdev:x:102:
         uuidd:x:103:
         _ssh:x:104:
-        _runit-log:x:987:
         rdma:x:105:
-        tcpdump:x:985:
-        polkitd:x:984:
-        admin:x:986:vcap
+        tcpdump:x:986:
+        polkitd:x:985:
+        admin:x:987:vcap
         vcap:x:1000:syslog
         bosh_sshers:x:1001:vcap
         bosh_sudoers:x:1002:
@@ -544,7 +545,6 @@ describe "Ubuntu 26.04 OS image", os_image: true do
         netdev:!::
         uuidd:!::
         _ssh:!::
-        _runit-log:!*::
         rdma:!::
         tcpdump:!*::
         polkitd:!*::
