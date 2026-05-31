@@ -34,20 +34,25 @@ docker run \
    --privileged \
    -v "$(pwd):/opt/bosh" \
    --workdir /opt/bosh \
-   --user=1000:1000 \
+   --user="$(id -u):$(id -g)" \
    -it \
    bosh/os-image-stemcell-builder:${short_name}
 
 # You're now in the Docker container
+export short_name="resolute"
+
 ulimit -n 16384 # only necessary if your host is Fedora
 gem install bundler
 bundle install
 
  # build OS image
-bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz]
 
  # build vSphere stemcell
-bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
+bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
+
+ # build warden (BOSH Lite) stemcell
+bundle exec rake stemcell:build[warden,warden,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
