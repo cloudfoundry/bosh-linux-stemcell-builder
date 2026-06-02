@@ -95,4 +95,22 @@ shared_examples_for "a Linux kernel module configured OS image" do
       its(:content) { should match "install algif_aead /bin/true" }
     end
   end
+
+  context "prevent esp4 module from being loaded" do
+    describe file("/etc/modprobe.d/blacklist.conf") do
+      its(:content) { should match "install esp4 /bin/true" }
+    end
+  end
+
+  context "prevent esp6 module from being loaded" do
+    describe file("/etc/modprobe.d/blacklist.conf") do
+      its(:content) { should match "install esp6 /bin/true" }
+    end
+  end
+
+  context "prevent rxrpc module from being loaded" do
+    describe file("/etc/modprobe.d/blacklist.conf") do
+      its(:content) { should match "install rxrpc /bin/true" }
+    end
+  end
 end
