@@ -4,6 +4,7 @@ anchors:
     name: &ci_bot_name CI Bot
 
 #@ load("@ytt:data", "data")
+#@ bats_director_tag = "test-stemcells-" + data.values.stemcell_details.os_short_name
 
 #@yaml/text-templated-strings
 
@@ -110,6 +111,7 @@ jobs:
       GCP_REGION: europe-north2
       GCP_NETWORK_NAME: bosh-concourse
       SUBNET_INT: (@= data.values.stemcell_details.subnet_int @)
+      DIRECTOR_TAG: (@= bats_director_tag @)
 
 - name: process-high-critical-cves
   serial_groups: [log-cves]
@@ -580,7 +582,7 @@ jobs:
           GCP_PROJECT_ID: ((gcp_project_id))
           GCP_ZONE: europe-north2-a
           GCP_SUBNET_NAME: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
-          TAG: test-stemcells-bats
+          TAG: (@= bats_director_tag @)
       - task: deploy-director
         file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director.yml
         image: bosh-integration-image
@@ -595,7 +597,7 @@ jobs:
           INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
           INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
           RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).63, 10.100.(@= data.values.stemcell_details.subnet_int @).126 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
-          TAG: test-stemcells-bats
+          TAG: (@= bats_director_tag @)
       - task: prepare-bats
         file: bosh-stemcells-ci/ci/tasks/bats/iaas/gcp/prepare-bats-config.yml
         image: bosh-integration-image
@@ -613,7 +615,6 @@ jobs:
           VARS_STATIC_IP_DEFAULT: 10.100.(@= data.values.stemcell_details.subnet_int @).130
           VARS_STATIC_IP_DEFAULT-2: 10.100.(@= data.values.stemcell_details.subnet_int @).132
           VARS_GATEWAY_DEFAULT: 10.100.(@= data.values.stemcell_details.subnet_int @).1
-          VARS_TAG: test-stemcells-bats
       - task: run-bats
         file: bats/ci/tasks/run-bats.yml
         image: bosh-integration-image
