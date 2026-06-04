@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# @AI-Generated
+# Modified with AI assistance
+# Description:
+# 2026-06-04: Install AppArmor local dhclient override (LP #2011628 backport) - Cursor: Claude Sonnet 4.6
 
 set -e
 
@@ -33,6 +37,12 @@ run_in_chroot "${chroot}" "systemctl enable systemd-networkd-resolvconf-update.p
 run_in_chroot "${chroot}" "systemctl enable systemd-networkd-resolvconf-update.service"
 
 pkg_mgr install $debs
+
+# Backport LP #2011628: allow dhclient to exec /bin/true (used by cloud-init
+# with -sf /bin/true). Canonical fixed this in Mantic but not Jammy.
+mkdir -p "${chroot}/etc/apparmor.d/local"
+cp "$(dirname "$0")/assets/apparmor-local-sbin.dhclient" \
+   "${chroot}/etc/apparmor.d/local/sbin.dhclient"
 
 run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
 pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"

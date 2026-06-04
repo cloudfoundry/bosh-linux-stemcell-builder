@@ -1,3 +1,8 @@
+# @AI-Generated
+# Modified with AI assistance
+# Description:
+# 2026-06-04: Add spec for AppArmor local dhclient override (LP #2011628 backport) - Cursor: Claude Sonnet 4.6
+
 require "spec_helper"
 
 describe "Ubuntu 22.04 stemcell image", stemcell_image: true do
@@ -187,6 +192,13 @@ describe "Ubuntu 22.04 stemcell image", stemcell_image: true do
         # expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit))
         expect(subject.stdout.split).to match_array(%w[/bin/su /bin/sudo /bin/sudoedit /usr/bin/su /usr/bin/sudo /usr/bin/sudoedit])
       end
+    end
+  end
+
+  context "installed by base_ubuntu_packages" do
+    describe file("/etc/apparmor.d/local/sbin.dhclient") do
+      it { should be_file }
+      its(:content) { should match(%r{\{,usr/\}bin/true ixr,}) }
     end
   end
 
