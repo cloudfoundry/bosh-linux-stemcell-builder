@@ -10,6 +10,7 @@ params:
   GCP_REGION:
   GCP_NETWORK_NAME:
   SUBNET_INT:
+  DIRECTOR_TAG:
 
 run:
   path: bosh-stemcells-ci/ci/tasks/gcp/ensure-integration-network.sh

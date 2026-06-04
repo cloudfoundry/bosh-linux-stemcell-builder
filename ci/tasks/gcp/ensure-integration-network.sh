@@ -6,15 +6,16 @@ set -eu -o pipefail
 : "${GCP_REGION:?}"
 : "${GCP_NETWORK_NAME:?}"
 : "${SUBNET_INT:?}"
+: "${DIRECTOR_TAG:?}"
 
 echo "${GCP_JSON_KEY}" | gcloud auth activate-service-account --key-file - --project "${GCP_PROJECT_ID}"
 
 SUBNET_NAME="stemcell-builder-integration-${SUBNET_INT}"
 SUBNET_CIDR="10.100.${SUBNET_INT}.0/24"
 
-# 'bat'                 => BATS created VM tag
-# 'test-stemcells-bats' => director, and compilation VM tag
-FIREWALL_TAGS="bat,test-stemcells-bats"
+# 'bat'             => BATS created VM tag
+# "${DIRECTOR_TAG}" => director, and compilation VM tag (per-OS, e.g. test-stemcells-jammy)
+FIREWALL_TAGS="bat,${DIRECTOR_TAG}"
 
 gcloud_stderr="$(mktemp)"
 trap 'rm -f "${gcloud_stderr}"' EXIT
