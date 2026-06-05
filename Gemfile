@@ -1,4 +1,5 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'rake'
-gem 'bosh-stemcell', path: 'bosh-stemcell'
+gem "rake"
+gem "bosh-stemcell", path: "bosh-stemcell"
+gem "standard"
