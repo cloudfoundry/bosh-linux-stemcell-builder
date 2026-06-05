@@ -21,9 +21,6 @@ install udf /bin/true
 install rds /bin/true
 install floppy /bin/true
 install algif_aead /bin/true
-install esp4 /bin/true
-install esp6 /bin/true
-install rxrpc /bin/true
 ' >> $chroot/etc/modprobe.d/blacklist.conf
 
 echo '# prevent nouveau from loading
