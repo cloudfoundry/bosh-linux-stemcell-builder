@@ -5,23 +5,23 @@
 # from different regions, by concatenating the 'ami' field in
 # the manifest
 
-require 'yaml'
+require "yaml"
 require "tmpdir"
 
-output_dir=File.expand_path("light-stemcell")
+output_dir = File.expand_path("light-stemcell")
 
-merged_amis =  {}
+merged_amis = {}
 
 def run_command(cmd)
-  result = `#{cmd}`
+  `#{cmd}`
   if $?.exitstatus > 0
     abort("Failed to execute #{cmd}")
   end
 end
 
-Dir['*-stemcell'].each do | tarball_dir |
-  next if tarball_dir == 'light-stemcell'
-  Dir.mktmpdir do | temp_dir |
+Dir["*-stemcell"].each do |tarball_dir|
+  next if tarball_dir == "light-stemcell"
+  Dir.mktmpdir do |temp_dir|
     matches = Dir.glob("#{tarball_dir}/*.tgz")
     if matches.length == 0
       abort("Empty glob for '#{tarball_dir}/*.tgz'")
@@ -32,11 +32,11 @@ Dir['*-stemcell'].each do | tarball_dir |
     run_command("tar -xvf #{tarball_path} -C #{temp_dir}")
 
     yaml = YAML.load_file("#{temp_dir}/stemcell.MF")
-    ami = yaml['cloud_properties']['ami']
+    ami = yaml["cloud_properties"]["ami"]
     merged_amis = ami.merge(merged_amis)
-    yaml['cloud_properties']['ami'] = merged_amis
+    yaml["cloud_properties"]["ami"] = merged_amis
 
-    File.open("#{temp_dir}/stemcell.MF",'w') do |s|
+    File.open("#{temp_dir}/stemcell.MF", "w") do |s|
       s.puts yaml.to_yaml
     end
 
