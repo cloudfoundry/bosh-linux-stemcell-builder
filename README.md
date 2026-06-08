@@ -130,7 +130,7 @@ the rake task the first time you create your docker container, but everytime
 after, as long as you do not destroy the container, you should be able to run
 the specific tests.
 
-To run the `ubuntu_${short_name}_spec.rb` tests (**assuming you've already built
+To run the OS image tests in `spec/os_image/ubuntu_spec.rb` (**assuming you've already built
 the OS image** at the `tmp/ubuntu_base_image.tgz` and you're within the Docker
 container):
 
@@ -138,7 +138,7 @@ container):
   export short_name="jammy"
   cd /opt/bosh/bosh-stemcell
   bundle install
-  OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_${short_name}_spec.rb
+  OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_spec.rb
 ```
 
 ### How to Run Tests for Stemcell
