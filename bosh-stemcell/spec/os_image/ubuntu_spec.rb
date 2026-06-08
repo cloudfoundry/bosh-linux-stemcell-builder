@@ -233,9 +233,14 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   context "auditd is configured to use augenrules" do
-    describe file("/etc/systemd/system/auditd.service") do
+    it "does not create '/etc/systemd/system/auditd.service'" do
+      expect(File.exist?("/etc/systemd/system/auditd.service")).to eq(false)
+    end
+
+    describe file("/lib/systemd/system/auditd.service") do
       it { should be_file }
       its(:content) { should match(/^ExecStartPost=-\/sbin\/augenrules --load$/) }
+      its(:content) { should match(/^#ExecStartPost=-\/sbin\/auditctl/) }
     end
   end
 
