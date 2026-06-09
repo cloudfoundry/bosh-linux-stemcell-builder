@@ -31,18 +31,13 @@ ruby_install_url="$(curl -s https://api.github.com/repos/postmodern/ruby-install
 ruby_version="$(cat "${REPO_ROOT}/.ruby-version")"
 gem_home="/usr/local/bundle"
 
-cat << EOF > "${REPO_PARENT}/docker-build-args/docker-build-args.json"
-{
-  "META4_CLI_URL": "${meta4_cli_url}",
-  "SYFT_CLI_URL": "${syft_cli_url}",
-  "YQ_CLI_URL": "${yq_cli_url}",
-
-  "RUBY_INSTALL_URL": "${ruby_install_url}",
-  "RUBY_VERSION": "${ruby_version}",
-  "GEM_HOME": "${gem_home}",
-
-  "placeholder": "without trailing comma"
-}
+cat << EOF > "${REPO_PARENT}/docker-build-args/docker-build-args.yml"
+META4_CLI_URL: "${meta4_cli_url}"
+SYFT_CLI_URL: "${syft_cli_url}"
+YQ_CLI_URL: "${yq_cli_url}"
+RUBY_INSTALL_URL: "${ruby_install_url}"
+RUBY_VERSION: "${ruby_version}"
+GEM_HOME: "${gem_home}"
 EOF
 
-cat "${REPO_PARENT}/docker-build-args/docker-build-args.json"
+cat "${REPO_PARENT}/docker-build-args/docker-build-args.yml"
