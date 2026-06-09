@@ -42,15 +42,15 @@ add_on_exit "umount ${image_mount_point}/boot"
 # == Guide to variables in this script (all paths are defined relative to the real root dir, not the chroot)
 
 # work: the base working directory outside the chroot
-#      eg: /mnt/stemcells/aws/xen/centos/work/work
+#      eg: /mnt/stemcells/aws/xen/ubuntu/work/work
 # disk_image: path to the stemcell disk image
-#      eg: /mnt/stemcells/aws/xen/centos/work/work/aws-xen-centos.raw
+#      eg: /mnt/stemcells/aws/xen/ubuntu/work/work/aws-xen-ubuntu.raw
 # device: path to the loopback devide mapped to the entire disk image
 #      eg: /dev/loop0
 # loopback_dev: device node mapped to the main partition in disk_image
 #      eg: /dev/mapper/loop0p1
 # image_mount_point: place where loopback_dev is mounted as a filesystem
-#      eg: /mnt/stemcells/aws/xen/centos/work/work/mnt
+#      eg: /mnt/stemcells/aws/xen/ubuntu/work/work/mnt
 
 # Generate random password
 random_password=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 16)
