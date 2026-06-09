@@ -8,6 +8,7 @@ Branches are names for the Ubuntu release on which they are based.  For example
 an "Ubuntu SHORT_NAME" based stemcell will be on the branch: 
 - `ubuntu-<short_name>`
 
-As of `2026-04-03` the following stemcell lines / branches are supported:
+As of `2026-06-09` the following stemcell lines / branches are supported:
 - Ubuntu Jammy / `ubuntu-jammy`
 - Ubuntu Noble / `ubuntu-noble`
+- Ubuntu Resolute / `ubuntu-resolute`
