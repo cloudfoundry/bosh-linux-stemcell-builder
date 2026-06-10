@@ -77,13 +77,16 @@ chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
-sudo --preserve-env --set-home --user ubuntu -- /bin/bash --login -i <<SUDO
+# pass SHLVL or '~ubuntu/.bash_logout' will exit 1
+sudo --set-home --user ubuntu \
+  --preserve-env=GEM_HOME,SHLVL,UBUNTU_ADVANTAGE_TOKEN,UBUNTU_FIPS_USE_IAAS_KERNEL \
+  -- /bin/bash --login <<SUDO
 set -e
 
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
-bundle exec rake stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]
+bundle exec rake "stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]"
 SUDO
 
 #
