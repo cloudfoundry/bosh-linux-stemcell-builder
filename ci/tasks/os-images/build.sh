@@ -35,12 +35,9 @@ chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
-sudo --set-home --user ubuntu -- \
-  env GEM_HOME="${GEM_HOME}" \
-      BUILD_TIME="${BUILD_TIME:-}" \
-      UBUNTU_ADVANTAGE_TOKEN="${UBUNTU_ADVANTAGE_TOKEN:-}" \
-      UBUNTU_DEBOOTSTRAP_MIRROR="${UBUNTU_DEBOOTSTRAP_MIRROR:-}" \
-  /bin/bash --login -i <<SUDO
+sudo --set-home --user ubuntu \
+  --preserve-env=GEM_HOME,BUILD_TIME,UBUNTU_ADVANTAGE_TOKEN,UBUNTU_DEBOOTSTRAP_MIRROR \
+  -- /bin/bash --login -i <<SUDO
 set -e
 
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
