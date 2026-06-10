@@ -35,9 +35,10 @@ chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
+# pass SHLVL or '~ubuntu/.bash_logout' will exit 1
 sudo --set-home --user ubuntu \
-  --preserve-env=GEM_HOME,BUILD_TIME,UBUNTU_ADVANTAGE_TOKEN,UBUNTU_DEBOOTSTRAP_MIRROR \
-  -- /bin/bash --login -i <<SUDO
+  --preserve-env=GEM_HOME,SHLVL,BUILD_TIME,UBUNTU_ADVANTAGE_TOKEN,UBUNTU_DEBOOTSTRAP_MIRROR \
+  -- /bin/bash --login <<SUDO
 set -e
 
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
