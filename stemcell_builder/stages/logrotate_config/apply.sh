@@ -32,15 +32,10 @@ install_logrotate_cron_script() {
   sed -i -e 's/^\s*\(\/usr\/sbin\/logrotate\)\b/nice -n 19 ionice -c3 \1/' "$chroot/usr/bin/logrotate-cron"
 }
 
-install_default_su_directive() {
-  cp -f "$assets_dir/default_su_directive" "$chroot/etc/logrotate.d/default_su_directive"
-}
-
 install_logrotate_conf
 install_setup_logrotate_script
 seed_default_logrotate_cronjob
 install_logrotate_cron_script
-install_default_su_directive
 
 ## TODO: either remove /etc/logrotate.d/{wtmp,btmp}
 ## or remove it from logrotate.conf and copy over the default created wtmp,btmp files

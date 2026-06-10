@@ -160,13 +160,5 @@ shared_examples_for "All Stemcells" do
         end
       end
     end
-
-    describe "default su directive" do
-      describe file("/etc/logrotate.d/default_su_directive") do
-        it "does `su root root` after any leading comments" do
-          expect(subject.content).to match(/\A(#.*\n)*su root root\Z/)
-        end
-      end
-    end
   end
 end
