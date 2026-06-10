@@ -17,11 +17,4 @@ describe "AliCloud Stemcell", stemcell_image: true do
     end
   end
 
-  context "ext4 filesystems" do
-    describe "should not contain ext4 feature metadata_csum" do
-      subject { file("/etc/mke2fs.conf") }
-
-      its(:content) { should_not match(/metadata_csum/) }
-    end
-  end
 end

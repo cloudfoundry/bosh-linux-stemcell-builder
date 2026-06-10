@@ -1,7 +1,9 @@
 azure-vm-utils
 cloud-init
-linux-cloud-tools-6.8
-linux-cloud-tools-6.8-generic
+cloud-init-base
+libjs-sphinxdoc
+linux-cloud-tools-7.0
+linux-cloud-tools-7.0-generic
 linux-cloud-tools-common
 linux-cloud-tools-generic
 netplan.io
@@ -16,10 +18,12 @@ python3-jinja2
 python3-json-pointer
 python3-jsonpatch
 python3-jsonschema
+python3-jsonschema-specifications
 python3-markupsafe
+python3-passlib
 python3-pyasn1
-python3-pyrsistent:amd64
+python3-referencing
 python3-requests
+python3-rpds-py
 python3-serial
-python3-setuptools
 python3-urllib3
