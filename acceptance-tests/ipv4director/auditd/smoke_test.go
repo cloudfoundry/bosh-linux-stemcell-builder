@@ -60,7 +60,7 @@ var _ = Describe("Auditd", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
 
-		auditLoginRegexp := `.*type=USER_LOGIN.*exe="/usr/sbin/sshd".*res=success`
+		auditLoginRegexp := `.*type=USER_LOGIN.*exe="/usr/lib/openssh/sshd-session".*res=success`
 		Expect(output).To(MatchRegexp(auditLoginRegexp))
 	})
 })
