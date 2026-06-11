@@ -158,7 +158,10 @@ module Bosh::Stemcell
       end
 
       def additional_cloud_properties
-        {"root_device_name" => "/dev/vda1"}
+        {
+          "root_device_name" => "/dev/vda1",
+          "nvme_support" => "supported"
+        }
       end
     end
 
