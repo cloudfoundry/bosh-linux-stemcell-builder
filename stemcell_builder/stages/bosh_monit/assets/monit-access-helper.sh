@@ -19,21 +19,20 @@ monit_isolation_classid=2958295041
 #
 # Prefer cgroup.controllers; also accept stat(2) filesystem type for hosts where
 # the file is missing from the mount view but the root is still cgroup2fs.
-system_using_unified_cgroup_v2() {
+monit_using_unified_cgroup_v2() {
     [ -f /sys/fs/cgroup/cgroup.controllers ] && return 0
     [ "$(stat -fc %T /sys/fs/cgroup 2>/dev/null)" = "cgroup2fs" ]
 }
 
 permit_monit_access() {
-    if system_using_unified_cgroup_v2; then
+    if monit_using_unified_cgroup_v2; then
         # cgroupv2 (unified hierarchy)
         # Create a sub-cgroup under the current process's cgroup and move into it.
         # The iptables rules match on this cgroup path.
-        cgroup_mount="$(awk '$1 == "cgroup2" && $3 == "cgroup2" { print $2 }' /proc/self/mounts)"
-        nb_matching_cgroup_mounts=$(echo "$cgroup_mount" | grep -c '^.')
+        cgroup_mount="$(awk '$3 == "cgroup2" { print $2 }' /proc/self/mounts)"
         current_cgroup="$(grep '^0::' /proc/self/cgroup | cut -d: -f3)"
-        if [ "${nb_matching_cgroup_mounts}" -ne 1 ] || [ -z "${current_cgroup}" ]; then
-            echo "permit_monit_access: unable to resolve cgroup v2 mount or path. current_cgroup=${current_cgroup} cgroup_mount=${cgroup_mount} nb_matching_cgroup_mounts=${nb_matching_cgroup_mounts}" >&2
+        if [ -z "${cgroup_mount}" ] || [ -z "${current_cgroup}" ]; then
+            echo "permit_monit_access: unable to resolve cgroup v2 mount or path" >&2
             return 1
         fi
         monit_access_cgroup="${cgroup_mount}${current_cgroup}/monit-api-access"
