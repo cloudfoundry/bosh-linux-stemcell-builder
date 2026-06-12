@@ -6,7 +6,10 @@
       "CreatePartitionIfNoEphemeralDisk": true,
       "ServiceManager": "systemd",
       "DiskIDTransformPattern": "^vol-(.+)$",
-      "DiskIDTransformReplacement": "nvme-Amazon_Elastic_Block_Store_vol${1}"
+      "DiskIDTransformReplacement": "nvme-Amazon_Elastic_Block_Store_vol${1}",
+      "UseMonitIptablesFirewall": true,
+      "InstanceStorageDevicePattern": "/dev/nvme*n1",
+      "InstanceStorageManagedVolumePattern": "/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_*"
     }
   },
   "Infrastructure": {
