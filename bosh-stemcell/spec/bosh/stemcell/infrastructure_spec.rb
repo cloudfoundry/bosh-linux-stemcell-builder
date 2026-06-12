@@ -92,6 +92,24 @@ module Bosh::Stemcell
     end
   end
 
+  describe Infrastructure::Alicloud do
+    its(:name) { should eq("alicloud") }
+    its(:hypervisor) { should eq("kvm") }
+    its(:default_disk_size) { should eq(5120) }
+    its(:disk_formats) { should eq(["raw"]) }
+    its(:stemcell_formats) { should eq(["alicloud-raw"]) }
+
+    it { should eq Infrastructure.for("alicloud") }
+    it { should_not eq Infrastructure.for("aws") }
+
+    it "has alicloud specific additional cloud properties" do
+      expect(subject.additional_cloud_properties).to eq({
+        "root_device_name" => "/dev/vda1",
+        "nvme_support" => "supported"
+      })
+    end
+  end
+
   describe Infrastructure::Google do
     its(:name) { should eq("google") }
     its(:hypervisor) { should eq("kvm") }
