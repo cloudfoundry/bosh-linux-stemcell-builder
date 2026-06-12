@@ -24,6 +24,22 @@ describe "AWS Stemcell", stemcell_image: true do
     end
   end
 
+  context "installed by bosh_aws_agent_settings" do
+    describe file("/var/vcap/bosh/agent.json") do
+      it { should be_valid_json_file }
+
+      it "sets InstanceStorageDevicePattern for NVMe instance storage" do
+        config = JSON.parse(subject.content)
+        expect(config.dig("Platform", "Linux", "InstanceStorageDevicePattern")).to eq("/dev/nvme*n1")
+      end
+
+      it "sets InstanceStorageManagedVolumePattern to exclude EBS volumes" do
+        config = JSON.parse(subject.content)
+        expect(config.dig("Platform", "Linux", "InstanceStorageManagedVolumePattern")).to eq("/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_*")
+      end
+    end
+  end
+
   describe "nvme" do
     describe "nvme-id finder" do
       subject { file("/sbin/nvme-id") }
