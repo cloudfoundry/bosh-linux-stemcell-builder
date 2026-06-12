@@ -40,7 +40,7 @@ add_on_exit "umount ${image_mount_point}"
 #      eg: /mnt/stemcells/aws/xen/ubuntu/work/work
 # disk_image: path to the stemcell disk image
 #      eg: /mnt/stemcells/aws/xen/ubuntu/work/work/aws-xen-ubuntu.raw
-# device: path to the loopback devide mapped to the entire disk image
+# device: path to the loopback device mapped to the entire disk image
 #      eg: /dev/loop0
 # loopback_dev: device node mapped to the main partition in disk_image
 #      eg: /dev/mapper/loop0p1
