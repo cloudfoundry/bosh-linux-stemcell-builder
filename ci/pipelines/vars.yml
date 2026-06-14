@@ -2,12 +2,12 @@
 ---
 stemcell_details:
   agent_suffix: "" #! empty
-  branch: ubuntu-noble
+  branch: ubuntu-resolute
   major_version: 1
-  os_version: "24.04"
-  os_name: ubuntu-noble
-  os_short_name: noble
-  subnet_int: "24" #! use last two digits of release year: ex 2010 -> 10
+  os_version: "26.04"
+  os_name: ubuntu-resolute
+  os_short_name: resolute
+  subnet_int: "26" #! use last two digits of release year: ex 2010 -> 10
   use_efi: true
   include_iaas: [
     {iaas: alicloud, hypervisor: kvm},
