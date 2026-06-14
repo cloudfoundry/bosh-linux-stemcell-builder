@@ -35,7 +35,7 @@ func (b *BOSH) Teardown() {
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 
-	stdOut, stdErr, exitStatus, err = b.Run("clean-up", "--all")
+	stdOut, stdErr, exitStatus, err = b.Run("clean-up")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(exitStatus).To(Equal(0), fmt.Sprintf("stdOut: %s \n stdErr: %s", stdOut, stdErr))
 }
