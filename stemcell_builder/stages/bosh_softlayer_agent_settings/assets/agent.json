@@ -1,0 +1,24 @@
+{
+  "Platform": {
+    "Linux": {
+      "PartitionerType": "parted",
+      "CreatePartitionIfNoEphemeralDisk": true,
+      "ScrubEphemeralDisk": true,
+      "DevicePathResolutionType": "iscsi",
+      "UseMonitIptablesFirewall": true
+    }
+  },
+  "Infrastructure": {
+    "Settings": {
+      "Sources": [
+        {
+          "Type": "HTTP",
+          "URI": "https://api.service.softlayer.com",
+          "UserDataPath": "/rest/v3.1/SoftLayer_Resource_Metadata/getUserMetadata.json"
+        }
+      ],
+      "UseServerName": true,
+      "UseRegistry": true
+    }
+  }
+}

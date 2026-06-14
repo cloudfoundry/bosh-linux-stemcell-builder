@@ -1,0 +1,22 @@
+{
+  "Platform": {
+    "Linux": {
+      "PartitionerType": "parted",
+      "DevicePathResolutionType": "scsi",
+      "UseMonitIptablesFirewall": true
+    }
+  },
+  "Infrastructure": {
+    "Settings": {
+      "Sources": [
+        {
+          "Type": "VsphereGuestInfo"
+        },
+        {
+          "Type": "CDROM",
+          "FileName": "env"
+        }
+      ]
+    }
+  }
+}
