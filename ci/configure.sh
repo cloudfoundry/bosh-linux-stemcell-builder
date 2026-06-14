@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
-STEMCELL_LINE="ubuntu-noble"
+STEMCELL_LINE="ubuntu-resolute"
 
 REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 

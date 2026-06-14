@@ -4,6 +4,8 @@ name: stemcell-acceptance-tests
 releases:
 - name: syslog
   version: latest
+- name: bpm
+  version: latest
 
 stemcells:
 - alias: default
@@ -25,6 +27,8 @@ instance_groups:
   - {name: default}
   azs: [z1]
   jobs:
+  - name: bpm
+    release: bpm
   - name: syslog_forwarder
     release: syslog
     properties:
