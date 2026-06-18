@@ -854,6 +854,8 @@ jobs:
       output_mapping:
         output_repo: bosh-linux-stemcell-builder
       params:
+        GIT_USER_EMAIL: *ci_bot_email
+        GIT_USER_NAME: *ci_bot_name
         SOURCE_PATH: acceptance-tests/
     - task: acceptance-tests-dry-run
       image: bosh-integration-image
