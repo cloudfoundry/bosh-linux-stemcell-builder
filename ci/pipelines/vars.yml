@@ -1,14 +1,14 @@
 #@data/values
 ---
 stemcell_details:
-  agent_suffix: "-go_agent"
-  branch: ubuntu-jammy
+  agent_suffix: "" #! empty
+  branch: ubuntu-noble
   major_version: 1
-  os_version: "22.04"
-  os_name: ubuntu-jammy
-  os_short_name: jammy
-  subnet_int: "22" #! use last two digits of release year: ex 2010 -> 10
-  use_efi: false
+  os_version: "24.04"
+  os_name: ubuntu-noble
+  os_short_name: noble
+  subnet_int: "24" #! use last two digits of release year: ex 2010 -> 10
+  use_efi: true
   bot_email: infra@cloudfoundry.org
   bot_name: CI Bot
   include_iaas: [
@@ -18,13 +18,9 @@ stemcell_details:
     {iaas: google, hypervisor: kvm},
     {iaas: openstack, hypervisor: kvm},
     {iaas: vsphere, hypervisor: esxi},
-    {iaas: vcloud, hypervisor: esxi},
     {iaas: warden, hypervisor: boshlite}
   ]
-  include_fips_iaas: [
-    {iaas: aws, hypervisor: xen-hvm},
-    {iaas: google, hypervisor: kvm},
-  ]
+  include_fips_iaas: []
 
 blobstore_types:
 - dav

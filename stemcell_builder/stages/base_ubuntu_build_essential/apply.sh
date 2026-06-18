@@ -10,4 +10,3 @@ debconf="debconf debconf/frontend select noninteractive"
 run_in_chroot $chroot "echo ${debconf} | debconf-set-selections"
 
 pkg_mgr install build-essential
-pkg_mgr install clang

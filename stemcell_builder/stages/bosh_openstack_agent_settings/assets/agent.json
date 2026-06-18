@@ -4,7 +4,9 @@
       "PartitionerType": "parted",
       "CreatePartitionIfNoEphemeralDisk": true,
       "DevicePathResolutionType": "virtio",
-      "UseMonitIptablesFirewall": true
+      "ServiceManager": "systemd",
+      "DiskIDTransformPattern": "^([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$",
+      "DiskIDTransformReplacement": "scsi-${1}${2}${3}${4}${5}"
     }
   },
   "Infrastructure": {
@@ -31,6 +33,7 @@
           "SSHKeysPath": "/latest/meta-data/public-keys/0/openssh-key"
         }
       ],
+
       "UseServerName": true,
       "UseRegistry": true
     }

@@ -5,24 +5,6 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
-mkdir -p $chroot/etc/sv
-cp -a $assets_dir/runit/agent $chroot/etc/sv/agent
-cp -a $assets_dir/runit/monit $chroot/etc/sv/monit
-mkdir -p $chroot/var/vcap/monit/svlog
-
-# Set up agent and monit with runit
-run_in_bosh_chroot $chroot "
-rm /etc/service
-mkdir /etc/service
-chmod +x /etc/sv/agent/run /etc/sv/agent/log/run
-rm -f /etc/service/agent
-ln -s /etc/sv/agent /etc/service/agent
-
-chmod +x /etc/sv/monit/run /etc/sv/monit/log/run
-rm -f /etc/service/monit
-ln -s /etc/sv/monit /etc/service/monit
-"
-
 # Alerts for monit config
 cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
 cd $assets_dir
@@ -35,6 +17,7 @@ bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
 /usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
 
 mv bosh-agent $chroot/var/vcap/bosh/bin/
+ln --force $chroot/var/vcap/bosh/bin/bosh-agent $chroot/var/vcap/bosh/etc/bosh-enable-monit-access
 
 cp $assets_dir/bosh-agent-rc $chroot/var/vcap/bosh/bin/bosh-agent-rc
 
@@ -62,17 +45,12 @@ echo 'vcap' > /etc/at.allow
 chmod -f og-rwx /etc/at.allow /etc/cron.allow /etc/crontab /etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly /etc/cron.d
 chown -f root:root /etc/at.allow /etc/cron.allow /etc/crontab /etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly /etc/cron.d
 
-chmod -R 0700 /etc/sv/agent
-chown -R root:root /etc/sv/agent
-
-# monit processes will inherit this directory as the default $PWD, so make sure processes can read/list
-# some scripts/packages might do this during startup and would potentially fail
-chmod -R 0755 /etc/sv/monit
-chown -R root:root /etc/sv/monit
-
 chmod 0600 /var/vcap/monit/alerts.monitrc
 chown root:root /var/vcap/monit/alerts.monitrc
 "
+
+# set symlink for bosh-agent logs so we can keep the same log locations for our tests
+run_in_chroot $chroot "ln -s /var/log/bosh-agent.log /var/vcap/bosh/log/current"
 
 # Since go agent is always specified with -C provide empty conf.
 # File will be overwritten in whole by infrastructures.
@@ -81,3 +59,6 @@ echo '{}' > $chroot/var/vcap/bosh/agent.json
 # this directory is utilized by the agent/init/create-env
 # https://github.com/cloudfoundry/bosh-agent/blob/1a6b1e11acd941e65c4f4155c22ff9a8f76098f9/micro/https_handler.go#L119
 mkdir -p $chroot/$bosh_dir/../micro_bosh/data/cache
+
+cp "$(dirname "$0")/assets/bosh-agent.service" "${chroot}/lib/systemd/system/"
+run_in_chroot "${chroot}" "systemctl enable bosh-agent.service"

@@ -177,8 +177,6 @@ module Bosh::Stemcell
           " --tag ~exclude_on_alicloud"
         when "vsphere"
           " --tag ~exclude_on_vsphere"
-        when "vcloud"
-          " --tag ~exclude_on_vcloud"
         when "warden"
           " --tag ~exclude_on_warden"
         when "aws"
@@ -189,8 +187,6 @@ module Bosh::Stemcell
           " --tag ~exclude_on_cloudstack"
         when "azure"
           " --tag ~exclude_on_azure"
-        when "softlayer"
-          " --tag ~exclude_on_softlayer"
         when "google"
           " --tag ~exclude_on_google"
         end,

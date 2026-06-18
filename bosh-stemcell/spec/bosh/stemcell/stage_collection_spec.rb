@@ -21,37 +21,37 @@ module Bosh::Stemcell
 
       it "has the correct stages" do
         expect(stage_collection.operating_system_stages).to eq(
-          [
-            :base_debootstrap,
-            :base_ubuntu_firstboot,
-            :base_apt,
-            :base_ubuntu_build_essential,
-            :base_ubuntu_packages,
-            :base_file_permission,
-            :base_ssh,
-            :bosh_sysstat,
-            :bosh_environment,
-            :bosh_sysctl,
-            :bosh_limits,
-            :bosh_users,
-            :bosh_monit,
-            :bosh_ntp,
-            :bosh_sudoers,
-            :bosh_systemd,
-            :password_policies,
-            :restrict_su_command,
-            :tty_config,
-            :rsyslog_config,
-            :delay_monit_start,
-            :system_grub,
-            :vim_tiny,
-            :cron_config,
-            :escape_ctrl_alt_del,
-            :bosh_audit_ubuntu,
-            :bosh_log_audit_start,
-            :clean_machine_id
-          ]
-        )
+                                                              [
+                                                                :base_debootstrap,
+                                                                :base_ubuntu_firstboot,
+                                                                :base_apt,
+                                                                :base_ubuntu_build_essential,
+                                                                :base_ubuntu_packages,
+                                                                :bosh_systemd_resolved,
+                                                                :base_file_permission,
+                                                                :base_ssh,
+                                                                :bosh_sysstat,
+                                                                :bosh_environment,
+                                                                :bosh_sysctl,
+                                                                :bosh_limits,
+                                                                :bosh_users,
+                                                                :bosh_monit,
+                                                                :bosh_ntp,
+                                                                :bosh_sudoers,
+                                                                :bosh_systemd,
+                                                                :password_policies,
+                                                                :restrict_su_command,
+                                                                :tty_config,
+                                                                :rsyslog_config,
+                                                                :system_grub,
+                                                                :vim_tiny,
+                                                                :cron_config,
+                                                                :escape_ctrl_alt_del,
+                                                                :bosh_audit_ubuntu,
+                                                                :bosh_log_audit_start,
+                                                                :clean_machine_id
+                                                              ]
+                                                            )
       end
     end
 
@@ -92,11 +92,11 @@ module Bosh::Stemcell
             :bosh_aws_agent_settings,
             :bosh_clean_ssh,
             :udev_aws_rules,
-            :restore_apt_sources,
-            :image_create,
+            :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list
+            :bosh_package_list,
+            :restore_apt_sources
           ]
         }
         let(:aws_package_stemcell_stages) {
@@ -124,11 +124,11 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_alicloud_agent_settings,
             :bosh_clean_ssh,
-            :restore_apt_sources,
-            :image_create,
+            :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list
+            :bosh_package_list,
+            :restore_apt_sources
           ]
         }
 
@@ -158,11 +158,11 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_google_agent_settings,
             :bosh_clean_ssh,
-            :restore_apt_sources,
-            :image_create,
+            :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list
+            :bosh_package_list,
+            :restore_apt_sources
           ]
         }
 
@@ -186,27 +186,27 @@ module Bosh::Stemcell
 
         it "has the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(
-            [
-              :system_network,
-              :system_openstack_clock,
-              :system_openstack_modules,
-              :system_parameters,
-              :bosh_clean,
-              :bosh_harden,
-              :bosh_openstack_agent_settings,
-              :bosh_clean_ssh,
-              :restore_apt_sources,
-              :image_create,
-              :image_install_grub,
-              :sbom_create,
-              :bosh_package_list
-            ]
-          )
+                                                                    [
+                                                                      :system_network,
+                                                                      :system_openstack_clock,
+                                                                      :system_openstack_modules,
+                                                                      :system_parameters,
+                                                                      :bosh_clean,
+                                                                      :bosh_harden,
+                                                                      :bosh_openstack_agent_settings,
+                                                                      :bosh_clean_ssh,
+                                                                      :image_create_efi,
+                                                                      :image_install_grub,
+                                                                      :sbom_create,
+                                                                      :bosh_package_list,
+                                                                      :restore_apt_sources
+                                                                    ]
+                                                                  )
           expect(stage_collection.package_stemcell_stages("qcow2")).to eq(
-              [
-                :prepare_qcow2_image_stemcell
-              ]
-            )
+                                                                         [
+                                                                           :prepare_qcow2_image_stemcell
+                                                                         ]
+                                                                       )
         end
       end
 
@@ -216,29 +216,29 @@ module Bosh::Stemcell
 
         it "has the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(
-            [
-              :system_network,
-              :system_openstack_modules,
-              :bosh_cloudstack_ubuntu_vr_metadata,
-              :system_ubuntu_xen_tools,
-              :system_parameters,
-              :system_vhd_utils_tools,
-              :bosh_clean,
-              :bosh_harden,
-              :bosh_cloudstack_agent_settings,
-              :bosh_clean_ssh,
-              :restore_apt_sources,
-              :image_create,
-              :image_install_grub,
-              :sbom_create,
-              :bosh_package_list
-            ]
-          )
+                                                                    [
+                                                                      :system_network,
+                                                                      :system_openstack_modules,
+                                                                      :bosh_cloudstack_ubuntu_vr_metadata,
+                                                                      :system_ubuntu_xen_tools,
+                                                                      :system_parameters,
+                                                                      :system_vhd_utils_tools,
+                                                                      :bosh_clean,
+                                                                      :bosh_harden,
+                                                                      :bosh_cloudstack_agent_settings,
+                                                                      :bosh_clean_ssh,
+                                                                      :image_create_efi,
+                                                                      :image_install_grub,
+                                                                      :sbom_create,
+                                                                      :bosh_package_list,
+                                                                      :restore_apt_sources
+                                                                    ]
+                                                                  )
           expect(stage_collection.package_stemcell_stages("qcow2")).to eq(
-              [
-                :prepare_qcow2_image_stemcell
-              ]
-            )
+                                                                         [
+                                                                           :prepare_qcow2_image_stemcell
+                                                                         ]
+                                                                       )
         end
       end
 
@@ -248,54 +248,23 @@ module Bosh::Stemcell
 
         it "has the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(
-            [
-              :system_network,
-              :system_open_vm_tools,
-              :system_vsphere_cdrom,
-              :system_parameters,
-              :bosh_clean,
-              :bosh_harden,
-              :bosh_enable_password_authentication,
-              :bosh_vsphere_agent_settings,
-              :bosh_clean_ssh,
-              :restore_apt_sources,
-              :image_create_efi,
-              :image_install_grub_efi,
-              :sbom_create,
-              :bosh_package_list
-            ]
-          )
+                                                                    [
+                                                                      :system_network,
+                                                                      :system_open_vm_tools,
+                                                                      :system_vsphere_cdrom,
+                                                                      :system_parameters,
+                                                                      :bosh_clean,
+                                                                      :bosh_harden,
+                                                                      :bosh_vsphere_agent_settings,
+                                                                      :bosh_clean_ssh,
+                                                                      :image_create_efi,
+                                                                      :image_install_grub,
+                                                                      :sbom_create,
+                                                                      :bosh_package_list,
+                                                                      :restore_apt_sources
+                                                                    ]
+                                                                  )
           expect(stage_collection.package_stemcell_stages("ovf")).to eq(vmware_package_stemcell_steps)
-        end
-      end
-
-      context "when using vCloud" do
-        let(:infrastructure) { Infrastructure.for("vcloud") }
-
-        context "when operating system is Ubuntu" do
-          let(:operating_system) { OperatingSystem.for("ubuntu") }
-
-          it "has the correct stages" do
-            expect(stage_collection.build_stemcell_image_stages).to eq(
-              [
-                :system_network,
-                :system_open_vm_tools,
-                :system_vsphere_cdrom,
-                :system_parameters,
-                :bosh_clean,
-                :bosh_harden,
-                :bosh_enable_password_authentication,
-                :bosh_vsphere_agent_settings,
-                :bosh_clean_ssh,
-                :restore_apt_sources,
-                :image_create_efi,
-                :image_install_grub_efi,
-                :sbom_create,
-                :bosh_package_list
-              ]
-            )
-            expect(stage_collection.package_stemcell_stages("ovf")).to eq(vmware_package_stemcell_steps)
-          end
         end
       end
 
@@ -313,11 +282,11 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_azure_agent_settings,
             :bosh_clean_ssh,
-            :restore_apt_sources,
-            :image_create,
+            :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list
+            :bosh_package_list,
+            :restore_apt_sources
           ]
         }
 
@@ -334,37 +303,6 @@ module Bosh::Stemcell
         end
       end
 
-      context "when using softlayer" do
-        let(:infrastructure) { Infrastructure.for("softlayer") }
-
-        context "when the operating system is Ubuntu" do
-          let(:operating_system) { OperatingSystem.for("ubuntu") }
-
-          it "has the correct stages" do
-            expect(stage_collection.build_stemcell_image_stages).to eq(
-              [
-                :system_network,
-                :system_softlayer_open_iscsi,
-                :system_softlayer_multipath_tools,
-                :system_softlayer_netplan,
-                :system_parameters,
-                :bosh_clean,
-                :bosh_harden,
-                :bosh_enable_password_authentication,
-                :bosh_softlayer_agent_settings,
-                :bosh_config_root_ssh_login,
-                :bosh_clean_ssh,
-                :restore_apt_sources,
-                :image_create_softlayer_two_partitions,
-                :image_install_grub_softlayer_two_partitions,
-                :bosh_package_list
-              ]
-            )
-            expect(stage_collection.package_stemcell_stages("ovf")).to eq(vmware_package_stemcell_steps)
-          end
-        end
-      end
-
       context "when using Warden" do
         let(:infrastructure) { Infrastructure.for("warden") }
         let(:build_stemcell_image_stages) {
@@ -374,11 +312,11 @@ module Bosh::Stemcell
             :bosh_clean,
             :bosh_harden,
             :bosh_clean_ssh,
-            :restore_apt_sources,
-            :image_create,
+            :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list
+            :bosh_package_list,
+            :restore_apt_sources
           ]
         }
         let(:package_stemcell_stages) {

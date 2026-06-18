@@ -19,30 +19,6 @@ shared_examples_for "All Stemcells" do
     end
   end
 
-  context "ipv6 is disabled in the kernel", {
-    exclude_on_vsphere: true,
-    exclude_on_vcloud: true
-  } do
-    describe file(grub_cfg_path) do
-      its(:content) { should match(/^\s+(kernel|linux)\s.*\sipv6\.disable=1\s.*$/) }
-    end
-  end
-
-  context "ipv6 is disabled in the kernel on EFI", {
-    exclude_on_alicloud: true,
-    exclude_on_softlayer: true,
-    exclude_on_cloudstack: true,
-    exclude_on_warden: true,
-    exclude_on_openstack: true,
-    exclude_on_azure: true,
-    exclude_on_aws: true,
-    exclude_on_google: true
-  } do
-    describe file("/boot/efi/EFI/grub/grub.cfg") do
-      its(:content) { should match(/^\s+(kernel|linux)\s.*\sipv6\.disable=1\s.*$/) }
-    end
-  end
-
   context "disable remote host login (stig: V-38491)" do
     describe command("find /home -name .rhosts") do
       its(:stdout) { should eq("") }
@@ -108,6 +84,7 @@ shared_examples_for "All Stemcells" do
       its(:stdout) do
         should eq(<<~FILELIST)
           50-default.conf
+          90-bosh-agent.conf
         FILELIST
       end
     end
@@ -132,7 +109,6 @@ shared_examples_for "All Stemcells" do
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
-      exclude_on_vcloud: true,
       exclude_on_vsphere: true,
       exclude_on_cloudstack: true,
       exclude_on_azure: true,

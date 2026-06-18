@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 
 packages="python3 python3-pyasn1 python3-setuptools python3-distro python-is-python3 \
-cloud-init linux-cloud-tools-common linux-cloud-tools-generic"
+cloud-init azure-vm-utils linux-cloud-tools-common linux-cloud-tools-generic"
 pkg_mgr install $packages
 
 wala_release=2.15.0.1
@@ -48,12 +48,16 @@ cat > $chroot/etc/logrotate.d/waagent <<EOS
 }
 EOS
 
-#setup cloud-init
+# Setup cloud-init
 rm $chroot/etc/cloud/*.cfg
 rm $chroot/etc/cloud/cloud.cfg.d/*.cfg
 cp -f $dir/assets/etc/cloud-init/cloud.cfg $chroot/etc/cloud/cloud.cfg
 cp -f $dir/assets/etc/cloud-init/*-*.cfg $chroot/etc/cloud/cloud.cfg.d/
 
+# Ensures that cloud-init waits until host keys have been regenerated.
+mkdir -p $chroot/etc/systemd/system/cloud-config.service.d
+cp -f $dir/assets/etc/systemd/system/cloud-config.service.d/firstboot-blocker.conf \
+      $chroot/etc/systemd/system/cloud-config.service.d/firstboot-blocker.conf
 
 # this will append the following two relevant lines (plus a few commented out lines)
 # to the default-conf:

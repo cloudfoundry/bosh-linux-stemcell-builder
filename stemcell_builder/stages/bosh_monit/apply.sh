@@ -30,12 +30,5 @@ chmod 0700 $chroot/$bosh_dir/etc/monitrc
 mkdir -p $chroot/$bosh_app_dir/monit
 touch $chroot/$bosh_app_dir/monit/empty.monitrc
 
-# Monit wrapper script:
-mv $chroot/$bosh_dir/bin/monit $chroot/$bosh_dir/bin/monit-actual
-
-cp $dir/assets/monit-access-helper.sh $chroot/$bosh_dir/etc/
-cp $dir/assets/monit $chroot/$bosh_dir/bin/monit
-chmod +x $chroot/$bosh_dir/bin/monit
-
-cp $dir/assets/restrict-monit-api-access $chroot/etc/network/if-up.d/restrict-monit-api-access
-chmod +x $chroot/etc/network/if-up.d/restrict-monit-api-access
+cp "$(dirname "$0")/assets/monit.service" "${chroot}/lib/systemd/system/"
+run_in_chroot "${chroot}" "systemctl enable monit.service"

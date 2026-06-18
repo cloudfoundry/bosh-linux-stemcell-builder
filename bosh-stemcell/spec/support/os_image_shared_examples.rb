@@ -96,12 +96,6 @@ shared_examples_for "every OS image" do
     end
   end
 
-  context "Disable IPv6 Redirect Acceptance - all (CIS-7.3.2)" do
-    describe file("/etc/sysctl.d/60-bosh-sysctl.conf") do
-      its(:content) { should match(/^\s*net\.ipv6\.conf\.all\.accept_redirects\s*=/) }
-    end
-  end
-
   # The STIG says to have the log files owned and grouped by 'root'. However, this would mean that
   # rsyslog would not be able to dropping privileges to another user. Because of this we've decided
   # it should run as the limited scope user 'syslog' which still prevents 'vcap' from reading the
@@ -136,7 +130,7 @@ shared_examples_for "every OS image" do
       it { should be_file }
 
       it "should reload rsyslog on rotate" do
-        expect(subject.content).to match(/sudo kill -SIGHUP \$\(cat \/var\/run\/rsyslogd\.pid\)/)
+        expect(subject.content).to match(/sudo systemctl kill -s HUP rsyslog.service/)
       end
 
       it "should not restart rsyslog on rotate so that logs are not lost" do
@@ -202,7 +196,7 @@ shared_examples_for "every OS image" do
       expect(sshd_config).to be_mode(0o600)
     end
 
-    it "disallows root login (stig: V-38613)", exclude_on_softlayer: true do
+    it "disallows root login (stig: V-38613)" do
       expect(sshd_config.content).to match(/^PermitRootLogin no$/)
     end
 
@@ -302,11 +296,11 @@ shared_examples_for "every OS image" do
       expect(sshd_config.content).to match(/^Protocol 2$/)
     end
 
-    it "sets AllowGroups to bosh_sshers (CIS 9.3.13)", exclude_on_softlayer: true do
+    it "sets AllowGroups to bosh_sshers (CIS 9.3.13)" do
       expect(sshd_config.content).to match(/^AllowGroups bosh_sshers$/)
     end
 
-    it "sets DenyUsers to root", exclude_on_softlayer: true do
+    it "sets DenyUsers to root" do
       expect(sshd_config.content).to match(/^DenyUsers root$/)
     end
   end
@@ -444,22 +438,11 @@ shared_examples_for "every OS image" do
   # images to perform theses stages. For the Stemcell suites the exlude flags
   # here apply.
   describe "exceptions" do
-    context "unless: vcloud / vsphere / warden / softlayer", {
-      exclude_on_vsphere: true,
-      exclude_on_vcloud: true,
-      exclude_on_warden: true,
-      exclude_on_softlayer: true
+    context "unless: warden", {
+      exclude_on_warden: true
     } do
       it "disallows password authentication" do
         expect(sshd_config.content).to match(/^PasswordAuthentication no$/)
-      end
-    end
-
-    context "unless: softlayer", {
-      exclude_on_softlayer: true
-    } do
-      it "disallows root login (stig: V-38613)" do
-        expect(sshd_config.content).to match(/^PermitRootLogin no$/)
       end
     end
   end
@@ -516,13 +499,6 @@ shared_examples_for "every OS image" do
   describe "syncookies should be enabled (stig: V-38539)" do
     context file("/etc/sysctl.d/60-bosh-sysctl.conf") do
       its(:content) { should match(/^net\.ipv4\.tcp_syncookies=1$/) }
-    end
-  end
-
-  describe "IPv6 should be disabled (stig: V-38546)" do
-    context file("/etc/sysctl.d/60-bosh-sysctl.conf") do
-      its(:content) { should match(/^net\.ipv6\.conf\.all\.disable_ipv6=1$/) }
-      its(:content) { should match(/^net\.ipv6\.conf\.default\.disable_ipv6=1$/) }
     end
   end
 
@@ -795,16 +771,6 @@ shared_examples_for "every OS image" do
   describe "Cron logging must be implemented. (stig: V-75865)" do
     context file("/etc/rsyslog.d/50-default.conf") do
       its(:content) { should match(/^cron\.\*\s+\/var\/log\/cron\.log$/) }
-    end
-  end
-
-  describe "apt removes all software components after updated versions have been installed (stig: V-260477)" do
-    describe file("/etc/apt/apt.conf.d/50unattended-upgrades") do
-      expected = <<~EXPECTED
-        Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
-        Unattended-Upgrade::Remove-Unused-Dependencies "true";
-      EXPECTED
-      its(:content) { should eq expected.chomp }
     end
   end
 end

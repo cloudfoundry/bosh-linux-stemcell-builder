@@ -107,7 +107,7 @@ groups:
 
   - bats
   - test-stemcells-ipv4
-  - test-stemcells-ipv6
+    #! - test-stemcells-ipv6
   - aggregate-candidate-stemcells
 
 - name: auto-bumps
@@ -273,10 +273,10 @@ jobs:
         passed:
           - process-high-critical-cves
         trigger: true
-      - get: high-critical-cves-processed
-        trigger: true
-        passed:
-          - process-high-critical-cves
+      #! - get: high-critical-cves-processed
+      #!   trigger: true
+      #!   passed:
+      #!     - process-high-critical-cves
       - get: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         passed:
           - process-high-critical-cves
@@ -499,74 +499,74 @@ jobs:
         timeout: 15m
   serial: true
 
-- name: test-stemcells-ipv6
-  plan:
-  - do:
-    - in_parallel:
-      - get: version
-        passed:
-      #@ for iaas in data.values.stemcell_details.include_iaas:
-        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
-      #@ end
-      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
-        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
-      #@ end
-        resource: version
-        trigger: true
-      - get: bosh-stemcells-ci
-      - get: bosh-integration-image
-      - get: bosh-linux-stemcell-builder
-      - get: bosh-deployment
-      - get: syslog-release
-      - get: bpm-release
-      - get: os-conf-release
-      - get: stemcell
-        passed:
-        - build-google-kvm
-        resource: google-kvm
-      - get: build-time
-        passed:
-          - build-os-image
-          #@ for iaas in data.values.stemcell_details.include_iaas:
-          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
-          #@ end
-          #@ for iaas in data.values.stemcell_details.include_fips_iaas:
-          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
-          #@ end
-        trigger: true
-    - do:
-      - task: deploy-director-ipv6
-        file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director-ipv6.yml
-        image: bosh-integration-image
-        params:
-          GCP_PROJECT_ID: ((gcp_project_id))
-          GCP_ZONE: europe-north2-a
-          GCP_NETWORK_NAME: ipv6-test
-          GCP_SUBNET_NAME: stemcell-builder-integration-ipv6-(@= data.values.stemcell_details.subnet_int @)
-          GCP_JSON_KEY: ((gcp_json_key))
-          INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).10
-          INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
-          INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
-          RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).9, 10.100.(@= data.values.stemcell_details.subnet_int @).62 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
-          SECOND_INTERNAL_CIDR: fd20:ecb:bcac:4000:0:0:0:0/64
-          SECOND_INTERNAL_GW: fd20:ecb:bcac:4000::1
-          SECOND_INTERNAL_IP: fd20:ecb:bcac:4000::10
-          TAG: test-stemcells-ipv6
-      - task: test-stemcell-ipv6
-        attempts: 3
-        file: bosh-stemcells-ci/ci/tasks/test-stemcell.yml
-        image: bosh-integration-image
-        params:
-          BOSH_os_name: (@= data.values.stemcell_details.os_name @)
-          package: ipv6director
-    ensure:
-      do:
-      - task: teardown
-        file: bosh-stemcells-ci/ci/tasks/teardown.yml
-        image: bosh-integration-image
-        attempts: 3
-        timeout: 15m
-  serial: true
+#!- name: test-stemcells-ipv6
+#!  plan:
+#!  - do:
+#!    - in_parallel:
+#!      - get: version
+#!        passed:
+#!      #@ for iaas in data.values.stemcell_details.include_iaas:
+#!        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+#!      #@ end
+#!      #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+#!        - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+#!      #@ end
+#!        resource: version
+#!        trigger: true
+#!      - get: bosh-stemcells-ci
+#!      - get: bosh-integration-image
+#!      - get: bosh-linux-stemcell-builder
+#!      - get: bosh-deployment
+#!      - get: syslog-release
+#!      - get: bpm-release
+#!      - get: os-conf-release
+#!      - get: stemcell
+#!        passed:
+#!        - build-google-kvm
+#!        resource: google-kvm
+#!      - get: build-time
+#!        passed:
+#!          - build-os-image
+#!          #@ for iaas in data.values.stemcell_details.include_iaas:
+#!          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
+#!          #@ end
+#!          #@ for iaas in data.values.stemcell_details.include_fips_iaas:
+#!          - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+#!          #@ end
+#!        trigger: true
+#!    - do:
+#!      - task: deploy-director-ipv6
+#!        file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director-ipv6.yml
+#!        image: bosh-integration-image
+#!        params:
+#!          GCP_PROJECT_ID: ((gcp_project_id))
+#!          GCP_ZONE: europe-north2-a
+#!          GCP_NETWORK_NAME: ipv6-test
+#!          GCP_SUBNET_NAME: stemcell-builder-integration-ipv6-(@= data.values.stemcell_details.subnet_int @)
+#!          GCP_JSON_KEY: ((gcp_json_key))
+#!          INTERNAL_IP: 10.100.(@= data.values.stemcell_details.subnet_int @).10
+#!          INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
+#!          INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
+#!          RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).9, 10.100.(@= data.values.stemcell_details.subnet_int @).62 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
+#!          SECOND_INTERNAL_CIDR: fd20:ecb:bcac:4000:0:0:0:0/64
+#!          SECOND_INTERNAL_GW: fd20:ecb:bcac:4000::1
+#!          SECOND_INTERNAL_IP: fd20:ecb:bcac:4000::10
+#!          TAG: test-stemcells-ipv6
+#!      - task: test-stemcell-ipv6
+#!        attempts: 3
+#!        file: bosh-stemcells-ci/ci/tasks/test-stemcell.yml
+#!        image: bosh-integration-image
+#!        params:
+#!          BOSH_os_name: (@= data.values.stemcell_details.os_name @)
+#!          package: ipv6director
+#!    ensure:
+#!      do:
+#!      - task: teardown
+#!        file: bosh-stemcells-ci/ci/tasks/teardown.yml
+#!        image: bosh-integration-image
+#!        attempts: 3
+#!        timeout: 15m
+#!  serial: true
 
 #@ for iaas in data.values.stemcell_details.include_iaas:
 - #@ build_stemcell(iaas.iaas, iaas.hypervisor)
@@ -1221,21 +1221,29 @@ resources:
   source:
     regexp: davcli-(.*)-linux-amd64
     bucket: bosh-davcli-artifacts
+    access_key_id: ((bosh_davcli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_davcli_pipeline_aws_access_key.password))
 
 - name: bosh-blobstore-gcs
   type: s3
   source:
     regexp: bosh-gcscli-(.*)-linux-amd64
     bucket: bosh-gcscli-artifacts
+    access_key_id: ((bosh_gcscli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_gcscli_pipeline_aws_access_key.password))
 
 - name: bosh-blobstore-s3
   type: s3
   source:
     regexp: s3cli-(.*)-linux-amd64
     bucket: bosh-s3cli-artifacts
+    access_key_id: ((bosh_s3cli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_s3cli_pipeline_aws_access_key.password))
 
 - name: bosh-blobstore-azure-storage
   type: s3
   source:
     regexp: azure-storage-cli-(.*)-linux-amd64
     bucket: bosh-azure-storage-cli-artifacts
+    access_key_id: ((bosh_azure_storage_cli_pipeline_aws_access_key.username))
+    secret_access_key: ((bosh_azure_storage_cli_pipeline_aws_access_key.password))

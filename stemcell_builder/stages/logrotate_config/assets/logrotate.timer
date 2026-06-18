@@ -1,5 +1,5 @@
 [Unit]
-Description=Once per minute rotation of logfiles using logrotate.
+Description=Every 5 minutes rotation of logfiles using logrotate.
 Documentation=man:logrotate(8) man:logrotate.conf(5)
 
 [Timer]

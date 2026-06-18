@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# @AI-Generated
-# Modified with AI assistance
-# Description:
-# 2026-06-04: Install AppArmor local dhclient override (LP #2011628 backport) - Cursor: Claude Sonnet 4.6
 
 set -e
 
@@ -13,17 +9,14 @@ source $base_dir/etc/settings.bash
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
 curl wget bison libreadline6-dev rng-tools \
 libxml2 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
-flex psmisc apparmor-utils iptables sysstat \
+flex psmisc apparmor-utils iptables nftables sysstat \
 rsync openssh-server traceroute libncurses5-dev quota \
-libaio1 gdb libcap2-bin libcap2-dev libbz2-dev \
+libaio1t64 gdb libcap2-bin libcap2-dev libbz2-dev \
 cmake uuid-dev libgcrypt-dev ca-certificates \
-scsitools mg htop module-assistant debhelper runit parted \
+mg htop module-assistant debhelper runit parted \
 cloud-guest-utils anacron software-properties-common \
-xfsprogs gdisk libpam-cracklib chrony dbus nvme-cli rng-tools fdisk \
-ethtool \
-nftables"
-
-debs="$debs gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
+xfsprogs gdisk chrony dbus nvme-cli rng-tools fdisk \
+ethtool libpam-pwquality gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
 
 pkg_mgr purge netplan.io
 run_in_chroot $chroot "
@@ -38,23 +31,13 @@ run_in_chroot "${chroot}" "systemctl enable systemd-networkd-resolvconf-update.s
 
 pkg_mgr install $debs
 
-# Backport LP #2011628: allow dhclient to exec /bin/true (used by cloud-init
-# with -sf /bin/true). Canonical fixed this in Mantic but not Jammy.
-mkdir -p "${chroot}/etc/apparmor.d/local"
-cp "$(dirname "$0")/assets/apparmor-local-sbin.dhclient" \
-   "${chroot}/etc/apparmor.d/local/sbin.dhclient"
+# NOBLE_TODO: adiscon repo does not have noble packages yet
+# run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
+# pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
+pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-relp"
 
-run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
-pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
-
-# "runsvdir-start" no longer exists, the equivalent is /etc/runit/2
-install -m0750 "${chroot}/etc/runit/2" "${chroot}/usr/sbin/runsvdir-start"
-
-cp "$(dirname "$0")/assets/runit.service" "${chroot}/lib/systemd/system/"
-run_in_chroot "${chroot}" "systemctl enable runit"
 run_in_chroot "${chroot}" "systemctl enable systemd-logind"
 run_in_chroot "${chroot}" "systemctl enable systemd-networkd"
-run_in_chroot "${chroot}" "systemctl disable systemd-resolved"
 pkgs_to_purge="iw mg wireless-regdb"
 pkg_mgr purge --auto-remove "$pkgs_to_purge"
 

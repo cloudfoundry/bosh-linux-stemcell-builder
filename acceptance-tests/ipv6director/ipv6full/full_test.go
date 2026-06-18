@@ -11,11 +11,11 @@ import (
 
 var _ = Describe("IPv6 Full", func() {
 	It("enables ipv6 in the kernel", func() {
-		stdOut, _, exitStatus, err := bosh.Run("--column=stdout", "ssh", "test/0", "-r", "-c", `sudo netstat -lnp | grep sshd`)
+		stdOut, _, exitStatus, err := bosh.Run("--column=stdout", "ssh", "test/0", "-r", "-c", `sudo ip a | grep inet6`)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
-		Expect(stdOut).To(ContainSubstring("0.0.0.0:22"))
-		Expect(stdOut).To(ContainSubstring(":::22"))
+		Expect(stdOut).To(ContainSubstring("inet6 ::1/128 scope host"))
+		Expect(stdOut).To(ContainSubstring("scope link"))
 	})
 
 	type Instance struct {

@@ -95,11 +95,10 @@ var _ = Describe("Stemcell", func() {
 		Expect(offending).To(BeEmpty(), "auth.log contained 'No such file or directory':\n%s", strings.Join(offending, "\n"))
 	})
 
-	It("#141987897: disables ipv6 in the kernel", func() {
-		stdOut, _, exitStatus, err := bosh.Run("--column=stdout", "ssh", "default/0", "-r", "-c", `sudo netstat -lnp | grep sshd | awk '{ print $4 }'`)
+	It("#141987897: has ipv6 enabled in the kernel", func() {
+		_, _, exitStatus, err := bosh.Run("--column=stdout", "ssh", "default/0", "-r", "-c", `sudo ip a | grep inet6`)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))
-		Expect(strings.Split(strings.TrimSpace(stdOut), "\n")).To(Equal([]string{"0.0.0.0:22"}))
 	})
 
 	It("#140456537: enables sysstat", func() {

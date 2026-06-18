@@ -14,8 +14,6 @@ describe "CIS test case verification", {stemcell_image: true, security_spec: tru
       CIS-7.2.5
       CIS-7.2.6
       CIS-7.2.7
-      CIS-7.3.1
-      CIS-7.3.2
       CIS-7.5.3
       CIS-11.1
       CIS-8.1.3
@@ -59,12 +57,10 @@ describe "CIS test case verification", {stemcell_image: true, security_spec: tru
     exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
-    exclude_on_vcloud: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
-    exclude_on_cloudstack: true,
-    exclude_on_softlayer: true
+    exclude_on_cloudstack: true
   } do
     it "confirms that all CIS test cases ran" do
       expect($cis_test_cases.to_a).to match_array(base_cis_test_cases) # standard:disable Style/GlobalVars

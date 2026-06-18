@@ -1,5 +1,0 @@
-# Local override for sbin.dhclient - allow dhclient to exec /bin/true as a
-# no-op script substitute (used by cloud-init with -sf /bin/true). Backports
-# the fix for Ubuntu Launchpad Bug #2011628 which was shipped in Mantic but
-# not backported to Jammy.
-/{,usr/}bin/true ixr,

@@ -51,7 +51,7 @@ module Bosh::Stemcell
     )
 
     def ovf_options
-      if infrastructure.name == "vsphere" || infrastructure.name == "vcloud"
+      if infrastructure.name == "vsphere"
         {"image_ovftool_path" => environment["OVFTOOL"]}
       else
         {}

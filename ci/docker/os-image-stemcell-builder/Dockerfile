@@ -22,9 +22,6 @@ ENV LANG="en_US.UTF-8"
 ENV LC_ALL="${LANG}"
 ENV TZ="Etc/UTC"
 
-ENV USER_ID=1000
-ENV GROUP_ID=1000
-
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y \
@@ -70,9 +67,7 @@ RUN apt-get update \
         xvfb \
     && locale-gen ${LANG}
 
-RUN groupadd -o -g ${GROUP_ID} ubuntu \
-  && useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu \
-  && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
+RUN echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 
 RUN temp_dir="/mnt/tmp" \
     && mkdir -p "${temp_dir}" \

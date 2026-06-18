@@ -3,8 +3,9 @@
     "Linux": {
       "CreatePartitionIfNoEphemeralDisk": true,
       "DevicePathResolutionType": "scsi",
+      "LunDeviceSymlinkPath": "/dev/disk/azure/data/by-lun",
       "PartitionerType": "parted",
-      "UseMonitIptablesFirewall": true
+      "ServiceManager": "systemd"
     }
   },
   "Infrastructure": {

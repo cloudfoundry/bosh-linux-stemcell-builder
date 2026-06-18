@@ -9,47 +9,12 @@ source $base_dir/lib/prelude_apply.bash
 # Otherwise using none ubuntu host will fail creating vm
 mkdir -p $chroot/warden-cpi-dev
 
-# Run system services via runit and replace /usr/sbin/service with a script which call runit
-mkdir -p $chroot/etc/sv/
-cp -a $assets_dir/runit/{ssh,rsyslog,cron} $chroot/etc/sv/
+# Auditd cannot capture events within a container
+sed -i 's/^local_events = yes$/local_events = no/g' $chroot/etc/audit/auditd.conf
 
-run_in_chroot $chroot "
-chmod +x /etc/sv/{ssh,rsyslog,cron}/run
-ln -s /etc/sv/{ssh,rsyslog,cron} /etc/service/
-"
-
-# Remove systemd setting from rsyslog as warden doesn't use systemd
-run_in_chroot $chroot "
-sed -i '/^\\\$SystemLogSocketName /d' /etc/rsyslog.conf
-"
-
-# Pending for disk_quota
-#run_in_chroot $chroot "
-#ln -s /proc/self/mounts /etc/mtab
-#"
-
-# unshare is used to launch upstart as PID 1, in tests
-# upstart does not run in normal bosh-lite containers
-unshare_binary=$chroot/var/vcap/bosh/bin/unshare
-cp -f $assets_dir/unshare $unshare_binary
-chmod +x $unshare_binary
-chown root:root $unshare_binary
-
-# Replace /usr/sbin/service with a script which calls runit
-run_in_chroot $chroot "
-dpkg-divert --local --rename --add /usr/sbin/service
-"
-
-cp -f $assets_dir/service $chroot/usr/sbin/service
-
-run_in_chroot $chroot "
-chmod +x /usr/sbin/service
-"
-
-cat > $chroot/var/vcap/bosh/bin/bosh-start-logging-and-auditing <<BASH
-#!/bin/bash
-# "service auditd start" because there is no upstart in containers
-BASH
+# As containers have less to startup, some services are restarted very quickly and can hit the systemd
+# restart limit of 5 restarts in 5 seconds
+sed -i 's/^#DefaultStartLimitBurst=5$/DefaultStartLimitBurst=500/g' $chroot/etc/systemd/system.conf
 
 cat > $chroot/var/vcap/bosh/bin/restart_networking <<EOF
 #!/bin/bash
@@ -67,7 +32,7 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
       "UsePreformattedPersistentDisk": true,
       "BindMountPersistentDisk": true,
       "SkipDiskSetup": true,
-      "UseMonitIptablesFirewall": true
+      "ServiceManager": "systemd"
     }
   },
   "Infrastructure": {
@@ -82,6 +47,31 @@ cat > $chroot/var/vcap/bosh/agent.json <<JSON
   }
 }
 JSON
+
+# Rosetta x86_64 emulation compatibility for Apple Silicon Macs
+#
+# When running warden stemcells under Rosetta emulation on Apple Silicon,
+# several systemd services fail because their security hardening features
+# (MemoryDenyWriteExecute, SystemCallFilter, etc.) conflict with Rosetta's
+# JIT compilation which requires writable+executable memory.
+#
+# We create systemd drop-in overrides to disable these security features.
+# This is acceptable for warden stemcells since they run in containerized
+# environments where the host provides security isolation.
+
+rosetta_services=(
+  systemd-journald
+  systemd-resolved
+  systemd-networkd
+  systemd-logind
+  systemd-timesyncd
+  auditd
+)
+
+for service in "${rosetta_services[@]}"; do
+  mkdir -p "$chroot/etc/systemd/system/${service}.service.d"
+  cp "$assets_dir/rosetta-compat.conf" "$chroot/etc/systemd/system/${service}.service.d/rosetta-compat.conf"
+done
 
 # Mask systemd-binfmt.service which fails under Rosetta emulation
 run_in_chroot "$chroot" "systemctl mask systemd-binfmt.service"

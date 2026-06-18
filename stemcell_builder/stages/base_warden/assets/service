@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-service=$1
-action=$2
-sv $action $service

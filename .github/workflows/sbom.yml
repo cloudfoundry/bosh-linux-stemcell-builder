@@ -19,7 +19,7 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: image
-        image-ref: ghcr.io/cloudfoundry/ubuntu-jammy-stemcell
+        image-ref: ghcr.io/cloudfoundry/ubuntu-noble-stemcell
         format: spdx-json
         output: sbom.spdx.json
 

@@ -10,9 +10,7 @@ module Bosh::Stemcell
         expect(Infrastructure.for("google")).to be_an(Infrastructure::Google)
         expect(Infrastructure.for("vsphere")).to be_a(Infrastructure::Vsphere)
         expect(Infrastructure.for("warden")).to be_a(Infrastructure::Warden)
-        expect(Infrastructure.for("vcloud")).to be_a(Infrastructure::Vcloud)
         expect(Infrastructure.for("azure")).to be_a(Infrastructure::Azure)
-        expect(Infrastructure.for("softlayer")).to be_a(Infrastructure::Softlayer)
         expect(Infrastructure.for("cloudstack")).to be_a(Infrastructure::CloudStack)
         expect(Infrastructure.for("null")).to be_an(Infrastructure::NullInfrastructure)
       end
@@ -72,7 +70,6 @@ module Bosh::Stemcell
       expect(subject).to_not eq(Infrastructure.for("aws"))
       expect(subject).to_not eq(Infrastructure.for("vsphere"))
       expect(subject).to_not eq(Infrastructure.for("azure"))
-      expect(subject).to_not eq(Infrastructure.for("softlayer"))
     end
 
     it "defaults to no additional cloud properties" do
@@ -91,7 +88,7 @@ module Bosh::Stemcell
     it { should_not eq Infrastructure.for("openstack") }
 
     it "has aws specific additional cloud properties" do
-      expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1"})
+      expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1", "boot_mode" => "uefi-preferred"})
     end
   end
 
@@ -173,21 +170,6 @@ module Bosh::Stemcell
     end
   end
 
-  describe Infrastructure::Vcloud do
-    its(:name) { should eq("vcloud") }
-    its(:hypervisor) { should eq("esxi") }
-    its(:default_disk_size) { should eq(5120) }
-    its(:disk_formats) { should eq(["ovf"]) }
-    its(:stemcell_formats) { should eq(["vcloud-ova", "vcloud-ovf"]) }
-
-    it { should eq Infrastructure.for("vcloud") }
-    it { should_not eq Infrastructure.for("vsphere") }
-
-    it "has vcloud specific additional cloud properties" do
-      expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1"})
-    end
-  end
-
   describe Infrastructure::Azure do
     its(:name) { should eq("azure") }
     its(:hypervisor) { should eq("hyperv") }
@@ -196,25 +178,16 @@ module Bosh::Stemcell
     its(:stemcell_formats) { should eq(["azure-vhd"]) }
 
     it { should eq Infrastructure.for("azure") }
-    it { should_not eq Infrastructure.for("vcloud") }
 
     it "has azure specific additional cloud properties" do
-      expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1"})
-    end
-  end
-
-  describe Infrastructure::Softlayer do
-    its(:name) { should eq("softlayer") }
-    its(:hypervisor) { should eq("esxi") }
-    its(:default_disk_size) { should eq(25600) }
-    its(:disk_formats) { should eq(["ovf"]) }
-    its(:stemcell_formats) { should eq(["softlayer-ovf"]) }
-
-    it { should eq Infrastructure.for("softlayer") }
-    it { should_not eq Infrastructure.for("vsphere") }
-
-    it "has softlayer specific additional cloud properties" do
-      expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1"})
+      expect(subject.additional_cloud_properties).to eq({
+        "root_device_name" => "/dev/sda1",
+        "generation" => "gen2",
+        "accelerated_networking" => true,
+        "hibernation" => true,
+        "disk_controller_types" => ["scsi", "nvme"],
+        "security_type" => "TrustedLaunchSupported"
+      })
     end
   end
 end

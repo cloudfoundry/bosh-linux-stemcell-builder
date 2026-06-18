@@ -14,12 +14,8 @@ module Bosh::Stemcell
         Vsphere.new
       when "warden"
         Warden.new
-      when "vcloud"
-        Vcloud.new
       when "azure"
         Azure.new
-      when "softlayer"
-        Softlayer.new
       when "cloudstack"
         CloudStack.new
       when "null"
@@ -114,22 +110,6 @@ module Bosh::Stemcell
       end
     end
 
-    class Vcloud < Base
-      def initialize
-        super(
-          name: "vcloud",
-          hypervisor: "esxi",
-          default_disk_size: 5120,
-          disk_formats: ["ovf"],
-          stemcell_formats: ["vcloud-ova", "vcloud-ovf"]
-        )
-      end
-
-      def additional_cloud_properties
-        {"root_device_name" => "/dev/sda1"}
-      end
-    end
-
     class Aws < Base
       def initialize
         super(
@@ -142,7 +122,10 @@ module Bosh::Stemcell
       end
 
       def additional_cloud_properties
-        {"root_device_name" => "/dev/sda1"}
+        {
+          "root_device_name" => "/dev/sda1",
+          "boot_mode" => "uefi-preferred"
+        }
       end
     end
 
@@ -172,7 +155,7 @@ module Bosh::Stemcell
               default_disk_size: 5120,
               disk_formats: ["rawdisk"],
               stemcell_formats: ["google-rawdisk"]
-      )
+        )
       end
 
       def additional_cloud_properties
@@ -208,23 +191,14 @@ module Bosh::Stemcell
       end
 
       def additional_cloud_properties
-        {"root_device_name" => "/dev/sda1"}
-      end
-    end
-
-    class Softlayer < Base
-      def initialize
-        super(
-          name: "softlayer",
-          hypervisor: "esxi",
-          default_disk_size: 25600,
-          disk_formats: ["ovf"],
-          stemcell_formats: ["softlayer-ovf"]
-        )
-      end
-
-      def additional_cloud_properties
-        {"root_device_name" => "/dev/sda1"}
+        {
+          "root_device_name" => "/dev/sda1",
+          "generation" => "gen2",
+          "accelerated_networking" => true,
+          "hibernation" => true,
+          "disk_controller_types" => ["scsi", "nvme"],
+          "security_type" => "TrustedLaunchSupported"
+        }
       end
     end
   end

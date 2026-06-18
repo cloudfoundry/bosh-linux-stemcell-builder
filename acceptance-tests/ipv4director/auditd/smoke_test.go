@@ -25,8 +25,8 @@ var _ = Describe("Auditd", func() {
 			"ssh", "os-conf-auditd/0", "-r", "-c",
 			`sudo auditctl -w /etc/network -p wa -k system-locale-story-50315687`,
 		)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(exitStatus).To(Equal(0))
+		Expect(err).To(HaveOccurred())
+		Expect(exitStatus).To(Equal(1))
 		Expect(stdout).To(ContainSubstring(immutabilityError))
 	})
 

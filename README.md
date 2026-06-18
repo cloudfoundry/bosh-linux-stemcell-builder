@@ -6,7 +6,7 @@ disk image that is used as a template by a BOSH Director to create VMs.
 ## Quick Start: Building a Stemcell Locally
 
 ```bash
-export short_name="jammy"
+export short_name="noble"
 
 git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
@@ -27,9 +27,9 @@ docker run \
    bosh/os-image-stemcell-builder:${short_name}
 
 # You're now in the Docker container
-pushd bosh-stemcell
-  bundle install
-popd
+ulimit -n 16384 # only necessary if your host is Fedora
+gem install bundler
+bundle install
 
  # build OS image
 bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
@@ -56,7 +56,7 @@ installed in the operating system or when making changes to the configuration
 of those packages.
 
 ```bash
-export short_name="jammy"
+export short_name="noble"
 
 bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz]
 ```
@@ -78,7 +78,7 @@ The arguments to the `stemcell:build_os_image` rake task follow:
 Rebuild the stemcell when you are making and testing BOSH-specific changes such as a new BOSH agent.
 
 ```bash
-export short_name="jammy"
+export short_name="noble"
 export build_number="0.0.8"
 
 bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz,${build_number}]
@@ -114,7 +114,7 @@ the stemcell would be at
 upload the stemcell to a vSphere BOSH Director:
 
 ```bash
-export short_name="jammy"
+export short_name="noble"
 
 bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-${short_name}-go_agent.tgz
 ```
@@ -135,7 +135,7 @@ the OS image** at the `tmp/ubuntu_base_image.tgz` and you're within the Docker
 container):
 
 ```shell
-  export short_name="jammy"
+  export short_name="noble"
   cd /opt/bosh/bosh-stemcell
   bundle install
   OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_spec.rb
@@ -208,7 +208,7 @@ If you find yourself debugging any of the above processes, here is what you need
    Example usage:
 
    ```shell
-   export short_name="jammy"
+   export short_name="noble"
    
    bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
    ```
@@ -249,7 +249,7 @@ You will need the ovftool installer present in
 Rebuild the container with:
 
 ```shell
-export short_name="jammy"
+export short_name="noble"
 
 docker build \
     --platform linux/amd64 \
@@ -280,7 +280,7 @@ gsutil cp MY_OVFTOOL_FILE gs://bosh-vmware-ovftool/MY_OS/
 Example:
 
 ```shell
-export short_name="jammy"
+export short_name="noble"
 
 gsutil cp VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle gs://bosh-vmware-ovftool/${short_name}/
 ```

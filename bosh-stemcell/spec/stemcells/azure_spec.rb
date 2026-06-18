@@ -7,7 +7,7 @@ describe "Azure Stemcell", stemcell_image: true do
     end
   end
 
-  context "installed by bosh_disable_password_authentication" do
+  context "installed by base_ssh" do
     describe "disallows password authentication" do
       subject { file("/etc/ssh/sshd_config") }
       its(:content) { should match(/^PasswordAuthentication no$/) }
@@ -24,11 +24,9 @@ describe "Azure Stemcell", stemcell_image: true do
     exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_google: true,
-    exclude_on_vcloud: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
-    exclude_on_openstack: true,
-    exclude_on_softlayer: true
+    exclude_on_openstack: true
   } do
     describe file("/var/vcap/bosh/agent.json") do
       it { should be_valid_json_file }
@@ -40,7 +38,6 @@ describe "Azure Stemcell", stemcell_image: true do
       its(:content) { should include('"DevicePathResolutionType": "scsi"') }
       its(:content) { should include('"CreatePartitionIfNoEphemeralDisk": true') }
       its(:content) { should include('"PartitionerType": "parted"') }
-      its(:content) { should include('"UseMonitIptablesFirewall": true') }
     end
   end
 
@@ -53,43 +50,6 @@ describe "Azure Stemcell", stemcell_image: true do
     describe file("/etc/cloud/cloud.cfg") do
       it { should be_file }
       its(:content) { should include("apt-configure") }
-    end
-  end
-
-  context "installed by system_azure_network", {
-    exclude_on_alicloud: true,
-    exclude_on_aws: true,
-    exclude_on_google: true,
-    exclude_on_vcloud: true,
-    exclude_on_vsphere: true,
-    exclude_on_warden: true,
-    exclude_on_openstack: true,
-    exclude_on_softlayer: true
-  } do
-    describe "SR-IOV VF udev rules" do
-      subject { file("/etc/udev/rules.d/10-azure-sriov-unmanaged.rules") }
-
-      it { should be_mode(0o644) }
-      it { should be_owned_by("root") }
-
-      its(:content) { should match(/SUBSYSTEM=="net"/) }
-      its(:content) { should match(/ATTR\{flags\}=="0x\?\[89ABCDEF\]\*"/) }
-      its(:content) { should match(/ENV\{AZURE_UNMANAGED_SRIOV\}="1"/) }
-      its(:content) { should match(/ENV\{ID_NET_MANAGED_BY\}="unmanaged"/) }
-      its(:content) { should match(/ENV\{NM_UNMANAGED\}="1"/) }
-      its(:content) { should match(/ATTR\{ifalias\}="sriov-vf"/) }
-    end
-
-    describe "systemd network configuration for unmanaged SR-IOV devices" do
-      subject { file("/etc/systemd/network/01-azure-sriov-unmanaged.network") }
-
-      it { should be_mode(0o644) }
-      it { should be_owned_by("root") }
-
-      its(:content) { should match(/\[Match\]/) }
-      its(:content) { should match(/Property=AZURE_UNMANAGED_SRIOV=1/) }
-      its(:content) { should match(/\[Link\]/) }
-      its(:content) { should match(/Unmanaged=yes/) }
     end
   end
 

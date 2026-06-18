@@ -58,15 +58,11 @@ module Bosh::Stemcell
       when Infrastructure::OpenStack
         openstack_stages
       when Infrastructure::Vsphere
-        vsphere_vcloud_stages
-      when Infrastructure::Vcloud
-        vsphere_vcloud_stages
+        vsphere_stages
       when Infrastructure::Warden
         warden_stages
       when Infrastructure::Azure
         azure_stages
-      when Infrastructure::Softlayer
-        softlayer_stages
       end
 
       stages.concat(finish_stemcell_stages)
@@ -105,8 +101,7 @@ module Bosh::Stemcell
         bosh_harden
         bosh_openstack_agent_settings
         bosh_clean_ssh
-        restore_apt_sources
-        image_create
+        image_create_efi
         image_install_grub
         sbom_create
       ]
@@ -124,14 +119,13 @@ module Bosh::Stemcell
         bosh_harden
         bosh_cloudstack_agent_settings
         bosh_clean_ssh
-        restore_apt_sources
-        image_create
+        image_create_efi
         image_install_grub
         sbom_create
       ]
     end
 
-    def vsphere_vcloud_stages
+    def vsphere_stages
       [
         :system_network,
         :system_open_vm_tools,
@@ -139,15 +133,13 @@ module Bosh::Stemcell
         :system_parameters,
         :bosh_clean,
         :bosh_harden,
-        :bosh_enable_password_authentication,
         :bosh_vsphere_agent_settings,
         :bosh_clean_ssh,
-        :restore_apt_sources,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
         :image_create_efi,
-        :image_install_grub_efi,
+        :image_install_grub,
         :sbom_create
       ]
     end
@@ -162,11 +154,10 @@ module Bosh::Stemcell
         :bosh_aws_agent_settings,
         :bosh_clean_ssh,
         :udev_aws_rules,
-        :restore_apt_sources,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
-        :image_create,
+        :image_create_efi,
         :image_install_grub,
         :sbom_create
       ]
@@ -181,8 +172,7 @@ module Bosh::Stemcell
         bosh_harden
         bosh_alicloud_agent_settings
         bosh_clean_ssh
-        restore_apt_sources
-        image_create
+        image_create_efi
         image_install_grub
         sbom_create
       ]
@@ -198,11 +188,10 @@ module Bosh::Stemcell
         :bosh_harden,
         :bosh_google_agent_settings,
         :bosh_clean_ssh,
-        :restore_apt_sources,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
-        :image_create,
+        :image_create_efi,
         :image_install_grub,
         :sbom_create
       ]
@@ -215,11 +204,10 @@ module Bosh::Stemcell
         :bosh_clean,
         :bosh_harden,
         :bosh_clean_ssh,
-        :restore_apt_sources,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
-        :image_create,
+        :image_create_efi,
         :image_install_grub,
         :sbom_create
       ]
@@ -236,41 +224,19 @@ module Bosh::Stemcell
         :bosh_harden,
         :bosh_azure_agent_settings,
         :bosh_clean_ssh,
-        :restore_apt_sources,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
-        :image_create,
+        :image_create_efi,
         :image_install_grub,
         :sbom_create
       ]
     end
 
-    def softlayer_stages
-      [
-        :system_network,
-        :system_softlayer_open_iscsi,
-        :system_softlayer_multipath_tools,
-        :system_softlayer_netplan,
-        :system_parameters,
-        :bosh_clean,
-        :bosh_harden,
-        :bosh_enable_password_authentication,
-        :bosh_softlayer_agent_settings,
-        :bosh_config_root_ssh_login,
-        :bosh_clean_ssh,
-        :restore_apt_sources,
-        # when adding a stage that changes files in the image, do so before
-        # this line.  Image create will make the image so any changes to the
-        # filesystem after it won't apply.
-        :image_create_softlayer_two_partitions,
-        :image_install_grub_softlayer_two_partitions
-      ]
-    end
-
     def finish_stemcell_stages
       [
-        :bosh_package_list
+        :bosh_package_list,
+        :restore_apt_sources
       ]
     end
 
@@ -281,6 +247,7 @@ module Bosh::Stemcell
         :base_apt,
         :base_ubuntu_build_essential,
         :base_ubuntu_packages,
+        :bosh_systemd_resolved,
         :base_file_permission,
         :base_ssh,
         :bosh_sysstat,
@@ -289,7 +256,6 @@ module Bosh::Stemcell
         :restrict_su_command,
         :tty_config,
         :rsyslog_config,
-        :delay_monit_start,
         :system_grub,
         :vim_tiny,
         :cron_config,

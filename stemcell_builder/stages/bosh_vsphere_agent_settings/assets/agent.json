@@ -3,7 +3,7 @@
     "Linux": {
       "PartitionerType": "parted",
       "DevicePathResolutionType": "scsi",
-      "UseMonitIptablesFirewall": true
+      "ServiceManager": "systemd"
     }
   },
   "Infrastructure": {

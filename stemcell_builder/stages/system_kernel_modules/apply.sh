@@ -21,7 +21,7 @@ install udf /bin/true
 install rds /bin/true
 install floppy /bin/true
 install algif_aead /bin/true
-options ipv6 disable=1' >> $chroot/etc/modprobe.d/blacklist.conf
+' >> $chroot/etc/modprobe.d/blacklist.conf
 
 echo '# prevent nouveau from loading
 blacklist nouveau

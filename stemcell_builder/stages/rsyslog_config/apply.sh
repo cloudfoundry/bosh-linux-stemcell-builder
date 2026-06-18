@@ -21,15 +21,22 @@ fi
 
 cp -f $assets_dir/rsyslog_50-default.conf $chroot/etc/rsyslog.d/50-default.conf
 
+cp -f $assets_dir/rsyslog_90-bosh-agent.conf $chroot/etc/rsyslog.d/90-bosh-agent.conf
+
 # Add user/group
 # add syslog to the vcap group in a separate step in case the syslog user already exists
 run_in_bosh_chroot $chroot "
   useradd --system --user-group --no-create-home --shell /sbin/nologin syslog || true
   usermod -G vcap syslog
 "
+# syslog needs to be able to write to /dev/console
+# see https://github.com/cloudfoundry/bosh-linux-stemcell-builder/issues/347
+run_in_bosh_chroot $chroot "
+  adduser syslog tty
+"
 
 # Configure /var/log directory
-filenames=( auth.log cloud-init.log daemon.log kern.log syslog cron.log )
+filenames=( auth.log cloud-init.log daemon.log kern.log syslog cron.log bosh-agent.log)
 
 # TODO: seems useless as /var/log is mounted later on
 for filename in ${filenames[@]}

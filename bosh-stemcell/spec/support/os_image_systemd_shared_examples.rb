@@ -1,6 +1,6 @@
 shared_examples_for "a systemd-based OS image" do
   context "systemd services" do
-    describe service("runit") do
+    describe service("monit") do
       it { should be_enabled }
     end
 

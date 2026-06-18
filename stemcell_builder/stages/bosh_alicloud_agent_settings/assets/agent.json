@@ -4,7 +4,9 @@
       "PartitionerType": "parted",
       "CreatePartitionIfNoEphemeralDisk": true,
       "DevicePathResolutionType": "virtio",
-      "UseMonitIptablesFirewall": true
+      "ServiceManager": "systemd",
+      "DiskIDTransformPattern": "^d-(.+)$",
+      "DiskIDTransformReplacement": "virtio-${1}"
     }
   },
   "Infrastructure": {

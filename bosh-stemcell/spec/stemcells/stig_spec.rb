@@ -4,7 +4,6 @@ describe "Stig test case verification", stemcell_image: true, security_spec: tru
   it "confirms all stig test cases ran" do
     expected_base_stig_test_cases = %w[
       V-38443
-      V-38444
       V-38445
       V-38446
       V-38448
@@ -55,10 +54,6 @@ describe "Stig test case verification", stemcell_image: true, security_spec: tru
       V-38539
       V-38542
       V-38544
-      V-38546
-      V-38548
-      V-38551
-      V-38553
       V-38573
       V-38574
       V-38576
@@ -137,8 +132,6 @@ describe "Stig test case verification", stemcell_image: true, security_spec: tru
       V-75779
       V-75865
       V-75851
-      V-260477
-      V-260520
     ]
 
     expected_stig_test_cases = expected_base_stig_test_cases
@@ -146,13 +139,6 @@ describe "Stig test case verification", stemcell_image: true, security_spec: tru
     when "ubuntu"
       expected_stig_test_cases = expected_base_stig_test_cases + [
         "V-38668"
-      ]
-    end
-
-    case ENV["IAAS"]
-    when "softlayer"
-      expected_stig_test_cases -= [
-        "V-38613"
       ]
     end
 

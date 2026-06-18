@@ -2,7 +2,7 @@ require "bosh/stemcell/arch"
 require "spec_helper"
 require "shellout_types/file"
 
-describe "Ubuntu 22.04 OS image", os_image: true do
+describe "Ubuntu 24.04 OS image", os_image: true do
   it_behaves_like "every OS image" do
     let(:syslog_config) { file("/etc/audit/plugins.d/syslog.conf") }
   end
@@ -32,12 +32,12 @@ describe "Ubuntu 22.04 OS image", os_image: true do
 
   describe "base_apt" do
     describe file("/etc/apt/sources.list") do
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) jammy main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) jammy-updates main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) jammy-security main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-updates main universe multiverse' }
+      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-security main universe multiverse' }
     end
 
-    describe file("/lib/systemd/system/runit.service") do
+    describe file("/lib/systemd/system/monit.service") do
       it { should be_file }
       its(:content) { should match "Restart=always" }
       its(:content) { should match "KillMode=process" }
@@ -45,11 +45,6 @@ describe "Ubuntu 22.04 OS image", os_image: true do
   end
 
   context "installed by base_ubuntu_packages" do
-    describe file("/sbin/rescan-scsi-bus") do
-      it { should be_file }
-      it { should be_executable }
-    end
-
     context "zfs" do
       %w[
         /lib/modules/*/kernel/zfs/
@@ -167,7 +162,7 @@ describe "Ubuntu 22.04 OS image", os_image: true do
   end
 
   context "PAM configuration" do
-    describe file("/lib/x86_64-linux-gnu/security/pam_cracklib.so") do
+    describe file("/lib/x86_64-linux-gnu/security/pam_pwquality.so") do
       it { should be_file }
     end
 
@@ -180,8 +175,8 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         expect(subject.content).to match(/password.*pam_unix\.so.*minlen=14/)
       end
 
-      it "must use the cracklib library to set correct password requirements (CIS-9.2.1)" do
-        expect(subject.content).to match(/password.*pam_cracklib\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/)
+      it "must use the pwquality library to set correct password requirements (CIS-9.2.1)" do
+        expect(subject.content).to match(/password.*pam_pwquality\.so.*retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1/)
       end
     end
 
@@ -302,7 +297,7 @@ describe "Ubuntu 22.04 OS image", os_image: true do
 
   context "display the number of unsuccessful logon/access attempts since the last successful logon/access (stig: V-51875)" do
     describe file("/etc/pam.d/common-password") do
-      its(:content) { should match(/session\trequired\t\t\tpam_lastlog\.so showfailed/) }
+      its(:content) { should match(/session\toptional\t\t\tpam_lastlog2\.so showfailed/) }
     end
   end
 
@@ -359,27 +354,27 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
         list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
         irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
-        gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+        _apt:x:42:65534::/nonexistent:/usr/sbin/nologin
         nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-        systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
-        systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
-        messagebus:x:102:105::/nonexistent:/usr/sbin/nologin
-        systemd-timesync:x:103:106:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
-        syslog:x:104:111::/home/syslog:/usr/sbin/nologin
-        _apt:x:105:65534::/nonexistent:/usr/sbin/nologin
-        _chrony:x:106:112:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
-        uuidd:x:107:114::/run/uuidd:/usr/sbin/nologin
-        tcpdump:x:108:115::/nonexistent:/usr/sbin/nologin
-        runit-log:x:999:999:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
-        _runit-log:x:998:998:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
-        sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
+        systemd-network:x:998:998:systemd Network Management:/:/usr/sbin/nologin
+        systemd-timesync:x:996:996:systemd Time Synchronization:/:/usr/sbin/nologin
+        dhcpcd:x:100:65534:DHCP Client Daemon,,,:/usr/lib/dhcpcd:/bin/false
+        messagebus:x:101:101::/nonexistent:/usr/sbin/nologin
+        syslog:x:102:102::/nonexistent:/usr/sbin/nologin
+        systemd-resolve:x:991:991:systemd Resolver:/:/usr/sbin/nologin
+        uuidd:x:103:104::/run/uuidd:/usr/sbin/nologin
+        _chrony:x:104:106:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+        _runit-log:x:999:990:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
+        sshd:x:105:65534::/run/sshd:/usr/sbin/nologin
+        tcpdump:x:106:108::/nonexistent:/usr/sbin/nologin
+        polkitd:x:989:989:User for polkitd:/:/usr/sbin/nologin
         vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
       HERE
     end
 
     describe file("/etc/shadow") do
       shadow_match = Regexp.new <<~'END_SHADOW', [Regexp::MULTILINE]
-        \Aroot:(.+):(\d{5}):0:99999:7:::
+        root:(.+):(\d{5}):0:99999:7:::
         daemon:\*:(\d{5}):0:99999:7:::
         bin:\*:(\d{5}):0:99999:7:::
         sys:\*:(\d{5}):0:99999:7:::
@@ -395,21 +390,21 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         backup:\*:(\d{5}):0:99999:7:::
         list:\*:(\d{5}):0:99999:7:::
         irc:\*:(\d{5}):0:99999:7:::
-        gnats:\*:(\d{5}):0:99999:7:::
-        nobody:\*:(\d{5}):0:99999:7:::
-        systemd-network:\*:(\d{5}):0:99999:7:::
-        systemd-resolve:\*:(\d{5}):0:99999:7:::
-        messagebus:\*:(\d{5}):0:99999:7:::
-        systemd-timesync:\*:(\d{5}):0:99999:7:::
-        syslog:\*:(\d{5}):0:99999:7:::
         _apt:\*:(\d{5}):0:99999:7:::
-        _chrony:\*:(\d{5}):0:99999:7:::
-        uuidd:\*:(\d{5}):0:99999:7:::
-        tcpdump:\*:(\d{5}):0:99999:7:::
-        runit-log:!:(\d{5})::::::
+        nobody:\*:(\d{5}):0:99999:7:::
+        systemd-network:!\*:(\d{5})::::::
+        systemd-timesync:!\*:(\d{5})::::::
+        dhcpcd:!:(\d{5})::::::
+        messagebus:!:(\d{5})::::::
+        syslog:!:(\d{5})::::::
+        systemd-resolve:!\*:(\d{5})::::::
+        uuidd:!:(\d{5})::::::
+        _chrony:!:(\d{5})::::::
         _runit-log:!:(\d{5})::::::
-        sshd:\*:(\d{5}):0:99999:7:::
-        vcap:(.+):(\d{5}):1:99999:7:::\Z
+        sshd:!:(\d{5})::::::
+        tcpdump:!:(\d{5})::::::
+        polkitd:!\*:(\d{5})::::::
+        vcap:(.+):(\d{5}):1:99999:7:::
       END_SHADOW
 
       its(:content) { should match(shadow_match) }
@@ -422,7 +417,7 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         bin:x:2:
         sys:x:3:
         adm:x:4:vcap
-        tty:x:5:
+        tty:x:5:syslog
         disk:x:6:
         lp:x:7:
         mail:x:8:
@@ -446,7 +441,6 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         list:x:38:
         irc:x:39:
         src:x:40:
-        gnats:x:41:
         shadow:x:42:
         utmp:x:43:
         video:x:44:vcap
@@ -456,25 +450,26 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         games:x:60:
         users:x:100:
         nogroup:x:65534:
-        systemd-journal:x:101:
-        systemd-network:x:102:
-        systemd-resolve:x:103:
-        crontab:x:104:
-        messagebus:x:105:
-        systemd-timesync:x:106:
-        input:x:107:
-        sgx:x:108:
-        kvm:x:109:
-        render:x:110:
-        syslog:x:111:
-        _chrony:x:112:
-        netdev:x:113:
-        uuidd:x:114:
-        tcpdump:x:115:
-        _ssh:x:116:
-        runit-log:x:999:
-        _runit-log:x:998:
-        admin:x:997:vcap
+        systemd-journal:x:999:
+        systemd-network:x:998:
+        crontab:x:997:
+        systemd-timesync:x:996:
+        input:x:995:
+        sgx:x:994:
+        kvm:x:993:
+        render:x:992:
+        messagebus:x:101:
+        syslog:x:102:
+        systemd-resolve:x:991:
+        netdev:x:103:
+        uuidd:x:104:
+        _ssh:x:105:
+        _chrony:x:106:
+        _runit-log:x:990:
+        rdma:x:107:
+        tcpdump:x:108:
+        polkitd:x:989:
+        admin:x:988:vcap
         vcap:x:1000:syslog
         bosh_sshers:x:1001:vcap
         bosh_sudoers:x:1002:
@@ -488,7 +483,7 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         bin:*::
         sys:*::
         adm:*::vcap
-        tty:*::
+        tty:*::syslog
         disk:*::
         lp:*::
         mail:*::
@@ -512,7 +507,6 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         list:*::
         irc:*::
         src:*::
-        gnats:*::
         shadow:*::
         utmp:*::
         video:*::vcap
@@ -522,29 +516,40 @@ describe "Ubuntu 22.04 OS image", os_image: true do
         games:*::
         users:*::
         nogroup:*::
-        systemd-journal:!::
-        systemd-network:!::
-        systemd-resolve:!::
-        crontab:!::
+        systemd-journal:!*::
+        systemd-network:!*::
+        crontab:!*::
+        systemd-timesync:!*::
+        input:!*::
+        sgx:!*::
+        kvm:!*::
+        render:!*::
         messagebus:!::
-        systemd-timesync:!::
-        input:!::
-        sgx:!::
-        kvm:!::
-        render:!::
         syslog:!::
-        _chrony:!::
+        systemd-resolve:!*::
         netdev:!::
         uuidd:!::
-        tcpdump:!::
         _ssh:!::
-        runit-log:!::
+        _chrony:!::
         _runit-log:!::
+        rdma:!::
+        tcpdump:!::
+        polkitd:!*::
         admin:!::vcap
         vcap:!::syslog
         bosh_sshers:!::vcap
         bosh_sudoers:!::
       HERE
+    end
+  end
+
+  describe "systemd-resolved modifications" do
+    describe file("/lib/systemd/system/create-systemd-resolved-listener-address.service") do
+      its(:content) { should match(/ip addr add 169\.254\.0\.53 dev lo/) }
+    end
+
+    describe file("/etc/systemd/resolved.conf.d/add-container-listener-address.conf") do
+      its(:content) { should match(/DNSStubListenerExtra=169\.254\.0\.53/) }
     end
   end
 end

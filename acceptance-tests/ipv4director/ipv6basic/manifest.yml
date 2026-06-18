@@ -23,7 +23,3 @@ instance_groups:
   - {name: default}
   azs: [z1]
   jobs: []
-  env:
-    bosh:
-      ipv6:
-        enable: true

@@ -3,59 +3,48 @@ require "spec_helper"
 describe "Warden Stemcell", stemcell_image: true do
   it_behaves_like "udf module is disabled"
 
-  describe file("/usr/sbin/runsvdir-start") do
-    it { should be_file }
-  end
-
   context "installed by system_parameters" do
     describe file("/var/vcap/bosh/etc/infrastructure") do
       its(:content) { should include("warden") }
     end
   end
 
-  context "rsyslog runit configuration" do
-    describe file("/etc/sv/rsyslog/run") do
-      its(:content) { should include("exec rsyslogd -n") }
-      it { should be_executable }
-    end
-
-    describe file("/etc/service/rsyslog") do
-      it { should be_linked_to "/etc/sv/rsyslog" }
+  context "auditd config" do
+    describe file("/etc/audit/auditd.conf") do
+      its(:content) { should include("local_events = no") }
     end
   end
 
-  context "ssh runit configuration" do
-    describe file("/etc/sv/ssh/run") do
-      its(:content) { should include("exec /usr/sbin/sshd -D") }
-      it { should be_executable }
-    end
-
-    describe file("/etc/service/ssh") do
-      it { should be_linked_to "/etc/sv/ssh" }
+  context "systemd config" do
+    describe file("/etc/systemd/system.conf") do
+      its(:content) { should include("DefaultStartLimitBurst=500") }
     end
   end
 
-  context "cron runit configuration" do
-    describe file("/etc/sv/cron/run") do
-      its(:content) { should include("exec cron -f") }
-      it { should be_executable }
+  context "Rosetta x86_64 emulation compatibility for Apple Silicon" do
+    # These systemd drop-in overrides disable security features that conflict
+    # with Rosetta's JIT compilation on Apple Silicon Macs
+
+    rosetta_services = %w[
+      systemd-journald
+      systemd-resolved
+      systemd-networkd
+      systemd-logind
+      systemd-timesyncd
+      auditd
+    ]
+
+    rosetta_services.each do |service|
+      describe file("/etc/systemd/system/#{service}.service.d/rosetta-compat.conf") do
+        it { should be_file }
+        its(:content) { should include("MemoryDenyWriteExecute=no") }
+        its(:content) { should include("LockPersonality=no") }
+        its(:content) { should include("NoNewPrivileges=no") }
+      end
     end
 
-    describe file("/etc/service/cron") do
-      it { should be_linked_to "/etc/sv/cron" }
-    end
-  end
-
-  context "BOSH Agent configuration" do
-    describe file("/var/vcap/bosh/agent.json") do
-      it { should be_valid_json_file }
-      its(:content) { should include('"Type": "File"') }
-      its(:content) { should include('"SettingsPath": "/var/vcap/bosh/warden-cpi-agent-env.json"') }
-      its(:content) { should include('"UseDefaultTmpDir": true') }
-      its(:content) { should include('"UsePreformattedPersistentDisk": true') }
-      its(:content) { should include('"BindMountPersistentDisk": true') }
-      its(:content) { should include('"SkipDiskSetup": true') }
-      its(:content) { should include('"UseMonitIptablesFirewall": true') }
+    describe file("/etc/systemd/system/systemd-binfmt.service") do
+      it { should be_linked_to File::NULL }
     end
   end
 end
