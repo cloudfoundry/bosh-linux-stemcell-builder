@@ -1125,6 +1125,12 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/os-conf-release
+
+- name: bpm-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bpm-release
+
 - name: bosh-deployment
   type: git
   source:
