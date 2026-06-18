@@ -83,7 +83,16 @@ var _ = Describe("Stemcell", func() {
 
 		contents, err := io.ReadAll(tempFile)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(contents).ToNot(ContainSubstring("No such file or directory"))
+
+		// Extract only the offending lines so failures are readable (auth.log can be
+		// hundreds of kilobytes and Gomega truncates the full-content diff).
+		var offending []string
+		for _, line := range strings.Split(string(contents), "\n") {
+			if strings.Contains(line, "No such file or directory") {
+				offending = append(offending, line)
+			}
+		}
+		Expect(offending).To(BeEmpty(), "auth.log contained 'No such file or directory':\n%s", strings.Join(offending, "\n"))
 	})
 
 	It("#141987897: has ipv6 enabled in the kernel", func() {
@@ -96,8 +105,11 @@ var _ = Describe("Stemcell", func() {
 		_, _, exitStatus, err := bosh.Run(
 			"--column=stdout",
 			"ssh", "default/0", "-r", "-c",
-			// sleep to ensure we have multiple samples so average can be verified
-			`sudo /usr/lib/sysstat/sa1 && sudo /usr/lib/sysstat/sa1 1 1 && sleep 2`,
+			// Ubuntu 26.04+ relocated sa1 to /usr/libexec/sysstat/; fall back to the
+			// legacy path for older releases.  sleep ensures multiple samples for the
+			// Average: check.
+			`SA1=$(ls /usr/lib/sysstat/sa1 /usr/libexec/sysstat/sa1 2>/dev/null | head -1) && `+
+				`sudo "$SA1" && sudo "$SA1" 1 1 && sleep 2`,
 		)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(exitStatus).To(Equal(0))

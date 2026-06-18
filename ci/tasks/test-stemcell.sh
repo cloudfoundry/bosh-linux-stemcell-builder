@@ -16,6 +16,7 @@ BOSH_CLIENT_SECRET="$(bosh int "${REPO_PARENT}/director-state/director-creds.yml
 BOSH_ENVIRONMENT="$(bosh int "${REPO_PARENT}/director-state/director-creds.yml" --path /internal_ip)"
 SYSLOG_RELEASE_PATH="$(realpath "${REPO_PARENT}/syslog-release"/*.tgz)"
 OS_CONF_RELEASE_PATH="$(realpath "${REPO_PARENT}/os-conf-release"/*.tgz)"
+BPM_RELEASE_PATH="$(realpath "${REPO_PARENT}/bpm-release"/*.tgz)"
 STEMCELL_PATH="$(realpath "${REPO_PARENT}/stemcell"/*.tgz)"
 # Quote value since the bosh CLI YAML parses it which results in `0.40` becoming `0.4`
 # shellcheck disable=SC2089
@@ -28,6 +29,7 @@ export BOSH_CLIENT_SECRET
 export BOSH_ENVIRONMENT
 export SYSLOG_RELEASE_PATH
 export OS_CONF_RELEASE_PATH
+export BPM_RELEASE_PATH
 export STEMCELL_PATH
 export BOSH_stemcell_version
 
