@@ -22,9 +22,11 @@ var _ = BeforeSuite(func() {
 	bosh = testhelpers.NewBOSH()
 	stemcellPath := testhelpers.RequireEnv("STEMCELL_PATH")
 	syslogReleasePath := testhelpers.RequireEnv("SYSLOG_RELEASE_PATH")
+	bpmReleasePath := testhelpers.RequireEnv("BPM_RELEASE_PATH")
 
 	bosh.UploadStemcell(stemcellPath)
 	bosh.UploadRelease(syslogReleasePath)
+	bosh.UploadRelease(bpmReleasePath)
 	bosh.SafeDeploy()
 })
 

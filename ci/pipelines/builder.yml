@@ -1098,10 +1098,11 @@ resources:
   type: git
   source:
     branch: (@= data.values.stemcell_details.branch @)
+    uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder.git
     paths:
       - ci
       - .ruby-version
-    uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder
+      - acceptance-tests
 
 - name: bats
   type: git
@@ -1133,6 +1134,12 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/os-conf-release
+
+- name: bpm-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bpm-release
+
 - name: bosh-deployment
   type: git
   source:
