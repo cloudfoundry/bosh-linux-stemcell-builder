@@ -19,6 +19,7 @@ mkdir -p tmp
 docker build \
    --platform linux/amd64 \
    --build-arg BASE_IMAGE="ubuntu:${short_name}" \
+   --build-arg USER_ID="$(id -u)" \
    --build-arg META4_CLI_URL="https://github.com/dpb587/metalink/releases/download/v0.5.0/meta4-0.5.0-linux-amd64" \
    --build-arg SYFT_CLI_URL="https://github.com/anchore/syft/releases/download/v1.42.3/syft_1.42.3_linux_amd64.tar.gz" \
    --build-arg YQ_CLI_URL="https://github.com/mikefarah/yq/releases/download/v4.52.5/yq_linux_amd64" \
@@ -274,6 +275,8 @@ export short_name="resolute"
 docker build \
     --platform linux/amd64 \
     --build-arg BASE_IMAGE="ubuntu:${short_name}" \
+    --build-arg USER_ID="$(id -u)" \
+    --build-arg GROUP_ID="$(id -g)" \
     --build-arg META4_CLI_URL="https://github.com/dpb587/metalink/releases/download/v0.5.0/meta4-0.5.0-linux-amd64" \
     --build-arg SYFT_CLI_URL="https://github.com/anchore/syft/releases/download/v1.42.3/syft_1.42.3_linux_amd64.tar.gz" \
     --build-arg YQ_CLI_URL="https://github.com/mikefarah/yq/releases/download/v4.52.5/yq_linux_amd64" \

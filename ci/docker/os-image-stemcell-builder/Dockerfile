@@ -76,7 +76,12 @@ RUN cp /usr/sbin/unix_chkpwd /usr/sbin/unix_chkpwd_rosetta \
   && chmod 4755 /usr/sbin/unix_chkpwd_rosetta \
   && ln -sf unix_chkpwd_rosetta /usr/sbin/unix_chkpwd
 
-RUN (id -u ubuntu &>/dev/null || useradd -u ${USER_ID} -g ${GROUP_ID} -m ubuntu) \
+RUN if id -u ubuntu &>/dev/null; then \
+      usermod -u ${USER_ID} ubuntu; \
+    else \
+      useradd -u ${USER_ID} -m ubuntu; \
+    fi \
+  && chown -R ubuntu /home/ubuntu \
   && usermod -p '*' ubuntu \
   && echo 'ubuntu ALL=NOPASSWD:ALL' >> /etc/sudoers
 

@@ -508,8 +508,10 @@ jobs:
       - get: bosh-integration-registry-image
       - get: bosh-linux-stemcell-builder
       - get: bosh-deployment
-      - get: syslog-release
       - get: bpm-release
+      - get: syslog-release-src
+        params:
+          submodules: all
       - get: os-conf-release
       - get: stemcell
         passed:
@@ -526,6 +528,22 @@ jobs:
       #@ end
         trigger: true
     - do:
+      - task: build-syslog-dev-release
+        image: bosh-integration-image
+        config:
+          platform: linux
+          inputs:
+          - name: syslog-release-src
+          outputs:
+          - name: syslog-release
+          run:
+            path: /bin/bash
+            args:
+            - -c
+            - |
+              set -eu -o pipefail
+              cd syslog-release-src
+              bosh create-release --force --tarball ../syslog-release/syslog-dev-release.tgz
       - task: deploy-director
         file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director.yml
         image: bosh-integration-registry-image
@@ -543,7 +561,7 @@ jobs:
           TAG: test-stemcells-ipv4
           DEFAULT_VM_TYPE: e2-standard-2
       - task: test-stemcell
-        attempts: 3
+        attempts: 1
         file: bosh-stemcells-ci/ci/tasks/test-stemcell.yml
         image: bosh-integration-registry-image
         params:
@@ -577,8 +595,10 @@ jobs:
       - get: bosh-integration-registry-image
       - get: bosh-linux-stemcell-builder
       - get: bosh-deployment
-      - get: syslog-release
       - get: bpm-release
+      - get: syslog-release-src
+        params:
+          submodules: all
       - get: os-conf-release
       - get: stemcell
         passed:
@@ -1681,7 +1701,7 @@ resources:
 - name: bosh-linux-stemcell-builder
   type: git
   source:
-    branch: (@= data.values.stemcell_details.branch @)
+    branch: fix-test-stemcells
     ignore_paths:
     - ci
     - image-metalinks
@@ -1754,8 +1774,8 @@ resources:
 - name: bosh-stemcells-ci
   type: git
   source:
-    branch: (@= data.values.stemcell_details.branch @)
     uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder.git
+    branch: fix-test-stemcells
     paths:
       - ci
       - .ruby-version
@@ -1787,10 +1807,11 @@ resources:
   source:
     repository: cloudfoundry/bosh
 
-- name: syslog-release
-  type: bosh-io-release
+- name: syslog-release-src
+  type: git
   source:
-    repository: cloudfoundry/syslog-release
+    uri: https://github.com/mkocher/syslog-release
+    branch: use-bpm
 
 - name: os-conf-release
   type: bosh-io-release
