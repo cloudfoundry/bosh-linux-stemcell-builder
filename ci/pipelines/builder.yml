@@ -1,12 +1,95 @@
-anchors:
-  ci_bot:
-    email: &ci_bot_email infra@cloudfoundry.org
-    name: &ci_bot_name CI Bot
-
 #@ load("@ytt:data", "data")
-#@ bats_director_tag = "test-stemcells-" + data.values.stemcell_details.os_short_name
 
 #@yaml/text-templated-strings
+---
+
+#@ def metalink_resource(IAAS, HYPERVISOR, FIPS=""):
+  name: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+  type: metalink-repository
+  source:
+    mirror_files:
+      - destination: s3://storage.googleapis.com/bosh-core-stemcells-candidate(@= FIPS @)/(@= IAAS @)/{{.Name}}
+    options:
+      private_key: ((github_deploy_key_bosh-io-stemcells-core-index.private_key))
+    filters:
+      - repositorypath: "*/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= data.values.stemcell_details.agent_suffix @).meta4"
+    uri: git+ssh://git@github.com:cloudfoundry/bosh-io-stemcells-core-index.git//dev/(@= data.values.stemcell_details.os_name @)(@= FIPS @)/
+    url_handlers:
+      - include:
+          - (s3|https)://.*
+        options:
+          access_key: ((hmac_accesskey))
+          secret_key: ((hmac_secret))
+        type: s3
+#@ end
+
+#@yaml/text-templated-strings
+---
+
+#@ def build_stemcell(IAAS, HYPERVISOR, FIPS=""):
+name: build-(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+serial: true
+plan:
+  - in_parallel:
+      - get: version
+        passed:
+          - build-stemcell
+        resource: version
+        trigger: true
+      - get: bosh-stemcells-ci
+      - get: os-image-stemcell-builder-registry-image
+      - get: build-time
+        passed:
+          - build-stemcell
+        trigger: true
+      - get: bosh-linux-stemcell-builder
+        passed:
+          - build-stemcell
+        resource: bosh-linux-stemcell-builder
+      - get: stemcells-index
+      - get: os-image-tarball
+        passed:
+          - build-os-image
+  - task: create-stemcell
+    file: bosh-stemcells-ci/ci/tasks/build.yml
+    image: os-image-stemcell-builder-registry-image
+    params:
+      HYPERVISOR: #@ HYPERVISOR
+      IAAS: #@ IAAS
+      OS_NAME: ubuntu
+      S3_API_ENDPOINT: storage.googleapis.com
+      OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)
+      STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
+      GIT_USER_EMAIL: (@= data.values.stemcell_details.bot_email @)
+      GIT_USER_NAME: (@= data.values.stemcell_details.bot_name @)
+      AGENT_SUFFIX: (@= data.values.stemcell_details.agent_suffix @)
+      #@ if/end FIPS != "":
+      UBUNTU_ADVANTAGE_TOKEN: ((ubuntu_advantage_token))
+    privileged: true
+    vars:
+      image_os_tag: (@= data.values.stemcell_details.os_short_name @)
+  - in_parallel:
+      - put: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+        attempts: 3
+        params:
+          files:
+            - stemcell/*.tgz
+          rename: "{{.Version}}/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= data.values.stemcell_details.agent_suffix @).meta4"
+          options:
+            author_email: (@= data.values.stemcell_details.bot_email @)
+            author_name: (@= data.values.stemcell_details.bot_name @)
+            message: 'dev: (@= data.values.stemcell_details.os_name @)'
+          version: candidate-build-number/number
+#@ end
+
+#@yaml/text-templated-strings
+---
+
+anchors:
+  bats_director_tag: &bats-director-tag test-stemcells-(@= data.values.stemcell_details.os_short_name @)
+  ci_bot:
+    email: &ci_bot_email (@= data.values.stemcell_details.bot_email @)
+    name: &ci_bot_name (@= data.values.stemcell_details.bot_name @)
 
 groups:
 - name: build
@@ -125,7 +208,7 @@ jobs:
       GCP_REGION: europe-north2
       GCP_NETWORK_NAME: bosh-concourse
       SUBNET_INT: (@= data.values.stemcell_details.subnet_int @)
-      DIRECTOR_TAG: (@= bats_director_tag @)
+      DIRECTOR_TAG: *bats-director-tag
 
 - name: process-high-critical-cves
   serial_groups: [log-cves]
@@ -367,6 +450,7 @@ jobs:
       - get: bosh-linux-stemcell-builder
       - get: bosh-deployment
       - get: syslog-release
+      - get: bpm-release
       - get: os-conf-release
       - get: stemcell
         passed:
@@ -434,6 +518,7 @@ jobs:
 #!      - get: bosh-linux-stemcell-builder
 #!      - get: bosh-deployment
 #!      - get: syslog-release
+#!      - get: bpm-release
 #!      - get: os-conf-release
 #!      - get: stemcell
 #!        passed:
@@ -482,62 +567,6 @@ jobs:
 #!        attempts: 3
 #!        timeout: 15m
 #!  serial: true
-
-#@ def build_stemcell(IAAS, HYPERVISOR, FIPS=""):
-  name: build-(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
-  serial: true
-  plan:
-  - in_parallel:
-    - get: version
-      passed:
-      - build-stemcell
-      resource: version
-      trigger: true
-    - get: bosh-stemcells-ci
-    - get: os-image-stemcell-builder-registry-image
-    - get: build-time
-      passed:
-      - build-stemcell
-      trigger: true
-    - get: bosh-linux-stemcell-builder
-      passed:
-      - build-stemcell
-      resource: bosh-linux-stemcell-builder
-    - get: stemcells-index
-    - get: os-image-tarball
-      passed:
-      - build-os-image
-  - task: create-stemcell
-    file: bosh-stemcells-ci/ci/tasks/build.yml
-    image: os-image-stemcell-builder-registry-image
-    params:
-      HYPERVISOR: #@ HYPERVISOR
-      IAAS: #@ IAAS
-      OS_NAME: ubuntu
-      S3_API_ENDPOINT: storage.googleapis.com
-      OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)
-      STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
-      GIT_USER_EMAIL: *ci_bot_email
-      GIT_USER_NAME: *ci_bot_name
-      AGENT_SUFFIX: (@= data.values.stemcell_details.agent_suffix @)
-      #@ if/end FIPS != "":
-      UBUNTU_ADVANTAGE_TOKEN: ((ubuntu_advantage_token))
-    privileged: true
-    vars:
-      image_os_tag: (@= data.values.stemcell_details.os_short_name @)
-  - in_parallel:
-    - put: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
-      attempts: 3
-      params:
-        files:
-        - stemcell/*.tgz
-        rename: "{{.Version}}/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= data.values.stemcell_details.agent_suffix @).meta4"
-        options:
-          author_email: *ci_bot_email
-          author_name: *ci_bot_name
-          message: 'dev: (@= data.values.stemcell_details.os_name @)'
-        version: candidate-build-number/number
-#@ end
 
 #@ for iaas in data.values.stemcell_details.include_iaas:
 - #@ build_stemcell(iaas.iaas, iaas.hypervisor)
@@ -596,7 +625,7 @@ jobs:
           GCP_PROJECT_ID: ((gcp_project_id))
           GCP_ZONE: europe-north2-a
           GCP_SUBNET_NAME: stemcell-builder-integration-(@= data.values.stemcell_details.subnet_int @)
-          TAG: (@= bats_director_tag @)
+          TAG: *bats-director-tag
       - task: deploy-director
         file: bosh-stemcells-ci/ci/tasks/gcp/deploy-director.yml
         image: bosh-integration-image
@@ -611,7 +640,7 @@ jobs:
           INTERNAL_CIDR: 10.100.(@= data.values.stemcell_details.subnet_int @).0/24
           INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
           RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).63, 10.100.(@= data.values.stemcell_details.subnet_int @).126 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
-          TAG: (@= bats_director_tag @)
+          TAG: *bats-director-tag
       - task: prepare-bats
         file: bosh-stemcells-ci/ci/tasks/bats/iaas/gcp/prepare-bats-config.yml
         image: bosh-integration-image
@@ -827,6 +856,8 @@ jobs:
       output_mapping:
         output_repo: bosh-linux-stemcell-builder
       params:
+        GIT_USER_EMAIL: *ci_bot_email
+        GIT_USER_NAME: *ci_bot_name
         SOURCE_PATH: acceptance-tests/
     - task: acceptance-tests-dry-run
       image: bosh-integration-image
@@ -932,37 +963,17 @@ resources:
 - name: weekly
   type: time
   source:
+    initial_version: true
     start: 3:00 -0700
     stop: 4:30 -0700
     days:
       - Saturday
-    initial_version: true
 
 - name: bosh-agent
   type: metalink-repository
   source:
     uri: git+https://github.com/cloudfoundry/bosh-agent-index.git/
     version: "*"
-
-#@ def metalink_resource(IAAS, HYPERVISOR, FIPS=""):
-  name: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
-  type: metalink-repository
-  source:
-    mirror_files:
-    - destination: s3://storage.googleapis.com/bosh-core-stemcells-candidate(@= FIPS @)/(@= IAAS @)/{{.Name}}
-    options:
-      private_key: ((github_deploy_key_bosh-io-stemcells-core-index.private_key))
-    filters:
-    - repositorypath: "*/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= data.values.stemcell_details.agent_suffix @).meta4"
-    uri: git+ssh://git@github.com:cloudfoundry/bosh-io-stemcells-core-index.git//dev/(@= data.values.stemcell_details.os_name @)(@= FIPS @)/
-    url_handlers:
-    - include:
-      - (s3|https)://.*
-      options:
-        access_key: ((hmac_accesskey))
-        secret_key: ((hmac_secret))
-      type: s3
-#@ end
 
 #@ for iaas in data.values.stemcell_details.include_iaas:
 - #@ metalink_resource(iaas.iaas, iaas.hypervisor)
@@ -1089,6 +1100,7 @@ resources:
   type: git
   source:
     branch: (@= data.values.stemcell_details.branch @)
+    uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder.git
     paths:
       - ci
       - .ruby-version
@@ -1125,6 +1137,12 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/os-conf-release
+
+- name: bpm-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bpm-release
+
 - name: bosh-deployment
   type: git
   source:
