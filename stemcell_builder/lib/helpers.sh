@@ -24,18 +24,37 @@ function run_in_chroot {
   disable $chroot/sbin/initctl
   disable $chroot/usr/sbin/invoke-rc.d
 
-  # `unshare -f -p` to prevent `kill -HUP 1` from causing `init` to exit;
-  unshare -f -p -m $SHELL <<EOS
-    mkdir -p $chroot/dev
-    mount -n --bind /dev $chroot/dev
-    mount -n --bind /dev/shm $chroot/dev/shm
-    mount -n --bind /dev/pts $chroot/dev/pts
+  # unshare: isolate mounts + PID namespace (see comment in original helpers).
+  # Inner shell must not read its script from stdin (heredoc): that breaks stdin for
+  # nested pipelines (e.g. grub-mkpasswd-pbkdf2). Pass command via env instead.
+  #
+  # setsid -f -w: new session without a controlling tty so apt/dpkg stderr does not
+  # trigger SIGTTOU (job-control stop, ps state T) under sudo / nested ptys.
+  env RUN_IN_CHROOT_ROOT="$chroot" \
+    RUN_IN_CHROOT_CMD="$script" \
+    RUN_IN_CHROOT_HTTP_PROXY="${http_proxy:-}" \
+    RUN_IN_CHROOT_HTTPS_PROXY="${https_proxy:-}" \
+    RUN_IN_CHROOT_NO_PROXY="${no_proxy:-}" \
+    setsid -f -w -- unshare -f -p -m /bin/bash -c '
+    set -e
+    chroot="$RUN_IN_CHROOT_ROOT"
+    mkdir -p "$chroot/dev"
+    mount -n --bind /dev "$chroot/dev"
+    mount -n --bind /dev/shm "$chroot/dev/shm"
+    mount -n --bind /dev/pts "$chroot/dev/pts"
 
-    mkdir -p $chroot/proc
-    mount -n --bind /proc $chroot/proc
+    mkdir -p "$chroot/proc"
+    mount -n --bind /proc "$chroot/proc"
 
-    chroot $chroot env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin http_proxy=${http_proxy:-} https_proxy=${https_proxy:-} no_proxy=${no_proxy:-} bash -e -c "$script"
-EOS
+    chroot "$chroot" env -i \
+      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+      DEBIAN_FRONTEND=noninteractive \
+      SYSTEMD_OFFLINE=1 \
+      http_proxy="$RUN_IN_CHROOT_HTTP_PROXY" \
+      https_proxy="$RUN_IN_CHROOT_HTTPS_PROXY" \
+      no_proxy="$RUN_IN_CHROOT_NO_PROXY" \
+      bash -e -c "$RUN_IN_CHROOT_CMD"
+  '
 
   # Enable daemon startup
   enable $chroot/sbin/initctl
@@ -93,4 +112,3 @@ function is_x86_64() {
     return 1
   fi
 }
-

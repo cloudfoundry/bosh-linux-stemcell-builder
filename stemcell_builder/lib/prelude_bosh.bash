@@ -21,11 +21,12 @@ function run_in_bosh_chroot {
   "
 }
 
-# remove setuid binaries - except su/sudo (sudoedit is hardlinked)
+# remove setuid binaries - except su/sudo (and their -rs alternates)
 function restrict_binary_setuid {
     run_in_bosh_chroot $chroot "
 find / -xdev -perm /ug=s -type f \
-  -not \( -name sudo -o -name su -o -name sudoedit \) \
+  -not \( -name sudo -o -name su -o -name sudoedit \
+          -o -name sudo-rs -o -name su-rs -o -name sudoedit-rs \) \
   -exec chmod ug-s {} \;
 "
 

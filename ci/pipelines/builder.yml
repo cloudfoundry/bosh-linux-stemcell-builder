@@ -1105,6 +1105,7 @@ resources:
       - ci
       - .ruby-version
       - acceptance-tests
+    uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder.git
 
 - name: bats
   type: git

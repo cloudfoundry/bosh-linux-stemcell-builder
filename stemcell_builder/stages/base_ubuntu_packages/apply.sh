@@ -6,17 +6,22 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/etc/settings.bash
 
+# The `runit` package (which provides `chpst`) is intentionally NOT installed on
+# the Resolute Raccoon stemcell. Per the Resolute RFC #1498,
+# runit is being removed; release authors must drop chpst in favour of BPM,
+# su/runuser, or setpriv. See docs/resolute-raccoon-migration-guide.md.
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
-curl wget bison libreadline6-dev rng-tools \
-libxml2 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
+curl wget bison libreadline6-dev \
+libxml2-16 libxml2-dev libxslt1.1 libxslt1-dev zip unzip \
 flex psmisc apparmor-utils iptables nftables sysstat \
-rsync openssh-server traceroute libncurses5-dev quota \
+rsync openssh-server libncurses5-dev quota \
 libaio1t64 gdb libcap2-bin libcap2-dev libbz2-dev \
 cmake uuid-dev libgcrypt-dev ca-certificates \
-mg htop module-assistant debhelper runit parted \
+htop debhelper parted \
 cloud-guest-utils anacron software-properties-common \
-xfsprogs gdisk chrony dbus nvme-cli rng-tools fdisk \
-ethtool libpam-pwquality gpg-agent libcurl4 libcurl4-openssl-dev resolvconf net-tools ifupdown"
+xfsprogs gdisk chrony dbus nvme-cli fdisk \
+ethtool libpam-pwquality libpam-lastlog2 gpg-agent libcurl4 libcurl4-openssl-dev \
+resolvconf net-tools ifupdown"
 
 pkg_mgr purge netplan.io
 run_in_chroot $chroot "
@@ -31,10 +36,9 @@ run_in_chroot "${chroot}" "systemctl enable systemd-networkd-resolvconf-update.s
 
 pkg_mgr install $debs
 
-# NOBLE_TODO: adiscon repo does not have noble packages yet
-# run_in_chroot $chroot "add-apt-repository ppa:adiscon/v8-stable"
-# pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-mmjsonparse rsyslog-mmnormalize rsyslog-relp"
-pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-openssl rsyslog-relp"
+# We have removed packages which require the Universe or Adiscon PPAs,
+# with the exception of rsyslog-relp, which is necessary for syslog-release.
+pkg_mgr install "rsyslog rsyslog-gnutls rsyslog-relp"
 
 run_in_chroot "${chroot}" "systemctl enable systemd-logind"
 run_in_chroot "${chroot}" "systemctl enable systemd-networkd"

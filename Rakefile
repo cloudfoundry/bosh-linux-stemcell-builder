@@ -11,12 +11,18 @@ namespace :stemcell do
     require "bosh/stemcell/stage_collection"
     require "bosh/stemcell/stage_runner"
 
+    os_image_path = File.expand_path(args.os_image_path)
+    if args.operating_system_version.to_s.strip.empty?
+      raise "stemcell:build_os_image: operating_system_version (2nd argument) is empty. " \
+            "Set it to the Ubuntu release codename (for example export short_name=resolute per README), " \
+            "or pass it literally: rake stemcell:build_os_image[ubuntu,resolute,tmp/os.tgz]"
+    end
     definition = Bosh::Stemcell::Definition.for("null", "null", args.operating_system_name, args.operating_system_version)
     environment = Bosh::Stemcell::BuildEnvironment.new(
       ENV.to_hash,
       definition,
       "",
-      args.os_image_path
+      os_image_path
     )
     collection = Bosh::Stemcell::StageCollection.new(definition)
     runner = Bosh::Stemcell::StageRunner.new(
@@ -33,7 +39,7 @@ namespace :stemcell do
       runner: runner,
       archive_handler: archive_handler
     )
-    builder.build(args.os_image_path)
+    builder.build(os_image_path)
 
     sh(environment.os_image_rspec_command)
   rescue RuntimeError => e
@@ -52,12 +58,13 @@ namespace :stemcell do
 
     args.with_defaults(build_number: "0000")
 
+    os_image_path = File.expand_path(args.os_image_path)
     definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version)
     environment = Bosh::Stemcell::BuildEnvironment.new(
       ENV.to_hash,
       definition,
       args.build_number,
-      args.os_image_path
+      os_image_path
     )
 
     sh(environment.os_image_rspec_command)

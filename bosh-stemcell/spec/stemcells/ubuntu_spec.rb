@@ -1,11 +1,10 @@
 require "spec_helper"
 
-describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
+describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
   it_behaves_like "All Stemcells"
   it_behaves_like "a Linux kernel based OS image"
   it_behaves_like "a Linux kernel module configured OS image"
 
-  # linux_version_regex = '/linux-(.+)-([0-9]+.+)/d'
   linux_version_regex = 's/linux-(.+)-([0-9]+).([0-9]+).([0-9]+)-([0-9]+)/linux-\1-\2.\3/'
 
   context "installed by image_install_grub", {
@@ -119,8 +118,20 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       subject { command("find -L / -xdev -perm /ug=s -type f") }
 
       it("includes the correct binaries") do
-        # expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit))
-        expect(subject.stdout.split).to match_array(%w[/bin/su /bin/sudo /bin/sudoedit /usr/bin/su /usr/bin/sudo /usr/bin/sudoedit])
+        expect(subject.stdout.split).to match_array(%w[
+          /bin/su /bin/su-rs
+          /bin/sudo /bin/sudo-rs
+          /bin/sudoedit /bin/sudoedit-rs
+          /usr/bin/su /usr/bin/su-rs
+          /usr/bin/sudo /usr/bin/sudo-rs
+          /usr/bin/sudoedit /usr/bin/sudoedit-rs
+          /etc/alternatives/sudo
+          /etc/alternatives/sudoedit
+          /lib/cargo/bin/su
+          /lib/cargo/bin/sudo
+          /usr/lib/cargo/bin/su
+          /usr/lib/cargo/bin/sudo
+        ])
       end
     end
   end
@@ -342,9 +353,16 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     end
   end
 
+  context "on non-warden stemcells", {
+    exclude_on_warden: true
+  } do
+    describe file("/etc/sysctl.d/20-disable-apparmor-restrict.conf") do
+      it { should_not be_file }
+    end
+  end
+
   describe "installed packages" do
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E '#{linux_version_regex}'"
-    # TODO: maby we can use awk "dpkg --get-selections | awk '!/linux-(.+)-([0-9]+.+)/&&/linux/{print $1}'"
 
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset("dpkg-list-ubuntu.txt")).map(&:chop) }
     let(:dpkg_list_kernel_ubuntu) { File.readlines(spec_asset("dpkg-list-ubuntu-kernel.txt")).map(&:chop) }
@@ -358,7 +376,8 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       exclude_on_cloudstack: true,
       exclude_on_google: true,
       exclude_on_vsphere: true,
-      exclude_on_azure: true
+      exclude_on_azure: true,
+      exclude_on_rosetta: true
     } do
       it "contains only the base set of packages for alicloud, aws, openstack, warden" do
         expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu.concat(dpkg_list_kernel_ubuntu))
@@ -427,7 +446,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
   end
 end
 
-describe "Ubuntu 24.04 stemcell tarball", stemcell_tarball: true do
+describe "Ubuntu 26.04 stemcell tarball", stemcell_tarball: true do
   context "installed by bosh_dpkg_list stage" do
     describe file("#{ENV["STEMCELL_WORKDIR"]}/stemcell/packages.txt", ShelloutTypes::Chroot.new("/")) do
       it { should be_file }

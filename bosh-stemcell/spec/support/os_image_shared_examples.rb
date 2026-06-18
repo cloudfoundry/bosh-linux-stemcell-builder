@@ -150,7 +150,7 @@ shared_examples_for "every OS image" do
 
     describe file("/etc/rsyslog.conf") do
       it { should be_file }
-      its(:content) { should match(/^module\( load="omrelp" tls.tlslib="openssl" \)$/) }
+      its(:content) { should match(/^module\( load="omrelp" tls.tlslib="gnutls" \)$/) }
       its(:content) { should match '\$FileGroup syslog' } # stig: V-38519
       its(:content) { should match '\$FileOwner syslog' } # stig: V-38518
       its(:content) { should match '\$FileCreateMode 0600' } # stig: V-38623
@@ -590,7 +590,7 @@ shared_examples_for "every OS image" do
 
     describe "events that modify system date and time must be recorded (CIS-8.1.4)" do
       its(:content) { should match(/^-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change$/) }
-      its(:content) { should match(/^-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change$/) }
+      its(:content) { should match(/^-a always,exit -F arch=b32 -S adjtimex -S settimeofday -k time-change$/) }
       its(:content) { should match(/^-a always,exit -F arch=b64 -S clock_settime -k time-change$/) }
       its(:content) { should match(/^-a always,exit -F arch=b32 -S clock_settime -k time-change$/) }
       its(:content) { should match(/^-w \/etc\/localtime -p wa -k time-change$/) }
@@ -634,8 +634,8 @@ shared_examples_for "every OS image" do
     end
 
     describe "record events that modify system network environment (CIS-4.1.6)" do
-      its(:content) { should match(/^-a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale$/) }
-      its(:content) { should match(/^-a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale$/) }
+      its(:content) { should match(/^-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale$/) }
+      its(:content) { should match(/^-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale$/) }
       its(:content) { should match(/^-w \/etc\/issue -p wa -k system-locale$/) }
       its(:content) { should match(/^-w \/etc\/issue\.net -p wa -k system-locale$/) }
       its(:content) { should match(/^-w \/etc\/hosts -p wa -k system-locale$/) }

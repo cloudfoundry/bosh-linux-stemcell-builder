@@ -48,4 +48,6 @@ patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch
 
 # /etc/login.defs are only effective for new users
 sed -i -r 's/^PASS_MIN_DAYS.+/PASS_MIN_DAYS 1/' $chroot/etc/login.defs
+# Ensure ENCRYPT_METHOD matches the sha512 used in pam_unix.so (Resolute defaults to YESCRYPT)
+sed -i -r 's/^ENCRYPT_METHOD .+/ENCRYPT_METHOD SHA512/' $chroot/etc/login.defs
 run_in_chroot $chroot "chage --mindays 1 vcap"
