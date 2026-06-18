@@ -1,17 +1,72 @@
 #@ load("@ytt:data", "data")
 
-#@ def build_light_aws_stemcell_new(name, stemcell_os, stemcell_version, builder_src, input_stemcell, output_stemcell, prefix, region, bucket_prefix, tag, ami_destinations, efi, ami_excluded_destinations):
+#@yaml/text-templated-strings
+---
+
+#@ def build_light_aws_stemcell_new(stemcell_os, stemcell_version, builder_src, input_stemcell, output_stemcell, prefix, region, bucket_prefix, tag, ami_destinations, efi, ami_excluded_destinations):
 do:
-- #@ get_aws_light_stemcells(input_stemcell, stemcell_os, stemcell_version, builder_src, tag)
-- #@ build_light_aws_stemcell(name, builder_src, input_stemcell, output_stemcell, prefix, region, bucket_prefix, tag, ami_destinations, efi, ami_excluded_destinations)
+  - in_parallel:
+    - get: (@= input_stemcell @)
+      params:
+        include_files:
+          - bosh-stemcell-*-aws-xen-hvm-(@= stemcell_os @)*.tgz
+      resource: candidate-(@= stemcell_os @)-stemcell-(@= stemcell_version @)
+      trigger: true
+      version: every
+      #@ if tag != "":
+      tags:
+        - (@= tag @)
+      #@ end
+    - get: (@= builder_src @)
+      passed:
+        - test-aws-unit
+        - test-aws-integration
+        - test-aws-drivers
+      resource: light-aws-builder-src
+      #@ if tag != "":
+      tags:
+        - (@= tag @)
+      #@ end
+  - task: build-(@= region @)-stemcell
+    file: bosh-stemcells-ci/ci/tasks/light-aws/build.yml
+    image: light-stemcell-builder-registry-image
+    input_mapping:
+      builder-src: (@= builder_src @)
+      input-stemcell: (@= input_stemcell @)
+    output_mapping:
+      light-stemcell: (@= output_stemcell @)
+    params:
+      AWS_PAGER:
+      ami_access_key: ((aws_publish_(@= prefix @)_access_key))
+      ami_secret_key: ((aws_publish_(@= prefix @)_secret_key))
+      ami_region: ((aws_publish_(@= region @)_region))
+      ami_bucket_name: ((aws_publish_(@= bucket_prefix @)_bucket))
+      ami_description: Light Stemcell Builder Prod AMI
+      #@ if ami_destinations != "":
+      ami_destinations: (@= ami_destinations @)
+      #@ end
+      #@ if ami_excluded_destinations != "":
+      ami_excluded_destinations: (@= ami_excluded_destinations @)
+      #@ end
+      ami_encrypted: false
+      ami_kms_key_id: ""
+      ami_server_side_encryption: ""
+      ami_virtualization_type: hvm
+      ami_visibility: public
+      S3_API_ENDPOINT: storage.googleapis.com
+      efi: (@= str(efi).lower() @)
+      #@ if tag != "":
+      tags:
+        - (@= tag @)
+      #@ end
 #@ end
 
 #@yaml/text-templated-strings
 ---
-#@ def cleanup_unpublished_light_stemcells(name, prefix, region):
+#@ def cleanup_unpublished_light_stemcells(prefix, region):
+task: cleanup-amis-in-(@= prefix @)
 file: bosh-stemcells-ci/ci/tasks/light-aws/cleanup-ami.yml
 image: bosh-integration-registry-image
-task: cleanup-amis-in-(@= name @)
 params:
   AWS_PAGER:
   ami_access_key: ((aws_publish_(@= prefix @)_access_key))
@@ -21,10 +76,13 @@ params:
   ami_keep_latest: 5
   os_name: (@= data.values.stemcell_details.os_name @)
 #@ end
-#@ def cleanup_old_published_light_stemcells(name, prefix, region):
+
+#@yaml/text-templated-strings
+---
+#@ def cleanup_old_published_light_stemcells(prefix, region):
+task: cleanup-amis-in-(@= prefix @)
 file: bosh-stemcells-ci/ci/tasks/light-aws/cleanup-ami.yml
 image: bosh-integration-registry-image
-task: cleanup-amis-in-(@= name @)
 params:
   AWS_PAGER:
   ami_access_key: ((aws_publish_(@= prefix @)_access_key))
@@ -33,199 +91,6 @@ params:
   ami_older_than_days: 1095
   remove_public_images: true
 #@ end
-
-#@ def build_light_aws_stemcell(name, builder_src, input_stemcell, output_stemcell, prefix, region, bucket_prefix, tag, ami_destinations, efi, ami_excluded_destinations):
-file: bosh-stemcells-ci/ci/tasks/light-aws/build.yml
-task: #@ name
-image: light-stemcell-builder-registry-image
-input_mapping:
-  builder-src: (@= builder_src @)
-  input-stemcell: (@= input_stemcell @)
-output_mapping:
-  light-stemcell: (@= output_stemcell @)
-params:
-  AWS_PAGER:
-  ami_access_key: ((aws_publish_(@= prefix @)_access_key))
-  ami_secret_key: ((aws_publish_(@= prefix @)_secret_key))
-  ami_region: ((aws_publish_(@= region @)_region))
-  ami_bucket_name: ((aws_publish_(@= bucket_prefix @)_bucket))
-  ami_description: Light Stemcell Builder Prod AMI
-  #@ if ami_destinations != "":
-  ami_destinations: (@= ami_destinations @)
-  #@ end
-  #@ if ami_excluded_destinations != "":
-  ami_excluded_destinations: (@= ami_excluded_destinations @)
-  #@ end
-  ami_encrypted: false
-  ami_kms_key_id: ""
-  ami_server_side_encryption: ""
-  ami_virtualization_type: hvm
-  ami_visibility: public
-  S3_API_ENDPOINT: storage.googleapis.com
-  efi: #@ efi
-  #@ if tag != "":
-  tags:
-  - #@ tag
-  #@ end
-#@ end
-
-#@ def get_aws_light_stemcells(input_stemcell, stemcell_os, stemcell_version, builder_src, tag):
-in_parallel:
-- get: (@= input_stemcell @)
-  params:
-    include_files:
-    - bosh-stemcell-*-aws-xen-hvm-(@= stemcell_os @)*.tgz
-  resource: candidate-(@= stemcell_os @)-stemcell-(@= stemcell_version @)
-  trigger: true
-  version: every
-  #@ if tag != "":
-  tags:
-  - #@ tag
-  #@ end
-- get: (@= builder_src @)
-  passed:
-  - test-aws-unit
-  - test-aws-integration
-  - test-aws-drivers
-  resource: light-aws-builder-src
-  #@ if tag != "":
-  tags:
-  - #@ tag
-  #@ end
-#@ end
-
-#@ def get_google_light_inputs(stemcell_os, stemcell_version):
-in_parallel:
-- get: stemcell
-  params:
-    include_files:
-    - bosh-stemcell-*-google-kvm-(@= stemcell_os @)*.tgz
-  resource: candidate-(@= stemcell_os @)-stemcell-(@= str(stemcell_version) @)
-  trigger: true
-  version: every
-- get: bosh-stemcells-ci
-- get: bosh-cpi-release
-  resource: bosh-google-cpi-release
-#@ end
-
-#@ def deploy_skeletal_google_light_stemcell(terraform_resource, credentials):
-do:
-- params:
-    generate_random_name: true
-    terraform_source: bosh-stemcells-ci/ci/tasks/light-google/terraform/
-  put: terraform
-  resource: (@= terraform_resource @)
-- file: bosh-stemcells-ci/ci/tasks/light-google/deploy-skeletal.yml
-  image: bosh-integration-registry-image
-  params:
-    GCE_CREDENTIALS_JSON: (@= credentials @)
-    SSH_PRIVATE_KEY: ((ssh.private_key))
-  task: deploy-skeletal
-ensure:
-  ensure:
-    get_params:
-      action: destroy
-    params:
-      action: destroy
-      env_name_file: terraform/name
-      terraform_source: bosh-stemcells-ci/ci/tasks/light-google/terraform/
-    put: terraform
-    resource: (@= terraform_resource @)
-  file: bosh-stemcells-ci/ci/tasks/light-google/destroy-skeletal.yml
-  image: bosh-integration-registry-image
-  task: destroy-skeletal
-on_failure:
-  image: bosh-integration-registry-image
-  config:
-    platform: linux
-    run:
-      args:
-      - |
-        * remove artifacts of failed jobs:
-        ```bash
-        gcloud auth revoke --all # start with clean slate
-        gcloud auth activate-service-account concourse@((gcp_project_id)).iam.gserviceaccount.com --key-file <( ((gcp_json_key)) )
-        gsutil rm gs://bosh-gce-raw-stemcells-new/STEMCELL_TO_BE_DELETED_raw.tar.gz
-        gsutil rm gs://bosh-gce-raw-stemcells-new/STEMCELL_TO_BE_DELETED_raw.tar.gz.sha1
-        gcloud auth revoke --all
-        ```
-        * re-fly pipeline after commenting-out `disable_manual_trigger: true`
-        * trigger failed jobs
-        * re-fly pipeline after uncommenting `disable_manual_trigger: true`
-      path: echo
-  task: cleanup-failed-run-instructions
-#@ end
-
-#@ def run_stemcell_upload_tests():
-do:
-- in_parallel:
-  - get: bosh-cpi-src
-    resource: bosh-aws-cpi-release
-    trigger: false
-  - get: cpi-release
-    resource: bosh-aws-cpi-dev-artifacts
-    trigger: false
-  - get: bosh-release
-    trigger: false
-  - get: bosh-deployment
-    trigger: false
-  - get: pipelines
-    resource: bosh-cpi-certification-concourse-tasks
-  - get: bosh-cpi-certification-concourse-tasks
-- put: environment
-  resource: light-aws-environment
-  params:
-    delete_on_failure: true
-    generate_random_name: true
-    terraform_source: bosh-cpi-src/ci/assets/terraform
-- file: bosh-cpi-certification-concourse-tasks/shared/tasks/prepare-director.yml
-  image: bosh-integration-registry-image
-  input_mapping:
-    stemcell: light-stemcell
-  params:
-    DIRECTOR_VARS_FILE: ((aws_test_director_vars_file))
-    INFRASTRUCTURE: aws
-    OPTIONAL_OPS_FILE: |
-      -o pipelines/shared/assets/ops/remove-hm.yml
-      -o bosh-deployment/external-ip-with-registry-not-recommended.yml
-      -o bosh-deployment/misc/source-releases/bosh.yml
-  task: prepare-director
-- file: bosh-cpi-certification-concourse-tasks/shared/tasks/deploy-director.yml
-  image: bosh-integration-registry-image
-  input_mapping:
-    stemcell: light-stemcell
-  task: deploy-director
-- file: bosh-stemcells-ci/ci/tasks/light-aws/run-upload-test.yml
-  image: bosh-integration-registry-image
-  input_mapping:
-    builder-src: us-builder-src
-    stemcell: light-stemcell
-  task: run-stemcell-upload-tests
-ensure:
-  do:
-  - task: teardown
-    file: bosh-cpi-certification-concourse-tasks/shared/tasks/teardown.yml
-    image: bosh-integration-registry-image
-  - task: ensure-terminated
-    file: bosh-cpi-src/ci/tasks/ensure-terminated.yml
-    image: bosh-integration-registry-image
-    input_mapping:
-      bosh-aws-cpi-release: bosh-cpi-src
-    params:
-      AWS_PAGER:
-      AWS_ACCESS_KEY_ID: ((aws_publish_us_access_key))
-      AWS_SECRET_ACCESS_KEY: ((aws_publish_us_secret_key))
-      AWS_DEFAULT_REGION: ((aws_publish_us_region))
-  - put: environment
-    resource: light-aws-environment
-    get_params:
-      action: destroy
-    params:
-      action: destroy
-      env_name_file: environment/name
-      terraform_source: bosh-cpi-src/ci/assets/terraform
-#@ end
----
 
 #@yaml/text-templated-strings
 ---
@@ -267,8 +132,8 @@ jobs:
     trigger: true
   - get: bosh-stemcells-ci
   - get: bosh-integration-registry-image
-  - #@ cleanup_old_published_light_stemcells("aws", "us", "us")
-  - #@ cleanup_old_published_light_stemcells("us-goverment", "us-gov", "us-gov")
+  - #@ cleanup_old_published_light_stemcells("us", "us")
+  - #@ cleanup_old_published_light_stemcells("us-gov", "us-gov")
 - name: cleanup-unpublished-(@= data.values.stemcell_details.os_name @)-aws-light-stemcells
   serial: true
   plan:
@@ -276,9 +141,9 @@ jobs:
     trigger: true
   - get: bosh-stemcells-ci
   - get: bosh-integration-registry-image
-  - #@ cleanup_unpublished_light_stemcells("aws", "us", "us")
-  - #@ cleanup_unpublished_light_stemcells("us-goverment", "us-gov", "us-gov")
-#!- #@ cleanup_unpublished_light_stemcells("china", "cn", "cn_north")
+  - #@ cleanup_unpublished_light_stemcells("us", "us")
+  - #@ cleanup_unpublished_light_stemcells("us-gov", "us-gov")
+#!- #@ cleanup_unpublished_light_stemcells("cn", "cn_north")
 
 - name: test-aws-unit
   plan:
@@ -371,15 +236,82 @@ jobs:
   - get: bosh-integration-registry-image
   - in_parallel:
     - do:
-    - #@ build_light_aws_stemcell_new("build-us-gov-stemcell", data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us-gov-builder-src", "us-gov-input-stemcell", "us-gov-light-stemcell", "us-gov", "us-gov", "us-gov", "", "", data.values.stemcell_details.use_efi, "")
-    - #@ build_light_aws_stemcell_new("build-us-stemcell", data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us-builder-src", "us-input-stemcell", "us-light-stemcell", "us", "us", "us", "", "", data.values.stemcell_details.use_efi, '["me-central-1"]')
+    - #@ build_light_aws_stemcell_new(data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us-gov-builder-src", "us-gov-input-stemcell", "us-gov-light-stemcell", "us-gov", "us-gov", "us-gov", "", "", data.values.stemcell_details.use_efi, "")
+    - #@ build_light_aws_stemcell_new(data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us-builder-src", "us-input-stemcell", "us-light-stemcell", "us", "us", "us", "", "", data.values.stemcell_details.use_efi, '["me-central-1"]')
   - file: bosh-stemcells-ci/ci/tasks/light-aws/us-gov-merge-builds.yml
     image: light-stemcell-builder-registry-image
     input_mapping:
       builder-src: us-builder-src
     task: merge-builds
-  - #@ run_stemcell_upload_tests()
-  - params:
+  - do:
+    - in_parallel:
+      - get: bosh-cpi-src
+        resource: bosh-aws-cpi-release
+        trigger: false
+      - get: cpi-release
+        resource: bosh-aws-cpi-dev-artifacts
+        trigger: false
+      - get: bosh-release
+        trigger: false
+      - get: bosh-deployment
+        trigger: false
+      - get: pipelines
+        resource: bosh-cpi-certification-concourse-tasks
+      - get: bosh-cpi-certification-concourse-tasks
+    - put: environment
+      resource: light-aws-environment
+      params:
+        delete_on_failure: true
+        generate_random_name: true
+        terraform_source: bosh-cpi-src/ci/assets/terraform
+    - task: prepare-director
+      file: bosh-cpi-certification-concourse-tasks/shared/tasks/prepare-director.yml
+      image: bosh-integration-registry-image
+      input_mapping:
+        stemcell: light-stemcell
+      params:
+        DIRECTOR_VARS_FILE: ((aws_test_director_vars_file))
+        INFRASTRUCTURE: aws
+        OPTIONAL_OPS_FILE: |
+          -o pipelines/shared/assets/ops/remove-hm.yml
+          -o bosh-deployment/external-ip-with-registry-not-recommended.yml
+          -o bosh-deployment/misc/source-releases/bosh.yml
+    - task: deploy-director
+      file: bosh-cpi-certification-concourse-tasks/shared/tasks/deploy-director.yml
+      image: bosh-integration-registry-image
+      input_mapping:
+        stemcell: light-stemcell
+    - task: run-stemcell-upload-tests
+      file: bosh-stemcells-ci/ci/tasks/light-aws/run-upload-test.yml
+      image: bosh-integration-registry-image
+      input_mapping:
+        builder-src: us-builder-src
+        stemcell: light-stemcell
+    ensure:
+      do:
+        - task: teardown
+          file: bosh-cpi-certification-concourse-tasks/shared/tasks/teardown.yml
+          image: bosh-integration-registry-image
+        - task: ensure-terminated
+          file: bosh-cpi-src/ci/tasks/ensure-terminated.yml
+          image: bosh-integration-registry-image
+          input_mapping:
+            bosh-aws-cpi-release: bosh-cpi-src
+          params:
+            AWS_PAGER:
+            AWS_ACCESS_KEY_ID: ((aws_publish_us_access_key))
+            AWS_SECRET_ACCESS_KEY: ((aws_publish_us_secret_key))
+            AWS_DEFAULT_REGION: ((aws_publish_us_region))
+        - put: environment
+          resource: light-aws-environment
+          get_params:
+            action: destroy
+          params:
+            action: destroy
+            env_name_file: environment/name
+            terraform_source: bosh-cpi-src/ci/assets/terraform
+  - put: candidate-aws-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
+    params:
       files:
       - light-stemcell/*.tgz
       options:
@@ -387,12 +319,21 @@ jobs:
         author_name: *ci_bot_name
         message: 'candidate (light aws): (@= data.values.stemcell_details.os_name @)/(@= str(data.values.stemcell_details.major_version) @).x'
       version: us-input-stemcell/.resource/version
-    put: candidate-aws-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
   serial: true
 
 - name: build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   plan:
-  - #@ get_google_light_inputs(data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version))
+  - in_parallel:
+    - get: stemcell
+      params:
+        include_files:
+          - bosh-stemcell-*-google-kvm-(@= data.values.stemcell_details.os_name @)*.tgz
+      resource: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
+      trigger: true
+      version: every
+    - get: bosh-stemcells-ci
+    - get: bosh-cpi-release
+      resource: bosh-google-cpi-release
   - get: light-stemcell-builder-registry-image
   - get: gce-cpi-release-registry-image
   - get: bosh-integration-registry-image
@@ -414,8 +355,51 @@ jobs:
       GCP_SERVICE_ACCOUNT_KEY: ((gcp_json_key))
       PROJECT_NAME: ((gcp_project_id))
       EFI: #@ data.values.stemcell_details.use_efi
-
-  - #@ deploy_skeletal_google_light_stemcell("light-google-environment-oss", "((gcp_json_key))")
+  - do:
+    - put: terraform
+      resource: light-google-environment-oss
+      params:
+        generate_random_name: true
+        terraform_source: bosh-stemcells-ci/ci/tasks/light-google/terraform/
+    - task: deploy-skeletal
+      file: bosh-stemcells-ci/ci/tasks/light-google/deploy-skeletal.yml
+      image: bosh-integration-registry-image
+      params:
+        GCE_CREDENTIALS_JSON: ((gcp_json_key))
+        SSH_PRIVATE_KEY: ((ssh.private_key))
+    ensure:
+      ensure:
+        get_params:
+          action: destroy
+        params:
+          action: destroy
+          env_name_file: terraform/name
+          terraform_source: bosh-stemcells-ci/ci/tasks/light-google/terraform/
+        put: terraform
+        resource: light-google-environment-oss
+      file: bosh-stemcells-ci/ci/tasks/light-google/destroy-skeletal.yml
+      image: bosh-integration-registry-image
+      task: destroy-skeletal
+    on_failure:
+      image: bosh-integration-registry-image
+      config:
+        platform: linux
+        run:
+          args:
+            - |
+              * remove artifacts of failed jobs:
+              ```bash
+              gcloud auth revoke --all # start with clean slate
+              gcloud auth activate-service-account concourse@((gcp_project_id)).iam.gserviceaccount.com --key-file <( ((gcp_json_key)) )
+              gsutil rm gs://bosh-gce-raw-stemcells-new/STEMCELL_TO_BE_DELETED_raw.tar.gz
+              gsutil rm gs://bosh-gce-raw-stemcells-new/STEMCELL_TO_BE_DELETED_raw.tar.gz.sha1
+              gcloud auth revoke --all
+              ```
+              * re-fly pipeline after commenting-out `disable_manual_trigger: true`
+              * trigger failed jobs
+              * re-fly pipeline after uncommenting `disable_manual_trigger: true`
+          path: echo
+      task: cleanup-failed-run-instructions
   - params:
       files:
       - light-stemcell/*.tgz
