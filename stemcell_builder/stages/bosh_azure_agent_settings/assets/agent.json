@@ -1,0 +1,23 @@
+{
+  "Platform": {
+    "Linux": {
+      "CreatePartitionIfNoEphemeralDisk": true,
+      "DevicePathResolutionType": "scsi",
+      "PartitionerType": "parted",
+      "UseMonitIptablesFirewall": true
+    }
+  },
+  "Infrastructure": {
+    "Settings": {
+      "Sources": [
+        {
+          "Type": "File",
+          "MetaDataPath": "",
+          "UserDataPath": "/var/lib/cloud/instance/user-data.txt",
+          "SettingsPath": "/var/lib/cloud/instance/user-data.txt"
+        }
+      ],
+      "UseServerName": true
+    }
+  }
+}
