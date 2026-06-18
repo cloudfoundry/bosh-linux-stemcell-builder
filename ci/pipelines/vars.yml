@@ -9,6 +9,8 @@ stemcell_details:
   os_short_name: jammy
   subnet_int: "22" #! use last two digits of release year: ex 2010 -> 10
   use_efi: false
+  bot_email: infra@cloudfoundry.org
+  bot_name: CI Bot
   include_iaas: [
     {iaas: alicloud, hypervisor: kvm},
     {iaas: aws, hypervisor: xen-hvm},
