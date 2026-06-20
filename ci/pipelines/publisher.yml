@@ -3,44 +3,29 @@
 #@yaml/text-templated-strings
 ---
 
-#@ def build_light_aws_stemcell_new(stemcell_os, stemcell_version, builder_src, input_stemcell, output_stemcell, prefix, region, bucket_prefix, tag, ami_destinations, efi, ami_excluded_destinations):
+#@ def build_light_aws_stemcell_new(stemcell_os, stemcell_version, prefix, efi, ami_destinations, ami_excluded_destinations):
 do:
   - in_parallel:
-    - get: (@= input_stemcell @)
+    - get: (@= prefix @)-input-stemcell
       params:
         include_files:
           - bosh-stemcell-*-aws-xen-hvm-(@= stemcell_os @)*.tgz
       resource: candidate-(@= stemcell_os @)-stemcell-(@= stemcell_version @)
       trigger: true
       version: every
-      #@ if tag != "":
-      tags:
-        - (@= tag @)
-      #@ end
-    - get: (@= builder_src @)
-      passed:
-        - test-aws-unit
-        - test-aws-integration
-        - test-aws-drivers
-      resource: light-aws-builder-src
-      #@ if tag != "":
-      tags:
-        - (@= tag @)
-      #@ end
-  - task: build-(@= region @)-stemcell
+  - task: build-(@= prefix @)-stemcell
     file: bosh-stemcells-ci/ci/tasks/light-aws/build.yml
-    image: light-stemcell-builder-registry-image
+    image: aws-light-stemcell-builder-registry-image
     input_mapping:
-      builder-src: (@= builder_src @)
-      input-stemcell: (@= input_stemcell @)
+      input-stemcell: (@= prefix @)-input-stemcell
     output_mapping:
-      light-stemcell: (@= output_stemcell @)
+      light-stemcell: (@= prefix @)-light-stemcell
     params:
       AWS_PAGER:
       ami_access_key: ((aws_publish_(@= prefix @)_access_key))
       ami_secret_key: ((aws_publish_(@= prefix @)_secret_key))
-      ami_region: ((aws_publish_(@= region @)_region))
-      ami_bucket_name: ((aws_publish_(@= bucket_prefix @)_bucket))
+      ami_region: ((aws_publish_(@= prefix @)_region))
+      ami_bucket_name: ((aws_publish_(@= prefix @)_bucket))
       ami_description: Light Stemcell Builder Prod AMI
       #@ if ami_destinations != "":
       ami_destinations: (@= ami_destinations @)
@@ -55,10 +40,6 @@ do:
       ami_visibility: public
       S3_API_ENDPOINT: storage.googleapis.com
       efi: (@= str(efi).lower() @)
-      #@ if tag != "":
-      tags:
-        - (@= tag @)
-      #@ end
 #@ end
 
 #@yaml/text-templated-strings
@@ -94,17 +75,9 @@ params:
 
 #@yaml/text-templated-strings
 ---
-anchors:
-  ci_bot:
-    email: &ci_bot_email bots@cloudfoundry.org
-    name: &ci_bot_name CI Bot
-
 groups:
 - name: all
   jobs:
-  - test-aws-unit
-  - test-aws-drivers
-  - test-aws-integration
   - build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   - build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   - publish-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
@@ -120,7 +93,6 @@ groups:
   - publish-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
 - name: cleanup-aws-light-stemcells
   jobs:
-  - cleanup-light-aws-builder-test-amis
   - cleanup-published-aws-light-stemcells-older-than-three-years
   - cleanup-unpublished-(@= data.values.stemcell_details.os_name @)-aws-light-stemcells
 
@@ -145,104 +117,18 @@ jobs:
   - #@ cleanup_unpublished_light_stemcells("us-gov", "us-gov")
 #!- #@ cleanup_unpublished_light_stemcells("cn", "cn_north")
 
-- name: test-aws-unit
-  plan:
-  - get: bosh-stemcells-ci
-  - get: bosh-integration-registry-image
-  - get: builder-src
-    resource: light-aws-builder-src
-    trigger: true
-  - file: bosh-stemcells-ci/ci/tasks/light-aws/test-unit.yml
-    image: bosh-integration-registry-image
-    task: test
-  serial: true
-
-- name: test-aws-drivers
-  plan:
-  - get: bosh-stemcells-ci
-  - get: bosh-integration-registry-image
-  - get: builder-src
-    resource: light-aws-builder-src
-    trigger: true
-  - file: bosh-stemcells-ci/ci/tasks/light-aws/test-drivers.yml
-    image: bosh-integration-registry-image
-    params:
-      AWS_PAGER:
-      aws_account_id: ((aws_test_account_id))
-      access_key: ((aws_test_access_key))
-      secret_key: ((aws_test_secret_key))
-      bucket_name: ((aws_test_bucket_name))
-      copy_region: ((aws_test_copy_region))
-      region: ((aws_test_region))
-      ami_fixture_id: ((aws_test_ami_fixture_id))
-      private_ami_fixture_id: ((aws_test_private_ami_fixture_id))
-      existing_snapshot_id: ((aws_test_snapshot_fixture_id))
-      existing_volume_id: ((aws_test_volume_fixture_id))
-      #! kms key id should be the one created in the region of "copy_region"
-      kms_key_id: ((aws_test_kms_key_id))
-      kms_multi_region_key: ((aws_test_kms_multi_region_key_id))
-      kms_multi_region_key_replication_test: ((aws_test_kms_multi_region_replication_test_key_id))
-      uploaded_machine_image_url: https://stemcell-test-publish.s3.eu-central-1.amazonaws.com/fixtures/root.img
-    task: test
-    attempts: 3
-  serial: true
-
-- name: test-aws-integration
-  plan:
-  - get: bosh-stemcells-ci
-  - get: bosh-integration-registry-image
-  - get: builder-src
-    resource: light-aws-builder-src
-    trigger: true
-  - file: bosh-stemcells-ci/ci/tasks/light-aws/test-integration.yml
-    image: bosh-integration-registry-image
-    params:
-      AWS_PAGER:
-      access_key: ((aws_test_access_key))
-      secret_key: ((aws_test_secret_key))
-      bucket_name: ((aws_test_bucket_name))
-      #! cn_access_key: ((test__cn_access_key))
-      #! cn_bucket_name: ((test__cn_bucket_name))
-      #! cn_region: ((test__cn_region))
-      #! cn_secret_key: ((test__cn_secret_key))
-      copy_region: ((aws_test_copy_region))
-      region: ((aws_test_region))
-
-    task: test
-  serial: true
-
-- name: cleanup-light-aws-builder-test-amis
-  plan:
-  - get: every-week-on-monday
-    trigger: true
-  - get: bosh-stemcells-ci
-  - get: bosh-integration-registry-image
-  - task: cleanup-aws-test-amis
-    file: bosh-stemcells-ci/ci/tasks/light-aws/cleanup-ami.yml
-    image: bosh-integration-registry-image
-    params:
-      AWS_PAGER:
-      ami_access_key: ((aws_test_access_key))
-      ami_secret_key: ((aws_test_secret_key))
-      ami_region: ((aws_test_region))
-      ami_older_than_days: 1
-      ami_keep_latest: 0
-      snapshot_id: ((aws_test_snapshot_fixture_id))
-
 - name: build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   plan:
   - get: bosh-stemcells-ci
-  - get: light-stemcell-builder-registry-image
+  - get: aws-light-stemcell-builder-registry-image
   - get: bosh-integration-registry-image
   - in_parallel:
     - do:
-    - #@ build_light_aws_stemcell_new(data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us-gov-builder-src", "us-gov-input-stemcell", "us-gov-light-stemcell", "us-gov", "us-gov", "us-gov", "", "", data.values.stemcell_details.use_efi, "")
-    - #@ build_light_aws_stemcell_new(data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us-builder-src", "us-input-stemcell", "us-light-stemcell", "us", "us", "us", "", "", data.values.stemcell_details.use_efi, '["me-central-1"]')
-  - file: bosh-stemcells-ci/ci/tasks/light-aws/us-gov-merge-builds.yml
-    image: light-stemcell-builder-registry-image
-    input_mapping:
-      builder-src: us-builder-src
-    task: merge-builds
+    - #@ build_light_aws_stemcell_new(data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us-gov", data.values.stemcell_details.use_efi, "", "")
+    - #@ build_light_aws_stemcell_new(data.values.stemcell_details.os_name, str(data.values.stemcell_details.major_version), "us", data.values.stemcell_details.use_efi, "", '["me-central-1"]')
+  - task: merge-builds
+    file: bosh-stemcells-ci/ci/tasks/light-aws/us-gov-merge-builds.yml
+    image: aws-light-stemcell-builder-registry-image
   - do:
     - in_parallel:
       - get: bosh-cpi-src
@@ -285,7 +171,6 @@ jobs:
       file: bosh-stemcells-ci/ci/tasks/light-aws/run-upload-test.yml
       image: bosh-integration-registry-image
       input_mapping:
-        builder-src: us-builder-src
         stemcell: light-stemcell
     ensure:
       do:
@@ -315,8 +200,8 @@ jobs:
       files:
       - light-stemcell/*.tgz
       options:
-        author_email: *ci_bot_email
-        author_name: *ci_bot_name
+        author_email: &ci_bot_email bots@cloudfoundry.org
+        author_name: &ci_bot_name CI Bot
         message: 'candidate (light aws): (@= data.values.stemcell_details.os_name @)/(@= str(data.values.stemcell_details.major_version) @).x'
       version: us-input-stemcell/.resource/version
   serial: true
@@ -334,12 +219,11 @@ jobs:
     - get: bosh-stemcells-ci
     - get: bosh-cpi-release
       resource: bosh-google-cpi-release
-  - get: light-stemcell-builder-registry-image
   - get: gce-cpi-release-registry-image
   - get: bosh-integration-registry-image
   - task: make-raw-from-heavy-stemcell
     file: bosh-stemcells-ci/ci/tasks/light-google/make-raw-from-heavy-stemcell.yml
-    image: light-stemcell-builder-registry-image
+    image: gce-cpi-release-registry-image
     params:
       BUCKET_NAME: bosh-gce-raw-stemcells-new
       STEMCELL_BUCKET_PATH: bosh-gce-light-stemcells
@@ -623,12 +507,6 @@ resources:
       - ci
     uri: https://github.com/cloudfoundry/bosh-linux-stemcell-builder.git
 
-- name: light-aws-builder-src
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/bosh-aws-light-stemcell-builder
-
 - name: bosh-aws-cpi-release
   type: git
   source:
@@ -854,7 +732,7 @@ resources:
     username: ((github_read_write_packages.username))
     password: ((github_read_write_packages.password))
 
-- name: light-stemcell-builder-registry-image
+- name: aws-light-stemcell-builder-registry-image
   type: registry-image
   source:
     repository: bosh/light-stemcell-builder
