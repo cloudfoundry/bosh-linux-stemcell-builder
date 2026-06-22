@@ -1469,7 +1469,7 @@ resources:
   source:
     bucket: bosh-gce-raw-stemcells-new
     json_key: ((gcp_json_key))
-    regexp: bosh-stemcell-([0-9\.]+)-google-kvm-ubuntu-*-raw.tar.gz
+    regexp: bosh-stemcell-([0-9.]+)-google-kvm-ubuntu-[a-z]+-raw.tar.gz
   type: gcs-resource
 
 - name: candidate-aws-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
