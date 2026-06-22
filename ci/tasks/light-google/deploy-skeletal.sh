@@ -11,8 +11,8 @@ if [[ -n "${DEBUG:-}" ]]; then
 fi
 
 # env
-: ${SSH_PRIVATE_KEY:?}
-: ${GCE_CREDENTIALS_JSON:?}
+: "${SSH_PRIVATE_KEY:?}"
+: "${GCE_CREDENTIALS_JSON:?}"
 
 
 mkdir -p "${REPO_PARENT}/deployment-state/assets/"
