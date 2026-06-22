@@ -44,7 +44,7 @@ do:
 
 #@yaml/text-templated-strings
 ---
-#@ def cleanup_unpublished_light_stemcells(prefix, region):
+#@ def cleanup_unpublished_light_stemcells(prefix):
 task: cleanup-amis-in-(@= prefix @)
 file: bosh-stemcells-ci/ci/tasks/light-aws/cleanup-ami.yml
 image: bosh-integration-registry-image
@@ -52,7 +52,7 @@ params:
   AWS_PAGER:
   ami_access_key: ((aws_publish_(@= prefix @)_access_key))
   ami_secret_key: ((aws_publish_(@= prefix @)_secret_key))
-  ami_region: ((aws_publish_(@= region @)_region))
+  ami_region: ((aws_publish_(@= prefix @)_region))
   ami_older_than_days: 60
   ami_keep_latest: 5
   os_name: (@= data.values.stemcell_details.os_name @)
@@ -60,7 +60,7 @@ params:
 
 #@yaml/text-templated-strings
 ---
-#@ def cleanup_old_published_light_stemcells(prefix, region):
+#@ def cleanup_old_published_light_stemcells(prefix):
 task: cleanup-amis-in-(@= prefix @)
 file: bosh-stemcells-ci/ci/tasks/light-aws/cleanup-ami.yml
 image: bosh-integration-registry-image
@@ -68,7 +68,7 @@ params:
   AWS_PAGER:
   ami_access_key: ((aws_publish_(@= prefix @)_access_key))
   ami_secret_key: ((aws_publish_(@= prefix @)_secret_key))
-  ami_region: ((aws_publish_(@= region @)_region))
+  ami_region: ((aws_publish_(@= prefix @)_region))
   ami_older_than_days: 1095
   remove_public_images: true
 #@ end
@@ -104,8 +104,8 @@ jobs:
     trigger: true
   - get: bosh-stemcells-ci
   - get: bosh-integration-registry-image
-  - #@ cleanup_old_published_light_stemcells("us", "us")
-  - #@ cleanup_old_published_light_stemcells("us-gov", "us-gov")
+  - #@ cleanup_old_published_light_stemcells("us")
+  - #@ cleanup_old_published_light_stemcells("us-gov")
 - name: cleanup-unpublished-(@= data.values.stemcell_details.os_name @)-aws-light-stemcells
   serial: true
   plan:
@@ -113,9 +113,9 @@ jobs:
     trigger: true
   - get: bosh-stemcells-ci
   - get: bosh-integration-registry-image
-  - #@ cleanup_unpublished_light_stemcells("us", "us")
-  - #@ cleanup_unpublished_light_stemcells("us-gov", "us-gov")
-#!- #@ cleanup_unpublished_light_stemcells("cn", "cn_north")
+  - #@ cleanup_unpublished_light_stemcells("us")
+  - #@ cleanup_unpublished_light_stemcells("us-gov")
+#!- #@ cleanup_unpublished_light_stemcells("cn")
 
 - name: build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   plan:
