@@ -8,10 +8,9 @@ inputs:
   - name: environment
   - name: stemcell
   - name: director-state
-  - name: builder-src
 
 run:
   path: bosh-stemcells-ci/ci/tasks/light-aws/run-upload-test.sh
 
 params:
-  BOSH_DEBUG_LEVEL:     info
+  BOSH_DEBUG_LEVEL: info

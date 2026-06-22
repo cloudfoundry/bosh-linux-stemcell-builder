@@ -366,7 +366,7 @@ Create a `stemcell-builder-integration-${subnet_int}` subnetworks need by BATs t
 Each stemcell line should get its own subnet corresponding to its `subnet_int` equal to
 the two digit release year. For example release year 2010 would have `subnet_int="10"`.
 
-Example per [ci/pipelines/vars.yml](ci/pipelines/vars.yml):
+Example per [ci/pipeline-vars.yml](ci/pipeline-vars.yml):
 
 ```yaml
 ---
