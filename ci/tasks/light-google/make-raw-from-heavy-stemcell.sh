@@ -19,7 +19,7 @@ stemcell_url() {
 
   resource="/${STEMCELL_BUCKET_PATH}/${name}"
 
-  if [ ! -z "$AWS_ACCESS_KEY_ID" ]; then
+  if [ ! -z "${AWS_ACCESS_KEY_ID}" ]; then
     expires=$(date +%s)
     expires=$((expires + 30))
 
