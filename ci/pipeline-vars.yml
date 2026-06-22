@@ -9,6 +9,7 @@ stemcell_details:
   os_short_name: noble
   subnet_int: "24" #! use last two digits of release year: ex 2010 -> 10
   use_efi: true
+  test_ipv6: false
   bot_email: infra@cloudfoundry.org
   bot_name: CI Bot
   include_iaas: [
