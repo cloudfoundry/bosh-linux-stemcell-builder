@@ -568,6 +568,7 @@ jobs:
         timeout: 15m
   serial: true
 
+#@ if data.values.stemcell_details.test_ipv6:
 - name: test-stemcells-ipv6
   plan:
   - do:
@@ -636,6 +637,7 @@ jobs:
         attempts: 3
         timeout: 15m
   serial: true
+#@ end
 
 #@ for iaas in data.values.stemcell_details.include_iaas:
 - #@ build_stemcell(iaas.iaas, iaas.hypervisor)
