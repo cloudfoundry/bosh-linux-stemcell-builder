@@ -14,20 +14,20 @@ ami_kms_key_id=${ami_kms_key_id:-}
 ami_server_side_encryption=${ami_server_side_encryption:-}
 ami_excluded_destinations=${ami_excluded_destinations:-}
 
-: ${bosh_io_bucket_name:?}
-: ${ami_description:?}
-: ${ami_virtualization_type:?}
-: ${ami_visibility:?}
-: ${ami_region:?}
-: ${ami_access_key:?}
-: ${ami_secret_key:?}
-: ${ami_bucket_name:?}
-: ${ami_encrypted:?}
-: ${efi:?}
+: "${bosh_io_bucket_name:?}"
+: "${ami_description:?}"
+: "${ami_virtualization_type:?}"
+: "${ami_visibility:?}"
+: "${ami_region:?}"
+: "${ami_access_key:?}"
+: "${ami_secret_key:?}"
+: "${ami_bucket_name:?}"
+: "${ami_encrypted:?}"
+: "${efi:?}"
 
-export AWS_ACCESS_KEY_ID=$ami_access_key
-export AWS_SECRET_ACCESS_KEY=$ami_secret_key
-export AWS_DEFAULT_REGION=$ami_region
+export AWS_ACCESS_KEY_ID=${ami_access_key}
+export AWS_SECRET_ACCESS_KEY=${ami_secret_key}
+export AWS_DEFAULT_REGION=${ami_region}
 
 saved_ami_destinations="$( aws ec2 describe-regions \
   --query "Regions[?RegionName != '${ami_region}'][].RegionName" \
@@ -38,7 +38,7 @@ if [[ -n "${ami_excluded_destinations}" ]]; then
     | jq --argjson exclude "$ami_excluded_destinations" '. - $exclude' -c )"
 fi
 
-: ${ami_destinations:=$saved_ami_destinations}
+: "${ami_destinations:=$saved_ami_destinations}"
 
 stemcell_path=$(ls "${REPO_PARENT}"/input-stemcell/*.tgz)
 version=$(cat "${REPO_PARENT}/input-stemcell/.resource/version")
@@ -55,14 +55,11 @@ if [ "${ami_virtualization_type}" = "hvm" ]; then
 fi
 
 bosh_io_light_stemcell_url="https://$S3_API_ENDPOINT/$bosh_io_bucket_name/$version/$light_stemcell_name"
-set +e
-wget --spider "$bosh_io_light_stemcell_url"
-if [[ "$?" == "0" ]]; then
+if wget --spider "$bosh_io_light_stemcell_url"; then
   echo "AWS light stemcell '$light_stemcell_name' already exists!"
   echo "You can download here: $bosh_io_light_stemcell_url"
   exit 1
 fi
-set -e
 
 echo "Building light stemcell..."
 echo "  Starting region: ${ami_region}"
@@ -70,40 +67,40 @@ echo "  Copy regions: ${ami_destinations}"
 
 export CONFIG_PATH="${REPO_PARENT}/config.json"
 
-cat > $CONFIG_PATH << EOF
+cat > "${CONFIG_PATH}" << EOF
 {
   "ami_configuration": {
-    "description":          "$ami_description",
-    "virtualization_type":  "$ami_virtualization_type",
-    "encrypted":            $ami_encrypted,
-    "kms_key_id":           "$ami_kms_key_id",
-    "visibility":           "$ami_visibility",
+    "description":          "${ami_description}",
+    "virtualization_type":  "${ami_virtualization_type}",
+    "encrypted":            ${ami_encrypted},
+    "kms_key_id":           "${ami_kms_key_id}",
+    "visibility":           "${ami_visibility}",
     "efi":                  ${efi}
   },
   "ami_regions": [
     {
-      "name":               "$ami_region",
+      "name":               "${ami_region}",
       "credentials": {
-        "access_key":       "$ami_access_key",
-        "secret_key":       "$ami_secret_key"
+        "access_key":       "${ami_access_key}",
+        "secret_key":       "${ami_secret_key}"
       },
-      "bucket_name":        "$ami_bucket_name",
-      "server_side_encryption": "$ami_server_side_encryption",
-      "destinations":       $ami_destinations
+      "bucket_name":        "${ami_bucket_name}",
+      "server_side_encryption": "${ami_server_side_encryption}",
+      "destinations":       ${ami_destinations}
     }
   ]
 }
 EOF
 
 extracted_stemcell_dir="${REPO_PARENT}/extracted-stemcell"
-mkdir -p ${extracted_stemcell_dir}
-tar -C ${extracted_stemcell_dir} -xf ${stemcell_path}
-tar -xf ${extracted_stemcell_dir}/image
+mkdir -p "${extracted_stemcell_dir}"
+tar -C "${extracted_stemcell_dir}" -xf "${stemcell_path}"
+tar -xf "${extracted_stemcell_dir}"/image
 
 # image format can be raw or stream optimized vmdk
 stemcell_image="$(echo "${REPO_PARENT}"/root.*)"
 stemcell_manifest=${extracted_stemcell_dir}/stemcell.MF
-manifest_contents="$(cat ${stemcell_manifest})"
+manifest_contents="$(cat "${stemcell_manifest}")"
 
 disk_regex="disk: ([0-9]+)"
 format_regex="disk_format: ([a-z]+)"
@@ -120,23 +117,22 @@ disk_size_gb=$(mb_to_gb "${BASH_REMATCH[1]}")
 [[ "${manifest_contents}" =~ ${format_regex} ]]
 disk_format="${BASH_REMATCH[1]}"
 
-pushd "${REPO_PARENT}/builder-src" > /dev/null
-  # Make sure we've closed the manifest file before writing to it
-  go run main.go \
-    -c $CONFIG_PATH \
-    --image ${stemcell_image} \
-    --format ${disk_format} \
-    --volume-size ${disk_size_gb} \
-    --manifest ${stemcell_manifest} \
-    | tee tmp-manifest
+# Make sure we've closed the manifest file before writing to it
+# see https://github.com/cloudfoundry/bosh-aws-light-stemcell-builder/blob/master/ci/docker/Dockerfile#L30
+light-stemcell-builder \
+  -c "${CONFIG_PATH}" \
+  --image "${stemcell_image}" \
+  --format "${disk_format}" \
+  --volume-size "${disk_size_gb}" \
+  --manifest "${stemcell_manifest}" \
+  | tee tmp-manifest
 
-  mv tmp-manifest ${stemcell_manifest}
+mv tmp-manifest "${stemcell_manifest}"
 
-popd
-
-pushd ${extracted_stemcell_dir}
-  > image
+pushd "${extracted_stemcell_dir}"
+  : > image
   # the bosh cli sees the stemcell as invalid if tar contents have leading ./
+  # shellcheck disable=SC2035
   tar -czf "${REPO_PARENT}/light-stemcell/${light_stemcell_name}" *
 popd
 

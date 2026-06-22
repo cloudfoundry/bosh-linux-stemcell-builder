@@ -13,6 +13,6 @@ fi
 source "${REPO_PARENT}/director-state/director.env"
 
 pushd "${REPO_PARENT}/stemcell"
-  time bosh -n upload-stemcell *.tgz
+  time bosh -n upload-stemcell ./*.tgz
 popd
 

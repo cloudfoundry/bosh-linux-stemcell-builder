@@ -8,7 +8,7 @@
    git switch -c ubuntu-${short_name} {commit}
    ```
 
-2. Update `ci/pipelines/vars.yml` with the appropriate values
+2. Update `ci/pipeline-vars.yml` with the appropriate values
 
     ```yaml
     #@data/values
