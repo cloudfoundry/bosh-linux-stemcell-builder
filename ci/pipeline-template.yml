@@ -160,33 +160,22 @@ params:
 groups:
 - name: build
   jobs:
-  - build-stemcell
-  - test-unit
-  - build-os-image
-  #@ for iaas in data.values.stemcell_details.include_iaas:
-  - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)
-  #@ end
-  #@ for iaas in data.values.stemcell_details.include_fips_iaas:
-  - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
-  #@ end
   - bats
-  - test-stemcells-ipv4
-  - test-stemcells-ipv6
+  - build-*
+  - test-unit
+  - test-stemcells-*
   - aggregate-candidate-stemcells
 - name: publish
   jobs:
-    - build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
-    - build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
-    - publish-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+    - create-light-*
+    - publish-*
 
 - name: auto-bumps
   jobs:
   - bump-deps
   - bump-golang-deps
   - bump-bosh-agent
-  #@ for blobstore_type in data.values.blobstore_types:
-  - bump-bosh-blobstore-(@= blobstore_type @)
-  #@ end
+  - bump-bosh-blobstore-*
 
 - name: automatic-triggers
   jobs:
@@ -194,12 +183,13 @@ groups:
   - check-usn-packages-are-available
   - log-low-medium-cves
   - notify-of-usn
+
 - name: infrastructure-tending
   jobs:
   - build-os-image-stemcell-builder
   - ensure-integration-network
-  - cleanup-published-aws-light-stemcells-older-than-three-years
-  - cleanup-unpublished-(@= data.values.stemcell_details.os_name @)-aws-light-stemcells
+  - cleanup-published-*
+  - cleanup-unpublished-*
 
 #@yaml/text-templated-strings
 jobs:
@@ -1015,7 +1005,8 @@ jobs:
     - #@ cleanup_unpublished_light_stemcells("us-gov")
       #!- #@ cleanup_unpublished_light_stemcells("cn")
 
-- name: build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+- name: create-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+  old_name: build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   plan:
     - get: bosh-stemcells-ci
     - get: aws-light-stemcell-builder-registry-image
@@ -1104,7 +1095,8 @@ jobs:
         version: us-input-stemcell/.resource/version
   serial: true
 
-- name: build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+- name: create-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+  old_name: build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   plan:
     - in_parallel:
         - get: stemcell
@@ -1205,23 +1197,23 @@ jobs:
           params:
             skip_download: true
           passed:
-            - build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
-            - build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+            - create-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+            - create-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
           resource: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
         - get: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
           passed:
-            - build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
-            - build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+            - create-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+            - create-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
         #@ if len(data.values.stemcell_details.include_fips_iaas) > 0:
         - get: candidate-(@= data.values.stemcell_details.os_name @)-fips-stemcell-(@= str(data.values.stemcell_details.major_version) @)
         #@ end
         - get: candidate-google-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
           passed:
-            - build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+            - create-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
         - get: candidate-aws-light-stemcell
           resource: candidate-aws-light-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
           passed:
-            - build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
+            - create-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
     - file: bosh-stemcells-ci/ci/tasks/build-release-metadata.yml
       image: os-image-stemcell-builder-registry-image
       task: build-release-metadata
