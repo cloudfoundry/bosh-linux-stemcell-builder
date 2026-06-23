@@ -1006,7 +1006,6 @@ jobs:
       #!- #@ cleanup_unpublished_light_stemcells("cn")
 
 - name: create-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
-  old_name: build-light-aws-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   plan:
     - get: bosh-stemcells-ci
     - get: aws-light-stemcell-builder-registry-image
@@ -1096,7 +1095,6 @@ jobs:
   serial: true
 
 - name: create-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
-  old_name: build-light-google-(@= data.values.stemcell_details.os_name @)-(@= str(data.values.stemcell_details.major_version) @)
   plan:
     - in_parallel:
         - get: stemcell
