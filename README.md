@@ -53,6 +53,9 @@ bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubu
 
  # build warden (BOSH Lite) stemcell
 bundle exec rake stemcell:build[warden,warden,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
+
+ # build warden rosetta stemcell (Apple Silicon / Colima / Lima)
+bundle exec rake stemcell:build[warden,warden,ubuntu,${short_name}-rosetta,${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
 ```
 
 When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
