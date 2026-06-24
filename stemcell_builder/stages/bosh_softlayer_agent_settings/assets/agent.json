@@ -4,8 +4,7 @@
       "PartitionerType": "parted",
       "CreatePartitionIfNoEphemeralDisk": true,
       "ScrubEphemeralDisk": true,
-      "DevicePathResolutionType": "iscsi",
-      "UseMonitIptablesFirewall": true
+      "DevicePathResolutionType": "iscsi"
     }
   },
   "Infrastructure": {
