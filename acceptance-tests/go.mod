@@ -3,9 +3,9 @@ module github.com/cloudfoundry/bosh-linux-stemcell-builder/acceptance-tests
 go 1.25.0
 
 require (
-	github.com/cloudfoundry/bosh-utils v0.0.622
-	github.com/onsi/ginkgo/v2 v2.30.0
-	github.com/onsi/gomega v1.42.0
+	github.com/cloudfoundry/bosh-utils v0.0.623
+	github.com/onsi/ginkgo/v2 v2.31.0
+	github.com/onsi/gomega v1.42.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
