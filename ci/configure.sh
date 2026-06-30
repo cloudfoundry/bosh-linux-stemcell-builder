@@ -27,7 +27,7 @@ rendered_template="$(ytt -f "${pipelines_dir}/${pipeline_template}" -f "${pipeli
 echo ""
 
 echo "Validating..."
-fly validate-pipeline --strict --config <(echo "${rendered_template}")
+"${fly}" validate-pipeline --strict --config <(echo "${rendered_template}")
 echo ""
 
 echo "Configuring..."
