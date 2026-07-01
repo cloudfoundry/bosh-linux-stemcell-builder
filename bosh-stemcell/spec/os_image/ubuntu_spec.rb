@@ -566,5 +566,10 @@ describe "Ubuntu 22.04 OS image", os_image: true do
     describe file("/var/vcap/bosh/rustup") do
       it { should be_directory }
     end
+
+    describe command("/var/vcap/bosh/bin/rustc --version") do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/^rustc \d+\.\d+\.\d+/) }
+    end
   end
 end

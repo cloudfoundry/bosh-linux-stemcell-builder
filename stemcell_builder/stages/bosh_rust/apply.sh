@@ -12,7 +12,7 @@ rustup_installer=$(mktemp "${chroot}/tmp/rustup-init.XXXXXX")
 curl_five_times "${rustup_installer}" "https://sh.rustup.rs"
 
 run_in_chroot "${chroot}" "$(cat <<SCRIPT
-  installer=\$(basename ${rustup_installer#${chroot}})
+  installer=\$(basename ${rustup_installer})
   chmod +x "/tmp/\${installer}"
   RUSTUP_HOME=/var/vcap/bosh/rustup \\
   CARGO_HOME=/var/vcap/bosh/cargo \\
