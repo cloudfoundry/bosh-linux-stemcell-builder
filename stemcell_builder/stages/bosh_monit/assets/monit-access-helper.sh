@@ -29,7 +29,7 @@ permit_monit_access() {
         # cgroupv2 (unified hierarchy)
         # Create a sub-cgroup under the current process's cgroup and move into it.
         # The iptables rules match on this cgroup path.
-        cgroup_mount="$(awk '$3 == "cgroup2" { print $2 }' /proc/self/mounts)"
+        cgroup_mount="$(awk '$3 == "cgroup2" { print $2; exit }' /proc/self/mounts)"
         current_cgroup="$(grep '^0::' /proc/self/cgroup | cut -d: -f3)"
         if [ -z "${cgroup_mount}" ] || [ -z "${current_cgroup}" ]; then
             echo "permit_monit_access: unable to resolve cgroup v2 mount or path" >&2
