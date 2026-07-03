@@ -1,4 +1,4 @@
-## Backporting
+# Backporting
 
 To backport this change to other stemcell branches, add one or more labels
 before merging and the workflow will open cherry-pick PRs automatically:
