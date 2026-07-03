@@ -75,7 +75,7 @@ jobs:
           fi
 
       - name: Cherry-pick onto target branch
-        if: steps.check.outputs.exists == 'false'
+        if: steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only'
         id: cherrypick
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -84,15 +84,35 @@ jobs:
           BRANCH:    ${{ steps.check.outputs.branch }}
           MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           BASE_SHA:  ${{ github.event.pull_request.base.sha }}
+          EXISTS:    ${{ steps.check.outputs.exists }}
         run: |
+          # Recovery path: branch was pushed but PR creation failed on a previous
+          # run. Inspect the tip commit to determine conflict state and skip the
+          # cherry-pick entirely — the branch content is already correct.
+          if [ "$EXISTS" = "branch_only" ]; then
+            git fetch origin "$BRANCH"
+            last_msg=$(git log -1 --pretty=%B "origin/$BRANCH")
+            if printf '%s' "$last_msg" | grep -q '^backport: conflict on '; then
+              failed_sha=$(printf '%s' "$last_msg" | sed -n 's/^backport: conflict on \([0-9a-f]*\).*/\1/p')
+              echo "conflict=true"     >> "$GITHUB_OUTPUT"
+              echo "failed_sha=$failed_sha" >> "$GITHUB_OUTPUT"
+            else
+              echo "conflict=false"    >> "$GITHUB_OUTPUT"
+              echo "failed_sha="       >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+
           git fetch origin "$TARGET"
           git checkout -b "$BRANCH" "origin/$TARGET"
 
-          # Detect squash vs merge commit by parent count
+          # Detect squash vs merge commit by parent count.
+          # For merge commits use --no-merges to exclude the merge commit itself
+          # from the list — cherry-picking a merge commit without -m fails.
           parent_count=$(git log --pretty=format:'%P' -n 1 "$MERGE_SHA" | wc -w | tr -d ' ')
 
           if [ "$parent_count" -gt 1 ]; then
-            mapfile -t commits < <(git log --reverse --pretty=format:'%H' "$BASE_SHA..$MERGE_SHA")
+            mapfile -t commits < <(git log --reverse --no-merges --pretty=format:'%H' "$BASE_SHA..$MERGE_SHA")
           else
             commits=("$MERGE_SHA")
           fi
