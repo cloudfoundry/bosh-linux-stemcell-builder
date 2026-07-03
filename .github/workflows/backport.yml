@@ -4,9 +4,13 @@ on:
   pull_request:
     types: [closed]
 
-permissions:
-  contents: write
-  pull-requests: write
+# Serialize runs for the same PR to prevent branch-push races on re-runs
+concurrency:
+  group: backport-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+# Default: no permissions; write access is granted only to the backport job
+permissions: {}
 
 jobs:
   build-matrix:
@@ -28,6 +32,10 @@ jobs:
     needs: build-matrix
     if: needs.build-matrix.outputs.targets != '' && needs.build-matrix.outputs.targets != '[]'
     runs-on: ubuntu-latest
+    # Scoped to only the job that pushes branches and opens PRs
+    permissions:
+      contents: write
+      pull-requests: write
     strategy:
       fail-fast: false
       matrix:
@@ -43,16 +51,28 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Check if backport branch already exists
+      - name: Check if backport branch or PR already exists
         id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          TARGET: ${{ matrix.target }}
         run: |
-          branch="backport/${{ github.event.pull_request.number }}-to-${{ matrix.target }}"
+          branch="backport/${PR_NUMBER}-to-${TARGET}"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
           if git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
+            # Branch exists — check whether a PR was also successfully created
+            pr_state=$(gh pr list --head "$branch" --state all --json state --jq '.[0].state // "NONE"')
+            if [ "$pr_state" = "NONE" ]; then
+              # Branch pushed but PR creation failed — proceed to open the PR
+              echo "exists=branch_only" >> "$GITHUB_OUTPUT"
+            else
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+            fi
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
-          echo "branch=$branch" >> "$GITHUB_OUTPUT"
 
       - name: Cherry-pick onto target branch
         if: steps.check.outputs.exists == 'false'
@@ -100,7 +120,9 @@ jobs:
           echo "failed_sha=$failed_sha" >> "$GITHUB_OUTPUT"
 
       - name: Open backport PR (clean)
-        if: steps.check.outputs.exists == 'false' && steps.cherrypick.outputs.conflict == 'false'
+        if: >
+          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
+          steps.cherrypick.outputs.conflict == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -122,7 +144,9 @@ jobs:
           rm -f "$body_file"
 
       - name: Open backport PR (conflict — draft)
-        if: steps.check.outputs.exists == 'false' && steps.cherrypick.outputs.conflict == 'true'
+        if: >
+          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
+          steps.cherrypick.outputs.conflict == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -145,7 +169,9 @@ jobs:
 
           rm -f "$body_file"
 
-      - name: Skip (branch already exists)
+      - name: Skip (backport PR already exists)
         if: steps.check.outputs.exists == 'true'
+        env:
+          BRANCH: ${{ steps.check.outputs.branch }}
         run: |
-          echo "Backport branch ${{ steps.check.outputs.branch }} already exists — skipping."
+          echo "Backport branch ${BRANCH} already exists with a PR — skipping."
