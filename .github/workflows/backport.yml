@@ -1,0 +1,151 @@
+name: Backport
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build-matrix:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.labels.outputs.targets }}
+    steps:
+      - id: labels
+        name: Extract backport targets from labels
+        env:
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          targets='[]'
+          targets=$(echo "$LABELS" | jq -c '[.[] | select(startswith("backport/")) | ltrimstr("backport/")]' || echo '[]')
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+
+  backport:
+    needs: build-matrix
+    if: needs.build-matrix.outputs.targets != '' && needs.build-matrix.outputs.targets != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJson(needs.build-matrix.outputs.targets) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if backport branch already exists
+        id: check
+        run: |
+          branch="backport/${{ github.event.pull_request.number }}-to-${{ matrix.target }}"
+          if git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+      - name: Cherry-pick onto target branch
+        if: steps.check.outputs.exists == 'false'
+        id: cherrypick
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE:  ${{ github.event.pull_request.title }}
+          TARGET:    ${{ matrix.target }}
+          BRANCH:    ${{ steps.check.outputs.branch }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          BASE_SHA:  ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch origin "$TARGET"
+          git checkout -b "$BRANCH" "origin/$TARGET"
+
+          # Detect squash vs merge commit by parent count
+          parent_count=$(git log --pretty=format:'%P' -n 1 "$MERGE_SHA" | wc -w | tr -d ' ')
+
+          if [ "$parent_count" -gt 1 ]; then
+            mapfile -t commits < <(git log --reverse --pretty=format:'%H' "$BASE_SHA..$MERGE_SHA")
+          else
+            commits=("$MERGE_SHA")
+          fi
+
+          if [ "${#commits[@]}" -eq 0 ]; then
+            echo "No commits to cherry-pick for PR #$PR_NUMBER onto $TARGET — skipping."
+            exit 0
+          fi
+
+          conflict=false
+          failed_sha=""
+          for sha in "${commits[@]}"; do
+            if ! git cherry-pick "$sha"; then
+              git cherry-pick --abort
+              conflict=true
+              failed_sha="$sha"
+              # Add a placeholder commit so the branch has content for the draft PR
+              git commit --allow-empty -m "backport: conflict on $sha — resolve manually"
+              break
+            fi
+          done
+
+          git push origin "$BRANCH"
+          echo "conflict=$conflict" >> "$GITHUB_OUTPUT"
+          echo "failed_sha=$failed_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Open backport PR (clean)
+        if: steps.check.outputs.exists == 'false' && steps.cherrypick.outputs.conflict == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE:  ${{ github.event.pull_request.title }}
+          PR_URL:    ${{ github.event.pull_request.html_url }}
+          TARGET:    ${{ matrix.target }}
+          BRANCH:    ${{ steps.check.outputs.branch }}
+        run: |
+          body_file=$(mktemp)
+          printf 'Automated backport of #%s to `%s`.\n\nOriginal PR: %s\n' \
+            "$PR_NUMBER" "$TARGET" "$PR_URL" > "$body_file"
+
+          gh pr create \
+            --title "[Backport $TARGET] $PR_TITLE" \
+            --body-file "$body_file" \
+            --base "$TARGET" \
+            --head "$BRANCH"
+
+          rm -f "$body_file"
+
+      - name: Open backport PR (conflict — draft)
+        if: steps.check.outputs.exists == 'false' && steps.cherrypick.outputs.conflict == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE:  ${{ github.event.pull_request.title }}
+          PR_URL:    ${{ github.event.pull_request.html_url }}
+          TARGET:    ${{ matrix.target }}
+          BRANCH:    ${{ steps.check.outputs.branch }}
+          FAILED_SHA: ${{ steps.cherrypick.outputs.failed_sha }}
+        run: |
+          body_file=$(mktemp)
+          printf 'Automated backport of #%s to `%s`.\n\nOriginal PR: %s\n\n> [!WARNING]\n> **This backport has conflicts.** The cherry-pick of commit `%s` could not be applied cleanly.\n> Check out the branch `%s`, resolve the conflicts, and mark this PR as ready for review.\n' \
+            "$PR_NUMBER" "$TARGET" "$PR_URL" "$FAILED_SHA" "$BRANCH" > "$body_file"
+
+          gh pr create \
+            --title "[Backport $TARGET] $PR_TITLE" \
+            --body-file "$body_file" \
+            --base "$TARGET" \
+            --head "$BRANCH" \
+            --draft
+
+          rm -f "$body_file"
+
+      - name: Skip (branch already exists)
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          echo "Backport branch ${{ steps.check.outputs.branch }} already exists — skipping."
