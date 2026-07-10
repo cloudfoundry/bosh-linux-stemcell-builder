@@ -409,16 +409,16 @@ jobs:
         task-output-folder: updated-usn-log
 
 - name: build-os-image
+  serial: true
   plan:
   - put: build-time
   - get: bosh-stemcells-ci
   - get: os-image-stemcell-builder-registry-image
   - get: bosh-linux-stemcell-builder
     trigger: true
-  - get: version
+  - get: os-image-version
     params:
       bump: "major"
-    resource: os-image-version
   - get: usn-log
   - get: stemcell-trigger
     trigger: true
@@ -442,10 +442,10 @@ jobs:
         author_email: (@= data.values.stemcell_details.bot_email @)
         author_name: (@= data.values.stemcell_details.bot_name @)
         message: 'Bump os-image tgz'
-      version: version/version
+      version: os-image-version/version
   - put: os-image-version
     params:
-      file: version/number
+      file: os-image-version/number
 
 - name: test-unit
   plan:
@@ -1658,18 +1658,20 @@ resources:
 - name: version
   type: semver
   source:
-    json_key: ((gcp_json_key))
-    bucket: bosh-core-stemcells-candidate
-    driver: gcs
-    key: bosh-stemcell/(@= data.values.stemcell_details.branch @)/1.x/1.x-version
+    driver: git
+    uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+    branch: release-details
+    file: (@= data.values.stemcell_details.branch @)/release-version
+    private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
 
 - name: os-image-version
   type: semver
   source:
-    json_key: ((gcp_json_key))
-    bucket: bosh-core-stemcells-candidate
-    driver: gcs
-    key: os-image/(@= data.values.stemcell_details.branch @)/1.x/1.x-version
+    driver: git
+    uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+    branch: release-details
+    file: (@= data.values.stemcell_details.branch @)/os-image-version
+    private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
 
 - name: bosh-linux-stemcell-builder-push
   type: git
