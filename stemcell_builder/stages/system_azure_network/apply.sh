@@ -10,12 +10,7 @@ rm -fr $chroot/etc/udev/rules.d/70-persistent-net.rules
 
 # Context on the need to replace the hostname is here:
 # https://github.com/cloudfoundry/bosh/issues/1399
-echo -n "bosh-stemcell" > $chroot/etc/hostname
-
-cat >> $chroot/etc/network/interfaces <<EOS
-auto eth0
-iface eth0 inet dhcp
-EOS
+echo -n "bosh-stemcell" >$chroot/etc/hostname
 
 # The port 65330 is unusable on Azure
 cp $dir/assets/90-azure-sysctl.conf $chroot/etc/sysctl.d
