@@ -20,6 +20,7 @@ shared_examples_for "a systemd-based OS image" do
     describe file("/etc/systemd/journald.conf.d/00-override.conf") do
       it { should be_file }
       its(:content) { should match(/^Storage=volatile/) }
+      its(:content) { should match(/^ForwardToSyslog=yes/) }
     end
 
     describe file("/etc/systemd/system/rsyslog.service.d/00-override.conf") do
