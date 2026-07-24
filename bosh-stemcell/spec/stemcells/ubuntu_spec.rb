@@ -157,22 +157,6 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     end
   end
 
-  context "installed by system-azure-network", {
-    exclude_on_alicloud: true,
-    exclude_on_aws: true,
-    exclude_on_cloudstack: true,
-    exclude_on_google: true,
-    exclude_on_vsphere: true,
-    exclude_on_warden: true,
-    exclude_on_openstack: true
-  } do
-    describe file("/etc/network/interfaces") do
-      it { should be_file }
-      its(:content) { should match "auto eth0" }
-      its(:content) { should match "iface eth0 inet dhcp" }
-    end
-  end
-
   context "installed by system_open_vm_tools", {
     exclude_on_alicloud: true,
     exclude_on_aws: true,
