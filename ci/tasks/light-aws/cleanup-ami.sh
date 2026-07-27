@@ -30,6 +30,28 @@ if [ -n "${ami_role_arn:-}" ]; then
   export AWS_PROFILE=resource_account
 fi
 
+# Every stemcell pipeline runs the published sweep against the same account, so two
+# pipelines can select the same AMI before either has deleted it. This handles
+# expected potential errors that could occur on a collision.
+run_tolerating_missing() {
+  local output
+  if output="$("$@" 2>&1)"; then
+    [ -n "${output}" ] && printf "%s\n" "${output}"
+    return 0
+  fi
+
+  case "${output}" in
+    *InvalidAMIID.Unavailable*|*InvalidAMIID.NotFound*|*InvalidSnapshot.NotFound*|*InvalidSnapshot.InUse*)
+      echo "    already deleted by another run, skipping"
+      return 0
+      ;;
+    *)
+      printf "%s\n" "${output}" >&2
+      return 1
+      ;;
+  esac
+}
+
 past_due=$(date --date="${ami_older_than_days} days ago" +"%Y-%m-%d")
 # shellcheck disable=SC2016
 past_due_query='sort_by(Images,&CreationDate)[?CreationDate<`'"${past_due}"'`].{ImageId: ImageId, date:CreationDate, SnapshotId: BlockDeviceMappings[0].Ebs.SnapshotId,Version: Tags[?Key==`name`]|[0].Value}'
@@ -73,8 +95,12 @@ for region in ${ami_destinations}; do
     Snapshot id:   $(_jq '.SnapshotId')
     "
 
-    aws ec2 deregister-image \
+    run_tolerating_missing aws ec2 deregister-image \
       --image-id "$(_jq '.ImageId')" \
+      --region "${region}"
+
+    run_tolerating_missing aws ec2 delete-snapshot \
+      --snapshot-id "$(_jq '.SnapshotId')" \
       --region "${region}"
   done
 done
