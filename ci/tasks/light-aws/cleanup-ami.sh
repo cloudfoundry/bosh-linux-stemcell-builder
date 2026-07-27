@@ -59,16 +59,6 @@ for region in ${ami_destinations}; do
     ami_list=$(jq -s '.[0] + .[1]' <(echo "${ami_list}") <(echo "${results}"))
   fi
 
-  if [ -n "${snapshot_id:-}" ]; then
-    results=$(aws ec2 describe-images \
-            --owners self \
-            --output json \
-            --region "${region}" \
-            --filters "Name=block-device-mapping.snapshot-id,Values=${snapshot_id}" \
-            --query "${past_due_query}" | jq 'reverse | del(.[range(env.ami_keep_latest|tonumber)])')
-    ami_list=$(jq -s '.[0] + .[1]' <(echo "${ami_list}") <(echo "${results}"))
-  fi
-
   # 'ami_list' is a json array of objects, each object is an ami and its snapshot
   for row in $(echo "${ami_list}" | jq -r '.[] | @base64'); do
     _jq() {
@@ -86,11 +76,5 @@ for region in ${ami_destinations}; do
     aws ec2 deregister-image \
       --image-id "$(_jq '.ImageId')" \
       --region "${region}"
-
-    if [ "${snapshot_id:-}" != "$(_jq '.SnapshotId')" ]; then
-      aws ec2 delete-snapshot \
-        --snapshot-id "$(_jq '.SnapshotId')" \
-        --region "${region}"
-    fi
   done
 done
