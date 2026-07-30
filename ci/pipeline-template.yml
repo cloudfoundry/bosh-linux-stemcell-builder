@@ -1473,6 +1473,8 @@ resources:
     vars:
       gce_credentials_json: ((gcp_json_key))
       gce_project_id: ((gcp_project_id))
+      gce_region: europe-north2
+      gce_zone: europe-north2-a
   type: terraform_type
 
 - name: base-oss-google-ubuntu-stemcell
