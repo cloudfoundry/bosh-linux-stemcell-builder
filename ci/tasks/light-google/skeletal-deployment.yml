@@ -19,7 +19,7 @@ resource_pools:
   stemcell:
     url: file://assets/stemcell.tgz
   cloud_properties:
-    machine_type: n1-standard-2
+    machine_type: e2-standard-2
     root_disk_type: pd-standard
     zone: ((gce_zone))
     tags:
