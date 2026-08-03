@@ -38,8 +38,8 @@ echo "source /etc/profile.d/00-bosh-ps1" >> $chroot/home/vcap/.bashrc
 echo "source /etc/profile.d/00-bosh-ps1" >> $chroot/etc/skel/.bashrc
 
 # configure idle session shell timeout
-cat << 'EOF' > $chroot/etc/profile.d/01-tmout.sh
+cat << 'EOF' > "$chroot/etc/profile.d/01-tmout.sh"
 readonly TMOUT=900
 export TMOUT
 EOF
-chmod 0644 $chroot/etc/profile.d/01-tmout.sh
+chmod 0644 "$chroot/etc/profile.d/01-tmout.sh"

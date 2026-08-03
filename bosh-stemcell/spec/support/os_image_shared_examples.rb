@@ -74,6 +74,8 @@ shared_examples_for "every OS image" do
     describe file("/etc/profile.d/01-tmout.sh") do
       it { should be_file }
       it { should be_mode(0o644) }
+      it { should be_owned_by("root") }
+      its(:group) { should eq("root") }
       its(:content) { should match(/^readonly TMOUT=900$/) }
       its(:content) { should match(/^export TMOUT$/) }
     end
@@ -239,7 +241,7 @@ shared_examples_for "every OS image" do
     end
 
     it "sets MaxStartups to 10:30:60" do
-      expect(sshd_config.content).to match(/^MaxStartups 10:30:60$/)
+      expect(sshd_config.content.scan(/^[ \t]*MaxStartups\s+\S+$/)).to contain_exactly("MaxStartups 10:30:60")
     end
 
     it "sets PermitEmptyPasswords to no (stig: V-38614)" do
