@@ -26,6 +26,8 @@ shared_examples_for "every OS image" do
       it { should be_file }
       its(:content) { should match(/%bosh_sudoers ALL=\(ALL\) NOPASSWD: ALL/m) }
       its(:content) { should match "#includedir /etc/sudoers.d" }
+      its(:content) { should match(/^Defaults\s+use_pty$/) }
+      its(:content) { should match(%r{^Defaults\s+logfile=/var/log/sudo\.log$}) }
     end
   end
 
@@ -67,6 +69,13 @@ shared_examples_for "every OS image" do
 
     describe file("/etc/profile.d/00-bosh-ps1") do
       it { should be_file }
+    end
+
+    describe file("/etc/profile.d/01-tmout.sh") do
+      it { should be_file }
+      it { should be_mode(0o644) }
+      its(:content) { should match(/^readonly TMOUT=900$/) }
+      its(:content) { should match(/^export TMOUT$/) }
     end
 
     describe command("grep -q .bashrc /root/.profile") do
@@ -227,6 +236,10 @@ shared_examples_for "every OS image" do
 
     it "sets MaxAuthTries to 3" do
       expect(sshd_config.content).to match(/^MaxAuthTries 3$/)
+    end
+
+    it "sets MaxStartups to 10:30:100" do
+      expect(sshd_config.content).to match(/^MaxStartups 10:30:100$/)
     end
 
     it "sets PermitEmptyPasswords to no (stig: V-38614)" do

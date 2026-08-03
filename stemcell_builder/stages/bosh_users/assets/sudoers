@@ -4,6 +4,8 @@
 # Defaults
 
 Defaults        !lecture,tty_tickets,!fqdn
+Defaults        use_pty
+Defaults        logfile=/var/log/sudo.log
 
 # Uncomment to allow members of group sudo to not need a password
 # %sudo ALL=NOPASSWD: ALL
