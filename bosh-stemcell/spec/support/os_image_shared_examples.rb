@@ -238,8 +238,8 @@ shared_examples_for "every OS image" do
       expect(sshd_config.content).to match(/^MaxAuthTries 3$/)
     end
 
-    it "sets MaxStartups to 10:30:100" do
-      expect(sshd_config.content).to match(/^MaxStartups 10:30:100$/)
+    it "sets MaxStartups to 10:30:60" do
+      expect(sshd_config.content).to match(/^MaxStartups 10:30:60$/)
     end
 
     it "sets PermitEmptyPasswords to no (stig: V-38614)" do

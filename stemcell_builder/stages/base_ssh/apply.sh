@@ -25,7 +25,7 @@ sed "/^ *MaxAuthTries/d" -i $chroot/etc/ssh/sshd_config
 echo 'MaxAuthTries 3' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *MaxStartups/d" -i $chroot/etc/ssh/sshd_config
-echo 'MaxStartups 10:30:100' >> $chroot/etc/ssh/sshd_config
+echo 'MaxStartups 10:30:60' >> $chroot/etc/ssh/sshd_config
 
 sed "/^ *PermitEmptyPasswords/d" -i $chroot/etc/ssh/sshd_config
 echo 'PermitEmptyPasswords no' >> $chroot/etc/ssh/sshd_config
