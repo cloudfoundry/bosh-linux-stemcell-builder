@@ -46,5 +46,7 @@ instance_groups:
     release: bpm
   - name: syslog_forwarder
     release: syslog
+    properties:
+      use_bpm: true
     consumes:
       syslog_storer: { from: syslog_storer }
