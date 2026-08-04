@@ -32,6 +32,7 @@ instance_groups:
   - name: syslog_forwarder
     release: syslog
     properties:
+      use_bpm: true
       syslog:
         address: 127.0.0.1
         port: 5123
