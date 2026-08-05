@@ -16,16 +16,22 @@ else
     cgroup_match="--cgroup ${monit_isolation_classid}"
 fi
 
-# Idempotently ensure both iptables rules exist.
-# The ACCEPT rule must be checked/inserted first so it appears above the DROP rule in the chain.
+# Idempotently ensure both iptables rules exist, in the order they must be evaluated. The
+# ESTABLISHED,RELATED ACCEPT has to come BEFORE the cgroup DROP: when a monit client dies
+# abruptly the kernel emits an RST on its behalf which carries no cgroup, so the DROP
+# matches it. If that RST is dropped, monit never learns the connection is dead and is left
+# stuck in LAST-ACK retransmitting -- see d38d7ae39, which added the ACCEPT for this reason.
+#
+# Append (-A), not insert (-I): -I puts a rule at the HEAD, so inserting these in reading
+# order would leave the DROP on top and the ACCEPT unreachable.
 if ! iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
         -m state --state ESTABLISHED,RELATED -j ACCEPT 2>/dev/null; then
-    iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+    iptables -t mangle -A POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
         -m state --state ESTABLISHED,RELATED -j ACCEPT
 fi
 
 if ! iptables -t mangle -C POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
         -m cgroup ! ${cgroup_match} -j DROP 2>/dev/null; then
-    iptables -t mangle -I POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
+    iptables -t mangle -A POSTROUTING -d 127.0.0.1 -p tcp --dport 2822 \
         -m cgroup ! ${cgroup_match} -j DROP
 fi
