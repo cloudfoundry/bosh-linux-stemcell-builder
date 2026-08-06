@@ -247,7 +247,7 @@ shared_examples_for "every OS image" do
     end
 
     it "sets MaxStartups to 10:30:60 (CIS-5.1.18)" do
-      expect(sshd_config.content.scan(/^[ \t]*MaxStartups\s+\S+$/)).to contain_exactly("MaxStartups 10:30:60")
+      expect(sshd_config.content.scan(/^[ \t]*MaxStartups\s+\S+$/).map(&:strip)).to contain_exactly("MaxStartups 10:30:60")
     end
 
     it "sets PermitEmptyPasswords to no (stig: V-38614)" do
