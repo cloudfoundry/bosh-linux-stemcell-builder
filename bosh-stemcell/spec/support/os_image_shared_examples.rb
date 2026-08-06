@@ -21,7 +21,7 @@ shared_examples_for "every OS image" do
     end
   end
 
-  context "installed by bosh_sudoers" do
+  context "installed by bosh_sudoers (CIS-5.2.2, CIS-5.2.3)" do
     describe file("/etc/sudoers") do
       it { should be_file }
       its(:content) { should match(/%bosh_sudoers ALL=\(ALL\) NOPASSWD: ALL/m) }
@@ -75,13 +75,15 @@ shared_examples_for "every OS image" do
       it { should be_file }
     end
 
-    describe file("/etc/profile.d/01-tmout.sh") do
-      it { should be_file }
-      it { should be_mode(0o644) }
-      it { should be_owned_by("root") }
-      its(:group) { should eq("root") }
-      its(:content) { should match(/^readonly TMOUT=900$/) }
-      its(:content) { should match(/^export TMOUT$/) }
+    context "idle session timeout (CIS-5.4.3.2)" do
+      describe file("/etc/profile.d/01-tmout.sh") do
+        it { should be_file }
+        it { should be_mode(0o644) }
+        it { should be_owned_by("root") }
+        its(:group) { should eq("root") }
+        its(:content) { should match(/^readonly TMOUT=900$/) }
+        its(:content) { should match(/^export TMOUT$/) }
+      end
     end
 
     describe command("grep -q .bashrc /root/.profile") do
@@ -244,7 +246,7 @@ shared_examples_for "every OS image" do
       expect(sshd_config.content).to match(/^MaxAuthTries 3$/)
     end
 
-    it "sets MaxStartups to 10:30:60" do
+    it "sets MaxStartups to 10:30:60 (CIS-5.1.18)" do
       expect(sshd_config.content.scan(/^[ \t]*MaxStartups\s+\S+$/)).to contain_exactly("MaxStartups 10:30:60")
     end
 

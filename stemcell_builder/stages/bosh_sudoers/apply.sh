@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
-# setup sudoers to use includedir, and make sure we don't break anything
+# enable sudoers.d drop-in support (used by CIS 5.2.2/5.2.3 hardening applied via bosh_users), and make sure we don't break anything
 cp -p "$chroot/etc/sudoers" "$chroot/etc/sudoers.save"
 grep -q '#includedir /etc/sudoers.d' "$chroot/etc/sudoers" || echo '#includedir /etc/sudoers.d' >> "$chroot/etc/sudoers"
 run_in_bosh_chroot $chroot "visudo -c"
