@@ -29,6 +29,10 @@ shared_examples_for "every OS image" do
       its(:content) { should match(/^Defaults\s+use_pty$/) }
       its(:content) { should match(%r{^Defaults\s+logfile=/var/log/sudo\.log$}) }
     end
+
+    describe command("egrep -sh '!use_pty' /etc/sudoers /etc/sudoers.d/* | egrep -v '^#' --") do
+      its(:stdout) { should eq("") }
+    end
   end
 
   context "effective GID for UID vcap" do

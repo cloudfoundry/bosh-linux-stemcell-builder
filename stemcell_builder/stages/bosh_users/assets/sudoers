@@ -24,3 +24,5 @@ root    ALL=(ALL) ALL
 
 # Members of bosh_sudoers do not require password to run sudo commands
 %bosh_sudoers ALL=(ALL) NOPASSWD: ALL
+
+#includedir /etc/sudoers.d
