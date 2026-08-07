@@ -458,7 +458,7 @@ shared_examples_for "every OS image" do
   end
 
   describe file("/etc/shadow") do
-    it("should be owned by root user (stig: V-38502)") { expect(subject.group).to eq("root") }
+    it("should be owned by root user (stig: V-38502)") { should be_owned_by("root") }
     it("should be owned by root group (stig: V-38503)") { expect(subject.group).to eq("root") }
     # V-38504 asks for mode 0000, which is not achievable on PAM >= 1.7: unix_chkpwd drops
     # CAP_DAC_OVERRIDE before reading /etc/shadow, so 0000 breaks `su` outright. 0400 still
