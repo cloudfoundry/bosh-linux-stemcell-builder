@@ -37,7 +37,7 @@ echo "source /etc/profile.d/00-bosh-ps1" >> $chroot/root/.bashrc
 echo "source /etc/profile.d/00-bosh-ps1" >> $chroot/home/vcap/.bashrc
 echo "source /etc/profile.d/00-bosh-ps1" >> $chroot/etc/skel/.bashrc
 
-# configure idle session shell timeout (CIS 5.4.3.2)
+# configure idle session shell timeout
 cat << 'EOF' > "$chroot/etc/profile.d/01-tmout.sh"
 readonly TMOUT=900
 export TMOUT

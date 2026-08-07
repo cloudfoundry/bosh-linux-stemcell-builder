@@ -4,9 +4,9 @@
 # Defaults
 
 Defaults        !lecture,tty_tickets,!fqdn
-# CIS 5.2.2
+# Run sudo commands in a dedicated pseudo-terminal
 Defaults        use_pty
-# CIS 5.2.3
+# Log sudo activity to a dedicated log file
 Defaults        logfile=/var/log/sudo.log
 
 # Uncomment to allow members of group sudo to not need a password
@@ -26,5 +26,3 @@ root    ALL=(ALL) ALL
 
 # Members of bosh_sudoers do not require password to run sudo commands
 %bosh_sudoers ALL=(ALL) NOPASSWD: ALL
-
-#includedir /etc/sudoers.d
