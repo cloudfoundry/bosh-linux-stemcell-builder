@@ -58,13 +58,13 @@ jobs:
       uses: advanced-security/spdx-dependency-submission-action@v0.2.0
 
     - name: Upload Trivy scan results to GitHub Security tab [all]
-      uses: github/codeql-action/upload-sarif@v4.37.4
+      uses: github/codeql-action/upload-sarif@v4.37.6
       with:
         sarif_file: 'trivy-results-all.sarif'
         category: all
 
     - name: Upload Trivy scan results to GitHub Security tab [fix-available]
-      uses: github/codeql-action/upload-sarif@v4.37.4
+      uses: github/codeql-action/upload-sarif@v4.37.6
       with:
         sarif_file: 'trivy-results-with-fix.sarif'
         category: fix-available
