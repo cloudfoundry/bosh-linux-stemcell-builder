@@ -460,7 +460,10 @@ shared_examples_for "every OS image" do
   describe file("/etc/shadow") do
     it("should be owned by root user (stig: V-38502)") { expect(subject.group).to eq("root") }
     it("should be owned by root group (stig: V-38503)") { expect(subject.group).to eq("root") }
-    it("should have mode 0 (stig: V-38504)") { should be_mode(0o000) }
+    # V-38504 asks for mode 0000, which is not achievable on PAM >= 1.7: unix_chkpwd drops
+    # CAP_DAC_OVERRIDE before reading /etc/shadow, so 0000 breaks `su` outright. 0400 still
+    # denies group and other, which is the intent of the control.
+    it("should have mode 0400 (stig: V-38504)") { should be_mode(0o400) }
 
     context "contains no system users with passwords (stig: V-38496)" do
       describe command("awk -F: '$1 !~ /^root$/ && $1 !~ /^vcap$/ && $2 !~ /^[!*]/ {print $1 \":\" $2}' /etc/shadow") do
