@@ -33,6 +33,18 @@ patch -p1 $chroot/etc/pam.d/common-auth < $assets_dir/ubuntu/common-auth.patch
 strip_trailing_whitespace_from $chroot/etc/pam.d/common-password
 patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password.patch
 
+# libpam-lastlog2 installs pam_lastlog2.so only to the multiarch path
+# (e.g. /usr/lib/x86_64-linux-gnu/security/), but PAM's securedir is
+# /usr/lib/security/ -- without this systemd logs:
+#   PAM unable to dlopen(pam_lastlog2.so): /usr/lib/security/pam_lastlog2.so:
+#   cannot open shared object file
+for module in $chroot/usr/lib/*-linux-gnu/security/pam_lastlog2.so; do
+  if [ -f "$module" ] && [ ! -e "$chroot/usr/lib/security/pam_lastlog2.so" ]; then
+    mkdir -p "$chroot/usr/lib/security"
+    ln -sf "${module#$chroot}" "$chroot/usr/lib/security/pam_lastlog2.so"
+  fi
+done
+
 strip_trailing_whitespace_from $chroot/etc/pam.d/login
 patch $chroot/etc/pam.d/login < $assets_dir/ubuntu/login.patch
 
