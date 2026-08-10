@@ -4,6 +4,10 @@
 # Defaults
 
 Defaults        !lecture,tty_tickets,!fqdn
+# Run sudo commands in a dedicated pseudo-terminal
+Defaults        use_pty
+# Log sudo activity to a dedicated log file
+Defaults        logfile=/var/log/sudo.log
 
 # Uncomment to allow members of group sudo to not need a password
 # %sudo ALL=NOPASSWD: ALL
