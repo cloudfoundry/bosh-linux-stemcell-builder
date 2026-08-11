@@ -1,12 +1,12 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-jammy.tgz">
-    <hash type="sha-512">836253c7731f1b9ee03ddd8f3fc72deed02bcab86124251fbc8e593447f7085a83e6b9ec3a9ebb12a2150c59111da41e12aac337f3ae793f7b1f173437dc9bf0</hash>
-    <hash type="sha-256">031680fe689294e5a857826b1effa40a9038d1c59a049b5b87e4f9d41685f6a9</hash>
-    <hash type="sha-1">ede6f2e4c4b9fc0bffe96b02f19c1607d681a1f2</hash>
-    <hash type="md5">70486f70e1a661545fe06375d5aac6c0</hash>
-    <size>437774951</size>
+    <hash type="sha-512">ebd2263dc6c36f4eb8029e357e00b4deaf9220a816221878e7dd4bbfa5a5f83b654aa003bc22ee089cbaf77c555b98826e698c4f576623915875b7e1eb572334</hash>
+    <hash type="sha-256">561e2a570f842153f0ea30d425d8e13bc71f207a3b1e3f5fef77209076ef9d81</hash>
+    <hash type="sha-1">77f4b362ae6f2f8f5f554cbb2ed1017dfbdcb6d8</hash>
+    <hash type="md5">b62ee548a71515840e22203baa097b6b</hash>
+    <size>437840882</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/ubuntu-jammy.tgz</url>
-    <version>1178.0.0</version>
+    <version>1179.0.0</version>
   </file>
   <file name="usn-log.json">
     <hash type="sha-512">be688838ca8686e5c90689bf2ab585cef1137c999b48c70b92f67a5c34dc15697b5d11c982ed6d71be1e1e7f7b4e0733884aa97c3f7a339a8ed03577cf74be09</hash>
@@ -15,8 +15,8 @@
     <hash type="md5">68b329da9893e34099c7d8ad5cb9c940</hash>
     <size>1</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-jammy/usn-log.json</url>
-    <version>1178.0.0</version>
+    <version>1179.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2026-08-10T18:05:38.860632578Z</published>
+  <published>2026-08-11T15:20:57.242146608Z</published>
 </metalink>
