@@ -1,0 +1,172 @@
+name: Merge Forward
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - ubuntu-jammy
+      - ubuntu-noble
+
+# Serialize runs per source branch to prevent push races on re-runs
+concurrency:
+  group: merge-forward-${{ github.base_ref }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+# Default: no permissions; write access is granted only to the merge-forward job
+permissions: {}
+
+jobs:
+  merge-forward:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine forward target
+        id: target
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          case "$BASE_REF" in
+            ubuntu-jammy)   echo "target=ubuntu-noble"    >> "$GITHUB_OUTPUT" ;;
+            ubuntu-noble)   echo "target=ubuntu-resolute" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "No forward target for $BASE_REF — skipping."
+              echo "target=" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Check if merge-forward branch or PR already exists
+        if: steps.target.outputs.target != ''
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SOURCE: ${{ github.base_ref }}
+          TARGET: ${{ steps.target.outputs.target }}
+        run: |
+          branch="merge-forward/${SOURCE}-to-${TARGET}-pr${PR_NUMBER}"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+          if git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null 2>&1; then
+            pr_state=$(gh pr list --head "$branch" --state all --json state --jq '.[0].state // "NONE"')
+            if [ "$pr_state" = "NONE" ]; then
+              echo "exists=branch_only" >> "$GITHUB_OUTPUT"
+            else
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Merge source into target branch
+        if: >
+          steps.target.outputs.target != '' &&
+          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only')
+        id: merge
+        env:
+          SOURCE:  ${{ github.base_ref }}
+          TARGET:  ${{ steps.target.outputs.target }}
+          BRANCH:  ${{ steps.check.outputs.branch }}
+          EXISTS:  ${{ steps.check.outputs.exists }}
+        run: |
+          # Recovery path: branch exists but PR creation failed on a previous run.
+          # The merge result is already on the branch — skip straight to opening the PR.
+          if [ "$EXISTS" = "branch_only" ]; then
+            git fetch origin "$BRANCH"
+            last_msg=$(git log -1 --pretty=%B "origin/$BRANCH")
+            if printf '%s' "$last_msg" | grep -q '^merge-forward: conflict'; then
+              echo "conflict=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "conflict=false" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+
+          git fetch origin "$SOURCE" "$TARGET"
+          git checkout -b "$BRANCH" "origin/$TARGET"
+
+          if git merge --no-edit "origin/$SOURCE"; then
+            echo "conflict=false" >> "$GITHUB_OUTPUT"
+          else
+            # Record the conflict state and push an incomplete merge branch so the
+            # draft PR gives reviewers a base to resolve from.
+            git merge --abort
+            # Create a placeholder commit to mark the conflict — the reviewer will
+            # need to check out the branch and perform the merge manually.
+            git commit --allow-empty -m "merge-forward: conflict merging $SOURCE into $TARGET — resolve manually"
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          git push origin "$BRANCH"
+
+      - name: Open merge-forward PR (clean)
+        if: >
+          steps.target.outputs.target != '' &&
+          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
+          steps.merge.outputs.conflict == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE:  ${{ github.event.pull_request.title }}
+          PR_URL:    ${{ github.event.pull_request.html_url }}
+          SOURCE:    ${{ github.base_ref }}
+          TARGET:    ${{ steps.target.outputs.target }}
+          BRANCH:    ${{ steps.check.outputs.branch }}
+        run: |
+          body_file=$(mktemp)
+          printf 'Automated merge-forward of `%s` into `%s`, triggered by #%s.\n\nSource PR: %s\n' \
+            "$SOURCE" "$TARGET" "$PR_NUMBER" "$PR_URL" > "$body_file"
+
+          gh pr create \
+            --title "[Merge Forward $SOURCE→$TARGET] $PR_TITLE" \
+            --body-file "$body_file" \
+            --base "$TARGET" \
+            --head "$BRANCH"
+
+          rm -f "$body_file"
+
+      - name: Open merge-forward PR (conflict — draft)
+        if: >
+          steps.target.outputs.target != '' &&
+          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
+          steps.merge.outputs.conflict == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE:  ${{ github.event.pull_request.title }}
+          PR_URL:    ${{ github.event.pull_request.html_url }}
+          SOURCE:    ${{ github.base_ref }}
+          TARGET:    ${{ steps.target.outputs.target }}
+          BRANCH:    ${{ steps.check.outputs.branch }}
+        run: |
+          body_file=$(mktemp)
+          printf 'Automated merge-forward of `%s` into `%s`, triggered by #%s.\n\nSource PR: %s\n\n> [!WARNING]\n> **This merge-forward has conflicts.** The merge of `%s` into `%s` could not be applied cleanly.\n> Check out branch `%s`, perform the merge manually, resolve the conflicts, and mark this PR as ready for review.\n' \
+            "$SOURCE" "$TARGET" "$PR_NUMBER" "$PR_URL" "$SOURCE" "$TARGET" "$BRANCH" > "$body_file"
+
+          gh pr create \
+            --title "[Merge Forward $SOURCE→$TARGET] $PR_TITLE" \
+            --body-file "$body_file" \
+            --base "$TARGET" \
+            --head "$BRANCH" \
+            --draft
+
+          rm -f "$body_file"
+
+      - name: Skip (merge-forward PR already exists)
+        if: steps.target.outputs.target != '' && steps.check.outputs.exists == 'true'
+        env:
+          BRANCH: ${{ steps.check.outputs.branch }}
+        run: |
+          echo "Merge-forward branch ${BRANCH} already exists with a PR — skipping."
