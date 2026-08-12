@@ -8,34 +8,32 @@ As of `2026-06-09` the following stemcell lines / branches are supported:
 - Ubuntu Noble / `ubuntu-noble`
 - Ubuntu Resolute / `ubuntu-resolute`
 
-## Backporting Changes Across Branches
+## Merge-Forward Strategy
 
-When a change should apply to more than one stemcell line, open your PR against
-the earliest applicable branch and use **backport labels** to request automatic
-cherry-picks onto other branches.
+This repository uses a **merge-forward** strategy to keep stemcell branches in sync.
 
-### How to backport
+**Branch order (oldest → newest):**
 
-1. Open your PR against the oldest applicable branch (e.g. `ubuntu-jammy`).
-2. Add one or more backport labels before merging:
+```
+ubuntu-jammy → ubuntu-noble → ubuntu-resolute
+```
 
-   | Label | Target branch |
-   |---|---|
-   | `backport/ubuntu-jammy` | `ubuntu-jammy` |
-   | `backport/ubuntu-noble` | `ubuntu-noble` |
-   | `backport/ubuntu-resolute` | `ubuntu-resolute` |
+### How it works
 
-3. Merge the PR. The backport workflow opens a new PR for each labeled target
-   automatically, titled `[Backport <target>] <your title>`.
+1. Open your PR against the **oldest applicable branch** (e.g. `ubuntu-jammy` if the change applies to all lines).
+2. Merge it.
+3. The merge-forward workflow automatically opens a PR merging that branch into the next one in the chain.
+4. Merge the forwarded PR, which then triggers another forward merge to the next branch, and so on.
 
-### Clean vs. conflict backports
+No labels are needed — every merged PR triggers an automatic forward merge.
 
-- **Clean cherry-pick** — the backport PR is opened ready for review.
-- **Conflict** — the backport PR is opened as a draft. The PR body names the
-  failing commit. Check out the branch, resolve the conflicts, and mark the PR
-  ready for review.
+### Clean vs. conflict merge-forwards
+
+- **Clean merge** — the merge-forward PR is opened ready for review.
+- **Conflict** — the merge-forward PR is opened as a draft. Check out the branch,
+  perform the merge manually, resolve the conflicts, and mark the PR ready for review.
 
 ### Re-runs
 
-The workflow is idempotent: if the backport branch already exists (e.g. after a
-failed run), re-running the workflow skips that target silently.
+The workflow is idempotent: if the merge-forward branch already exists (e.g. after a
+failed run), re-running the workflow skips the merge step and only retries opening the PR.

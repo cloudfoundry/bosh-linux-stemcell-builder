@@ -1,11 +1,12 @@
-# Backporting
+# Merge Forward
 
-To backport this change to other stemcell branches, add one or more labels
-before merging and the workflow will open cherry-pick PRs automatically:
+This repository uses a **merge-forward** strategy. Open your PR against the
+**oldest applicable branch** and merge it — the workflow will automatically
+open a PR merging it forward to the next branch in the chain:
 
-- `backport/ubuntu-jammy`
-- `backport/ubuntu-noble`
-- `backport/ubuntu-resolute`
+```
+ubuntu-jammy → ubuntu-noble → ubuntu-resolute
+```
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for details.
 
