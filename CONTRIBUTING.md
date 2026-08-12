@@ -14,7 +14,7 @@ This repository uses a **merge-forward** strategy to keep stemcell branches in s
 
 **Branch order (oldest → newest):**
 
-```
+```text
 ubuntu-jammy → ubuntu-noble → ubuntu-resolute
 ```
 
@@ -25,7 +25,7 @@ ubuntu-jammy → ubuntu-noble → ubuntu-resolute
 3. The merge-forward workflow automatically opens a PR merging that branch into the next one in the chain.
 4. Merge the forwarded PR, which then triggers another forward merge to the next branch, and so on.
 
-No labels are needed — every merged PR triggers an automatic forward merge.
+No labels are needed — every PR merged into `ubuntu-jammy` or `ubuntu-noble` triggers an automatic forward merge to the next branch.
 
 ### Clean vs. conflict merge-forwards
 
@@ -35,5 +35,7 @@ No labels are needed — every merged PR triggers an automatic forward merge.
 
 ### Re-runs
 
-The workflow is idempotent: if the merge-forward branch already exists (e.g. after a
-failed run), re-running the workflow skips the merge step and only retries opening the PR.
+The workflow is idempotent: if the merge-forward branch already exists but has no
+associated PR (i.e. the branch was pushed but PR creation failed on a previous run),
+re-running retries opening the PR without re-doing the merge. If a PR already exists
+(open or closed), the run skips silently.
