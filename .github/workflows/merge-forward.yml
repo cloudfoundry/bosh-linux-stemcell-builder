@@ -84,7 +84,13 @@ jobs:
           # Recovery path: branch exists but PR creation failed on a previous run.
           # The merge result is already on the branch — skip straight to opening the PR.
           if [ "$EXISTS" = "branch_only" ]; then
-            git fetch origin "$BRANCH"
+            git fetch origin "$BRANCH" "$SOURCE" "$TARGET"
+            # No-op check: if source is already an ancestor of target the branch
+            # has nothing new to forward — skip PR creation entirely.
+            if git merge-base --is-ancestor "origin/$SOURCE" "origin/$TARGET"; then
+              echo "noop=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             last_msg=$(git log -1 --pretty=%B "origin/$BRANCH")
             if printf '%s' "$last_msg" | grep -q '^merge-forward: conflict'; then
               echo "conflict=true" >> "$GITHUB_OUTPUT"
@@ -95,6 +101,14 @@ jobs:
           fi
 
           git fetch origin "$SOURCE" "$TARGET"
+
+          # No-op check: source already fully contained in target — nothing to forward.
+          if git merge-base --is-ancestor "origin/$SOURCE" "origin/$TARGET"; then
+            echo "No new commits from $SOURCE not already in $TARGET — skipping."
+            echo "noop=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           git checkout -b "$BRANCH" "origin/$TARGET"
 
           if git merge --no-edit "origin/$SOURCE"; then
@@ -115,6 +129,7 @@ jobs:
         if: >
           steps.target.outputs.target != '' &&
           (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
+          steps.merge.outputs.noop != 'true' &&
           steps.merge.outputs.conflict == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -141,6 +156,7 @@ jobs:
         if: >
           steps.target.outputs.target != '' &&
           (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
+          steps.merge.outputs.noop != 'true' &&
           steps.merge.outputs.conflict == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

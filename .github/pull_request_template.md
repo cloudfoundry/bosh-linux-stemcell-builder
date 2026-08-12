@@ -2,9 +2,10 @@
 
 This repository uses a **merge-forward** strategy. Open your PR against the
 **oldest applicable branch** and merge it — the workflow will automatically
-open a PR merging it forward to the next branch in the chain:
+open a PR merging it forward to the next branch in the chain (applies when
+targeting `ubuntu-jammy` or `ubuntu-noble`; `ubuntu-resolute` is the end of the chain):
 
-```
+```text
 ubuntu-jammy → ubuntu-noble → ubuntu-resolute
 ```
 
