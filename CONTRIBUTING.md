@@ -44,5 +44,4 @@ re-running retries opening the PR without re-doing the merge. If a PR already ex
 
 GitHub suppresses workflow runs triggered by a `GITHUB_TOKEN`-pushed branch. This
 means the auto-opened merge-forward PR will not have CI results initially. A
-maintainer can start CI by pushing a trivial commit to the forward branch or by
-re-running the checks manually from the Actions tab.
+maintainer can start CI by pushing a trivial commit to the forward branch.
