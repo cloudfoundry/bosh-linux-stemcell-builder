@@ -59,13 +59,14 @@ jobs:
           branch="merge-forward/${SOURCE}-to-${TARGET}-pr${PR_NUMBER}"
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
 
-          if git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null 2>&1; then
-            pr_state=$(gh pr list --head "$branch" --state all --json state --jq '.[0].state // "NONE"')
-            if [ "$pr_state" = "NONE" ]; then
-              echo "exists=branch_only" >> "$GITHUB_OUTPUT"
-            else
-              echo "exists=true" >> "$GITHUB_OUTPUT"
-            fi
+          # Query PR history first, regardless of whether the branch still exists.
+          # This prevents re-opening a PR whose branch was deleted after it was closed.
+          pr_state=$(gh pr list --head "$branch" --state all --json state --jq '.[0].state // "NONE"')
+          if [ "$pr_state" != "NONE" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null 2>&1; then
+            # Branch exists but no PR was ever created (previous run failed after push).
+            echo "exists=branch_only" >> "$GITHUB_OUTPUT"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
@@ -125,58 +126,40 @@ jobs:
 
           git push origin "$BRANCH"
 
-      - name: Open merge-forward PR (clean)
+      - name: Open merge-forward PR
         if: >
           steps.target.outputs.target != '' &&
           (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
-          steps.merge.outputs.noop != 'true' &&
-          steps.merge.outputs.conflict == 'false'
+          steps.merge.outputs.noop != 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE:  ${{ github.event.pull_request.title }}
           PR_URL:    ${{ github.event.pull_request.html_url }}
           SOURCE:    ${{ github.base_ref }}
           TARGET:    ${{ steps.target.outputs.target }}
           BRANCH:    ${{ steps.check.outputs.branch }}
+          CONFLICT:  ${{ steps.merge.outputs.conflict }}
         run: |
           body_file=$(mktemp)
           printf 'Automated merge-forward of `%s` into `%s`, triggered by #%s.\n\nSource PR: %s\n' \
             "$SOURCE" "$TARGET" "$PR_NUMBER" "$PR_URL" > "$body_file"
 
-          gh pr create \
-            --title "[Merge Forward $SOURCE→$TARGET] $PR_TITLE" \
-            --body-file "$body_file" \
-            --base "$TARGET" \
-            --head "$BRANCH"
+          if [ "$CONFLICT" = "true" ]; then
+            printf '\n> [!WARNING]\n> **This merge-forward has conflicts.** The merge of `%s` into `%s` could not be applied cleanly.\n> Check out branch `%s`, perform the merge manually, resolve the conflicts, and mark this PR as ready for review.\n' \
+              "$SOURCE" "$TARGET" "$BRANCH" >> "$body_file"
+          fi
 
-          rm -f "$body_file"
+          draft_flag=""
+          [ "$CONFLICT" = "true" ] && draft_flag="--draft"
 
-      - name: Open merge-forward PR (conflict — draft)
-        if: >
-          steps.target.outputs.target != '' &&
-          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
-          steps.merge.outputs.noop != 'true' &&
-          steps.merge.outputs.conflict == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE:  ${{ github.event.pull_request.title }}
-          PR_URL:    ${{ github.event.pull_request.html_url }}
-          SOURCE:    ${{ github.base_ref }}
-          TARGET:    ${{ steps.target.outputs.target }}
-          BRANCH:    ${{ steps.check.outputs.branch }}
-        run: |
-          body_file=$(mktemp)
-          printf 'Automated merge-forward of `%s` into `%s`, triggered by #%s.\n\nSource PR: %s\n\n> [!WARNING]\n> **This merge-forward has conflicts.** The merge of `%s` into `%s` could not be applied cleanly.\n> Check out branch `%s`, perform the merge manually, resolve the conflicts, and mark this PR as ready for review.\n' \
-            "$SOURCE" "$TARGET" "$PR_NUMBER" "$PR_URL" "$SOURCE" "$TARGET" "$BRANCH" > "$body_file"
-
+          # shellcheck disable=SC2086
           gh pr create \
             --title "[Merge Forward $SOURCE→$TARGET] $PR_TITLE" \
             --body-file "$body_file" \
             --base "$TARGET" \
             --head "$BRANCH" \
-            --draft
+            $draft_flag
 
           rm -f "$body_file"
 
