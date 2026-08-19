@@ -50,6 +50,8 @@ function pkg_exists {
 function update_kernel_static_libraries {
   kernel_suffix=${1}
   major_kernel_version=${2}
+  kernel_major=${major_kernel_version%%.*}
+  
 
   suffix=$kernel_suffix
   if [ ! -z "$UBUNTU_FIPS_USE_IAAS_KERNEL" ]; then
@@ -59,9 +61,8 @@ function update_kernel_static_libraries {
   sed -i "s/__KERNEL_VERSION__/$kernel_version/g" $chroot/var/vcap/bosh/etc/static_libraries_list
 
   # since kernel 6.5 the objtool/libsubcmd.a has been moved to objtool/libsubcmd/libsubcmd.a
-  # fips still uses the 5.9 kernel, so we need to rewrite the static_libraries_list file to the old path
-  # TODO: puting a todo tag here as this could probably be removed in the future if the kernel version gets bumped
-  if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
+  # older fips kernels (5.x) used the old path, so rewrite only for those
+  if [[ "${stemcell_operating_system_variant}" == 'fips' ]] && (( kernel_major < 6 )); then
     sed -i "s|objtool/libsubcmd/libsubcmd.a|objtool/libsubcmd.a|g" $chroot/var/vcap/bosh/etc/static_libraries_list
   fi
 }
