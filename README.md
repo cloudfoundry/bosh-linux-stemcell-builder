@@ -9,6 +9,18 @@ for 24.04).
 
 ## Quick Start: Building a Stemcell Locally
 
+Stemcells are always built as **x86-64**, regardless of your workstation's
+architecture. On an Apple Silicon Mac that means the whole build runs under
+Rosetta x86-64 translation, which needs a few extra steps — read
+[Building on Apple Silicon](docs/apple-silicon-builds.md) *instead of* this
+section if you are on an M-series Mac.
+
+Before you start, download `VMware-ovftool-*.bundle` into
+`ci/docker/os-image-stemcell-builder/`. The Docker image build `ADD`s it
+unconditionally, so it is required even though only vSphere and vCloud stemcells
+actually use `ovftool` — warden builds never invoke it. See
+[External Assets](#external-assets).
+
 ```bash
 export short_name="resolute"
 
@@ -19,6 +31,8 @@ mkdir -p tmp
 docker build \
    --platform linux/amd64 \
    --build-arg BASE_IMAGE="ubuntu:${short_name}" \
+   --build-arg USER_ID="$(id -u)" \
+   --build-arg GROUP_ID="$(id -g)" \
    --build-arg META4_CLI_URL="https://github.com/dpb587/metalink/releases/download/v0.5.0/meta4-0.5.0-linux-amd64" \
    --build-arg SYFT_CLI_URL="https://github.com/anchore/syft/releases/download/v1.42.3/syft_1.42.3_linux_amd64.tar.gz" \
    --build-arg YQ_CLI_URL="https://github.com/mikefarah/yq/releases/download/v4.52.5/yq_linux_amd64" \
@@ -53,15 +67,14 @@ bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubu
 
  # build warden (BOSH Lite) stemcell
 bundle exec rake stemcell:build[warden,warden,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
-
- # build warden rosetta stemcell (Apple Silicon / Colima / Lima)
-bundle exec rake stemcell:build[warden,warden,ubuntu,${short_name}-rosetta,${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
 ```
 
-When building a vSphere stemcell, you must download `VMware-ovftool-*.bundle`
-and place it in the `ci/docker/os-image-stemcell-builder/` directory before
-running `docker build`. See [External Assets](#external-assets) for download
-instructions.
+`USER_ID` and `GROUP_ID` must match your host user, so that the bind-mounted
+repo, `/mnt/stemcells` and the gem home are all writable by the uid that
+`docker run --user` selects. Passing them is not optional on macOS: the base
+image already ships an `ubuntu` user at uid 1000, so without them the container
+runs as a uid with no passwd entry, no `sudo`, and no write access — `gem
+install bundler` fails immediately.
 
 ### OS image
 
@@ -140,6 +153,16 @@ export short_name="resolute"
 bosh upload-stemcell tmp/bosh-stemcell-0.0.8-vsphere-esxi-ubuntu-${short_name}-go_agent.tgz
 ```
 
+## Building on Apple Silicon
+
+An arm64 Mac builds x86-64 stemcells under Rosetta translation. Set up Colima,
+build the builder image with `ARM64_TAR_FIX=true`, then run the same rake tasks
+as above: see [Building on Apple Silicon](docs/apple-silicon-builds.md).
+
+Building *on* Apple Silicon is a separate concern from the `-rosetta` stemcell
+**variant**, which makes the stemcell you produce able to run under Rosetta
+itself: see [The `-rosetta` stemcell variant](docs/rosetta-stemcell-variant.md).
+
 ## Testing
 
 ### How to run tests for OS Images
@@ -183,6 +206,34 @@ spec/stemcells/vsphere_spec.rb \
 spec/stemcells/stig_spec.rb \
 spec/stemcells/cis_spec.rb
 ```
+
+Note that `bosh-stemcell/` has its own `Gemfile` — `bundle install` at the repo
+root is not enough to run the specs directly, and skipping it fails with
+`Bundler::GemNotFound` for `fakefs` and `timecop`.
+
+For a warden (BOSH Lite) or rosetta stemcell the paths differ, and the specs
+must run in the same container that built the stemcell, since `/mnt/stemcells`
+lives inside it:
+
+```shell
+cd /opt/bosh/bosh-stemcell; \
+bundle install; \
+STEMCELL_IMAGE=/mnt/stemcells/warden/boshlite/ubuntu/work/work/warden-boshlite-ubuntu.raw \
+STEMCELL_WORKDIR=/mnt/stemcells/warden/boshlite/ubuntu/work/work \
+STEMCELL_INFRASTRUCTURE=warden \
+OS_NAME=ubuntu \
+OS_VERSION=resolute \
+bundle exec rspec -fd --tag ~exclude_on_warden \
+spec/stemcells/warden_spec.rb \
+spec/stemcells/rosetta_spec.rb
+```
+
+`spec/stemcells/rosetta_spec.rb` asserts the changes made by the `-rosetta`
+variant: that the replaced binaries are arm64 ELF, that the arm64 runtime
+libraries they need are present, that `tar` can complete a real
+create-then-extract round trip, and that no PAM or systemd-hardening override
+has been reintroduced. It runs automatically as part of a `-rosetta` stemcell
+build. See [The `-rosetta` stemcell variant](docs/rosetta-stemcell-variant.md).
 
 ### How to run tests for `ShelloutTypes`
 
@@ -250,10 +301,14 @@ If you find yourself debugging any of the above processes, here is what you need
 The installer for `ovftool` can be found at:
 - https://developer.broadcom.com/tools/open-virtualization-format-ovf-tool/latest.
 
-The `ovftool` installer **for linux** must be copied into 
+`ovftool` itself is only used by the `image_ovf_generate` stage, which appears
+only in `ovf_package_stages` — vSphere and vCloud. Warden stemcell builds never
+invoke it.
+
+The installer **for linux** must nonetheless be copied into
 [os-image-stemcell-builder](ci/docker/os-image-stemcell-builder)
-next to the `Dockerfile` before building the Docker image. If not you will
-see an error similar to: 
+next to the `Dockerfile` before building the Docker image, because the
+`Dockerfile` `ADD`s it unconditionally. If not you will see an error similar to: 
 
 ```shell
 ADD failed: failed to compute cache key: "/VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle": not found
@@ -266,7 +321,9 @@ The Docker image is published to
 You will need the ovftool installer present in
 `ci/docker/os-image-stemcell-builder/`.
 
-Rebuild the container with:
+Rebuild the container with the command below. On Apple Silicon add
+`--build-arg ARM64_TAR_FIX=true`; see
+[Building on Apple Silicon](docs/apple-silicon-builds.md).
 
 ```shell
 export short_name="resolute"
@@ -274,6 +331,8 @@ export short_name="resolute"
 docker build \
     --platform linux/amd64 \
     --build-arg BASE_IMAGE="ubuntu:${short_name}" \
+    --build-arg USER_ID="$(id -u)" \
+    --build-arg GROUP_ID="$(id -g)" \
     --build-arg META4_CLI_URL="https://github.com/dpb587/metalink/releases/download/v0.5.0/meta4-0.5.0-linux-amd64" \
     --build-arg SYFT_CLI_URL="https://github.com/anchore/syft/releases/download/v1.42.3/syft_1.42.3_linux_amd64.tar.gz" \
     --build-arg YQ_CLI_URL="https://github.com/mikefarah/yq/releases/download/v4.52.5/yq_linux_amd64" \
