@@ -43,26 +43,56 @@ describe "Rosetta Warden Stemcell", stemcell_image: true do
     end
   end
 
-  context "Rosetta x86_64 emulation compatibility for Apple Silicon" do
-    # These systemd drop-in overrides disable security features that conflict
-    # with Rosetta's JIT compilation on Apple Silicon Macs.
+  context "arm64 tar (Rosetta extraction ENOSYS)" do
+    # Ubuntu 26.04's x86-64 GNU tar cannot extract archives under Rosetta: every
+    # file it creates fails with "Cannot open: Function not implemented"
+    # (ENOSYS). The BOSH agent shells out to tar for every release blob it
+    # downloads, so a stemcell shipping the x86-64 binary cannot run a single
+    # deployment. The stage swaps in the arm64 build and keeps the original as
+    # tar.amd64.
+    describe command("file -b /usr/bin/tar") do
+      its(:stdout) { should match(/ELF 64-bit.*ARM aarch64/) }
+    end
 
-    rosetta_services = %w[
-      systemd-journald
-      systemd-resolved
-      systemd-networkd
-      systemd-logind
-      systemd-timesyncd
-      auditd
-    ]
+    describe file("/usr/bin/tar.amd64") do
+      it { should be_file }
+    end
 
-    rosetta_services.each do |service|
-      describe file("/etc/systemd/system/#{service}.service.d/rosetta-compat.conf") do
+    # tar links against libacl and libselinux, so the arm64 builds of both have
+    # to be present or the binary will not even load.
+    %w[
+      /lib/aarch64-linux-gnu/libacl.so.1
+      /lib/aarch64-linux-gnu/libselinux.so.1
+    ].each do |lib|
+      describe file(lib) do
         it { should be_file }
-        its(:content) { should include("MemoryDenyWriteExecute=no") }
-        its(:content) { should include("LockPersonality=no") }
-        its(:content) { should include("NoNewPrivileges=no") }
       end
+    end
+
+    # The architecture check above would still pass if the binary could not
+    # actually run, so exercise a real round-trip.
+    describe command(
+      "set -e; " \
+      "rm -rf /tmp/tar-spec; mkdir -p /tmp/tar-spec/src /tmp/tar-spec/out; " \
+      "echo payload > /tmp/tar-spec/src/probe; " \
+      "tar -czf /tmp/tar-spec/probe.tgz -C /tmp/tar-spec src; " \
+      "tar -xzf /tmp/tar-spec/probe.tgz -C /tmp/tar-spec/out; " \
+      "grep -q payload /tmp/tar-spec/out/src/probe; " \
+      "rm -rf /tmp/tar-spec"
+    ) do
+      it("extracts an archive it just created") { expect(subject.exit_status).to eq(0) }
+    end
+  end
+
+  context "Rosetta x86_64 emulation compatibility for Apple Silicon" do
+    # Asserted against the vendor units because these specs run on the built
+    # chroot, where `systemctl show` has no systemd to query.
+    describe file("/usr/lib/systemd/system/auditd.service") do
+      its(:content) { should match(/^MemoryDenyWriteExecute=true$/) }
+    end
+
+    describe file("/usr/lib/systemd/system/logrotate.service") do
+      its(:content) { should match(/^MemoryDenyWriteExecute=true$/) }
     end
 
     describe file("/etc/systemd/system/systemd-binfmt.service") do
@@ -70,38 +100,27 @@ describe "Rosetta Warden Stemcell", stemcell_image: true do
     end
   end
 
-  context "SSH without socket activation (Rosetta/Colima ENOSYS)" do
-    describe file("/etc/systemd/system/ssh.socket") do
-      it { should be_linked_to File::NULL }
+  context "arm64 userland binaries" do
+    # e_machine at offset 18 of the ELF header: 183 (EM_AARCH64), 62 for x86-64.
+    %w[
+      /usr/sbin/unix_chkpwd
+      /usr/sbin/auditd
+      /usr/sbin/logrotate
+    ].each do |path|
+      describe command("od -An -tu1 -j18 -N1 #{path} | tr -d ' '") do
+        its(:stdout) { should match(/^183$/) }
+      end
+
+      describe file("#{path}.amd64") do
+        it { should be_file }
+      end
     end
 
-    describe file("/etc/systemd/system/ssh.service.d/warden-no-socket-activation.conf") do
-      it { should be_file }
-      its(:content) { should include("RefuseManualStart=no") }
-    end
-  end
-
-  context "auditd foreground (Rosetta/Colima Docker pidfd ENOSYS)" do
-    # Under Docker/Colima with Rosetta emulation, systemd cannot create pidfd
-    # references or cgroup entries for processes started with Type=forking + PIDFile.
-    # Running auditd with -n (no-fork / foreground) avoids the fork-and-PIDFile
-    # lifecycle entirely, so systemd tracks the process directly without pidfd.
-    describe file("/etc/systemd/system/auditd.service.d/warden-auditd-foreground.conf") do
-      it { should be_file }
-      its(:content) { should include("Type=simple") }
-      its(:content) { should include("ExecStart=/usr/sbin/auditd -n") }
-    end
-  end
-
-  context "restrict access to the su command CIS-9.5 (Rosetta PAM override)" do
-    # The Rosetta stemcell replaces /etc/pam.d/su with a minimal config that
-    # avoids unix-chkpwd (which AppArmor blocks under Lima/Rosetta, causing every
-    # su invocation to fail with "Authentication failure" even for root).
-    # pam_wheel.so use_uid is kept in the replacement config so that the CIS-9.5
-    # requirement — only wheel-group members may use su — is still enforced.
-    # This test verifies that the override did not inadvertently remove the wheel check.
-    describe command('grep "^\s*auth\s*required\s*pam_wheel.so\s*use_uid" /etc/pam.d/su') do
-      it("exits 0") { expect(subject.exit_status).to eq(0) }
+    # 0755, not the 2755 the deb ships: restrict_binary_setuid strips setgid
+    # outside the allowlist asserted in stemcells/ubuntu_spec.rb.
+    describe file("/usr/sbin/unix_chkpwd") do
+      it { should be_mode(0o755) }
+      its(:group) { should eq("shadow") }
     end
   end
 end
