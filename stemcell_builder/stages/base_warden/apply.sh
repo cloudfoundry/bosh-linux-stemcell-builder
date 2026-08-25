@@ -66,3 +66,24 @@ run_in_chroot "$chroot" "systemctl mask nvmf-autoconnect.service"
 
 # systemd-udevd has no function in containerised environments.
 run_in_chroot "$chroot" "systemctl mask systemd-udevd.service"
+
+# Audit rule changes need the initial PID namespace (audit_netlink_ok() in
+# kernel/audit.c returns -EPERM otherwise), so audit-rules.service can never
+# succeed in a container and would sit permanently failed. Skipped by condition
+# rather than masked so the stemcell still loads the rules if booted on a VM.
+# /etc/audit/audit.rules is left intact for the STIG/CIS content checks, and
+# auditd only Wants= this unit so it still starts.
+mkdir -p "$chroot/etc/systemd/system/audit-rules.service.d"
+cat > "$chroot/etc/systemd/system/audit-rules.service.d/warden-skip-in-container.conf" <<'UNIT'
+[Unit]
+ConditionVirtualization=!container
+UNIT
+
+# These images ship no /etc/netplan, so netplan-configure has nothing to
+# generate, and its ExecStartPost runs `udevadm control --reload` against the
+# systemd-udevd masked above.
+mkdir -p "$chroot/etc/systemd/system/netplan-configure.service.d"
+cat > "$chroot/etc/systemd/system/netplan-configure.service.d/warden-skip-in-container.conf" <<'UNIT'
+[Unit]
+ConditionVirtualization=!container
+UNIT
