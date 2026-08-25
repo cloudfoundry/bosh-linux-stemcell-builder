@@ -330,6 +330,21 @@ module Bosh::Stemcell
           expect(stage_collection.build_stemcell_image_stages).to eq(build_stemcell_image_stages)
           expect(stage_collection.package_stemcell_stages("files")).to eq(package_stemcell_stages)
         end
+
+        it "does not include the rosetta stage" do
+          expect(stage_collection.build_stemcell_image_stages).to_not include(:base_ubuntu_warden_rosetta)
+        end
+
+        context "with the rosetta variant" do
+          let(:operating_system) { OperatingSystem.for("ubuntu", "resolute-rosetta") }
+
+          # The stage has to run before bosh_clean/bosh_harden, which is why its
+          # position rather than its mere presence is asserted.
+          it "inserts the rosetta stage directly after base_warden" do
+            stages = stage_collection.build_stemcell_image_stages
+            expect(stages[stages.index(:base_warden) + 1]).to eq(:base_ubuntu_warden_rosetta)
+          end
+        end
       end
     end
   end

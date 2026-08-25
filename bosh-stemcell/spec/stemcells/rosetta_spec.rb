@@ -70,7 +70,12 @@ describe "Rosetta Warden Stemcell", stemcell_image: true do
     end
 
     # The architecture check above would still pass if the binary could not
-    # actually run, so exercise a real round-trip.
+    # actually run, so exercise a real round-trip — but only on a host whose
+    # kernel can run arm64. An x86-64 CI worker has no arm64 handler and every
+    # exec fails with "Exec format error"; there the exec path is covered
+    # instead by the manual build on Apple Silicon
+    # (docs/apple-silicon-builds.md). Every other assertion in this file is
+    # static and runs everywhere.
     describe command(
       "set -e; " \
       "rm -rf /tmp/tar-spec; mkdir -p /tmp/tar-spec/src /tmp/tar-spec/out; " \
@@ -80,7 +85,14 @@ describe "Rosetta Warden Stemcell", stemcell_image: true do
       "grep -q payload /tmp/tar-spec/out/src/probe; " \
       "rm -rf /tmp/tar-spec"
     ) do
-      it("extracts an archive it just created") { expect(subject.exit_status).to eq(0) }
+      it "extracts an archive it just created" do
+        if command("/lib/ld-linux-aarch64.so.1 --help").exit_status != 0
+          skip("this build host cannot execute arm64 binaries; the tar " \
+               "round-trip is the only check skipped, all static assertions ran")
+        end
+
+        expect(subject.exit_status).to eq(0)
+      end
     end
   end
 
