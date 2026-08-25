@@ -29,4 +29,24 @@ describe "Warden Stemcell", stemcell_image: true do
       its(:content) { should match(/^kernel\.apparmor_restrict_unprivileged_unconfined = 0$/) }
     end
   end
+
+  context "units that cannot work in a container are skipped, not failed" do
+    # audit-rules needs the initial PID namespace; netplan-configure has no
+    # /etc/netplan and its ExecStartPost needs the masked systemd-udevd.
+    describe file("/etc/systemd/system/audit-rules.service.d/warden-skip-in-container.conf") do
+      it { should be_file }
+      its(:content) { should include("ConditionVirtualization=!container") }
+    end
+
+    describe file("/etc/systemd/system/netplan-configure.service.d/warden-skip-in-container.conf") do
+      it { should be_file }
+      its(:content) { should include("ConditionVirtualization=!container") }
+    end
+
+    # STIG/CIS checks read this file's content, so skipping the unit must not
+    # remove it.
+    describe file("/etc/audit/audit.rules") do
+      it { should be_file }
+    end
+  end
 end
