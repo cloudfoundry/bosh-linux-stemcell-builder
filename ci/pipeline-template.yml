@@ -3,8 +3,10 @@
 #@yaml/text-templated-strings
 ---
 
-#@ def metalink_resource(IAAS, HYPERVISOR, FIPS=""):
-  name: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+#! VARIANT shares the plain stemcell's candidate bucket, so it appears in the
+#! resource name and the index path but never in the meta4 filename or bucket.
+#@ def metalink_resource(IAAS, HYPERVISOR, FIPS="", VARIANT=""):
+  name: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= VARIANT @)
   type: metalink-repository
   source:
     mirror_files:
@@ -13,7 +15,7 @@
       private_key: ((github_deploy_key_bosh-io-stemcells-core-index.private_key))
     filters:
       - repositorypath: "*/(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= data.values.stemcell_details.agent_suffix @).meta4"
-    uri: git+ssh://git@github.com:cloudfoundry/bosh-io-stemcells-core-index.git//dev/(@= data.values.stemcell_details.os_name @)(@= FIPS @)/
+    uri: git+ssh://git@github.com:cloudfoundry/bosh-io-stemcells-core-index.git//dev/(@= data.values.stemcell_details.os_name @)(@= FIPS @)(@= VARIANT @)/
     url_handlers:
       - include:
           - (s3|https)://.*
@@ -26,8 +28,8 @@
 #@yaml/text-templated-strings
 ---
 
-#@ def build_stemcell(IAAS, HYPERVISOR, FIPS=""):
-name: build-(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+#@ def build_stemcell(IAAS, HYPERVISOR, FIPS="", VARIANT=""):
+name: build-(@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= VARIANT @)
 serial: true
 plan:
   - in_parallel:
@@ -58,7 +60,7 @@ plan:
       IAAS: #@ IAAS
       OS_NAME: ubuntu
       S3_API_ENDPOINT: storage.googleapis.com
-      OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)
+      OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)(@= VARIANT @)
       STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
       GIT_USER_EMAIL: (@= data.values.stemcell_details.bot_email @)
       GIT_USER_NAME: (@= data.values.stemcell_details.bot_name @)
@@ -69,7 +71,7 @@ plan:
     vars:
       image_os_tag: (@= data.values.stemcell_details.os_short_name @)
   - in_parallel:
-      - put: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)
+      - put: (@= IAAS @)-(@= HYPERVISOR @)(@= FIPS @)(@= VARIANT @)
         attempts: 3
         params:
           files:
@@ -502,6 +504,9 @@ jobs:
       #@ for iaas in data.values.stemcell_details.include_fips_iaas:
         - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
       #@ end
+      #@ for v in data.values.stemcell_details.include_variant_iaas:
+        - build-(@= v.iaas @)-(@= v.hypervisor @)-(@= v.variant @)
+      #@ end
         resource: version
         trigger: true
       - get: bosh-stemcells-ci
@@ -525,6 +530,9 @@ jobs:
       #@ end
       #@ for iaas in data.values.stemcell_details.include_fips_iaas:
           - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+      #@ end
+      #@ for v in data.values.stemcell_details.include_variant_iaas:
+          - build-(@= v.iaas @)-(@= v.hypervisor @)-(@= v.variant @)
       #@ end
         trigger: true
     - do:
@@ -589,6 +597,9 @@ jobs:
       #@ for iaas in data.values.stemcell_details.include_fips_iaas:
         - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
       #@ end
+      #@ for v in data.values.stemcell_details.include_variant_iaas:
+        - build-(@= v.iaas @)-(@= v.hypervisor @)-(@= v.variant @)
+      #@ end
         resource: version
         trigger: true
       - get: bosh-stemcells-ci
@@ -612,6 +623,9 @@ jobs:
           #@ end
           #@ for iaas in data.values.stemcell_details.include_fips_iaas:
           - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+          #@ end
+          #@ for v in data.values.stemcell_details.include_variant_iaas:
+          - build-(@= v.iaas @)-(@= v.hypervisor @)-(@= v.variant @)
           #@ end
         trigger: true
     - do:
@@ -655,6 +669,9 @@ jobs:
 #@ for iaas in data.values.stemcell_details.include_fips_iaas:
 - #@ build_stemcell(iaas.iaas, iaas.hypervisor, "-fips")
 #@ end
+#@ for v in data.values.stemcell_details.include_variant_iaas:
+- #@ build_stemcell(v.iaas, v.hypervisor, "", "-" + v.variant)
+#@ end
 
 - name: bats
   serial: true
@@ -678,6 +695,9 @@ jobs:
       #@ for iaas in data.values.stemcell_details.include_fips_iaas:
         - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
       #@ end
+      #@ for v in data.values.stemcell_details.include_variant_iaas:
+        - build-(@= v.iaas @)-(@= v.hypervisor @)-(@= v.variant @)
+      #@ end
         resource: bosh-linux-stemcell-builder
       - get: version
         passed:
@@ -687,6 +707,9 @@ jobs:
       #@ for iaas in data.values.stemcell_details.include_fips_iaas:
         - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
       #@ end
+      #@ for v in data.values.stemcell_details.include_variant_iaas:
+        - build-(@= v.iaas @)-(@= v.hypervisor @)-(@= v.variant @)
+      #@ end
         resource: version
       - get: build-time
         passed:
@@ -695,6 +718,9 @@ jobs:
       #@ end
       #@ for iaas in data.values.stemcell_details.include_fips_iaas:
         - build-(@= iaas.iaas @)-(@= iaas.hypervisor @)-fips
+      #@ end
+      #@ for v in data.values.stemcell_details.include_variant_iaas:
+        - build-(@= v.iaas @)-(@= v.hypervisor @)-(@= v.variant @)
       #@ end
         trigger: true
     - do:
@@ -1657,6 +1683,9 @@ resources:
 #@ end
 #@ for iaas in data.values.stemcell_details.include_fips_iaas:
 - #@ metalink_resource(iaas.iaas, iaas.hypervisor, "-fips")
+#@ end
+#@ for v in data.values.stemcell_details.include_variant_iaas:
+- #@ metalink_resource(v.iaas, v.hypervisor, "", "-" + v.variant)
 #@ end
 
 - name: os-image-tarball
