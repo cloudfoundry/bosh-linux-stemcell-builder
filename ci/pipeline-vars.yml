@@ -22,6 +22,11 @@ stemcell_details:
     {iaas: warden, hypervisor: boshlite}
   ]
   include_fips_iaas: []
+  #! Variant stemcells: same bucket and stemcell line, variant suffixed onto the
+  #! stemcell name. Rosetta ships arm64 binaries for Apple Silicon bosh-lite.
+  include_variant_iaas: [
+    {iaas: warden, hypervisor: boshlite, variant: rosetta}
+  ]
 
 blobstore_types:
 - dav
