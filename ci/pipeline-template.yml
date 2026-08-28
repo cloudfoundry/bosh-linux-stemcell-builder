@@ -280,11 +280,11 @@ jobs:
       - get: (@= data.values.stemcell_details.os_short_name @)-usn
         version: every
         trigger: true
-      - task: fetch-usn-gh-json
-        file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
-        image: os-image-stemcell-builder-registry-image
       - get: usn-log
       - get: high-critical-unfound-usns
+    - task: fetch-usn-gh-json
+      file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
+      image: os-image-stemcell-builder-registry-image
     - task: check-if-usn-is-in-github
       file: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.yml
       image: os-image-stemcell-builder-registry-image
@@ -337,9 +337,9 @@ jobs:
         trigger: true
         passed:
           - process-high-critical-cves
-      - task: fetch-usn-gh-json
-        file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
-        image: os-image-stemcell-builder-registry-image
+    - task: fetch-usn-gh-json
+      file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
+      image: os-image-stemcell-builder-registry-image
     - task: check-usn-packages
       file: bosh-stemcells-ci/ci/tasks/check-usn-packages.yml
       image: os-image-stemcell-builder-registry-image
@@ -371,10 +371,10 @@ jobs:
         version: every
         trigger: true
       - get: usn-log
-      - task: fetch-usn-gh-json
-        file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
-        image: os-image-stemcell-builder-registry-image
       - get: low-medium-unfound-usns
+    - task: fetch-usn-gh-json
+      file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
+      image: os-image-stemcell-builder-registry-image
     - task: check-if-usn-is-in-github
       file: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.yml
       image: os-image-stemcell-builder-registry-image
