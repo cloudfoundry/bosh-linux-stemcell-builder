@@ -280,7 +280,9 @@ jobs:
       - get: (@= data.values.stemcell_details.os_short_name @)-usn
         version: every
         trigger: true
-      - get: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
+      - task: fetch-usn-gh-json
+        file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
+        image: os-image-stemcell-builder-registry-image
       - get: usn-log
       - get: high-critical-unfound-usns
     - task: check-if-usn-is-in-github
@@ -288,7 +290,6 @@ jobs:
       image: os-image-stemcell-builder-registry-image
       input_mapping:
         usn: (@= data.values.stemcell_details.os_short_name @)-usn
-        usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         unfound-usns: high-critical-unfound-usns
       vars:
         image_os_tag: (@= data.values.stemcell_details.os_short_name @)
@@ -302,7 +303,6 @@ jobs:
         image: os-image-stemcell-builder-registry-image
         input_mapping:
           usns: found-usns
-          usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         params:
           OS: (@= data.values.stemcell_details.os_short_name @)
         vars:
@@ -322,6 +322,7 @@ jobs:
         task-output-folder: updated-usn-log
 
 - name: check-usn-packages-are-available
+  serial: true
   plan:
     - in_parallel:
       - get: bosh-stemcells-ci
@@ -336,15 +337,14 @@ jobs:
         trigger: true
         passed:
           - process-high-critical-cves
-      - get: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
-        passed:
-          - process-high-critical-cves
+      - task: fetch-usn-gh-json
+        file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
+        image: os-image-stemcell-builder-registry-image
     - task: check-usn-packages
       file: bosh-stemcells-ci/ci/tasks/check-usn-packages.yml
       image: os-image-stemcell-builder-registry-image
       input_mapping:
         usn-log-in: usn-log
-        usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
       params:
         OS: (@= data.values.stemcell_details.os_short_name @)
       vars:
@@ -371,14 +371,15 @@ jobs:
         version: every
         trigger: true
       - get: usn-log
-      - get: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
+      - task: fetch-usn-gh-json
+        file: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.yml
+        image: os-image-stemcell-builder-registry-image
       - get: low-medium-unfound-usns
     - task: check-if-usn-is-in-github
       file: bosh-stemcells-ci/ci/tasks/check-if-usn-is-in-github.yml
       image: os-image-stemcell-builder-registry-image
       input_mapping:
         usn: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
-        usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         unfound-usns: low-medium-unfound-usns
       vars:
         image_os_tag: (@= data.values.stemcell_details.os_short_name @)
@@ -392,7 +393,6 @@ jobs:
         image: os-image-stemcell-builder-registry-image
         input_mapping:
           usns: found-usns
-          usn-gh-json: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
         params:
           OS: (@= data.values.stemcell_details.os_short_name @)
         vars:
@@ -1829,13 +1829,6 @@ resources:
     severities:
     - high
     - critical
-- name: (@= data.values.stemcell_details.os_short_name @)-usn-gh-json
-  type: git
-  source:
-    branch: main
-    uri: https://github.com/canonical/ubuntu-security-notices.git
-    paths:
-    - usn
 - name: slack-alert
   type: slack-notification
   source:
