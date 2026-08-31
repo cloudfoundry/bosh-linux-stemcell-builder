@@ -1815,14 +1815,14 @@ resources:
 - name: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
   type: usn
   source:
-    os: ubuntu-(@= data.values.stemcell_details.os_version @)-lts
+    os: (@= data.values.stemcell_details.os_short_name @)
     priorities:
     - low
     - medium
 - name: (@= data.values.stemcell_details.os_short_name @)-usn
   type: usn
   source:
-    os: ubuntu-(@= data.values.stemcell_details.os_version @)-lts
+    os: (@= data.values.stemcell_details.os_short_name @)
     priorities:
     - high
     - critical
