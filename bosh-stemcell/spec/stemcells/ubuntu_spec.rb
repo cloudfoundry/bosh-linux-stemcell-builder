@@ -82,6 +82,16 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       end
     end
 
+    describe file("/boot/efi/boot/grub/grub.cfg") do
+      it { should be_file }
+      its(:content) { should match %r{^set prefix=\(\$root\)'/EFI/grub'$} }
+      its(:content) { should match %r{^configfile \$prefix/grub\.cfg$} }
+
+      it "mirrors the config grub-install wrote to the ESP" do
+        expect(subject.content).to eq(file("/boot/efi/EFI/BOOT/grub.cfg").content)
+      end
+    end
+
     describe file("/boot/grub/menu.lst") do
       before { skip 'until alicloud/aws/openstack stop clobbering the symlink with "update-grub"' }
       it { should be_linked_to("./grub.cfg") }
