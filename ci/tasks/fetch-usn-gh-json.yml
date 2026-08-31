@@ -1,0 +1,13 @@
+platform: linux
+
+inputs:
+  - name: bosh-stemcells-ci
+
+outputs:
+  - name: usn-gh-json
+
+caches:
+  - path: usn-gh-json-cache
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/fetch-usn-gh-json.sh
