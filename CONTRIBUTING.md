@@ -22,10 +22,10 @@ ubuntu-jammy → ubuntu-noble → ubuntu-resolute
 
 1. Open your PR against the **oldest applicable branch** (e.g. `ubuntu-jammy` if the change applies to all lines).
 2. Merge it.
-3. The merge-forward workflow automatically opens a PR merging that branch into the next one in the chain.
-4. Merge the forwarded PR, which then triggers another forward merge to the next branch, and so on.
+3. A maintainer manually dispatches `.github/workflows/merge-forward.yml` with `source_branch` set to the merged branch. Optionally, set `validated_sha` to the commit that passed Concourse validation (`aggregate-candidate-stemcells`) — when provided, the workflow merges from that exact SHA rather than the branch tip.
+4. Merge the forwarded PR, then repeat from step 3 for the next branch in the chain.
 
-No labels are needed — every PR merged into `ubuntu-jammy` or `ubuntu-noble` triggers an automatic forward merge to the next branch.
+No labels are needed. After each relevant merge, a maintainer dispatches the workflow to create the forward PR.
 
 ### Clean vs. conflict merge-forwards
 
@@ -38,10 +38,10 @@ No labels are needed — every PR merged into `ubuntu-jammy` or `ubuntu-noble` t
 The workflow is idempotent: if the merge-forward branch already exists but has no
 associated PR (i.e. the branch was pushed but PR creation failed on a previous run),
 re-running retries opening the PR without re-doing the merge. If a PR already exists
-(open or closed), the run skips silently.
+(open), the run skips silently.
 
 ### CI on merge-forward PRs
 
 GitHub suppresses workflow runs triggered by a `GITHUB_TOKEN`-pushed branch. This
-means the auto-opened merge-forward PR will not have CI results initially. A
+means the merge-forward PR will not have CI results initially. A
 maintainer can start CI by pushing a trivial commit to the forward branch.
