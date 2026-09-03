@@ -3,7 +3,7 @@
 # See the man page for details on how to write a sudoers file.
 # Defaults
 
-Defaults        !lecture,tty_tickets,!fqdn
+Defaults        !lecture,!fqdn
 # Run sudo commands in a dedicated pseudo-terminal
 Defaults        use_pty
 # Log sudo activity to a dedicated log file
