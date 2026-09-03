@@ -98,9 +98,21 @@ jobs:
           fi
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
 
-          # Query PR history first, regardless of whether the branch still exists.
-          # This prevents re-opening a PR whose branch was deleted after it was closed.
-          pr_state=$(gh pr list --head "$branch" --state all --json state --jq '.[0].state // "NONE"')
+          # Check for an existing open PR for this source→target pair regardless of
+          # which validated_sha was used. Two runs with different SHAs would otherwise
+          # each pass the per-branch check and open duplicate PRs.
+          pair_prefix="merge-forward/${SOURCE}-to-${TARGET}"
+          open_pair_pr=$(gh pr list --base "$TARGET" --state open --json headRefName \
+            --jq "[.[] | select(.headRefName | startswith(\"${pair_prefix}\"))] | length")
+          if [ "${open_pair_pr:-0}" -gt 0 ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Query PR history for this exact branch, regardless of whether the branch
+          # still exists. This prevents re-opening a PR whose branch was deleted after
+          # it was closed.
+          pr_state=$(gh pr list --head "$branch" --state open --json state --jq '.[0].state // "NONE"')
           if [ "$pr_state" != "NONE" ]; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           elif git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null 2>&1; then
