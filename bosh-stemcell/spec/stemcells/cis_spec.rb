@@ -1,6 +1,7 @@
 require "spec_helper"
 
 describe "CIS test case verification", {stemcell_image: true, security_spec: true} do
+  # CIS-5.2.3 was removed from ubuntu-resolute, see spec/support/os_image_shared_examples.rb
   let(:base_cis_test_cases) do
     %W[
       CIS-2.18
@@ -44,7 +45,6 @@ describe "CIS test case verification", {stemcell_image: true, security_spec: tru
       CIS-10.2
       CIS-5.1.18
       CIS-5.2.2
-      CIS-5.2.3
       CIS-5.2.12
       CIS-5.2.13
       CIS-5.4.3.2
