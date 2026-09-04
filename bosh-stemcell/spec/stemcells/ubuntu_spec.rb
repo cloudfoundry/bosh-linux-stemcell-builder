@@ -496,6 +496,62 @@ describe "Ubuntu 22.04 stemcell image", stemcell_image: true do
     end
   end
 
+  describe "apt state is not shipped in the stemcell" do
+    # restore_apt_sources rewrites sources.list from the build-time snapshot
+    # mirror back to archive.ubuntu.com, which leaves every fetched list keyed
+    # to a source the image no longer references. Apt discards and refetches
+    # them on the first `apt-get update`, so the stage purges them.
+
+    # Everything except the lock file and the two subdirectories should be gone.
+    describe command(
+      "find /var/lib/apt/lists -mindepth 1 " \
+      "! -name lock ! -name partial ! -name auxfiles | wc -l"
+    ) do
+      its(:stdout) { should match(/^0$/) }
+    end
+
+    describe command("ls /var/lib/apt/lists/*_Packages 2>/dev/null | wc -l") do
+      its(:stdout) { should match(/^0$/) }
+    end
+
+    # Regenerated on demand by the next `apt-get update`.
+    describe command("ls /var/cache/apt/*.bin 2>/dev/null | wc -l") do
+      its(:stdout) { should match(/^0$/) }
+    end
+
+    describe command("ls /var/cache/apt/archives/*.deb 2>/dev/null | wc -l") do
+      its(:stdout) { should match(/^0$/) }
+    end
+
+    # Apt recreates a missing subdirectory, but a parent left behind with the
+    # wrong ownership fails `apt-get update` with a confusing permission error.
+    # The stage preserves these in place rather than recreating them, so assert
+    # the modes it inherited are still intact.
+    describe file("/var/lib/apt/lists") do
+      it { should be_directory }
+      it { should be_mode(0o755) }
+      it { should be_owned_by("root") }
+    end
+
+    describe file("/var/lib/apt/lists/partial") do
+      it { should be_directory }
+      it { should be_mode(0o700) }
+      it { should be_owned_by("_apt") }
+    end
+
+    describe file("/var/lib/apt/lists/auxfiles") do
+      it { should be_directory }
+      it { should be_mode(0o755) }
+      it { should be_owned_by("_apt") }
+    end
+
+    # Asserted separately because the find above excludes lock from its count,
+    # so that assertion passes whether or not the file survived.
+    describe file("/var/lib/apt/lists/lock") do
+      it { should be_file }
+    end
+  end
+
   context "installed by system_kernel", exclude_on_fips: true do
     describe package("linux-generic") do
       it { should be_installed }
