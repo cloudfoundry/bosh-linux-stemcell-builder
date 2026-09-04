@@ -1,0 +1,227 @@
+name: Merge Forward
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: >
+          Branch to merge forward (ubuntu-jammy → ubuntu-noble, ubuntu-noble → ubuntu-resolute).
+        required: true
+        type: choice
+        options:
+          - ubuntu-jammy
+          - ubuntu-noble
+      validated_sha:
+        description: >
+          Optional: specific commit SHA that passed Concourse validation
+          (aggregate-candidate-stemcells). When provided, merges from this SHA
+          rather than the branch tip, making the validated commit explicit in the
+          merge-forward PR. Leave blank to use the current branch tip.
+        required: false
+        type: string
+        default: ''
+
+# Serialize runs per source branch to prevent push races on concurrent triggers
+concurrency:
+  group: merge-forward-${{ inputs.source_branch }}
+  cancel-in-progress: false
+
+# Default: no permissions; write access is granted only to the merge-forward job
+permissions: {}
+
+jobs:
+  merge-forward:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine forward target
+        id: target
+        env:
+          SOURCE: ${{ inputs.source_branch }}
+        run: |
+          case "$SOURCE" in
+            ubuntu-jammy)   echo "target=ubuntu-noble"    >> "$GITHUB_OUTPUT" ;;
+            ubuntu-noble)   echo "target=ubuntu-resolute" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "No forward target for $SOURCE — skipping."
+              echo "target=" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Resolve merge ref
+        if: steps.target.outputs.target != ''
+        id: ref
+        env:
+          SOURCE:        ${{ inputs.source_branch }}
+          VALIDATED_SHA: ${{ inputs.validated_sha }}
+        run: |
+          git fetch origin "$SOURCE"
+          if [ -n "$VALIDATED_SHA" ]; then
+            # Verify the SHA exists on the source branch before trusting it.
+            if ! git merge-base --is-ancestor "$VALIDATED_SHA" "origin/$SOURCE"; then
+              echo "::error::validated_sha $VALIDATED_SHA is not an ancestor of origin/$SOURCE"
+              exit 1
+            fi
+            echo "merge_ref=$VALIDATED_SHA" >> "$GITHUB_OUTPUT"
+          else
+            echo "merge_ref=origin/$SOURCE" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check if merge-forward branch or PR already exists
+        if: steps.target.outputs.target != ''
+        id: check
+        env:
+          GH_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
+          SOURCE:        ${{ inputs.source_branch }}
+          TARGET:        ${{ steps.target.outputs.target }}
+          VALIDATED_SHA: ${{ inputs.validated_sha }}
+        run: |
+          # Use a short SHA suffix when a specific commit was given so re-runs
+          # with a different SHA produce a distinct branch.
+          if [ -n "$VALIDATED_SHA" ]; then
+            short="${VALIDATED_SHA:0:8}"
+            branch="merge-forward/${SOURCE}-to-${TARGET}-${short}"
+          else
+            branch="merge-forward/${SOURCE}-to-${TARGET}"
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+          # Check for an existing open PR for this source→target pair regardless of
+          # which validated_sha was used. Two runs with different SHAs would otherwise
+          # each pass the per-branch check and open duplicate PRs.
+          pair_prefix="merge-forward/${SOURCE}-to-${TARGET}"
+          open_pair_pr=$(gh pr list --base "$TARGET" --state open --json headRefName \
+            --jq "[.[] | select(.headRefName | startswith(\"${pair_prefix}\"))] | length")
+          if [ "${open_pair_pr:-0}" -gt 0 ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Query PR history for this exact branch, regardless of whether the branch
+          # still exists. This prevents re-opening a PR whose branch was deleted after
+          # it was closed.
+          pr_state=$(gh pr list --head "$branch" --state open --json state --jq '.[0].state // "NONE"')
+          if [ "$pr_state" != "NONE" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null 2>&1; then
+            # Branch exists but no PR was ever created (previous run failed after push).
+            echo "exists=branch_only" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Merge source into target branch
+        if: >
+          steps.target.outputs.target != '' &&
+          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only')
+        id: merge
+        env:
+          SOURCE:    ${{ inputs.source_branch }}
+          TARGET:    ${{ steps.target.outputs.target }}
+          BRANCH:    ${{ steps.check.outputs.branch }}
+          EXISTS:    ${{ steps.check.outputs.exists }}
+          MERGE_REF: ${{ steps.ref.outputs.merge_ref }}
+        run: |
+          # Recovery path: branch exists but PR creation failed on a previous run.
+          # The merge result is already on the branch — skip straight to opening the PR.
+          if [ "$EXISTS" = "branch_only" ]; then
+            git fetch origin "$BRANCH" "$TARGET"
+            # No-op check: if merge ref is already an ancestor of target the branch
+            # has nothing new to forward — skip PR creation entirely.
+            if git merge-base --is-ancestor "$MERGE_REF" "origin/$TARGET"; then
+              echo "noop=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            last_msg=$(git log -1 --pretty=%B "origin/$BRANCH")
+            if printf '%s' "$last_msg" | grep -q '^merge-forward: conflict'; then
+              echo "conflict=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "conflict=false" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+
+          git fetch origin "$TARGET"
+
+          # No-op check: merge ref already fully contained in target — nothing to forward.
+          if git merge-base --is-ancestor "$MERGE_REF" "origin/$TARGET"; then
+            echo "No new commits from $MERGE_REF not already in $TARGET — skipping."
+            echo "noop=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git checkout -b "$BRANCH" "origin/$TARGET"
+
+          if git merge --no-edit "$MERGE_REF"; then
+            echo "conflict=false" >> "$GITHUB_OUTPUT"
+          else
+            # Record the conflict state and push an incomplete merge branch so the
+            # draft PR gives reviewers a base to resolve from.
+            git merge --abort
+            # Create a placeholder commit to mark the conflict — the reviewer will
+            # need to check out the branch and perform the merge manually.
+            git commit --allow-empty -m "merge-forward: conflict merging $SOURCE into $TARGET — resolve manually"
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          git push origin "$BRANCH"
+
+      - name: Open merge-forward PR
+        if: >
+          steps.target.outputs.target != '' &&
+          (steps.check.outputs.exists == 'false' || steps.check.outputs.exists == 'branch_only') &&
+          steps.merge.outputs.noop != 'true'
+        env:
+          GH_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
+          SOURCE:        ${{ inputs.source_branch }}
+          TARGET:        ${{ steps.target.outputs.target }}
+          BRANCH:        ${{ steps.check.outputs.branch }}
+          CONFLICT:      ${{ steps.merge.outputs.conflict }}
+          VALIDATED_SHA: ${{ inputs.validated_sha }}
+          ACTOR:         ${{ github.actor }}
+        run: |
+          body_file=$(mktemp)
+          if [ -n "$VALIDATED_SHA" ]; then
+            printf 'Manual merge-forward of `%s` (commit `%s`) into `%s`, triggered by @%s.\n\nThis commit has passed Concourse validation (`aggregate-candidate-stemcells`).\n' \
+              "$SOURCE" "$VALIDATED_SHA" "$TARGET" "$ACTOR" > "$body_file"
+          else
+            printf 'Manual merge-forward of `%s` into `%s`, triggered by @%s.\n' \
+              "$SOURCE" "$TARGET" "$ACTOR" > "$body_file"
+          fi
+
+          if [ "$CONFLICT" = "true" ]; then
+            printf '\n> [!WARNING]\n> **This merge-forward has conflicts.** The merge of `%s` into `%s` could not be applied cleanly.\n> Check out branch `%s`, perform the merge manually, resolve the conflicts, and mark this PR as ready for review.\n' \
+              "$SOURCE" "$TARGET" "$BRANCH" >> "$body_file"
+          fi
+
+          draft_flag=""
+          [ "$CONFLICT" = "true" ] && draft_flag="--draft"
+
+          # shellcheck disable=SC2086
+          gh pr create \
+            --title "[Merge Forward $SOURCE→$TARGET]" \
+            --body-file "$body_file" \
+            --base "$TARGET" \
+            --head "$BRANCH" \
+            $draft_flag
+
+          rm -f "$body_file"
+
+      - name: Skip (merge-forward PR already exists)
+        if: steps.target.outputs.target != '' && steps.check.outputs.exists == 'true'
+        env:
+          BRANCH: ${{ steps.check.outputs.branch }}
+        run: |
+          echo "Merge-forward branch ${BRANCH} already exists with a PR — skipping."
