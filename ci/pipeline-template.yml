@@ -1757,7 +1757,6 @@ resources:
 - name: bosh-linux-stemcell-builder-push-tags
   type: git
   source:
-    fake_param_to_bust_global_resource_cache: true
     private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
     uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
 
