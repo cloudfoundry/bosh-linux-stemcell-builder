@@ -135,4 +135,19 @@ describe "Rosetta Warden Stemcell", stemcell_image: true do
       its(:group) { should eq("shadow") }
     end
   end
+
+  context "the rosetta stage leaves no apt cache behind" do
+    # This stage makes the only apt calls in the builder that bypass pkg_mgr,
+    # which always finishes with `apt-get clean`. Left uncleaned it ships the
+    # regenerated binary caches (~150MB) and every arm64 deb it downloaded.
+    # The arm64 debs are the fingerprint that identifies this stage as the
+    # culprit rather than some earlier one, so assert on them specifically.
+    describe command("ls /var/cache/apt/archives/*_arm64.deb 2>/dev/null | wc -l") do
+      its(:stdout) { should match(/^0$/) }
+    end
+
+    describe command("ls /var/cache/apt/*.bin 2>/dev/null | wc -l") do
+      its(:stdout) { should match(/^0$/) }
+    end
+  end
 end
