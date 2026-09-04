@@ -93,11 +93,9 @@ describe "Ubuntu 26.04 OS image", os_image: true do
         it { should be_installed }
       end
     end
-    # ubuntu-noble tested unicode.pf2 and gfxblacklist.txt here, which were
-    # installed by the grub2 meta-package (via grub-common). Resolute installs
-    # only grub-pc-bin and grub-efi-amd64-bin (the bare binaries), which do not
-    # include those files. They are written to /boot/grub/ during grub-install at
-    # stemcell build time, after this OS-image phase.
+    # ubuntu-noble also asserts /boot/grub/unicode.pf2 and gfxblacklist.txt here.
+    # Resolute only asserts menu.lst, which system_grub creates itself; the other
+    # two are not checked in the OS-image phase.
     describe file("/boot/grub/menu.lst") do
       it { should be_file }
     end
