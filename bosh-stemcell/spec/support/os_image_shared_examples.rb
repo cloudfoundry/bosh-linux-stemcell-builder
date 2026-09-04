@@ -21,13 +21,17 @@ shared_examples_for "every OS image" do
     end
   end
 
-  context "installed by bosh_sudoers (CIS-5.2.2, CIS-5.2.3)" do
+  # CIS-5.2.3 ("ensure sudo log file exists") is deliberately not covered here.
+  # It requires a `Defaults logfile=` directive in sudoers, and sudo-rs -- the
+  # default sudo provider since Resolute -- has no file-logging backend and
+  # rejects the setting outright. sudo activity is logged to the authpriv
+  # syslog facility instead, which rsyslog_config routes to /var/log/auth.log.
+  context "installed by bosh_sudoers (CIS-5.2.2)" do
     describe file("/etc/sudoers") do
       it { should be_file }
       its(:content) { should match(/%bosh_sudoers ALL=\(ALL\) NOPASSWD: ALL/m) }
       its(:content) { should match "#includedir /etc/sudoers.d" }
       its(:content) { should match(/^Defaults\s+use_pty$/) }
-      its(:content) { should match(%r{^Defaults\s+logfile=/var/log/sudo\.log$}) }
     end
 
     describe command("egrep -sh '!use_pty' /etc/sudoers /etc/sudoers.d/* | egrep -v '^[[:space:]]*#' --") do
