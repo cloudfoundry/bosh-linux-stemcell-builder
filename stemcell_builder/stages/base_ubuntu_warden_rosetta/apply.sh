@@ -44,7 +44,7 @@ debs_root="$chroot$debs_dir/root"
 
 # Enable arm64 as a foreign architecture so apt can resolve arm64 packages.
 run_in_chroot $chroot "dpkg --add-architecture arm64"
-run_in_chroot $chroot "apt-get update"
+run_in_chroot $chroot "apt-get $APT_RETRY_OPTS update"
 
 # Install arm64 runtime libraries needed by the arm64 binaries installed below
 # (systemd in Part 4; unix_chkpwd, auditd and logrotate in Part 5 — auditd needs
@@ -77,7 +77,7 @@ arm64_libs="libc6:arm64 \
   libauparse0t64:arm64 \
   libpopt0:arm64"
 
-run_in_chroot $chroot "apt-get install --no-install-recommends --assume-yes $arm64_libs"
+run_in_chroot $chroot "apt-get $APT_RETRY_OPTS install --no-install-recommends --assume-yes $arm64_libs"
 
 # ---------------------------------------------------------------------------
 # Part 2: download every arm64 deb that gets swapped in by hand
@@ -105,7 +105,7 @@ run_in_chroot $chroot "
   rm -rf $debs_dir
   mkdir -p $debs_dir
   cd $debs_dir
-  apt-get download $arm64_download_list
+  apt-get $APT_RETRY_OPTS download $arm64_download_list
 "
 
 # ---------------------------------------------------------------------------
@@ -302,3 +302,13 @@ run_in_chroot $chroot "rm -f $probe_marker"
 # Rosetta handler; letting it run risks deregistering Rosetta and leaving no
 # x86-64 binary in the container executable.
 run_in_chroot "$chroot" "systemctl mask systemd-binfmt.service"
+
+# ---------------------------------------------------------------------------
+# Part 7: apt cleanup
+# ---------------------------------------------------------------------------
+
+# The apt calls above are the only ones in the builder that bypass pkg_mgr,
+# which always finishes with `apt-get clean` (lib/prelude_apply.bash). Without
+# this the stage leaves ~150MB of regenerated pkgcache.bin/srcpkgcache.bin plus
+# the downloaded arm64 debs in the image.
+run_in_chroot $chroot "apt-get clean"
