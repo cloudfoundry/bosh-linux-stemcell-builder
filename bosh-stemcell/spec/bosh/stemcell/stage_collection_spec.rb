@@ -92,11 +92,11 @@ module Bosh::Stemcell
             :bosh_aws_agent_settings,
             :bosh_clean_ssh,
             :udev_aws_rules,
+            :restore_apt_sources,
             :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
-            :restore_apt_sources
+            :bosh_package_list
           ]
         }
         let(:aws_package_stemcell_stages) {
@@ -124,11 +124,11 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_alicloud_agent_settings,
             :bosh_clean_ssh,
+            :restore_apt_sources,
             :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
-            :restore_apt_sources
+            :bosh_package_list
           ]
         }
 
@@ -158,11 +158,11 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_google_agent_settings,
             :bosh_clean_ssh,
+            :restore_apt_sources,
             :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
-            :restore_apt_sources
+            :bosh_package_list
           ]
         }
 
@@ -195,11 +195,11 @@ module Bosh::Stemcell
                                                                       :bosh_harden,
                                                                       :bosh_openstack_agent_settings,
                                                                       :bosh_clean_ssh,
+                                                                      :restore_apt_sources,
                                                                       :image_create_efi,
                                                                       :image_install_grub,
                                                                       :sbom_create,
-                                                                      :bosh_package_list,
-                                                                      :restore_apt_sources
+                                                                      :bosh_package_list
                                                                     ]
                                                                   )
           expect(stage_collection.package_stemcell_stages("qcow2")).to eq(
@@ -227,11 +227,11 @@ module Bosh::Stemcell
                                                                       :bosh_harden,
                                                                       :bosh_cloudstack_agent_settings,
                                                                       :bosh_clean_ssh,
+                                                                      :restore_apt_sources,
                                                                       :image_create_efi,
                                                                       :image_install_grub,
                                                                       :sbom_create,
-                                                                      :bosh_package_list,
-                                                                      :restore_apt_sources
+                                                                      :bosh_package_list
                                                                     ]
                                                                   )
           expect(stage_collection.package_stemcell_stages("qcow2")).to eq(
@@ -257,11 +257,11 @@ module Bosh::Stemcell
                                                                       :bosh_harden,
                                                                       :bosh_vsphere_agent_settings,
                                                                       :bosh_clean_ssh,
+                                                                      :restore_apt_sources,
                                                                       :image_create_efi,
                                                                       :image_install_grub,
                                                                       :sbom_create,
-                                                                      :bosh_package_list,
-                                                                      :restore_apt_sources
+                                                                      :bosh_package_list
                                                                     ]
                                                                   )
           expect(stage_collection.package_stemcell_stages("ovf")).to eq(vmware_package_stemcell_steps)
@@ -282,11 +282,11 @@ module Bosh::Stemcell
             :bosh_harden,
             :bosh_azure_agent_settings,
             :bosh_clean_ssh,
+            :restore_apt_sources,
             :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
-            :restore_apt_sources
+            :bosh_package_list
           ]
         }
 
@@ -312,11 +312,11 @@ module Bosh::Stemcell
             :bosh_clean,
             :bosh_harden,
             :bosh_clean_ssh,
+            :restore_apt_sources,
             :image_create_efi,
             :image_install_grub,
             :sbom_create,
-            :bosh_package_list,
-            :restore_apt_sources
+            :bosh_package_list
           ]
         }
         let(:package_stemcell_stages) {
