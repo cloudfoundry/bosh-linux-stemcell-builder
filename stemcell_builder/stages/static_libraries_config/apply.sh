@@ -16,7 +16,7 @@ if [[ "${stemcell_operating_system_variant}" == 'fips' ]]; then
     # TODO use iaas specific kernel
     # kernel_suffix="-${stemcell_infrastructure}-fips"
     kernel_suffix="-fips"
-    major_kernel_version="5.15"
+    major_kernel_version="6.8"
 fi
 
 update_kernel_static_libraries ${kernel_suffix} ${major_kernel_version}
