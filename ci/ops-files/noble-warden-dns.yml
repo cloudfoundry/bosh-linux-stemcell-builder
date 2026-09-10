@@ -1,0 +1,9 @@
+---
+- type: replace
+  path: /addons/name=bosh-dns-systemd/jobs/name=bosh-dns/properties/disable_recursors
+  value: false
+
+- type: replace
+  path: /addons/name=bosh-dns-systemd/jobs/name=bosh-dns/properties/recursors?
+  value:
+    - 169.254.169.254
