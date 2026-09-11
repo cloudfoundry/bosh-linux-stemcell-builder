@@ -66,6 +66,7 @@ rosetta_services=(
   systemd-logind
   systemd-timesyncd
   auditd
+  logrotate
 )
 
 for service in "${rosetta_services[@]}"; do
