@@ -73,5 +73,13 @@ for service in "${rosetta_services[@]}"; do
   cp "$assets_dir/rosetta-compat.conf" "$chroot/etc/systemd/system/${service}.service.d/rosetta-compat.conf"
 done
 
-# Mask systemd-binfmt.service which fails under Rosetta emulation
-run_in_chroot "$chroot" "systemctl mask systemd-binfmt.service"
+# mask units which fail under Rosetta and are not needed in a container image
+warden_masked_units=(
+  systemd-udevd.service
+  chrony.service
+  systemd-binfmt.service
+)
+
+for unit in "${warden_masked_units[@]}"; do
+  run_in_chroot "$chroot" "systemctl mask ${unit}"
+done
