@@ -32,6 +32,7 @@ describe "Warden Stemcell", stemcell_image: true do
       systemd-logind
       systemd-timesyncd
       auditd
+      logrotate
     ]
 
     rosetta_services.each do |service|
@@ -43,8 +44,16 @@ describe "Warden Stemcell", stemcell_image: true do
       end
     end
 
-    describe file("/etc/systemd/system/systemd-binfmt.service") do
-      it { should be_linked_to File::NULL }
+    warden_masked_units = %w[
+      systemd-udevd.service
+      chrony.service
+      systemd-binfmt.service
+    ]
+
+    warden_masked_units.each do |unit|
+      describe file("/etc/systemd/system/#{unit}") do
+        it { should be_linked_to File::NULL }
+      end
     end
   end
 end

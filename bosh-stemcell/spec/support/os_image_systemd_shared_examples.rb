@@ -8,7 +8,7 @@ shared_examples_for "a systemd-based OS image" do
       it { should be_enabled }
     end
 
-    describe service("chrony") do
+    describe service("chrony"), exclude_on_warden: true do
       it { should be_enabled }
     end
 
