@@ -221,22 +221,26 @@ describe "Ubuntu 22.04 stemcell image", stemcell_image: true do
       end
     end
 
-    %w[
-      /etc/systemd/system/multi-user.target.wants/ubuntu-advantage.service
-      /etc/systemd/system/multi-user.target.wants/ua-reboot-cmds.service
-      /etc/systemd/system/timers.target.wants/ua-timer.timer
-    ].each do |enablement_symlink|
-      describe file(enablement_symlink) do
-        it("is not enabled in any systemd target") { should_not be_file }
+    # These paths must be gone, not merely "not a regular file". `should_not be_file`
+    # is too weak here: File#file? canonicalizes with `readlink -m` before `stat`, so a
+    # symlink left behind pointing at a missing target reports false and the assertion
+    # would pass with the link still in place. Three of these are symlinks to begin
+    # with, so check for absence exactly.
+    {
+      "/etc/systemd/system/multi-user.target.wants/ubuntu-advantage.service" =>
+        "is not enabled in any systemd target",
+      "/etc/systemd/system/multi-user.target.wants/ua-reboot-cmds.service" =>
+        "is not enabled in any systemd target",
+      "/etc/systemd/system/timers.target.wants/ua-timer.timer" =>
+        "is not enabled in any systemd target",
+      "/etc/apt/apt.conf.d/20apt-esm-hook.conf" =>
+        "does not let apt trigger esm-cache or apt-news",
+      "/etc/update-motd.d/91-contract-ua-esm-status" =>
+        "does not render ESM status at login"
+    }.each do |path, description|
+      describe command("test ! -e #{path} && test ! -L #{path}") do
+        it(description) { expect(subject.exit_status).to eq(0) }
       end
-    end
-
-    describe file("/etc/apt/apt.conf.d/20apt-esm-hook.conf") do
-      it("does not let apt trigger esm-cache or apt-news") { should_not be_file }
-    end
-
-    describe file("/etc/update-motd.d/91-contract-ua-esm-status") do
-      it("does not render ESM status at login") { should_not be_file }
     end
   end
 
