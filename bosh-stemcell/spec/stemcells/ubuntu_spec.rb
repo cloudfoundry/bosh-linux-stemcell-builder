@@ -2,6 +2,7 @@
 # Modified with AI assistance
 # Description:
 # 2026-06-04: Add spec for AppArmor local dhclient override (LP #2011628 backport) - Cursor: Claude Sonnet 4.6
+# 2026-09-15: Add spec for masked Ubuntu Pro client units - Claude Code: Claude Opus 5
 
 require "spec_helper"
 
@@ -199,6 +200,43 @@ describe "Ubuntu 22.04 stemcell image", stemcell_image: true do
     describe file("/etc/apparmor.d/local/sbin.dhclient") do
       it { should be_file }
       its(:content) { should match(%r{\{,usr/\}bin/true ixr,}) }
+    end
+  end
+
+  # The Ubuntu Pro client ships installed on jammy (ubuntu-minimal depends on
+  # ubuntu-advantage-tools, so it cannot be purged) with its units enabled. An unattached
+  # client still calls contracts.canonical.com every 6h, so bosh_harden disables and masks
+  # those units and removes the apt and MOTD entry points.
+  context "installed by bosh_harden" do
+    %w[
+      ua-timer.timer
+      ua-timer.service
+      esm-cache.service
+      apt-news.service
+      ubuntu-advantage.service
+      ua-reboot-cmds.service
+    ].each do |unit|
+      describe file("/etc/systemd/system/#{unit}") do
+        it("is masked") { should be_linked_to(File::NULL) }
+      end
+    end
+
+    %w[
+      /etc/systemd/system/multi-user.target.wants/ubuntu-advantage.service
+      /etc/systemd/system/multi-user.target.wants/ua-reboot-cmds.service
+      /etc/systemd/system/timers.target.wants/ua-timer.timer
+    ].each do |enablement_symlink|
+      describe file(enablement_symlink) do
+        it("is not enabled in any systemd target") { should_not be_file }
+      end
+    end
+
+    describe file("/etc/apt/apt.conf.d/20apt-esm-hook.conf") do
+      it("does not let apt trigger esm-cache or apt-news") { should_not be_file }
+    end
+
+    describe file("/etc/update-motd.d/91-contract-ua-esm-status") do
+      it("does not render ESM status at login") { should_not be_file }
     end
   end
 
