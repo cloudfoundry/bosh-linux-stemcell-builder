@@ -17,6 +17,7 @@ run:
 params:
   OPERATING_SYSTEM_NAME:      replace-me
   OPERATING_SYSTEM_VERSION:   replace-me
+  STEMCELL_ARCH:              amd64
   ESM_TOKEN:
   UBUNTU_ADVANTAGE_TOKEN:
   UBUNTU_DEBOOTSTRAP_MIRROR:

@@ -8,6 +8,19 @@ source $base_dir/lib/prelude_apply.bash
 mount --bind /sys "$chroot/sys"
 add_on_exit "umount $chroot/sys"
 
+# Ubuntu serves non-amd64 architectures (e.g. arm64) from the ports mirror
+# (ports.ubuntu.com/ubuntu-ports) rather than archive/security.ubuntu.com.
+# stemcell_target_arch derives the arch from the bootstrapped chroot, so this
+# works regardless of how build settings are propagated. Defaults to the amd64
+# mirrors for amd64/unknown so existing builds are unchanged.
+if [ "$(stemcell_target_arch)" == "arm64" ]; then
+  apt_archive_mirror="http://ports.ubuntu.com/ubuntu-ports"
+  apt_security_mirror="http://ports.ubuntu.com/ubuntu-ports"
+else
+  apt_archive_mirror="http://archive.ubuntu.com/ubuntu"
+  apt_security_mirror="http://security.ubuntu.com/ubuntu"
+fi
+
 # check if current git branch is a tag and use snapshot date from the last commit message in that tag
 if [ -n "${BUILD_TIME:-}" ]; then
   cat > "$chroot/etc/apt/sources.list" <<EOS
@@ -17,9 +30,9 @@ if [ -n "${BUILD_TIME:-}" ]; then
 EOS
 else
   cat > "$chroot/etc/apt/sources.list" <<EOS
-  deb http://archive.ubuntu.com/ubuntu $DISTRIB_CODENAME main universe multiverse
-  deb http://archive.ubuntu.com/ubuntu $DISTRIB_CODENAME-updates main universe multiverse
-  deb http://security.ubuntu.com/ubuntu $DISTRIB_CODENAME-security main universe multiverse
+  deb ${apt_archive_mirror} $DISTRIB_CODENAME main universe multiverse
+  deb ${apt_archive_mirror} $DISTRIB_CODENAME-updates main universe multiverse
+  deb ${apt_security_mirror} $DISTRIB_CODENAME-security main universe multiverse
 EOS
 fi
 
