@@ -1,0 +1,37 @@
+package bpm_restore_test
+
+import (
+	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/bosh-linux-stemcell-builder/acceptance-tests/testhelpers"
+)
+
+var (
+	bosh *testhelpers.BOSH
+)
+
+func TestBpmRestore(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "BPM Restore Suite")
+}
+
+var _ = BeforeSuite(func() {
+	bosh = testhelpers.NewBOSH()
+	stemcellPath := testhelpers.RequireEnv("STEMCELL_PATH")
+	syslogReleasePath := testhelpers.RequireEnv("SYSLOG_RELEASE_PATH")
+	bpmReleasePath := testhelpers.RequireEnv("BPM_RELEASE_PATH")
+	osConfReleasePath := testhelpers.RequireEnv("OS_CONF_RELEASE_PATH")
+
+	bosh.UploadStemcell(stemcellPath)
+	bosh.UploadRelease(syslogReleasePath)
+	bosh.UploadRelease(bpmReleasePath)
+	bosh.UploadRelease(osConfReleasePath)
+	bosh.SafeDeploy()
+})
+
+var _ = AfterSuite(func() {
+	bosh.Teardown()
+})
