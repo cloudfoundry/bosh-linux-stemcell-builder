@@ -62,7 +62,8 @@ module Bosh::Stemcell
         "spec/stemcells/go_agent_spec.rb",
         "spec/stemcells/#{infrastructure.name}_spec.rb",
         "spec/stemcells/stig_spec.rb",
-        "spec/stemcells/cis_spec.rb"
+        "spec/stemcells/cis_spec.rb",
+        "spec/stemcells/bpm_spec.rb"
       ]
       cmd << "spec/stemcells/#{operating_system.variant}_spec.rb" if operating_system.variant?
       cmd.join(" ")
