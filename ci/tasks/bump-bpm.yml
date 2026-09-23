@@ -1,0 +1,18 @@
+---
+platform: linux
+
+inputs:
+- name: bosh-linux-stemcell-builder
+- name: bosh-stemcells-ci
+- name: bpm-tarball-release
+
+outputs:
+- name: bosh-linux-stemcell-builder
+  path: bosh-linux-stemcell-builder-out
+
+run:
+  path: bosh-stemcells-ci/ci/tasks/bump-bpm.sh
+
+params:
+  GIT_USER_EMAIL:
+  GIT_USER_NAME:

@@ -177,6 +177,7 @@ groups:
   - bump-deps
   - bump-golang-deps
   - bump-bosh-agent
+  - bump-bpm
   - bump-bosh-blobstore-*
 
 - name: automatic-triggers
@@ -979,6 +980,28 @@ jobs:
   - get: bosh-linux-stemcell-builder
   - task: bump
     file: bosh-stemcells-ci/ci/tasks/bump-bosh-agent.yml
+    image: bosh-integration-registry-image
+    params:
+      GIT_USER_EMAIL: (@= data.values.stemcell_details.bot_email @)
+      GIT_USER_NAME: (@= data.values.stemcell_details.bot_name @)
+  - put: bosh-linux-stemcell-builder-push
+    params:
+      rebase: true
+      repository: bosh-linux-stemcell-builder
+  serial: true
+
+- name: bump-bpm
+  plan:
+  - get: bpm-tarball-release
+    trigger: true
+    params:
+      globs:
+      - bpm-*-linux-amd64.tar.gz.sha256
+  - get: bosh-stemcells-ci
+  - get: bosh-integration-registry-image
+  - get: bosh-linux-stemcell-builder
+  - task: bump
+    file: bosh-stemcells-ci/ci/tasks/bump-bpm.yml
     image: bosh-integration-registry-image
     params:
       GIT_USER_EMAIL: (@= data.values.stemcell_details.bot_email @)
@@ -1833,6 +1856,13 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/bpm-release
+
+- name: bpm-tarball-release
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: bpm-release
+    access_token: ((github_public_repo_token))
 
 - name: bosh-deployment
   type: git
