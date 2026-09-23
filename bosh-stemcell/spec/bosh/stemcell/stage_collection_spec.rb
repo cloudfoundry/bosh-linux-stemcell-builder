@@ -62,7 +62,8 @@ module Bosh::Stemcell
           :blobstore_clis,
           :logrotate_config,
           :dev_tools_config,
-          :static_libraries_config
+          :static_libraries_config,
+          :bosh_bpm
         ]
       end
 

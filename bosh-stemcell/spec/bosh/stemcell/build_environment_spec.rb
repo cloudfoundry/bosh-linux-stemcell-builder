@@ -217,6 +217,7 @@ module Bosh::Stemcell
           "spec/stemcells/#{infrastructure.name}_spec.rb",
           "spec/stemcells/stig_spec.rb",
           "spec/stemcells/cis_spec.rb",
+          "spec/stemcells/bpm_spec.rb",
           "spec/stemcells/fips_spec.rb"
         ].join(" ")
 
