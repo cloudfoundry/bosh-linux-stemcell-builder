@@ -21,7 +21,7 @@ fi
 
 cp -f $assets_dir/rsyslog_50-default.conf $chroot/etc/rsyslog.d/50-default.conf
 
-cp -f $assets_dir/rsyslog_90-bosh-agent.conf $chroot/etc/rsyslog.d/90-bosh-agent.conf
+cp -f "$assets_dir"/rsyslog_34-bosh-agent.conf "$chroot"/etc/rsyslog.d/34-bosh-agent.conf
 
 # Add user/group
 # add syslog to the vcap group in a separate step in case the syslog user already exists
