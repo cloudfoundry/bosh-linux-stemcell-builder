@@ -1,6 +1,6 @@
 # bosh/os-image-stemcell-builder
 ARG BASE_IMAGE
-FROM $BASE_IMAGE
+FROM $BASE_IMAGE AS base
 
 LABEL maintainer="cf-bosh@lists.cloudfoundry.org"
 
@@ -12,9 +12,6 @@ ARG YQ_CLI_URL
 ARG RUBY_INSTALL_URL
 ARG RUBY_VERSION
 ARG GEM_HOME
-
-ARG OVF_TOOL_INSTALLER
-ARG OVF_TOOL_INSTALLER_SHA1
 
 # ENV VARs
 ENV DEBIAN_FRONTEND="noninteractive"
@@ -78,7 +75,19 @@ RUN temp_dir="/mnt/tmp" \
 RUN mkdir -p /mnt/stemcells \
     && chown -R ubuntu:ubuntu /mnt/stemcells
 
-# VMware's ovftool is used to create vSphere stemcells
+# VMware's ovftool is used to create vSphere stemcells. VMware ships no arm64
+# Linux ovftool, and vSphere is not an arm64 (Graviton) target, so the ovftool
+# bundle is only added and installed on amd64. On arm64 the ADD is skipped
+# entirely (a conditional build stage), which keeps the arm64 image buildable
+# without an ovftool bundle in the build context.
+# RFC: cloudfoundry/community#1530.
+#
+# TARGETARCH is provided automatically by BuildKit ("amd64" / "arm64").
+ARG TARGETARCH
+
+FROM base AS ovftool-amd64
+ARG OVF_TOOL_INSTALLER
+ARG OVF_TOOL_INSTALLER_SHA1
 ADD ${OVF_TOOL_INSTALLER} /tmp/ovftool_installer.bundle
 RUN cd /tmp \
     && echo "${OVF_TOOL_INSTALLER_SHA1} /tmp/ovftool_installer.bundle" | sha1sum -c - \
@@ -86,6 +95,20 @@ RUN cd /tmp \
     && ln -s /bin/cat /usr/local/bin/more \
     && bash  ./ovftool_installer.bundle --eulas-agreed \
     && rm -rf ./ovftool_installer.bundle /tmp/vmware-root/ /usr/local/bin/more
+
+# On arm64 the ovftool stage is a no-op passthrough of the base image.
+FROM base AS ovftool-arm64
+
+# Select the arch-appropriate ovftool stage and continue the build from it.
+FROM ovftool-${TARGETARCH} AS builder
+
+# Build args are per-stage in BuildKit, so re-declare the ones used below.
+ARG META4_CLI_URL
+ARG SYFT_CLI_URL
+ARG YQ_CLI_URL
+ARG RUBY_INSTALL_URL
+ARG RUBY_VERSION
+ARG GEM_HOME
 
 RUN meta4_cli_path="/usr/local/bin/meta4" \
     && curl --show-error -sL "${META4_CLI_URL}" \

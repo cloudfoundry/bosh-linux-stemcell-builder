@@ -447,6 +447,66 @@ jobs:
     params:
       file: os-image-version/number
 
+#! arm64 (Graviton) OS image build. RFC: cloudfoundry/community#1530.
+#! Mirrors build-os-image but runs the same bosh-stemcells-ci os-images/build.yml
+#! task on an arm64 worker. The stemcell code derives target arch from the chroot
+#! (dpkg --print-architecture), and this job supplies the ports.ubuntu.com mirror
+#! that hosts arm64 Ubuntu packages. It publishes to its own os-image-tarball-arm64
+#! resource and version series so it never perturbs the amd64 os-image artifacts.
+#! Dormant until the platform team registers an `arm64`-tagged Concourse worker
+#! (RFC D3 / Open Question 2). Heavy/light stemcell packaging + arm64 AMI/GCE
+#! publishing for downstream IaaSes is platform-owned (RFC D5) and tracked
+#! separately; this job covers the os-image stage whose arch-correctness lives
+#! in this repo (validated 376/0 on a Graviton instance).
+- name: build-os-image-arm64
+  serial: true
+  plan:
+  - put: build-time
+    tags: [ arm64 ]
+  - get: bosh-stemcells-ci
+    tags: [ arm64 ]
+  - get: os-image-stemcell-builder-registry-image
+    tags: [ arm64 ]
+  - get: bosh-linux-stemcell-builder
+    trigger: true
+    tags: [ arm64 ]
+  - get: os-image-version-arm64
+    params:
+      bump: "major"
+    tags: [ arm64 ]
+  - get: usn-log
+    tags: [ arm64 ]
+  - get: stemcell-trigger
+    trigger: true
+    tags: [ arm64 ]
+  - task: build
+    file: bosh-stemcells-ci/ci/tasks/os-images/build.yml
+    image: os-image-stemcell-builder-registry-image
+    tags: [ arm64 ]
+    params:
+      OPERATING_SYSTEM_NAME: ubuntu
+      OPERATING_SYSTEM_VERSION: (@= data.values.stemcell_details.os_short_name @)
+      UBUNTU_DEBOOTSTRAP_MIRROR: http://ports.ubuntu.com/ubuntu-ports
+    privileged: true
+    vars:
+      image_os_tag: (@= data.values.stemcell_details.os_short_name @)
+  - put: os-image-tarball-arm64
+    tags: [ arm64 ]
+    params:
+      files:
+      - os-image/(@= data.values.stemcell_details.os_name @).tgz
+      - usn-log/usn-log.json
+      rename: (@= data.values.stemcell_details.branch @)/(@= data.values.stemcell_details.os_name @)-arm64.meta4
+      options:
+        author_email: (@= data.values.stemcell_details.bot_email @)
+        author_name: (@= data.values.stemcell_details.bot_name @)
+        message: 'Bump os-image tgz (arm64)'
+      version: os-image-version-arm64/version
+  - put: os-image-version-arm64
+    tags: [ arm64 ]
+    params:
+      file: os-image-version-arm64/number
+
 - name: test-unit
   plan:
   - get: bosh-stemcells-ci
@@ -1657,6 +1717,27 @@ resources:
         secret_key: ((hmac_secret))
       type: s3
 
+#! arm64 (Graviton) OS image tarball. RFC: cloudfoundry/community#1530.
+#! Mirrors os-image-tarball but under a distinct -arm64 meta4 name and S3 prefix
+#! so the arm64 os-image never overwrites the amd64 one.
+- name: os-image-tarball-arm64
+  type: metalink-repository
+  source:
+    mirror_files:
+    - destination: s3://storage.googleapis.com/bosh-os-images/(@= data.values.stemcell_details.branch @)-arm64/{{.Name}}
+    options:
+      private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
+    filters:
+    - repositorypath: "(@= data.values.stemcell_details.branch @)/(@= data.values.stemcell_details.os_name @)-arm64.meta4"
+    uri: git+ssh://git@github.com/cloudfoundry/bosh-linux-stemcell-builder.git//image-metalinks/#(@= data.values.stemcell_details.branch @)
+    url_handlers:
+    - include:
+      - (s3|https)://.*
+      options:
+        access_key: ((hmac_accesskey))
+        secret_key: ((hmac_secret))
+      type: s3
+
 - name: version
   type: semver
   source:
@@ -1673,6 +1754,17 @@ resources:
     uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
     branch: release-details
     file: (@= data.values.stemcell_details.branch @)/os-image-version
+    private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
+
+#! arm64 (Graviton) os-image version series, independent of the amd64 series.
+#! RFC: cloudfoundry/community#1530.
+- name: os-image-version-arm64
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/bosh-linux-stemcell-builder
+    branch: release-details
+    file: (@= data.values.stemcell_details.branch @)/os-image-version-arm64
     private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
 
 - name: bosh-linux-stemcell-builder-push
