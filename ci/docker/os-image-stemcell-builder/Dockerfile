@@ -104,15 +104,26 @@ FROM ovftool-${TARGETARCH} AS builder
 
 # Build args are per-stage in BuildKit, so re-declare the ones used below.
 ARG META4_CLI_URL
+ARG META4_VERSION
 ARG SYFT_CLI_URL
 ARG YQ_CLI_URL
 ARG RUBY_INSTALL_URL
 ARG RUBY_VERSION
 ARG GEM_HOME
 
+# Use the prebuilt meta4 release binary when one exists for this architecture
+# (amd64). dpb587/metalink publishes no arm64 binary, so on arm64
+# build-docker-args.sh leaves META4_CLI_URL empty and meta4 is built from source
+# with the image's Go toolchain instead.
 RUN meta4_cli_path="/usr/local/bin/meta4" \
-    && curl --show-error -sL "${META4_CLI_URL}" \
-      > "${meta4_cli_path}" \
+    && if [ -n "${META4_CLI_URL}" ]; then \
+         curl --show-error -sL "${META4_CLI_URL}" > "${meta4_cli_path}"; \
+       else \
+         git clone --depth 1 --branch "${META4_VERSION}" \
+           https://github.com/dpb587/metalink.git /tmp/metalink \
+         && ( cd /tmp/metalink && go build -o "${meta4_cli_path}" ./cli ) \
+         && rm -rf /tmp/metalink; \
+       fi \
     && chmod +x "${meta4_cli_path}"
 
 ENV GEM_HOME="${GEM_HOME}" \

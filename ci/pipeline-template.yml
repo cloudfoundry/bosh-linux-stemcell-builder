@@ -187,6 +187,7 @@ groups:
 - name: infrastructure-tending
   jobs:
   - build-os-image-stemcell-builder
+  - build-os-image-stemcell-builder-arm64
   - ensure-integration-network
   - cleanup-published-*
   - cleanup-unpublished-*
@@ -246,6 +247,57 @@ jobs:
           path: build
     - put: os-image-stemcell-builder-registry-image
       no_get: true
+      params:
+        image: image/image.tar
+
+#! arm64 (Graviton) builder image. RFC: cloudfoundry/community#1530.
+#! Mirrors build-os-image-stemcell-builder on an arm64 worker so build-os-image-arm64
+#! runs in a native arm64 image. The Dockerfile skips VMware ovftool on arm64 (no
+#! arm64 ovftool exists; vSphere is not an arm64 target), and build-docker-args.sh
+#! selects arm64 CLI assets from the worker's architecture. Pushes to a separate
+#! "<os>-arm64" tag so the amd64 image is never overwritten. Dormant until an
+#! `arm64`-tagged worker is registered (RFC D3 / Open Question 2).
+- name: build-os-image-stemcell-builder-arm64
+  public: true
+  serial: true
+  plan:
+    - get: daily
+      trigger: true
+      tags: [ arm64 ]
+    - get: ubuntu_base
+      tags: [ arm64 ]
+    - get: os-image-stemcell-builder-dockerfile
+      trigger: true
+      tags: [ arm64 ]
+    - get: bosh-stemcells-ci
+      tags: [ arm64 ]
+    - task: build-docker-args
+      file: bosh-stemcells-ci/ci/tasks/build-docker-args.yml
+      image: ubuntu_base
+      tags: [ arm64 ]
+    - task: build-image
+      privileged: true
+      tags: [ arm64 ]
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: concourse/oci-build-task
+        inputs:
+        - name: os-image-stemcell-builder-dockerfile
+        - name: docker-build-args
+        outputs:
+        - name: image
+        params:
+          CONTEXT: os-image-stemcell-builder-dockerfile/ci/docker/os-image-stemcell-builder
+          BUILD_ARGS_FILE: docker-build-args/docker-build-args.yml
+          BUILD_ARG_BASE_IMAGE: ubuntu:(@= data.values.stemcell_details.os_short_name @)
+        run:
+          path: build
+    - put: os-image-stemcell-builder-registry-image-arm64
+      no_get: true
+      tags: [ arm64 ]
       params:
         image: image/image.tar
 
@@ -448,10 +500,12 @@ jobs:
       file: os-image-version/number
 
 #! arm64 (Graviton) OS image build. RFC: cloudfoundry/community#1530.
-#! Mirrors build-os-image but runs the same bosh-stemcells-ci os-images/build.yml
-#! task on an arm64 worker. The stemcell code derives target arch from the chroot
-#! (dpkg --print-architecture), and this job supplies the ports.ubuntu.com mirror
-#! that hosts arm64 Ubuntu packages. It publishes to its own os-image-tarball-arm64
+#! Mirrors build-os-image but runs the same ci/tasks/os-images/build.yml task on
+#! an arm64 worker, inside the arm64 builder image. STEMCELL_ARCH=arm64 selects
+#! the target architecture (passed to the rake task -> debootstrap --arch), and
+#! this job supplies the ports.ubuntu.com mirror that hosts arm64 Ubuntu
+#! packages. Later stages read the arch back from the rootfs
+#! (stemcell_target_arch). It publishes to its own os-image-tarball-arm64
 #! resource and version series so it never perturbs the amd64 os-image artifacts.
 #! Dormant until the platform team registers an `arm64`-tagged Concourse worker
 #! (RFC D3 / Open Question 2). Heavy/light stemcell packaging + arm64 AMI/GCE
@@ -465,7 +519,7 @@ jobs:
     tags: [ arm64 ]
   - get: bosh-stemcells-ci
     tags: [ arm64 ]
-  - get: os-image-stemcell-builder-registry-image
+  - get: os-image-stemcell-builder-registry-image-arm64
     tags: [ arm64 ]
   - get: bosh-linux-stemcell-builder
     trigger: true
@@ -481,11 +535,12 @@ jobs:
     tags: [ arm64 ]
   - task: build
     file: bosh-stemcells-ci/ci/tasks/os-images/build.yml
-    image: os-image-stemcell-builder-registry-image
+    image: os-image-stemcell-builder-registry-image-arm64
     tags: [ arm64 ]
     params:
       OPERATING_SYSTEM_NAME: ubuntu
       OPERATING_SYSTEM_VERSION: (@= data.values.stemcell_details.os_short_name @)
+      STEMCELL_ARCH: arm64
       UBUNTU_DEBOOTSTRAP_MIRROR: http://ports.ubuntu.com/ubuntu-ports
     privileged: true
     vars:
@@ -1955,6 +2010,16 @@ resources:
   source:
     repository: bosh/os-image-stemcell-builder
     tag: (@= data.values.stemcell_details.os_short_name @)
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
+
+#! arm64 (Graviton) builder image, published under its own tag so the amd64
+#! image is never overwritten. RFC: cloudfoundry/community#1530.
+- name: os-image-stemcell-builder-registry-image-arm64
+  type: registry-image
+  source:
+    repository: bosh/os-image-stemcell-builder
+    tag: (@= data.values.stemcell_details.os_short_name @)-arm64
     username: ((dockerhub_username))
     password: ((dockerhub_password))
 
