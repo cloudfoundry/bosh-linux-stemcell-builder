@@ -55,6 +55,33 @@ module Bosh::Stemcell
       end
     end
 
+    describe "#kernel_stages" do
+      let(:operating_system) { OperatingSystem.for("ubuntu") }
+
+      it "returns the default kernel stages" do
+        expect(stage_collection.kernel_stages).to eq(
+          [
+            :system_kernel,
+            :system_kernel_modules
+          ]
+        )
+      end
+
+      context "when operating system variant is fips" do
+        let(:operating_system) { OperatingSystem.for("ubuntu", "resolute-fips") }
+
+        it "returns the fips kernel stages" do
+          expect(stage_collection.kernel_stages).to eq(
+            [
+              :system_fips_kernel,
+              :base_fips_apt,
+              :system_kernel_modules
+            ]
+          )
+        end
+      end
+    end
+
     describe "#agent_stages" do
       let(:agent_stages) do
         [

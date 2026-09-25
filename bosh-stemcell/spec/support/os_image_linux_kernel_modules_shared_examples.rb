@@ -89,4 +89,47 @@ shared_examples_for "a Linux kernel module configured OS image" do
       its(:content) { should match "install algif_aead /bin/true" }
     end
   end
+
+  context "unneeded kernel modules removed from disk" do
+    %w[
+      bluetooth
+      tipc
+      sctp
+      cramfs
+      freevxfs
+      jffs2
+      hfs
+      hfsplus
+      rds
+      floppy
+    ].each do |mod|
+      describe command("find /lib/modules -name '#{mod}.ko*'") do
+        its(:stdout) { should eq("") }
+      end
+    end
+
+    describe command("find /lib/modules -path '*/kernel/sound/*'") do
+      its(:stdout) { should eq("") }
+    end
+
+    describe command("find /lib/modules -path '*/kernel/drivers/net/wireless/*'") do
+      its(:stdout) { should eq("") }
+    end
+  end
+
+  context "essential cloud kernel modules retained on disk" do
+    %w[
+      ena
+      vmxnet3
+      gve
+      hv_netvsc
+      nvme
+      overlay
+      udf
+    ].each do |mod|
+      describe command("find /lib/modules -name '#{mod}.ko*'") do
+        its(:stdout) { should_not eq("") }
+      end
+    end
+  end
 end
