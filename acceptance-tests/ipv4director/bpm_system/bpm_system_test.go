@@ -9,7 +9,7 @@ import (
 )
 
 // The stemcell has python3 but not jq.
-const tiniCommand = `sudo python3 -c 'import json; print(json.load(open("/var/vcap/data/bpm/bundles/syslog_forwarder/syslog_forwarder/config.json"))["process"]["args"][0])'`
+const tiniCommand = `sudo python3 -c 'import json; print(json.load(open("/var/vcap/data/bpm/bundles/syslog_forwarder/blackbox/config.json"))["process"]["args"][0])'`
 
 var _ = Describe("Stemcell BPM System", func() {
 	It("runs syslog_forwarder using stemcell bpm without bpm job", func() {
