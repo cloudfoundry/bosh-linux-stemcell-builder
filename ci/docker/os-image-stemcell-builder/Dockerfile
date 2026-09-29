@@ -6,10 +6,14 @@ LABEL maintainer="cf-bosh@lists.cloudfoundry.org"
 
 # BUILD_ARGs
 ARG META4_CLI_URL
+ARG META4_CLI_SHA256
 ARG SYFT_CLI_URL
+ARG SYFT_CLI_SHA256
 ARG YQ_CLI_URL
+ARG YQ_CLI_SHA256
 
 ARG RUBY_INSTALL_URL
+ARG RUBY_INSTALL_SHA256
 ARG RUBY_VERSION
 ARG GEM_HOME
 
@@ -93,8 +97,8 @@ RUN cd /tmp \
     && rm -rf ./ovftool_installer.bundle /tmp/vmware-root/ /usr/local/bin/more
 
 RUN meta4_cli_path="/usr/local/bin/meta4" \
-    && curl --show-error -sL "${META4_CLI_URL}" \
-      > "${meta4_cli_path}" \
+    && curl --show-error -sfL "${META4_CLI_URL}" -o "${meta4_cli_path}" \
+    && echo "${META4_CLI_SHA256} ${meta4_cli_path}" | sha256sum -c - \
     && chmod +x "${meta4_cli_path}"
 
 ENV GEM_HOME="${GEM_HOME}" \
@@ -102,9 +106,11 @@ ENV GEM_HOME="${GEM_HOME}" \
     BUNDLE_SILENCE_ROOT_WARNING=1
 ENV PATH="${GEM_HOME}/bin:${PATH}"
 
-RUN cd /tmp  \
-    && curl --show-error -sL "${RUBY_INSTALL_URL}" \
-      | tar -xzf - \
+RUN cd /tmp \
+    && curl --show-error -sfL "${RUBY_INSTALL_URL}" -o ruby-install.tar.gz \
+    && echo "${RUBY_INSTALL_SHA256} ruby-install.tar.gz" | sha256sum -c - \
+    && tar -xzf ruby-install.tar.gz \
+    && rm ruby-install.tar.gz \
     && cd ruby-install-* \
     && make -s install \
     && cd - \
@@ -118,11 +124,14 @@ RUN cd /tmp  \
     && chown -R ubuntu:ubuntu "${GEM_HOME}"
 
 RUN syft_cli_path="/usr/local/bin/syft" \
-    && curl --show-error -sL "${SYFT_CLI_URL}" \
-      | tar -xz -C /usr/local/bin/ syft \
+    && cd /tmp \
+    && curl --show-error -sfL "${SYFT_CLI_URL}" -o syft.tar.gz \
+    && echo "${SYFT_CLI_SHA256} syft.tar.gz" | sha256sum -c - \
+    && tar -xz -C /usr/local/bin/ -f syft.tar.gz syft \
+    && rm syft.tar.gz \
     && chmod +x ${syft_cli_path}
 
 RUN yq_cli_path="/usr/local/bin/yq" \
-    && curl --show-error -sL "${YQ_CLI_URL}" \
-      > "${yq_cli_path}" \
+    && curl --show-error -sfL "${YQ_CLI_URL}" -o "${yq_cli_path}" \
+    && echo "${YQ_CLI_SHA256} ${yq_cli_path}" | sha256sum -c - \
     && chmod +x "${yq_cli_path}"
