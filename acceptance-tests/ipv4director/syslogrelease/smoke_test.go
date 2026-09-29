@@ -9,16 +9,16 @@ import (
 )
 
 var _ = Describe("Syslogrelease", func() {
-	Context("when auditd is monitoring access to modprobe", func() {
+	Context("when auditd is monitoring access to modprobe and we attempt to unload the `dummy` networking module", func() {
 		It("gets forwarded to the syslog storer", func() {
-			_, _, exitStatus, err := bosh.Run("ssh", "syslog_forwarder/0", "sudo modprobe -r lp")
+			_, _, exitStatus, err := bosh.Run("ssh", "syslog_forwarder/0", "sudo modprobe -r dummy")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
 
 			stdOut, _, exitStatus, err := bosh.Run("ssh", "syslog_storer/0", `cat /var/vcap/store/syslog_storer/syslog.log`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(exitStatus).To(Equal(0))
-			Expect(stdOut).To(MatchRegexp(`COMMAND=/sbin/modprobe -r lp|COMMAND=/usr/sbin/modprobe -r lp`))
+			Expect(stdOut).To(MatchRegexp(`COMMAND=/sbin/modprobe -r dummy|COMMAND=/usr/sbin/modprobe -r dummy`))
 		})
 	})
 
