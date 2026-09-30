@@ -22,8 +22,8 @@ function process_packages {
   for package_version in "${package_version_for_usn[@]}"
   do
     # single package
-    package=$(echo "$package_version" | cut -d ':' -f1)
-    version=$(echo "$package_version" | cut -d ':' -f2)
+    package=${package_version%%:*}
+    version=${package_version#*:}
 
     if is_package_installed "$package";
     then
