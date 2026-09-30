@@ -83,8 +83,8 @@ shared_examples_for "All Stemcells" do
     describe command("ls -A /etc/rsyslog.d") do
       its(:stdout) do
         should eq(<<~FILELIST)
+          34-bosh-agent.conf
           50-default.conf
-          90-bosh-agent.conf
         FILELIST
       end
     end
