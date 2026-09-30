@@ -1,3 +1,8 @@
+# @AI-Generated
+# Modified with AI assistance
+# Description:
+# 2026-09-15: Add spec for masked Ubuntu Pro client units - Claude Code: Claude Opus 5
+
 require "spec_helper"
 
 describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
@@ -131,6 +136,47 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       it("includes the correct binaries") do
         # expect(subject.stdout.split).to match_array(%w(/bin/su /usr/bin/sudo /usr/bin/sudoedit))
         expect(subject.stdout.split).to match_array(%w[/bin/su /bin/sudo /bin/sudoedit /usr/bin/su /usr/bin/sudo /usr/bin/sudoedit])
+      end
+    end
+  end
+
+  # The Ubuntu Pro client ships installed on jammy (ubuntu-minimal depends on
+  # ubuntu-advantage-tools, so it cannot be purged) with its units enabled. An unattached
+  # client still calls contracts.canonical.com every 6h, so bosh_harden disables and masks
+  # those units and removes the apt and MOTD entry points.
+  context "installed by bosh_harden" do
+    %w[
+      ua-timer.timer
+      ua-timer.service
+      esm-cache.service
+      apt-news.service
+      ubuntu-advantage.service
+      ua-reboot-cmds.service
+    ].each do |unit|
+      describe file("/etc/systemd/system/#{unit}") do
+        it("is masked") { should be_linked_to(File::NULL) }
+      end
+    end
+
+    # These paths must be gone, not merely "not a regular file". `should_not be_file`
+    # is too weak here: File#file? canonicalizes with `readlink -m` before `stat`, so a
+    # symlink left behind pointing at a missing target reports false and the assertion
+    # would pass with the link still in place. Three of these are symlinks to begin
+    # with, so check for absence exactly.
+    {
+      "/etc/systemd/system/multi-user.target.wants/ubuntu-advantage.service" =>
+        "is not enabled in any systemd target",
+      "/etc/systemd/system/multi-user.target.wants/ua-reboot-cmds.service" =>
+        "is not enabled in any systemd target",
+      "/etc/systemd/system/timers.target.wants/ua-timer.timer" =>
+        "is not enabled in any systemd target",
+      "/etc/apt/apt.conf.d/20apt-esm-hook.conf" =>
+        "does not let apt trigger esm-cache or apt-news",
+      "/etc/update-motd.d/91-contract-ua-esm-status" =>
+        "does not render ESM status at login"
+    }.each do |path, description|
+      describe command("test ! -e #{path} && test ! -L #{path}") do
+        it(description) { expect(subject.exit_status).to eq(0) }
       end
     end
   end
