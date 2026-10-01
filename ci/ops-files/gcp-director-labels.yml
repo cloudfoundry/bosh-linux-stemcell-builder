@@ -1,0 +1,8 @@
+---
+#! Labels the create-env VMs (the smoke-test and BATS directors) so their GCP
+#! cost can be attributed to the pipeline that owns them. `pipeline_label` is
+#! set in director-vars.yml by ci/tasks/gcp/deploy-director*.sh.
+- type: replace
+  path: /resource_pools/name=vms/cloud_properties/labels?
+  value:
+    pipeline: ((pipeline_label))

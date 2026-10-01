@@ -551,6 +551,7 @@ jobs:
           RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).9, 10.100.(@= data.values.stemcell_details.subnet_int @).62 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
           TAG: test-stemcells-ipv4
           DEFAULT_VM_TYPE: e2-standard-2
+          PIPELINE_LABEL: (@= data.values.stemcell_details.pipeline_label @)
       - task: test-stemcell
         attempts: 3
         file: bosh-stemcells-ci/ci/tasks/test-stemcell.yml
@@ -627,6 +628,7 @@ jobs:
           SECOND_INTERNAL_GW: fd20:ecb:bcac:4000::1
           SECOND_INTERNAL_IP: fd20:ecb:bcac:4000::10
           TAG: test-stemcells-ipv6
+          PIPELINE_LABEL: (@= data.values.stemcell_details.pipeline_label @)
       - task: test-stemcell-ipv6
         attempts: 3
         file: bosh-stemcells-ci/ci/tasks/test-stemcell.yml
@@ -729,6 +731,7 @@ jobs:
           INTERNAL_GW: 10.100.(@= data.values.stemcell_details.subnet_int @).1
           RESERVED_RANGE: '10.100.(@= data.values.stemcell_details.subnet_int @).2 - 10.100.(@= data.values.stemcell_details.subnet_int @).63, 10.100.(@= data.values.stemcell_details.subnet_int @).126 - 10.100.(@= data.values.stemcell_details.subnet_int @).254'
           TAG: *bats-director-tag
+          PIPELINE_LABEL: (@= data.values.stemcell_details.pipeline_label @)
       - task: prepare-bats
         file: bosh-stemcells-ci/ci/tasks/bats/iaas/gcp/prepare-bats-config.yml
         image: bosh-integration-registry-image
@@ -1176,6 +1179,7 @@ jobs:
         GCP_SERVICE_ACCOUNT_KEY: ((gcp_json_key))
         PROJECT_NAME: ((gcp_project_id))
         EFI: #@ data.values.stemcell_details.use_efi
+        PIPELINE_LABEL: (@= data.values.stemcell_details.pipeline_label @)
     - do:
         - put: terraform
           resource: light-google-environment-oss
@@ -1188,6 +1192,7 @@ jobs:
           params:
             GCE_CREDENTIALS_JSON: ((gcp_json_key))
             SSH_PRIVATE_KEY: ((ssh.private_key))
+            PIPELINE_LABEL: (@= data.values.stemcell_details.pipeline_label @)
       ensure:
         ensure:
           get_params:
@@ -1504,6 +1509,7 @@ resources:
       gce_project_id: ((gcp_project_id))
       gce_region: europe-north2
       gce_zone: europe-north2-a
+      pipeline_label: (@= data.values.stemcell_details.pipeline_label @)
   type: terraform_type
 
 - name: base-oss-google-ubuntu-stemcell
