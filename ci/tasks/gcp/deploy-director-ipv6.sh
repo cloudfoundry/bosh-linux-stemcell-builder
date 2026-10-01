@@ -10,6 +10,10 @@ if [[ -n "${DEBUG:-}" ]]; then
   export BOSH_LOG_PATH="${BOSH_LOG_PATH:-${REPO_PARENT}/bosh-debug.log}"
 fi
 
+: "${PIPELINE_LABEL:?}"
+[[ "${PIPELINE_LABEL}" =~ ^[a-z]([-_a-z0-9]{0,61}[a-z0-9])?$ ]] ||
+  { echo "invalid GCP label value in PIPELINE_LABEL: '${PIPELINE_LABEL}'" >&2; exit 1; }
+
 cat > "${REPO_PARENT}/director-creds.yml" <<EOF
 internal_ip: ${INTERNAL_IP}
 EOF
@@ -19,6 +23,7 @@ project_id: ${GCP_PROJECT_ID}
 zone: ${GCP_ZONE}
 preemptible: ${GCP_PREEMPTIBLE}
 tags: [${TAG}]
+pipeline_label: ${PIPELINE_LABEL}
 EOF
 
 cat > "${REPO_PARENT}/network-variables.yml" <<EOF
@@ -38,6 +43,7 @@ echo ${GCP_JSON_KEY} > "${REPO_PARENT}/gcp_creds.json"
 bosh interpolate "${REPO_PARENT}/bosh-deployment/bosh.yml" \
   -o "${REPO_PARENT}/bosh-deployment/gcp/cpi.yml" \
   -o "${REPO_PARENT}/bosh-deployment/jumpbox-user.yml" \
+  -o "${REPO_ROOT}/ci/ops-files/gcp-director-labels.yml" \
   -o "${REPO_PARENT}/bosh-deployment/misc/ipv6/bosh.yml" \
   -o "${REPO_PARENT}/bosh-deployment/misc/second-network.yml" \
   -o "${REPO_ROOT}/ci/ops-files/ipv6-director.yml" \
@@ -65,6 +71,11 @@ export BOSH_ENVIRONMENT=`bosh int "${REPO_PARENT}/director-creds.yml" --path /in
 export BOSH_CA_CERT=`bosh int "${REPO_PARENT}/director-creds.yml" --path /director_ssl/ca`
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=`bosh int "${REPO_PARENT}/director-creds.yml" --path /admin_password`
+
+# label every deployment on this director, e.g. the ipv6 test and compilation VMs
+bosh -n update-runtime-config "${REPO_ROOT}/ci/tasks/gcp/gcp-labels-runtime-config.yml" \
+          --name gcp-labels \
+          --vars-file "${REPO_PARENT}/director-vars.yml"
 
 bosh -n update-cloud-config "${REPO_PARENT}/bosh-deployment/gcp/cloud-config.yml" \
           --ops-file "${REPO_ROOT}/ci/ops-files/reserve-ips.yml" \
