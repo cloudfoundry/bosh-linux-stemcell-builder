@@ -9,12 +9,27 @@ source $base_dir/lib/prelude_bosh.bash
 cp -a $assets_dir/alerts.monitrc $chroot/var/vcap/monit/alerts.monitrc
 cd $assets_dir
 
-wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/v0.2.0/meta4-0.2.0-linux-amd64 \
-  && echo "81a592eaf647358563f296aced845ac60d9061a45b30b852d1c3f3674720fe19  /usr/bin/meta4" | shasum -a 256 -c \
-  && chmod +x /usr/bin/meta4
+# meta4 runs on the build host. dpb587/metalink publishes a linux-amd64 binary
+# only, so on other hosts (e.g. arm64 builders) use the meta4 already provided
+# by the os-image-stemcell-builder image. RFC: cloudfoundry/community#1530
+if [ "$(uname -m)" == "x86_64" ]; then
+  wget -O /usr/bin/meta4 https://github.com/dpb587/metalink/releases/download/v0.2.0/meta4-0.2.0-linux-amd64 \
+    && echo "81a592eaf647358563f296aced845ac60d9061a45b30b852d1c3f3674720fe19  /usr/bin/meta4" | shasum -a 256 -c \
+    && chmod +x /usr/bin/meta4
+  meta4_bin=/usr/bin/meta4
+else
+  meta4_bin="$(command -v meta4 || true)"
+  if [ -z "${meta4_bin}" ]; then
+    echo "meta4 not found on this $(uname -m) build host; the os-image-stemcell-builder image provides it" >&2
+    exit 1
+  fi
+fi
 
+# Install the agent built for the stemcell's architecture (linux-amd64 or
+# linux-arm64); the agent metalink lists one file per architecture.
+agent_arch="$(stemcell_target_arch)"
 bosh_agent_version=$(cat ${assets_dir}/bosh-agent-version)
-/usr/bin/meta4 file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-amd64 bosh-agent
+${meta4_bin} file-download --metalink=${assets_dir}/metalink.meta4 --file=bosh-agent-${bosh_agent_version}-linux-${agent_arch} bosh-agent
 
 mv bosh-agent $chroot/var/vcap/bosh/bin/
 ln --force $chroot/var/vcap/bosh/bin/bosh-agent $chroot/var/vcap/bosh/etc/bosh-enable-monit-access

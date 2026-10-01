@@ -97,8 +97,17 @@ SUDO
 # Output and checksum the stemcell artifacts
 #
 
-stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}"
-meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}.meta4"
+# Non-default architectures carry an "-<arch>" suffix in the stemcell name
+# (see Bosh::Stemcell::Definition#stemcell_name) and get their own index entry,
+# so they never collide with the amd64 artifacts.
+if [ "${STEMCELL_ARCH}" == "amd64" ]; then
+  arch_suffix=""
+else
+  arch_suffix="-${STEMCELL_ARCH}"
+fi
+
+stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}${arch_suffix}"
+meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}${arch_suffix}.meta4"
 
 echo "${CANDIDATE_BUILD_NUMBER}" > "${REPO_PARENT}/candidate-build-number/number"
 mkdir -p "$( dirname "$meta4_path" )"
@@ -134,4 +143,4 @@ cd "${REPO_PARENT}/stemcells-index-output"
 git add -A
 git config --global user.email "${GIT_USER_EMAIL}"
 git config --global user.name "${GIT_USER_NAME}"
-git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR})"
+git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR}${arch_suffix})"
