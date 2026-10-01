@@ -36,4 +36,8 @@ resource "google_compute_firewall" "allow-ssh-mbus" {
 
 resource "google_compute_address" "skeletal" {
   name = "skeletal-ip-${var.env_name}"
+
+  labels = {
+    pipeline = "${var.pipeline_label}"
+  }
 }
