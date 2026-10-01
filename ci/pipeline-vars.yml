@@ -7,6 +7,7 @@ stemcell_details:
   os_version: "26.04"
   os_name: ubuntu-resolute
   os_short_name: resolute
+  pipeline_label: stemcell-builder-ubuntu-resolute
   subnet_int: "26" #! use last two digits of release year: ex 2010 -> 10
   use_efi: true
   test_ipv6: false

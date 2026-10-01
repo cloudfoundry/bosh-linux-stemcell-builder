@@ -12,6 +12,7 @@ outputs:
 
 params:
   DEFAULT_VM_TYPE: n1-standard-2 # chosen to match what is currently in https://github.com/cloudfoundry/bosh-deployment/blob/master/gcp/cloud-config.yml#L15
+  PIPELINE_LABEL: # required - GCP label (pipeline=<value>) for the resources this task creates
 
 
 run:
