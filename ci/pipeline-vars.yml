@@ -7,6 +7,7 @@ stemcell_details:
   os_version: "24.04"
   os_name: ubuntu-noble
   os_short_name: noble
+  pipeline_label: stemcell-builder-ubuntu-noble
   subnet_int: "24" #! use last two digits of release year: ex 2010 -> 10
   use_efi: true
   test_ipv6: false
