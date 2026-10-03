@@ -101,8 +101,8 @@ module Bosh::Stemcell
         system_openstack_clock
         system_openstack_modules
         system_parameters
-        bosh_clean
         bosh_harden
+        bosh_clean
         bosh_openstack_agent_settings
         bosh_clean_ssh
         restore_apt_sources
@@ -120,8 +120,8 @@ module Bosh::Stemcell
         system_ubuntu_xen_tools
         system_parameters
         system_vhd_utils_tools
-        bosh_clean
         bosh_harden
+        bosh_clean
         bosh_cloudstack_agent_settings
         bosh_clean_ssh
         restore_apt_sources
@@ -137,8 +137,8 @@ module Bosh::Stemcell
         :system_open_vm_tools,
         :system_vsphere_cdrom,
         :system_parameters,
-        :bosh_clean,
         :bosh_harden,
+        :bosh_clean,
         :bosh_enable_password_authentication,
         :bosh_vsphere_agent_settings,
         :bosh_clean_ssh,
@@ -157,8 +157,8 @@ module Bosh::Stemcell
         :system_network,
         :system_aws_modules,
         :system_parameters,
-        :bosh_clean,
         :bosh_harden,
+        :bosh_clean,
         :bosh_aws_agent_settings,
         :bosh_clean_ssh,
         :udev_aws_rules,
@@ -177,8 +177,8 @@ module Bosh::Stemcell
         system_network
         system_alicloud
         system_parameters
-        bosh_clean
         bosh_harden
+        bosh_clean
         bosh_alicloud_agent_settings
         bosh_clean_ssh
         restore_apt_sources
@@ -194,8 +194,8 @@ module Bosh::Stemcell
         :system_google_modules,
         :system_google_packages,
         :system_parameters,
-        :bosh_clean,
         :bosh_harden,
+        :bosh_clean,
         :bosh_google_agent_settings,
         :bosh_clean_ssh,
         :restore_apt_sources,
@@ -212,8 +212,8 @@ module Bosh::Stemcell
       [
         :system_parameters,
         :base_warden,
-        :bosh_clean,
         :bosh_harden,
+        :bosh_clean,
         :bosh_clean_ssh,
         :restore_apt_sources,
         # when adding a stage that changes files in the image, do so before
@@ -232,8 +232,8 @@ module Bosh::Stemcell
         :system_parameters,
         :enable_udf_module,
         :bosh_azure_chrony,
-        :bosh_clean,
         :bosh_harden,
+        :bosh_clean,
         :bosh_azure_agent_settings,
         :bosh_clean_ssh,
         :restore_apt_sources,
@@ -253,8 +253,8 @@ module Bosh::Stemcell
         :system_softlayer_multipath_tools,
         :system_softlayer_netplan,
         :system_parameters,
-        :bosh_clean,
         :bosh_harden,
+        :bosh_clean,
         :bosh_enable_password_authentication,
         :bosh_softlayer_agent_settings,
         :bosh_config_root_ssh_login,
