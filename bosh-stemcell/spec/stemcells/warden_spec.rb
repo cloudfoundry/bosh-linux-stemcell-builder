@@ -58,4 +58,34 @@ describe "Warden Stemcell", stemcell_image: true do
       its(:content) { should include('"UseMonitIptablesFirewall": true') }
     end
   end
+
+  context "systemd unit cleanup for warden containers" do
+    # The Docker CPI runs warden stemcells with `exec /sbin/init`. base_warden
+    # strips non-essential stock systemd units from the boot sequence so they
+    # don't contend with the monit-managed bpm jobs in the BOSH director
+    # container (symptom: postgres role never created, bosh/0 never converges).
+    # Keep-list mirrors the historical Docker CPI allow-list. See
+    # base_warden/apply.sh and cloudfoundry/bosh-docker-cpi-release#60.
+    keep_patterns = %w[
+      *bosh-agent* *dbus* *journald* *logrotate* *runit* *ssh*
+      *systemd-user-sessions* *systemd-tmpfiles*
+    ]
+    not_name = keep_patterns.map { |g| "-not -name '#{g}'" }.join(" ")
+    wants = "find /etc/systemd/system /lib/systemd/system -type l -path '*.wants/*'"
+
+    describe "non-essential units are removed from the boot sequence" do
+      describe command("#{wants} #{not_name}") do
+        its(:exit_status) { should eq 0 }
+        its(:stdout) { should eq "" }
+      end
+    end
+
+    describe "essential units are preserved (guards against an over-broad prune)" do
+      describe command(wants) do
+        its(:exit_status) { should eq 0 }
+        its(:stdout) { should include("runit.service") }
+        its(:stdout) { should include("ssh.service") }
+      end
+    end
+  end
 end
