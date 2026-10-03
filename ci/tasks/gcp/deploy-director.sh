@@ -79,3 +79,7 @@ bosh -n update-cloud-config "${REPO_PARENT}/bosh-deployment/gcp/cloud-config.yml
           --ops-file "${REPO_ROOT}/ci/ops-files/disable-ephemeral-ip.yml" \
           --vars-file "${REPO_PARENT}/network-variables.yml" \
           --vars-file "${REPO_PARENT}/director-vars.yml"
+
+bosh -n update-runtime-config "${REPO_PARENT}/bosh-deployment/runtime-configs/dns.yml" \
+          --ops-file "${REPO_ROOT}/ci/ops-files/noble-warden-dns.yml" \
+          --name dns
