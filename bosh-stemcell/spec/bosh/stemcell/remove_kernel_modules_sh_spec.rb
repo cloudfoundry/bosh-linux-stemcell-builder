@@ -1,4 +1,5 @@
 require "spec_helper"
+require "csv"
 require "fileutils"
 require "open3"
 require "tmpdir"
@@ -103,8 +104,67 @@ describe "system_kernel_modules/remove_kernel_modules.sh" do
       )
       expect(stderr).to include("  kernel/drivers/net/new-nic.ko.zst\n")
       expect(stderr).to include("  kernel/fs/newfs/newfs.ko.zst\n")
-      expect(stderr).to include("run scripts/retriage_kernel_modules.rb")
+      expect(stderr).to include("pbpaste | scripts/retriage_kernel_modules.rb")
+      expect(stderr).to include("--- BEGIN KERNEL MODULE TRIAGE DATA ---")
       expect(module_present?("kernel/sound/core/snd.ko.zst")).to be(true)
+    end
+  end
+
+  describe "retriaging from the job output with scripts/retriage_kernel_modules.rb" do
+    let(:retriage) { File.expand_path("../../../../scripts/retriage_kernel_modules.rb", __dir__) }
+
+    def retriage_from(log)
+      # Prefix each line the way CI log viewers might.
+      Open3.capture3(retriage, "-", csv, stdin_data: log.gsub(/^/, "12:34:56 \e[0m"))
+    end
+
+    def csv_row(rel_path)
+      CSV.read(csv, headers: true).find { |r| r["rel_path"] == rel_path }&.to_h
+    end
+
+    context "when a new module is not listed" do
+      let(:modules) { super() + %w[kernel/drivers/net/vxlan/vxlan.ko.zst] }
+      let(:modules_dep) { super() + ["kernel/drivers/net/vxlan/vxlan.ko.zst: kernel/sound/core/snd.ko.zst"] }
+
+      it "adds a triaged row and keeps the modules it depends on" do
+        _, stderr, status = run_script
+        expect(status).not_to be_success
+
+        stdout, retriage_stderr, retriage_status = retriage_from(stderr)
+        expect(retriage_status).to be_success, retriage_stderr
+        expect(stdout).to include("Added 1 rows:\n  kernel/drivers/net/vxlan/vxlan.ko.zst\n")
+        expect(stdout).to include("    remove=No (Container & Overlay Networking): Bridge, VLAN, bonding")
+        expect(csv_row("kernel/drivers/net/vxlan/vxlan.ko.zst")).to include("remove" => "No")
+        expect(csv_row("kernel/sound/core/snd.ko.zst")).to include(
+          "remove" => "No", "category" => "Dependency of Retained Module"
+        )
+
+        _, _, status = run_script
+        expect(status).to be_success
+      end
+    end
+
+    context "when a remove=No module gains a dependency on a remove=Yes module" do
+      let(:modules_dep) do
+        super().map { |l| l.start_with?("kernel/fs/overlayfs/") ? "#{l} kernel/sound/core/snd.ko.zst" : l }
+      end
+
+      it "marks the dependency remove=No" do
+        _, stderr, status = run_script
+        expect(status).not_to be_success
+
+        stdout, retriage_stderr, retriage_status = retriage_from(stderr)
+        expect(retriage_status).to be_success, retriage_stderr
+        expect(stdout).to include(
+          "Changed 1 decisions:\n  kernel/sound/core/snd.ko.zst\n" \
+          "    remove=No (Dependency of Retained Module): Required by retained module(s): overlay.\n"
+        )
+        expect(csv_row("kernel/sound/core/snd.ko.zst")).to include("remove" => "No")
+        expect(csv_row("kernel/sound/pci/snd-hda.ko.zst")).to include("remove" => "Yes")
+
+        _, _, status = run_script
+        expect(status).to be_success
+      end
     end
   end
 
