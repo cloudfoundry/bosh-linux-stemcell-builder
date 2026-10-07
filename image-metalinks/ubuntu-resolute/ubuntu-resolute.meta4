@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-resolute.tgz">
-    <hash type="sha-512">f6af9c14d731106befe3aaa5af40826fa993da020256b9d24daeb31808c9a1952c1bf21377de59532ec9c41f86e98db82b0a3cdd0a09833562d938798d944114</hash>
-    <hash type="sha-256">12e427118640d50ebf73829f3b69f49d02bfe69851cba5faec7ab83075996cb2</hash>
-    <hash type="sha-1">1a44f65e766f2ffb17533e57bbdd873ccf48b085</hash>
-    <hash type="md5">3d491249ede69a4e2ddf583a6b4db89e</hash>
-    <size>417689980</size>
+    <hash type="sha-512">3af8f7018bd913d8cf34b1a1feddd6787640e1b8bff644ca46bd41614dcda392e1a0b6f7d98587c4c9ad4899a0b11efb2bf6923ade01a450829e27b33b47af38</hash>
+    <hash type="sha-256">8a62782352827c33a228df1f1c917034aa1eaca2ed4cd0696ae19b1aa5ebbd4e</hash>
+    <hash type="sha-1">ffe025b1b26d233410e37cac9b5479d42f566415</hash>
+    <hash type="md5">b417a5885bdc606a0e0319422f782ad4</hash>
+    <size>417726319</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-resolute/ubuntu-resolute.tgz</url>
-    <version>181.0.0</version>
+    <version>182.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">0d3a49f814f91d93d56ca4c88734aa422639e2e18d935d0dd2f420aca0643e290c338c55fc1621dbe6925957a563548819c57074065143d95b217d5f878effd0</hash>
-    <hash type="sha-256">dd214a75865726f80b3ea0238dbe823e19dd162fe770bbb16a0b8c4f3a25ef89</hash>
-    <hash type="sha-1">f89cf807a45a006e0bfaa9f815fbdf552bdb99ee</hash>
-    <hash type="md5">7535536e7268671ff2d93a510e8cdd1a</hash>
-    <size>6172</size>
+    <hash type="sha-512">94e39284b9c63450e3dbdffdb776249034215a9db6f1a6d0214f439ae862d527a799c18e648d174e0f8bec8e6857bb0bae4cbaf3ad1161df2c52210f628281e2</hash>
+    <hash type="sha-256">e542ccc36a9bd19c243656e92b17f5ce297cd26e829588edfa804a530bfca7e2</hash>
+    <hash type="sha-1">025553a9ccc010fc45525ff266dd88999756e109</hash>
+    <hash type="md5">9dd628197c84be7ad50b446dc660c1d3</hash>
+    <size>83808</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-resolute/usn-log.json</url>
-    <version>181.0.0</version>
+    <version>182.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2026-10-06T19:11:12.707443491Z</published>
+  <published>2026-10-07T18:37:50.99226463Z</published>
 </metalink>
