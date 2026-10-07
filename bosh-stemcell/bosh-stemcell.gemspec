@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rspec-its"
 
   # used only in gem's own specs
+  spec.add_development_dependency "csv"
   spec.add_development_dependency "fakefs"
   spec.add_development_dependency "standard"
   spec.add_development_dependency "timecop"
