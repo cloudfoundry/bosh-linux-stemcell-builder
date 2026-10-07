@@ -15,6 +15,10 @@
 # A module marked remove=No must not depend (per <modules_dir>/modules.dep, or
 # softly per <modules_dir>/modules.softdep) on a module marked remove=Yes. If one
 # does, nothing is removed and the broken dependencies are reported.
+#
+# Either failure also prints a block of triage data (the unlisted modules and
+# the modules.dep/modules.softdep entries of the modules that may be kept) that
+# scripts/retriage_kernel_modules.rb reads from the copied job output.
 
 set -eu -o pipefail
 
@@ -26,6 +30,31 @@ export LC_ALL=C
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
+
+retriage_hint() {
+  echo "To triage, copy this job's output and run:"
+  echo "  pbpaste | scripts/retriage_kernel_modules.rb"
+  echo "then review the changes to ${csv_repo_path}."
+}
+
+# Everything scripts/retriage_kernel_modules.rb needs to update the CSV without
+# the kernel: the CSV name, the unlisted modules, the modules.dep lines of every
+# module that is or may become remove=No, and modules.softdep.
+print_triage_data() {
+  awk -F, 'NR > 1 && $3 == "No" { print $2 }' "$csv" | cat - "$tmp/unlisted" > "$tmp/may_keep"
+  echo "--- BEGIN KERNEL MODULE TRIAGE DATA ---"
+  {
+    echo "csv $(basename "$csv")"
+    echo "kernel $(basename "$modules_dir")"
+    sed 's/^/new /' "$tmp/unlisted"
+    awk -F: 'NR == FNR { keep[$0] = 1; next } $1 in keep { print "dep " $0 }' "$tmp/may_keep" "$modules_dir/modules.dep"
+    if [ -f "$modules_dir/modules.softdep" ]; then
+      grep '^softdep ' "$modules_dir/modules.softdep" || true
+    fi
+  } | gzip -9 | base64 | tr -d '\n' | fold -w 76
+  echo
+  echo "--- END KERNEL MODULE TRIAGE DATA ---"
+}
 
 invalid=$(awk -F, 'NR > 1 && $3 != "Yes" && $3 != "No" { print NR": "$0 }' "$csv")
 if [ -n "$invalid" ]; then
@@ -45,14 +74,19 @@ awk -F, 'NR > 1 { print $2 }' "$csv" | sort -u > "$tmp/listed"
 awk -F, 'NR > 1 && $3 == "Yes" { print $2 }' "$csv" | sort -u > "$tmp/remove"
 (cd "$modules_dir" && find . -type f -name '*.ko*' | sed 's#^\./##') | sort > "$tmp/present"
 
+if [ ! -f "$modules_dir/modules.dep" ]; then
+  echo "ERROR: ${modules_dir}/modules.dep not found; run depmod before removing modules." >&2
+  exit 1
+fi
+
 comm -23 "$tmp/present" "$tmp/listed" > "$tmp/unlisted"
 if [ -s "$tmp/unlisted" ]; then
   {
     echo "ERROR: $(wc -l < "$tmp/unlisted" | tr -d ' ') kernel modules in ${modules_dir} are not listed in ${csv_repo_path}."
     echo "Add a row for each of these modules with remove=Yes or remove=No:"
     sed 's/^/  /' "$tmp/unlisted"
-    echo "To triage them, run scripts/retriage_kernel_modules.rb against this kernel's modules directory"
-    echo "(on Linux; see the comments at the top of that script), then review the updated ${csv_repo_path}."
+    retriage_hint
+    print_triage_data
   } >&2
   exit 1
 fi
@@ -63,10 +97,6 @@ if [ -s "$tmp/stale" ]; then
   sed 's/^/  /' "$tmp/stale"
 fi
 
-if [ ! -f "$modules_dir/modules.dep" ]; then
-  echo "ERROR: ${modules_dir}/modules.dep not found; run depmod before removing modules." >&2
-  exit 1
-fi
 # modules.dep lines look like "kernel/fs/nfs/nfs.ko.zst: kernel/net/sunrpc/sunrpc.ko.zst ..."
 awk -F': *' '
   NR == FNR { remove[$0] = 1; next }
@@ -96,6 +126,8 @@ if [ -s "$tmp/broken" ]; then
     echo "ERROR: $(wc -l < "$tmp/broken" | tr -d ' ') dependencies of remove=No modules are marked remove=Yes in ${csv_repo_path}."
     echo "Mark each needed module remove=No (or the dependent module remove=Yes):"
     sed 's/^/  /' "$tmp/broken"
+    retriage_hint
+    print_triage_data
   } >&2
   exit 1
 fi

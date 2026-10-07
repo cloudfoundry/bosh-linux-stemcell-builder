@@ -2,14 +2,22 @@
 #
 # Re-triages the kernel module list used by the system_kernel_modules stage.
 #
-# Usage: scripts/retriage_kernel_modules.rb <modules_dir> [csv]
+# Usage: scripts/retriage_kernel_modules.rb [<ci_log> | <modules_dir>] [csv]
 #
+#   <ci_log>       output of a stemcell build that failed in remove_kernel_modules.sh
+#                  (file, or "-"/omitted for stdin). Works on any machine, e.g.:
+#                    pbpaste | scripts/retriage_kernel_modules.rb
+#                    fly -t <target> watch -j <pipeline>/<job> -b <build> | scripts/retriage_kernel_modules.rb
+#                  The failure prints a TRIAGE DATA block naming the CSV and holding
+#                  the new modules plus the modules.dep/modules.softdep entries needed.
 #   <modules_dir>  an unpacked /usr/lib/modules/<kernel-version> tree that has
 #                  modules.dep (and optionally modules.softdep), e.g. extracted
 #                  from linux-modules-<version>-generic and indexed with depmod:
 #                    dpkg-deb -x linux-modules-*.deb root && ln -s usr/lib root/lib
 #                    depmod -b root <version>
-#   [csv]          defaults to stemcell_builder/stages/system_kernel_modules/linux-generic.csv
+#                  Needs a case-sensitive filesystem, i.e. Linux.
+#   [csv]          defaults to the CSV named in the CI log, or
+#                  stemcell_builder/stages/system_kernel_modules/linux-generic.csv
 #
 # The CSV is rewritten in place:
 #   1. Every module in <modules_dir> gets a row; rows for modules that are not
@@ -24,6 +32,8 @@
 # (add a rule, or add the row to the CSV and re-run).
 
 require "csv"
+require "stringio"
+require "zlib"
 
 KEEP = "No"
 REMOVE = "Yes"
@@ -71,6 +81,10 @@ RULES = [
   [%r{drivers/i2c/busses/i2c-cros-ec-tunnel},
     REMOVE, "Consumer Laptop & Desktop Platform",
     "ChromeOS embedded controller I2C tunnel."],
+  [%r{drivers/platform/x86/dell/},
+    REMOVE, "Consumer Laptop & Desktop Platform",
+    "Dell laptop/desktop/PowerEdge platform driver (ACPI/WMI hotkeys and sensors, SMBIOS/BIOS settings, " \
+    "BIOS update, systems management); not present on cloud virtual machines."],
   [%r{drivers/mmc/},
     REMOVE, "Physical Memory & Storage Controllers",
     "SD/MMC card host controller; not present on cloud VMs."],
@@ -272,21 +286,18 @@ def read_csv(path)
   end
 end
 
-def read_modules_dep(modules_dir)
-  File.readlines(File.join(modules_dir, "modules.dep"), chomp: true).to_h do |line|
+def parse_modules_dep(lines)
+  lines.to_h do |line|
     mod, deps = line.split(":", 2)
     [mod, deps.to_s.split]
   end
 end
 
 # modules.softdep names modules, not paths: "softdep cifs pre: gcm ccm ..."
-def read_softdeps(modules_dir, present)
-  path = File.join(modules_dir, "modules.softdep")
-  return {} unless File.exist?(path)
-
+def parse_softdeps(lines, present)
   by_name = present.to_h { |p| [normalize(module_name(p)), p] }
   softdeps = Hash.new { |h, k| h[k] = [] }
-  File.foreach(path) do |line|
+  lines.each do |line|
     words = line.split
     next unless words.first == "softdep" && words.size >= 3
 
@@ -303,6 +314,56 @@ def read_softdeps(modules_dir, present)
   softdeps
 end
 
+def read_modules_dir(modules_dir)
+  abort "#{modules_dir}/modules.dep not found; run depmod first" unless File.exist?(File.join(modules_dir, "modules.dep"))
+  # Some modules differ only by case (xt_DSCP / xt_dscp); a case-insensitive
+  # filesystem (the macOS default) silently keeps just one of each pair.
+  if File.directory?(File.join(modules_dir, "kernel")) && File.exist?(File.join(modules_dir, "KERNEL"))
+    abort "#{modules_dir} is on a case-insensitive filesystem, which merges modules whose names differ " \
+      "only by case (e.g. xt_DSCP and xt_dscp). Unpack the kernel modules and run this script on a " \
+      "case-sensitive filesystem, e.g. inside a Linux container, or pass the CI log instead."
+  end
+  softdep_path = File.join(modules_dir, "modules.softdep")
+  {
+    present: Dir.glob("**/*.ko*", base: modules_dir).sort,
+    deps: parse_modules_dep(File.readlines(File.join(modules_dir, "modules.dep"), chomp: true)),
+    softdep_lines: File.exist?(softdep_path) ? File.readlines(softdep_path, chomp: true) : []
+  }
+end
+
+# Decodes the TRIAGE DATA blocks printed by remove_kernel_modules.sh. Tolerates
+# log timestamps / ANSI colors around each line and several blocks (kernels).
+def read_ci_log(log)
+  lines = log.gsub(/\e\[[\d;]*m/, "").lines
+  blocks = []
+  base64 = nil
+  lines.each do |line|
+    if line.include?("--- BEGIN KERNEL MODULE TRIAGE DATA ---")
+      base64 = +""
+    elsif line.include?("--- END KERNEL MODULE TRIAGE DATA ---") && base64
+      blocks << Zlib::GzipReader.new(StringIO.new(base64.unpack1("m"))).read
+      base64 = nil
+    elsif base64
+      base64 << line.split.last.to_s
+    end
+  end
+  abort "No KERNEL MODULE TRIAGE DATA block found in the CI log." if blocks.empty?
+
+  data = {csvs: [], kernels: [], new: [], deps: {}, softdep_lines: []}
+  blocks.join("\n").each_line(chomp: true) do |line|
+    key, value = line.split(" ", 2)
+    case key
+    when "csv" then data[:csvs] |= [value]
+    when "kernel" then data[:kernels] |= [value]
+    when "new" then data[:new] |= [value]
+    when "dep" then data[:deps].merge!(parse_modules_dep([value])) { |_, a, b| a | b }
+    when "softdep" then data[:softdep_lines] << line
+    end
+  end
+  abort "The CI log has triage data for several CSVs (#{data[:csvs].join(", ")}); pass one at a time." if data[:csvs].size > 1
+  data
+end
+
 def triage(row)
   short = row["rel_path"].delete_prefix("kernel/")
   RULES.each do |pattern, remove, category, reason|
@@ -316,25 +377,30 @@ def triage(row)
   row
 end
 
-modules_dir = ARGV[0] or abort "usage: #{$PROGRAM_NAME} <modules_dir> [csv]"
-csv_path = ARGV[1] || File.expand_path("../stemcell_builder/stages/system_kernel_modules/linux-generic.csv", __dir__)
-abort "#{modules_dir}/modules.dep not found; run depmod first" unless File.exist?(File.join(modules_dir, "modules.dep"))
-# Some modules differ only by case (xt_DSCP / xt_dscp); a case-insensitive
-# filesystem (the macOS default) silently keeps just one of each pair.
-if File.directory?(File.join(modules_dir, "kernel")) && File.exist?(File.join(modules_dir, "KERNEL"))
-  abort "#{modules_dir} is on a case-insensitive filesystem, which merges modules whose names differ " \
-    "only by case (e.g. xt_DSCP and xt_dscp). Unpack the kernel modules and run this script on a " \
-    "case-sensitive filesystem, e.g. inside a Linux container."
+input = ARGV[0] || "-"
+csv_dir = File.expand_path("../stemcell_builder/stages/system_kernel_modules", __dir__)
+from_log = input == "-" || !File.directory?(input)
+if from_log
+  abort "usage: #{$PROGRAM_NAME} [<ci_log> | <modules_dir>] [csv]  (reading the CI log from stdin)" if input == "-" && $stdin.tty?
+  abort "#{input}: no such CI log or modules directory\nusage: #{$PROGRAM_NAME} [<ci_log> | <modules_dir>] [csv]" unless input == "-" || File.file?(input)
+  modules = read_ci_log((input == "-") ? $stdin.read : File.read(input))
+  csv_path = ARGV[1] || File.join(csv_dir, modules[:csvs].first || "linux-generic.csv")
+  old = read_csv(csv_path)
+  # The log only lists new modules; everything already in the CSV is assumed present.
+  present = (old.keys | modules[:new]).sort
+  puts "Read triage data for kernel #{modules[:kernels].join(", ")}: #{modules[:new].size} new modules."
+else
+  modules = read_modules_dir(input)
+  csv_path = ARGV[1] || File.join(csv_dir, "linux-generic.csv")
+  old = read_csv(csv_path)
+  present = modules[:present]
 end
-
-present = Dir.glob("**/*.ko*", base: modules_dir).sort
-deps = read_modules_dep(modules_dir)
-softdeps = read_softdeps(modules_dir, present)
-old = read_csv(csv_path)
+deps = modules[:deps]
+softdeps = parse_softdeps(modules[:softdep_lines], present)
 
 untriaged = []
 rows = (present | old.keys).to_h do |path|
-  existing = old[path] || {"module_name" => module_name(path), "rel_path" => path}
+  existing = old[path]&.dup || {"module_name" => module_name(path), "rel_path" => path}
   row = triage(existing)
   untriaged << path unless row["remove"]
   [path, row]
@@ -372,6 +438,16 @@ rows.each do |path, row|
   end
 end
 
+# The CI log only has modules.dep lines for modules that were remove=No or new.
+# modules.dep is transitive, so modules kept as dependencies are covered.
+unknown = rows.keys.select do |p|
+  rows[p]["remove"] == KEEP && old.dig(p, "remove") != KEEP && !deps.key?(p) && !required_by.key?(p)
+end
+if from_log && !unknown.empty?
+  puts "WARNING: dependencies unknown for these newly kept modules; the next stemcell build checks them:",
+    unknown.map { |p| "  #{p}" }
+end
+
 sorted = rows.values.sort_by do |r|
   [(r["remove"] == KEEP) ? 1 : 0, r["category"], r["module_name"].downcase, r["rel_path"]]
 end
@@ -384,12 +460,23 @@ changed = rows.values.select { |r| old[r["rel_path"]] && old[r["rel_path"]]["rem
 added = rows.keys - old.keys
 counts = rows.values.map { |r| r["remove"] }.tally
 puts "Wrote #{csv_path}: #{counts[REMOVE].to_i} remove=Yes, #{counts[KEEP].to_i} remove=No."
-puts("Added #{added.size} rows:", added.map { |p| "  #{p}" }) unless added.empty?
+def describe(row)
+  "  #{row["rel_path"]}\n    remove=#{row["remove"]} (#{row["category"]}): #{row["reason"]}"
+end
+
+unless added.empty?
+  puts "Added #{added.size} rows:"
+  added.each { |p| puts describe(rows[p]) }
+end
 unless changed.empty?
   puts "Changed #{changed.size} decisions:"
-  changed.sort_by { |r| r["rel_path"] }.each { |r| puts "  #{r["rel_path"]}: remove=#{r["remove"]} (#{r["category"]})" }
+  changed.sort_by { |r| r["rel_path"] }.each { |r| puts describe(r) }
 end
-unless required_by.empty?
-  puts "Kept as dependencies:"
-  required_by.sort.each { |dep, users| puts "  #{dep} <- #{users.sort.join(", ")}" }
+# Only report dependency rows whose reason changed and that aren't listed above.
+new_deps = required_by.keys.reject do |dep|
+  old.dig(dep, "reason") == rows[dep]["reason"] || added.include?(dep) || changed.include?(rows[dep])
+end
+unless new_deps.empty?
+  puts "Now needed by different retained modules (dependency <- modules that need it):"
+  new_deps.sort.each { |dep| puts "  #{dep} <- #{required_by[dep].sort.join(", ")}" }
 end
