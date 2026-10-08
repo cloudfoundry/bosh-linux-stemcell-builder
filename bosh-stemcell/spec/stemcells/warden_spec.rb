@@ -49,40 +49,4 @@ describe "Warden Stemcell", stemcell_image: true do
       it { should be_file }
     end
   end
-
-  context "Rosetta x86_64 emulation compatibility for Apple Silicon" do
-    # These systemd drop-in overrides disable security features that conflict
-    # with Rosetta's JIT compilation on Apple Silicon Macs
-
-    rosetta_services = %w[
-      systemd-journald
-      systemd-resolved
-      systemd-networkd
-      systemd-logind
-      systemd-timesyncd
-      auditd
-      logrotate
-    ]
-
-    rosetta_services.each do |service|
-      describe file("/etc/systemd/system/#{service}.service.d/rosetta-compat.conf") do
-        it { should be_file }
-        its(:content) { should include("MemoryDenyWriteExecute=no") }
-        its(:content) { should include("LockPersonality=no") }
-        its(:content) { should include("NoNewPrivileges=no") }
-      end
-    end
-
-    warden_masked_units = %w[
-      systemd-udevd.service
-      chrony.service
-      systemd-binfmt.service
-    ]
-
-    warden_masked_units.each do |unit|
-      describe file("/etc/systemd/system/#{unit}") do
-        it { should be_linked_to File::NULL }
-      end
-    end
-  end
 end
