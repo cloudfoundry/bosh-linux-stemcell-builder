@@ -1282,6 +1282,7 @@ jobs:
         BRANCH: (@= data.values.stemcell_details.branch @)
         KERNEL_PACKAGE: linux-generic
         AGENT_SUFFIX: (@= data.values.stemcell_details.agent_suffix @)
+        CONTAINER_STEMCELL: oci-container
       input_mapping:
         candidate-stemcell: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
     - task: extract-warden-image
@@ -1298,7 +1299,7 @@ jobs:
           args:
             - -ce
             - |
-              tar xvf ../candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/bosh-stemcell-*-warden-boshlite-(@= data.values.stemcell_details.os_name @)(@= data.values.stemcell_details.agent_suffix @).tgz image
+              tar xvf ../candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/bosh-stemcell-*-oci-container-(@= data.values.stemcell_details.os_name @)(@= data.values.stemcell_details.agent_suffix @).tgz image
               printf 'FROM scratch\nADD image /\n' > Dockerfile
     - task: build-stemcell-oci-image
       privileged: true
