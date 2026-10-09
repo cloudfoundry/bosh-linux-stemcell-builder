@@ -10,6 +10,7 @@ module Bosh::Stemcell
         expect(Infrastructure.for("google")).to be_an(Infrastructure::Google)
         expect(Infrastructure.for("vsphere")).to be_a(Infrastructure::Vsphere)
         expect(Infrastructure.for("warden")).to be_a(Infrastructure::Warden)
+        expect(Infrastructure.for("oci")).to be_an(Infrastructure::Oci)
         expect(Infrastructure.for("azure")).to be_a(Infrastructure::Azure)
         expect(Infrastructure.for("cloudstack")).to be_a(Infrastructure::CloudStack)
         expect(Infrastructure.for("null")).to be_an(Infrastructure::NullInfrastructure)
@@ -166,6 +167,21 @@ module Bosh::Stemcell
     it { should_not eq Infrastructure.for("aws") }
 
     it "has vsphere specific additional cloud properties" do
+      expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1"})
+    end
+  end
+
+  describe Infrastructure::Oci do
+    its(:name) { should eq("oci") }
+    its(:hypervisor) { should eq("container") }
+    its(:default_disk_size) { should eq(5120) }
+    its(:disk_formats) { should eq(["files"]) }
+    its(:stemcell_formats) { should eq(["warden-tar"]) }
+
+    it { should eq Infrastructure.for("oci") }
+    it { should_not eq Infrastructure.for("warden") }
+
+    it "has oci specific additional cloud properties" do
       expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1"})
     end
   end

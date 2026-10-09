@@ -223,6 +223,31 @@ module Bosh::Stemcell
 
         expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
       end
+
+      context "when the infrastructure is oci" do
+        let(:infrastructure) { Infrastructure.for("oci") }
+        before { allow(operating_system).to receive(:variant?).and_return(false) }
+
+        it "runs the warden specs, excluding exclude_on_warden" do
+          command = subject.stemcell_rspec_command
+          expect(command).to include("STEMCELL_INFRASTRUCTURE=oci")
+          expect(command).to include("bundle exec rspec -fd --tag ~exclude_on_warden spec/")
+          expect(command).to include("spec/stemcells/warden_spec.rb")
+          expect(command).to_not include("spec/stemcells/oci_spec.rb")
+        end
+      end
+
+      context "when the infrastructure is warden" do
+        let(:infrastructure) { Infrastructure.for("warden") }
+        before { allow(operating_system).to receive(:variant?).and_return(false) }
+
+        it "runs the warden specs, excluding exclude_on_warden" do
+          command = subject.stemcell_rspec_command
+          expect(command).to include("STEMCELL_INFRASTRUCTURE=warden")
+          expect(command).to include("bundle exec rspec -fd --tag ~exclude_on_warden spec/")
+          expect(command).to include("spec/stemcells/warden_spec.rb")
+        end
+      end
     end
 
     describe "#build_path" do

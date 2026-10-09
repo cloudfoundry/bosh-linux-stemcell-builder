@@ -14,6 +14,8 @@ module Bosh::Stemcell
         Vsphere.new
       when "warden"
         Warden.new
+      when "oci"
+        Oci.new
       when "azure"
         Azure.new
       when "cloudstack"
@@ -168,6 +170,22 @@ module Bosh::Stemcell
         super(
           name: "warden",
           hypervisor: "boshlite",
+          default_disk_size: 5120,
+          disk_formats: ["files"],
+          stemcell_formats: ["warden-tar"]
+        )
+      end
+
+      def additional_cloud_properties
+        {"root_device_name" => "/dev/sda1"}
+      end
+    end
+
+    class Oci < Base
+      def initialize
+        super(
+          name: "oci",
+          hypervisor: "container",
           default_disk_size: 5120,
           disk_formats: ["files"],
           stemcell_formats: ["warden-tar"]

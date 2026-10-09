@@ -60,7 +60,7 @@ module Bosh::Stemcell
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
         "spec/stemcells/#{operating_system_spec_name}_spec.rb",
         "spec/stemcells/go_agent_spec.rb",
-        "spec/stemcells/#{infrastructure.name}_spec.rb",
+        "spec/stemcells/#{spec_infrastructure_name}_spec.rb",
         "spec/stemcells/stig_spec.rb",
         "spec/stemcells/cis_spec.rb",
         "spec/stemcells/bpm_spec.rb"
@@ -171,9 +171,17 @@ module Bosh::Stemcell
       end
     end
 
+    # The oci-container stemcell is the renamed warden-boshlite stemcell. Its specs
+    # keep the warden names (warden_spec.rb, exclude_on_warden) because they're
+    # shared with jammy and noble, where renaming them would conflict on every
+    # merge forward. Rename them to oci once Noble is out of support.
+    def spec_infrastructure_name
+      (infrastructure.name == "oci") ? "warden" : infrastructure.name
+    end
+
     def exclude_exclusions
       [
-        case infrastructure.name
+        case spec_infrastructure_name
         when "alicloud"
           " --tag ~exclude_on_alicloud"
         when "vsphere"

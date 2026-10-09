@@ -374,6 +374,38 @@ module Bosh::Stemcell
           end
         end
       end
+
+      context "when using OCI" do
+        let(:infrastructure) { Infrastructure.for("oci") }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
+
+        it "returns the warden stages" do
+          expect(stage_collection.build_stemcell_image_stages).to eq(
+            [
+              :system_parameters,
+              :base_warden,
+              :bosh_clean,
+              :bosh_harden,
+              :bosh_clean_ssh,
+              :restore_apt_sources,
+              :image_create_efi,
+              :image_install_grub,
+              :sbom_create,
+              :bosh_package_list
+            ]
+          )
+          expect(stage_collection.package_stemcell_stages("files")).to eq([:prepare_files_image_stemcell])
+        end
+
+        context "with the rosetta variant" do
+          let(:operating_system) { OperatingSystem.for("ubuntu", "resolute-rosetta") }
+
+          it "inserts the rosetta stage directly after base_warden" do
+            stages = stage_collection.build_stemcell_image_stages
+            expect(stages[stages.index(:base_warden) + 1]).to eq(:base_ubuntu_warden_rosetta)
+          end
+        end
+      end
     end
   end
 end
