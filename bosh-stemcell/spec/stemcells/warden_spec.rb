@@ -5,7 +5,7 @@ describe "Warden Stemcell", stemcell_image: true do
 
   context "installed by system_parameters" do
     describe file("/var/vcap/bosh/etc/infrastructure") do
-      its(:content) { should include("warden") }
+      its(:content) { should include(ENV["STEMCELL_INFRASTRUCTURE"]) }
     end
   end
 

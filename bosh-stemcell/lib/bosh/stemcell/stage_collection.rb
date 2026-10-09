@@ -60,7 +60,7 @@ module Bosh::Stemcell
         openstack_stages
       when Infrastructure::Vsphere
         vsphere_stages
-      when Infrastructure::Warden
+      when Infrastructure::Warden, Infrastructure::Oci
         warden_stages
       when Infrastructure::Azure
         azure_stages
