@@ -44,6 +44,7 @@ module Bosh
           "sha1" => image_checksum,
           "operating_system" => "#{definition.operating_system.name}-#{definition.operating_system.version}",
           "stemcell_formats" => infrastructure.stemcell_formats,
+          "agent_features" => [],
           "cloud_properties" => manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
         }
       end
