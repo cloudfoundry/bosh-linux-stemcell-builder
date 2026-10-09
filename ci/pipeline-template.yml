@@ -1274,6 +1274,7 @@ jobs:
         OS_VERSION: (@= str(data.values.stemcell_details.os_short_name) @)
         BRANCH: (@= data.values.stemcell_details.branch @)
         KERNEL_PACKAGE: linux-generic
+        AGENT_SUFFIX: (@= data.values.stemcell_details.agent_suffix @)
       input_mapping:
         candidate-stemcell: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
     - task: extract-warden-image
