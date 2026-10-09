@@ -1,5 +1,9 @@
 #@ load("@ytt:data", "data")
 
+#@ def container_variants():
+#@   return [""] + [v.variant for v in data.values.stemcell_details.include_variant_iaas if v.iaas == "oci"]
+#@ end
+
 #@yaml/text-templated-strings
 ---
 
@@ -1285,23 +1289,25 @@ jobs:
         CONTAINER_STEMCELL: oci-container
       input_mapping:
         candidate-stemcell: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
-    - task: extract-warden-image
+    #@ for variant in container_variants():
+    #@ suffix = "-" + variant if variant else ""
+    - task: extract-oci-container-image(@= suffix @)
       image: bosh-integration-registry-image
       config:
         inputs:
           - name: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
         outputs:
-          - name: stemcell-image
+          - name: stemcell-image(@= suffix @)
         platform: linux
         run:
-          dir: stemcell-image
+          dir: stemcell-image(@= suffix @)
           path: /bin/bash
           args:
             - -ce
             - |
-              tar xvf ../candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/bosh-stemcell-*-oci-container-(@= data.values.stemcell_details.os_name @)(@= data.values.stemcell_details.agent_suffix @).tgz image
-              printf 'FROM scratch\nADD image /\n' > Dockerfile
-    - task: build-stemcell-oci-image
+              tar xvf ../candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/bosh-stemcell-*-oci-container-(@= data.values.stemcell_details.os_name @)(@= suffix @)(@= data.values.stemcell_details.agent_suffix @).tgz image
+              printf 'FROM scratch\nLABEL org.opencontainers.image.source=https://github.com/cloudfoundry/bosh-linux-stemcell-builder\nADD image /\n' > Dockerfile
+    - task: build-stemcell-oci-image(@= suffix @)
       privileged: true
       config:
         platform: linux
@@ -1310,17 +1316,19 @@ jobs:
           source:
             repository: concourse/oci-build-task
         inputs:
-          - name: stemcell-image
+          - name: stemcell-image(@= suffix @)
         outputs:
-          - name: image
+          - name: image(@= suffix @)
+            path: image
         params:
-          CONTEXT: stemcell-image
+          CONTEXT: stemcell-image(@= suffix @)
         run:
           path: build
-    - put: github-container-registry-(@= data.values.stemcell_details.os_name @)-stemcell
+    - put: github-container-registry-(@= data.values.stemcell_details.os_name @)(@= suffix @)-stemcell
       params:
-        image: image/image.tar
+        image: image(@= suffix @)/image.tar
         additional_tags: candidate-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)/.resource/version
+    #@ end
     - put: published-(@= data.values.stemcell_details.os_name @)-stemcell-(@= str(data.values.stemcell_details.major_version) @)
       params:
         files:
@@ -1682,13 +1690,16 @@ resources:
   type: metalink-repository
   #@ end
 
-- name: github-container-registry-(@= data.values.stemcell_details.os_name @)-stemcell
+#@ for variant in container_variants():
+#@ suffix = "-" + variant if variant else ""
+- name: github-container-registry-(@= data.values.stemcell_details.os_name @)(@= suffix @)-stemcell
   type: registry-image
   source:
-    repository: ghcr.io/cloudfoundry/(@= data.values.stemcell_details.os_name @)-stemcell
+    repository: ghcr.io/cloudfoundry/(@= data.values.stemcell_details.os_name @)(@= suffix @)-stemcell
     username: ((github_read_write_packages.username))
     password: ((github_read_write_packages.password))
     tag: latest
+#@ end
 
 - name: bosh-agent
   type: metalink-repository
