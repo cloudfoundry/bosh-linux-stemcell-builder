@@ -105,6 +105,7 @@ describe Bosh::Stemcell::StemcellPackager do
         "version" => "1234",
         "bosh_protocol" => 1,
         "api_version" => 3,
+        "agent_features" => [],
         "sha1" => "c1ebdefc3f8282a9d7d47803fb5030b61ffc793d", # SHA-1 of image above
         "operating_system" => "ubuntu-jammy",
         "stemcell_formats" => ["stemcell-format-a", "stemcell-format-b"],
@@ -122,6 +123,16 @@ describe Bosh::Stemcell::StemcellPackager do
           "fake_infra_specific_property" => "some_value"
         }
       })
+    end
+
+    it "includes the agent feature list in the packaged manifest" do
+      packager.package(disk_format)
+
+      manifest = YAML.load_file(File.join(work_dir, "stemcell/stemcell.MF"))
+      expect(manifest["agent_features"]).to eq([])
+      contents, _, status = Open3.capture3("tar", "xOf", File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-jammy-go_agent.tgz"), "stemcell.MF")
+      expect(status.success?).to be(true)
+      expect(YAML.safe_load(contents)["agent_features"]).to eq(manifest["agent_features"])
     end
 
     it "returns the path of the created tarball" do
