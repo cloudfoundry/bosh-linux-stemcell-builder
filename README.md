@@ -18,7 +18,7 @@ section if you are on an M-series Mac.
 Before you start, download `VMware-ovftool-*.bundle` into
 `ci/docker/os-image-stemcell-builder/`. The Docker image build `ADD`s it
 unconditionally, so it is required even though only vSphere and vCloud stemcells
-actually use `ovftool` — warden builds never invoke it. See
+actually use `ovftool` — OCI container builds never invoke it. See
 [External Assets](#external-assets).
 
 ```bash
@@ -65,8 +65,8 @@ bundle exec rake stemcell:build_os_image[ubuntu,${short_name},${PWD}/tmp/ubuntu_
  # build vSphere stemcell
 bundle exec rake stemcell:build[vsphere,esxi,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
 
- # build warden (BOSH Lite) stemcell
-bundle exec rake stemcell:build[warden,warden,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
+ # build OCI container stemcell (BOSH Lite / Docker CPI)
+bundle exec rake stemcell:build[oci,container,ubuntu,${short_name},${PWD}/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
 ```
 
 `USER_ID` and `GROUP_ID` must match your host user, so that the bind-mounted
@@ -128,7 +128,9 @@ The arguments to `stemcell:build` are:
     - `google` → `kvm`
     - `openstack` → `kvm`
     - `vsphere` → `esxi`
-    - `warden` → `warden`
+    - `oci` → `container` (the OCI container stemcell, for the warden and
+      Docker CPIs)
+    - `warden` → `boshlite` (jammy and noble only; Resolute uses `oci`)
 3. `operating_system_name` (`ubuntu`): Type of OS. Same as
    `stemcell:build_os_image`.
 4. `operating_system_version` (`<short_name>`): OS release. Same as
@@ -211,19 +213,33 @@ Note that `bosh-stemcell/` has its own `Gemfile` — `bundle install` at the rep
 root is not enough to run the specs directly, and skipping it fails with
 `Bundler::GemNotFound` for `fakefs` and `timecop`.
 
-For a warden (BOSH Lite) or rosetta stemcell the paths differ, and the specs
-must run in the same container that built the stemcell, since `/mnt/stemcells`
-lives inside it:
+For an OCI container stemcell the paths differ, and the specs must run in the
+same container that built the stemcell, since `/mnt/stemcells` lives inside it:
 
 ```shell
 cd /opt/bosh/bosh-stemcell; \
 bundle install; \
-STEMCELL_IMAGE=/mnt/stemcells/warden/boshlite/ubuntu/work/work/warden-boshlite-ubuntu.raw \
-STEMCELL_WORKDIR=/mnt/stemcells/warden/boshlite/ubuntu/work/work \
-STEMCELL_INFRASTRUCTURE=warden \
+STEMCELL_IMAGE=/mnt/stemcells/oci/container/ubuntu/work/work/oci-container-ubuntu.raw \
+STEMCELL_WORKDIR=/mnt/stemcells/oci/container/ubuntu/work/work \
+STEMCELL_INFRASTRUCTURE=oci \
 OS_NAME=ubuntu \
 OS_VERSION=resolute \
 bundle exec rspec -fd --tag ~exclude_on_warden \
+spec/stemcells/warden_spec.rb
+```
+
+For the rosetta variant, also exclude `exclude_on_rosetta` and add
+`spec/stemcells/rosetta_spec.rb`:
+
+```shell
+cd /opt/bosh/bosh-stemcell; \
+bundle install; \
+STEMCELL_IMAGE=/mnt/stemcells/oci/container/ubuntu/work/work/oci-container-ubuntu.raw \
+STEMCELL_WORKDIR=/mnt/stemcells/oci/container/ubuntu/work/work \
+STEMCELL_INFRASTRUCTURE=oci \
+OS_NAME=ubuntu \
+OS_VERSION=resolute \
+bundle exec rspec -fd --tag ~exclude_on_warden --tag ~exclude_on_rosetta \
 spec/stemcells/warden_spec.rb \
 spec/stemcells/rosetta_spec.rb
 ```
@@ -302,8 +318,8 @@ The installer for `ovftool` can be found at:
 - https://developer.broadcom.com/tools/open-virtualization-format-ovf-tool/latest.
 
 `ovftool` itself is only used by the `image_ovf_generate` stage, which appears
-only in `ovf_package_stages` — vSphere and vCloud. Warden stemcell builds never
-invoke it.
+only in `ovf_package_stages` — vSphere and vCloud. OCI container stemcell builds
+never invoke it.
 
 The installer **for linux** must nonetheless be copied into
 [os-image-stemcell-builder](ci/docker/os-image-stemcell-builder)

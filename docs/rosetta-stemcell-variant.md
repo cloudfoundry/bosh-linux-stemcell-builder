@@ -6,14 +6,21 @@ A stemcell built as `...,resolute-rosetta,...` inserts the
 on an arm64 kernel.
 
 This is separate from [building on Apple Silicon](apple-silicon-builds.md),
-which is about the build host. A plain `warden` stemcell built on a Mac is not a
+which is about the build host. A plain OCI container stemcell built on a Mac is not a
 Rosetta stemcell, and this variant would be pointless on an x86-64 host.
 
-Only warden builds are affected; cloud infrastructure stemcells never include
-the stage. Because it is gated on the variant
-(`stage_collection.rb`, `operating_system.variant == "rosetta"`), the standard CI
-Resolute build never exercises it — changes here have to be verified against a
-deliberate `-rosetta` build.
+Only OCI container (and warden) builds are affected; cloud infrastructure
+stemcells never include the stage. Because it is gated on the variant
+(`stage_collection.rb`, `operating_system.variant == "rosetta"`), the plain
+`build-oci-container` CI job never exercises it — changes here have to be
+verified against a `-rosetta` build, either locally or in the
+`build-oci-container-rosetta` job.
+
+CI builds the variant as an ordinary heavy stemcell alongside the others, at the
+same version, as `bosh-stemcell-<v>-oci-container-ubuntu-resolute-rosetta.tgz`
+(stemcell name `bosh-oci-container-ubuntu-resolute-rosetta`). Publishing also
+pushes it to `ghcr.io/cloudfoundry/ubuntu-resolute-rosetta-stemcell`, next to
+the plain `ghcr.io/cloudfoundry/ubuntu-resolute-stemcell`.
 
 ## Why binaries get replaced
 
@@ -146,8 +153,8 @@ are absent.
 
 ## Units that cannot work in a container
 
-Handled in `base_warden`, not this stage, because they apply to every warden
-stemcell regardless of architecture. Both are skipped with
+Handled in `base_warden`, not this stage, because they apply to every OCI
+container stemcell regardless of architecture. Both are skipped with
 `ConditionVirtualization=!container` rather than masked, so the stemcell still
 behaves correctly if booted on a VM, and the journal records why:
 
