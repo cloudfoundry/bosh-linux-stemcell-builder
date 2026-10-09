@@ -56,7 +56,7 @@ write_body() {
 }
 
 pushd "${REPO_PARENT}/candidate-stemcell"
-  tar xvf bosh-stemcell-*-warden-boshlite-"${OS_NAME}"-"${OS_VERSION}"*.tgz packages.txt
+  tar xvf bosh-stemcell-*-"${CONTAINER_STEMCELL}"-"${OS_NAME}"-"${OS_VERSION}${AGENT_SUFFIX}".tgz packages.txt
   kernel_version=$(grep "${KERNEL_PACKAGE}" packages.txt | awk '{print $3}')
 popd
 

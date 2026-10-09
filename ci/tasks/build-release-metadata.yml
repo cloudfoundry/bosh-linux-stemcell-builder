@@ -20,6 +20,8 @@ params:
   OS_VERSION: ~
   BRANCH: ~
   KERNEL_PACKAGE: ~
+  CONTAINER_STEMCELL: warden-boshlite
+  AGENT_SUFFIX:
 
 run:
   path: bosh-stemcells-ci/ci/tasks/build-release-metadata.sh
