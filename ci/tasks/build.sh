@@ -86,15 +86,15 @@ set -e
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
-bundle exec rake "stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]"
+bundle exec rake "stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION}${VARIANT:+-$VARIANT},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]"
 SUDO
 
 #
 # Output and checksum the stemcell artifacts
 #
 
-stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}"
-meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}.meta4"
+stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${VARIANT:+-$VARIANT}${AGENT_SUFFIX}"
+meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${VARIANT:+-$VARIANT}${AGENT_SUFFIX}.meta4"
 
 echo "${CANDIDATE_BUILD_NUMBER}" > "${REPO_PARENT}/candidate-build-number/number"
 mkdir -p "$( dirname "$meta4_path" )"
@@ -130,4 +130,4 @@ cd "${REPO_PARENT}/stemcells-index-output"
 git add -A
 git config --global user.email "${GIT_USER_EMAIL}"
 git config --global user.name "${GIT_USER_NAME}"
-git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR})"
+git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR}${VARIANT:+-$VARIANT})"
