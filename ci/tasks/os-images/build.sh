@@ -35,6 +35,10 @@ chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
+# Architecture of the OS image to build. Defaults to amd64 so existing pipelines
+# are unaffected; set STEMCELL_ARCH=arm64 to build an ARM64 OS image.
+STEMCELL_ARCH="${STEMCELL_ARCH:-amd64}"
+
 # pass SHLVL or '~ubuntu/.bash_logout' will exit 1
 sudo --set-home --user ubuntu \
   --preserve-env=GEM_HOME,SHLVL,BUILD_TIME,UBUNTU_ADVANTAGE_TOKEN,UBUNTU_DEBOOTSTRAP_MIRROR \
@@ -44,5 +48,5 @@ set -e
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
-bundle exec rake "stemcell:build_os_image[${OPERATING_SYSTEM_NAME},${OPERATING_SYSTEM_VERSION},${OS_IMAGE}]"
+bundle exec rake "stemcell:build_os_image[${OPERATING_SYSTEM_NAME},${OPERATING_SYSTEM_VERSION},${OS_IMAGE},${STEMCELL_ARCH}]"
 SUDO

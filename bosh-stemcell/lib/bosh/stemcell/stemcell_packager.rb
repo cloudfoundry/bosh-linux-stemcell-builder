@@ -49,7 +49,9 @@ module Bosh
       end
 
       def manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
-        architecture = "x86_64"
+        # Map the BOSH/Debian architecture to the kernel architecture string
+        # recorded in the manifest. Defaults to x86_64 for amd64 builds.
+        architecture = {"amd64" => "x86_64", "arm64" => "aarch64"}.fetch(definition.architecture, "x86_64")
 
         {
           "name" => stemcell_name,

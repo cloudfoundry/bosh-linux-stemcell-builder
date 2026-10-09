@@ -34,8 +34,11 @@ shared_examples_for "All Stemcells" do
       it("should be owned by root user (stig: V-38466)") { should be_owned_by("root") }
     end
 
-    describe file("/lib64") do
-      it("should be owned by root user (stig: V-38466)") { should be_owned_by("root") }
+    # /lib64 holds the x86_64 dynamic linker and is absent on arm64, which uses
+    # /lib/ld-linux-aarch64.so.1. Skip the ownership check when it is missing,
+    # mirroring the /usr/lib64 check below. RFC: cloudfoundry/community#1530
+    describe command('if [ -e /lib64 ]; then stat -c "%U" /lib64 ; else echo "root" ; fi') do
+      its(:stdout) { should eq("root\n") }
     end
 
     describe file("/usr/lib") do
