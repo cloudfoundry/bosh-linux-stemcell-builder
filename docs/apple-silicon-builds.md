@@ -5,7 +5,7 @@ builder image and the rake tasks are x86-64 and run under Rosetta translation.
 
 It is independent of the `-rosetta` stemcell *variant*, which is a property of
 the stemcell you produce — see [Rosetta stemcell variant](rosetta-stemcell-variant.md).
-You can build a plain `warden` stemcell here, and the variant only matters if you
+You can build a plain OCI container stemcell here, and the variant only matters if you
 intend to run the resulting stemcell under Rosetta too.
 
 ## Prerequisites
@@ -70,11 +70,11 @@ Expect five to ten minutes, most of it compiling Ruby under translation.
 ### ovftool
 
 `ovftool` is only used by the `image_ovf_generate` stage, which appears solely in
-`ovf_package_stages` — vSphere and vCloud. **Warden stemcells never invoke it.**
+`ovf_package_stages` — vSphere and vCloud. **OCI container stemcells never invoke it.**
 
 The `OVF_TOOL_INSTALLER` bundle is nonetheless required to build the *builder
 image*, because the Dockerfile `ADD`s it unconditionally. Download it into
-`ci/docker/os-image-stemcell-builder/` first. If you only ever build warden
+`ci/docker/os-image-stemcell-builder/` first. If you only ever build OCI container
 stemcells, making that `ADD` conditional would remove the dependency.
 
 ## Build the OS image and the stemcell
@@ -103,8 +103,8 @@ bundle install
 # build the OS image (the stemcell build below consumes it)
 bundle exec rake stemcell:build_os_image[ubuntu,${short_name},/opt/bosh/tmp/ubuntu_base_image_${short_name}.tgz]
 
-# build the warden rosetta stemcell
-bundle exec rake stemcell:build[warden,warden,ubuntu,${short_name}-rosetta,/opt/bosh/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
+# build the OCI container rosetta stemcell
+bundle exec rake stemcell:build[oci,container,ubuntu,${short_name}-rosetta,/opt/bosh/tmp/ubuntu_base_image_${short_name}.tgz,9.000]
 ```
 
 Each took roughly 10-15 minutes on a 16-CPU VM with a local apt cache; expect
@@ -114,7 +114,7 @@ means the tests passed too.
 The OS image is architecture-neutral and carries no Rosetta-specific changes.
 The `-rosetta` suffix on the *stemcell* build is what inserts the
 `base_ubuntu_warden_rosetta` stage, so the same OS image tarball also serves a
-plain `warden` build.
+plain `oci,container` build.
 
 ### Rebuilding at the same version
 
