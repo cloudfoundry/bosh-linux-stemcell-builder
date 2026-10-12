@@ -450,7 +450,7 @@ jobs:
 - name: test-unit
   plan:
   - get: bosh-stemcells-ci
-  - get: bosh-integration-registry-image
+  - get: os-image-stemcell-builder-registry-image
   - get: bosh-linux-stemcell-builder
     trigger: true
     passed:
@@ -464,7 +464,7 @@ jobs:
     - build-os-image
   - task: test-unit
     file: bosh-stemcells-ci/ci/tasks/test-unit.yml
-    image: bosh-integration-registry-image
+    image: os-image-stemcell-builder-registry-image
     privileged: true
   serial: true
 
@@ -877,7 +877,7 @@ jobs:
         - get: bosh-ruby-release-registry-image
         - get: weekly
           trigger: true
-        - get: bosh-integration-registry-image
+        - get: os-image-stemcell-builder-registry-image
         - get: os-image-tarball
           passed:
             - build-os-image
@@ -898,7 +898,7 @@ jobs:
         VENDOR: true
     - task: test-unit
       file: bosh-stemcells-ci/ci/tasks/test-unit.yml
-      image: bosh-integration-registry-image
+      image: os-image-stemcell-builder-registry-image
       privileged: true
     - put: bosh-linux-stemcell-builder-push
       params:
