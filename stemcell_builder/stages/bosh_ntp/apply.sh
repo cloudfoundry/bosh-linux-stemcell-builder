@@ -6,7 +6,7 @@ base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 
-sed -i "/^pool /d" $chroot/etc/chrony/chrony.conf
+rm -f $chroot/etc/chrony/sources.d/ubuntu-ntp-pools.sources
 cp $dir/assets/chrony-updater $chroot/$bosh_dir/bin/sync-time
 
 chmod 0755 $chroot/$bosh_dir/bin/sync-time
