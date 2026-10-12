@@ -23,6 +23,8 @@ shared_examples_for "an os with chrony" do
 
     describe command("grep -rhE '^\\s*(pool|server|peer)\\s' /etc/chrony/conf.d /etc/chrony/sources.d") do
       its(:stdout) { should eq "" }
+      # grep exits 2 on read errors (e.g. missing dir) with empty stdout
+      its(:exit_status) { should be_between(0, 1) }
     end
   end
 end
