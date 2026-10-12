@@ -10,7 +10,7 @@ if [[ -n "${DEBUG:-}" ]]; then
   export BOSH_LOG_PATH="${BOSH_LOG_PATH:-${REPO_PARENT}/bosh-debug.log}"
 fi
 
-VERSION=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//;s/\.0$//' )
+VERSION=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//' )
 export VERSION
 
 #
