@@ -26,7 +26,7 @@ check_param OS_VERSION
 
 OS_IMAGE="$(readlink -f "${REPO_PARENT}/os-image-tarball"/*.tgz)"
 
-export CANDIDATE_BUILD_NUMBER=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//;s/\.0$//' )
+export CANDIDATE_BUILD_NUMBER=$( cat "${REPO_PARENT}/version/number" | sed 's/\.0$//' )
 
 git clone "${REPO_PARENT}/stemcells-index" "${REPO_PARENT}/stemcells-index-output"
 
