@@ -92,6 +92,7 @@ The arguments to `stemcell:build` are:
    target:
     - `aws` → `xen-hvm`
     - `azure` → `hyperv`
+    - `gdch` → `kvm`
     - `google` → `kvm`
     - `openstack` → `kvm`
     - `vsphere` → `esxi`
