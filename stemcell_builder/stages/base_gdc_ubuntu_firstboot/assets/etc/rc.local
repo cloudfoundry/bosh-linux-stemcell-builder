@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: CloudFoundry.org Foundation, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+set -euo pipefail
+
+#execute a successful firstboot.sh only once
+if [ ! -e /root/firstboot_done ]; then
+  if [ -e /root/firstboot.sh ]; then
+    # retry on failures with max 5 times
+    retries=5
+    while [ $retries -gt 0 ]; do
+      if /root/firstboot.sh; then
+        touch /root/firstboot_done
+
+        # exit the loop if successful
+        break
+      fi
+      retries=$((retries - 1))
+
+      # wait 3 seconds before retrying to avoid system overload
+      sleep 3
+    done
+
+    # exits with status 1 if retries were exhausted
+    if [ $retries -eq 0 ]; then
+        exit 1
+    fi
+  fi
+fi
