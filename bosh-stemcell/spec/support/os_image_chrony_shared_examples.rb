@@ -17,8 +17,8 @@ shared_examples_for "an os with chrony" do
       its(:content) { should_not match(/^\s*(pool|server|peer)\s/) }
     end
 
-    describe file("/etc/chrony/sources.d/ubuntu-ntp-pools.sources") do
-      it { should_not exist }
+    describe command("test ! -e /etc/chrony/sources.d/ubuntu-ntp-pools.sources && test ! -L /etc/chrony/sources.d/ubuntu-ntp-pools.sources") do
+      it("does not ship Ubuntu's NTP pools") { expect(subject.exit_status).to eq(0) }
     end
 
     describe command("grep -rhE '^\\s*(pool|server|peer)\\s' /etc/chrony/conf.d /etc/chrony/sources.d") do
