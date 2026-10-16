@@ -109,6 +109,7 @@ shared_examples_for "All Stemcells" do
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
+      exclude_on_gdc: true,
       exclude_on_vsphere: true,
       exclude_on_cloudstack: true,
       exclude_on_azure: true,
