@@ -1,5 +1,6 @@
 module Bosh::Stemcell
   module Infrastructure
+    # Returns the infrastructure instance for the given IaaS name.
     def self.for(name)
       case name
       when "openstack"
@@ -10,6 +11,8 @@ module Bosh::Stemcell
         Alicloud.new
       when "google"
         Google.new
+      when Gdc::NAME
+        Gdc.new
       when "vsphere"
         Vsphere.new
       when "warden"
@@ -148,7 +151,9 @@ module Bosh::Stemcell
       end
     end
 
+    # Google Cloud Platform (GCP) infrastructure definition.
     class Google < Base
+      # Initializes the Google infrastructure configuration.
       def initialize
         super(name: "google",
               hypervisor: "kvm",
@@ -158,8 +163,35 @@ module Bosh::Stemcell
         )
       end
 
+      # Returns Google-specific cloud properties for the stemcell manifest.
       def additional_cloud_properties
         {"root_device_name" => "/dev/sda1"}
+      end
+    end
+
+    # Google Distributed Cloud air-gapped (GDC) infrastructure definition.
+    class Gdc < Base
+      NAME = "gdch"
+      STEMCELL_FORMAT = "#{NAME}-rawdisk"
+
+      # Initializes the GDC infrastructure configuration.
+      def initialize
+        super(
+          name: NAME,
+          hypervisor: "kvm",
+          default_disk_size: 5120,
+          disk_formats: ["rawdisk"],
+          stemcell_formats: [STEMCELL_FORMAT]
+        )
+      end
+
+      # Returns GDC-specific cloud properties for the stemcell manifest.
+      def additional_cloud_properties
+        {
+          "root_device_name" => "/dev/sda1",
+          "os_version" => "noble",
+          "boot_mode" => "uefi-preferred"
+        }
       end
     end
 
