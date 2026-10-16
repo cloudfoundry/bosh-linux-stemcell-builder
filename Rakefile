@@ -3,7 +3,7 @@ require "standard/rake"
 
 namespace :stemcell do
   desc "Build a base OS image for use in stemcells"
-  task :build_os_image, [:operating_system_name, :operating_system_version, :os_image_path] do |_, args|
+  task :build_os_image, [:operating_system_name, :operating_system_version, :os_image_path, :infrastructure_name, :hypervisor_name] do |_, args|
     require "bosh/stemcell/archive_handler"
     require "bosh/stemcell/build_environment"
     require "bosh/stemcell/definition"
@@ -11,7 +11,8 @@ namespace :stemcell do
     require "bosh/stemcell/stage_collection"
     require "bosh/stemcell/stage_runner"
 
-    definition = Bosh::Stemcell::Definition.for("null", "null", args.operating_system_name, args.operating_system_version)
+    args.with_defaults(infrastructure_name: "null", hypervisor_name: "null")
+    definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version)
     environment = Bosh::Stemcell::BuildEnvironment.new(
       ENV.to_hash,
       definition,
