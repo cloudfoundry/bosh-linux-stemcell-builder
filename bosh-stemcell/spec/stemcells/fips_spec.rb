@@ -65,6 +65,7 @@ describe "FIPS Stemcell", os_image: true do
     describe command(dpkg_list_packages), {
       exclude_on_alicloud: true,
       exclude_on_cloudstack: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
@@ -82,6 +83,7 @@ describe "FIPS Stemcell", os_image: true do
     describe command(dpkg_list_packages), {
       exclude_on_cloudstack: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_azure: true
     } do
@@ -95,6 +97,7 @@ describe "FIPS Stemcell", os_image: true do
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
@@ -110,6 +113,7 @@ describe "FIPS Stemcell", os_image: true do
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true
@@ -125,6 +129,7 @@ describe "FIPS Stemcell", os_image: true do
       exclude_on_cloudstack: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_openstack: true
     } do
@@ -138,6 +143,7 @@ describe "FIPS Stemcell", os_image: true do
       exclude_on_aws: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true
