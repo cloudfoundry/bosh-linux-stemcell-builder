@@ -20,7 +20,8 @@ module Bosh::Stemcell
       instance_double(
         "Bosh::Stemcell::Definition",
         infrastructure: infrastructure,
-        operating_system: operating_system
+        operating_system: operating_system,
+        architecture: "amd64"
       )
     }
 
@@ -56,6 +57,11 @@ module Bosh::Stemcell
       it "sets stemcell operating system variant" do
         result = stemcell_builder_options.default
         expect(result["stemcell_operating_system_variant"]).to eq("bear")
+      end
+
+      it "sets the stemcell architecture" do
+        result = stemcell_builder_options.default
+        expect(result["stemcell_arch"]).to eq("amd64")
       end
 
       # rubocop:disable Metrics/MethodLength

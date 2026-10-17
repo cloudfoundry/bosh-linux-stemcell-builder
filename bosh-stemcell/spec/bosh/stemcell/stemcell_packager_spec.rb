@@ -124,6 +124,29 @@ describe Bosh::Stemcell::StemcellPackager do
       })
     end
 
+    context "when the definition is arm64" do
+      let(:definition) do
+        Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "arm64")
+      end
+
+      it "records aarch64 as the manifest architecture" do
+        packager.package("raw")
+        actual_manifest = YAML.load_file(File.join(work_dir, "stemcell/stemcell.MF"))
+        expect(actual_manifest["cloud_properties"]["architecture"]).to eq("aarch64")
+      end
+    end
+
+    context "when the definition has an unsupported architecture" do
+      let(:definition) do
+        Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "riscv64")
+      end
+
+      it "raises rather than mislabeling the manifest architecture" do
+        expect { packager.package("raw") }
+          .to raise_error(ArgumentError, /Unsupported stemcell architecture: riscv64/)
+      end
+    end
+
     it "returns the path of the created tarball" do
       expect(packager.package(disk_format)).to eq(
         File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-noble.tgz")
