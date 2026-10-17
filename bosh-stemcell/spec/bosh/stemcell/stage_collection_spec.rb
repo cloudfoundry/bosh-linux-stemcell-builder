@@ -53,6 +53,47 @@ module Bosh::Stemcell
                                                               ]
                                                             )
       end
+
+      context "when using GDC" do
+        let(:infrastructure) { Infrastructure.for(Infrastructure::Gdc::NAME) }
+
+        it "has the correct GDC OS stages" do
+          expect(stage_collection.operating_system_stages).to eq(
+            [
+              :base_debootstrap,
+              :base_gdc_ubuntu_firstboot,
+              :base_apt,
+              :base_ubuntu_build_essential,
+              :base_ubuntu_packages,
+              :base_ubuntu_packages_addson,
+              :bosh_systemd_resolved,
+              :base_file_permission,
+              :base_ssh,
+              :bosh_sysstat,
+              :bosh_environment,
+              :bosh_sysctl,
+              :bosh_limits,
+              :bosh_users,
+              :gdc_ssh_users,
+              :bosh_monit,
+              :bosh_ntp,
+              :bosh_sudoers,
+              :bosh_systemd,
+              :password_policies,
+              :restrict_su_command,
+              :tty_config,
+              :rsyslog_config,
+              :system_grub,
+              :vim_tiny,
+              :cron_config,
+              :escape_ctrl_alt_del,
+              :bosh_gdc_audit_ubuntu,
+              :bosh_log_audit_start,
+              :clean_machine_id
+            ]
+          )
+        end
+      end
     end
 
     describe "#agent_stages" do
@@ -177,6 +218,71 @@ module Bosh::Stemcell
         it "returns the correct stages" do
           expect(stage_collection.build_stemcell_image_stages).to eq(google_build_stemcell_image_stages)
           expect(stage_collection.package_stemcell_stages("rawdisk")).to eq(google_package_stemcell_stages)
+        end
+      end
+
+      context "when using GDC" do
+        let(:infrastructure) { Infrastructure.for(Infrastructure::Gdc::NAME) }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
+
+        let(:gdc_package_stemcell_stages) {
+          [
+            :prepare_gdc_rawdisk_image_stemcell
+          ]
+        }
+
+        context "when USE_METADATA_SERVER is not set" do
+          before { allow(ENV).to receive(:[]).and_call_original }
+          before { allow(ENV).to receive(:[]).with("USE_METADATA_SERVER").and_return(nil) }
+
+          let(:gdc_build_stemcell_image_stages) {
+            [
+              :system_network,
+              :system_gdc_ntp,
+              :system_parameters,
+              :bosh_clean,
+              :bosh_harden,
+              :bosh_gdc_agent_settings,
+              :bosh_clean_ssh,
+              :restore_apt_sources,
+              :image_create_efi,
+              :image_install_grub,
+              :sbom_create,
+              :bosh_package_list
+            ]
+          }
+
+          it "returns the correct stages" do
+            expect(stage_collection.build_stemcell_image_stages).to eq(gdc_build_stemcell_image_stages)
+            expect(stage_collection.package_stemcell_stages("rawdisk")).to eq(gdc_package_stemcell_stages)
+          end
+        end
+
+        context "when USE_METADATA_SERVER is true" do
+          before { allow(ENV).to receive(:[]).and_call_original }
+          before { allow(ENV).to receive(:[]).with("USE_METADATA_SERVER").and_return("true") }
+
+          let(:gdc_build_stemcell_image_stages) {
+            [
+              :system_network,
+              :system_gdc_ntp,
+              :system_parameters,
+              :bosh_clean,
+              :bosh_harden,
+              :bosh_gdc_agent_settings_with_metadata_server,
+              :bosh_clean_ssh,
+              :restore_apt_sources,
+              :image_create_efi,
+              :image_install_grub,
+              :sbom_create,
+              :bosh_package_list
+            ]
+          }
+
+          it "returns the correct stages with metadata server" do
+            expect(stage_collection.build_stemcell_image_stages).to eq(gdc_build_stemcell_image_stages)
+            expect(stage_collection.package_stemcell_stages("rawdisk")).to eq(gdc_package_stemcell_stages)
+          end
         end
       end
 

@@ -10,8 +10,14 @@ module Bosh::Stemcell
       @definition = definition
     end
 
+    # Returns the list of OS image build stages for the target infrastructure.
     def operating_system_stages
-      ubuntu_os_stages
+      case infrastructure
+      when Infrastructure::Gdc
+        gdc_ubuntu_os_stages
+      else
+        ubuntu_os_stages
+      end
     end
 
     def kernel_stages
@@ -45,6 +51,7 @@ module Bosh::Stemcell
       ]
     end
 
+    # Returns the list of stemcell image build stages for the target infrastructure.
     def build_stemcell_image_stages
       stages = case infrastructure
       when Infrastructure::Aws
@@ -55,6 +62,8 @@ module Bosh::Stemcell
         cloudstack_stages
       when Infrastructure::Google
         google_stages
+      when Infrastructure::Gdc
+        gdc_stages
       when Infrastructure::OpenStack
         openstack_stages
       when Infrastructure::Vsphere
@@ -183,6 +192,7 @@ module Bosh::Stemcell
       ]
     end
 
+    # Returns the stemcell image build stages for Google Cloud Platform.
     def google_stages
       [
         :system_network,
@@ -192,6 +202,31 @@ module Bosh::Stemcell
         :bosh_clean,
         :bosh_harden,
         :bosh_google_agent_settings,
+        :bosh_clean_ssh,
+        :restore_apt_sources,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
+        :image_create_efi,
+        :image_install_grub,
+        :sbom_create
+      ]
+    end
+
+    # Returns the stemcell image build stages for GDC.
+    def gdc_stages
+      agent_settings_stage = if ENV["USE_METADATA_SERVER"] == "true"
+        :bosh_gdc_agent_settings_with_metadata_server
+      else
+        :bosh_gdc_agent_settings
+      end
+      [
+        :system_network,
+        :system_gdc_ntp,
+        :system_parameters,
+        :bosh_clean,
+        :bosh_harden,
+        agent_settings_stage,
         :bosh_clean_ssh,
         :restore_apt_sources,
         # when adding a stage that changes files in the image, do so before
@@ -247,6 +282,7 @@ module Bosh::Stemcell
       ]
     end
 
+    # Returns the base Ubuntu OS image build stages.
     def ubuntu_os_stages
       [
         :base_debootstrap,
@@ -273,6 +309,24 @@ module Bosh::Stemcell
       ].flatten
     end
 
+    # Returns the Ubuntu OS image build stages customized for GDC.
+    def gdc_ubuntu_os_stages
+      ubuntu_os_stages.map do |s|
+        case s
+        when :bosh_audit_ubuntu
+          :bosh_gdc_audit_ubuntu
+        when :base_ubuntu_firstboot
+          :base_gdc_ubuntu_firstboot
+        when :base_ubuntu_packages
+          [:base_ubuntu_packages, :base_ubuntu_packages_addson]
+        when :bosh_users
+          [:bosh_users, :gdc_ssh_users]
+        else
+          s
+        end
+      end.flatten
+    end
+
     def bosh_steps
       %i[
         bosh_environment
@@ -292,10 +346,14 @@ module Bosh::Stemcell
       ]
     end
 
+    # Returns the packaging stages for the rawdisk format.
     def rawdisk_package_stages
-      [
-        :prepare_rawdisk_image_stemcell
-      ]
+      case infrastructure
+      when Infrastructure::Gdc
+        [:prepare_gdc_rawdisk_image_stemcell]
+      else
+        [:prepare_rawdisk_image_stemcell]
+      end
     end
 
     def qcow2_package_stages

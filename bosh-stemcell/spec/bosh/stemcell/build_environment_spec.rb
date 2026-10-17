@@ -194,6 +194,27 @@ module Bosh::Stemcell
           expect(subject.os_image_rspec_command).to eq(expected_rspec_command)
         end
       end
+
+      context "when infrastructure is gdc" do
+        let(:infrastructure) do
+          instance_double("Bosh::Stemcell::Infrastructure::Gdc",
+            name: Infrastructure::Gdc::NAME,
+            hypervisor: "kvm",
+            default_disk_size: 5120)
+        end
+
+        it "passes STEMCELL_INFRASTRUCTURE and excludes gdc tagged specs" do
+          expected_rspec_command = [
+            "cd #{stemcell_specs_dir};",
+            "OS_IMAGE=/some/os_image.tgz",
+            "STEMCELL_INFRASTRUCTURE=#{Infrastructure::Gdc::NAME}",
+            "bundle exec rspec -fd --tag ~exclude_on_gdc",
+            "spec/os_image/#{operating_system.name}_spec.rb"
+          ].join(" ")
+
+          expect(subject.os_image_rspec_command).to eq(expected_rspec_command)
+        end
+      end
     end
 
     describe "#stemcell_rspec_command" do
@@ -221,6 +242,38 @@ module Bosh::Stemcell
         ].join(" ")
 
         expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
+      end
+
+      context "when infrastructure is gdc" do
+        let(:infrastructure) do
+          instance_double("Bosh::Stemcell::Infrastructure::Gdc",
+            name: Infrastructure::Gdc::NAME,
+            hypervisor: "kvm",
+            default_disk_size: 5120)
+        end
+
+        before { allow(operating_system).to receive(:variant?).and_return(false) }
+
+        it "excludes gdc tagged specs" do
+          expected_rspec_command = [
+            "cd #{stemcell_specs_dir};",
+            "STEMCELL_IMAGE=#{File.join(work_path, "fake-root-disk-image.raw")}",
+            "STEMCELL_WORKDIR=#{work_path}",
+            "STEMCELL_INFRASTRUCTURE=#{Infrastructure::Gdc::NAME}",
+            "OS_NAME=#{operating_system.name}",
+            "OS_VERSION=#{operating_system.version}",
+            "CANDIDATE_BUILD_NUMBER=#{version}",
+            "bundle exec rspec -fd --tag ~exclude_on_gdc",
+            "spec/os_image/#{operating_system.name}_spec.rb",
+            "spec/stemcells/#{operating_system.name}_spec.rb",
+            "spec/stemcells/go_agent_spec.rb",
+            "spec/stemcells/gdc_spec.rb",
+            "spec/stemcells/stig_spec.rb",
+            "spec/stemcells/cis_spec.rb"
+          ].join(" ")
+
+          expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
+        end
       end
     end
 

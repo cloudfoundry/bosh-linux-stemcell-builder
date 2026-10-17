@@ -8,6 +8,7 @@ module Bosh::Stemcell
         expect(Infrastructure.for("openstack")).to be_an(Infrastructure::OpenStack)
         expect(Infrastructure.for("aws")).to be_an(Infrastructure::Aws)
         expect(Infrastructure.for("google")).to be_an(Infrastructure::Google)
+        expect(Infrastructure.for(Infrastructure::Gdc::NAME)).to be_an(Infrastructure::Gdc)
         expect(Infrastructure.for("vsphere")).to be_a(Infrastructure::Vsphere)
         expect(Infrastructure.for("warden")).to be_a(Infrastructure::Warden)
         expect(Infrastructure.for("azure")).to be_a(Infrastructure::Azure)
@@ -122,6 +123,25 @@ module Bosh::Stemcell
 
     it "has google specific additional cloud properties" do
       expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1"})
+    end
+  end
+
+  describe Infrastructure::Gdc do
+    its(:name) { should eq(Infrastructure::Gdc::NAME) }
+    its(:hypervisor) { should eq("kvm") }
+    its(:default_disk_size) { should eq(5120) }
+    its(:disk_formats) { should eq(["rawdisk"]) }
+    its(:stemcell_formats) { should eq([Infrastructure::Gdc::STEMCELL_FORMAT]) }
+
+    it { should eq Infrastructure.for(Infrastructure::Gdc::NAME) }
+    it { should_not eq Infrastructure.for("google") }
+
+    it "has gdc specific additional cloud properties" do
+      expect(subject.additional_cloud_properties).to eq({
+        "root_device_name" => "/dev/sda1",
+        "os_version" => "noble",
+        "boot_mode" => "uefi-preferred"
+      })
     end
   end
 

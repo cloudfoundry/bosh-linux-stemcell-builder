@@ -1,4 +1,5 @@
 require "bosh/stemcell/arch"
+require "bosh/stemcell/infrastructure"
 require "spec_helper"
 require "shellout_types/file"
 
@@ -336,8 +337,10 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   describe "allowed user accounts" do
+    is_gdc = ENV["STEMCELL_INFRASTRUCTURE"] == Bosh::Stemcell::Infrastructure::Gdc::NAME
+
     describe file("/etc/passwd") do
-      its(:content) { should eql(<<~HERE) }
+      expected_passwd = <<~HERE
         root:x:0:0:root:/root:/bin/bash
         daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
         bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -370,10 +373,22 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         polkitd:x:989:989:User for polkitd:/:/usr/sbin/nologin
         vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
       HERE
+      expected_passwd += "bosh-ssh-user:x:1001:1003:GDC BOSH ssh user:/home/bosh-ssh-user:/bin/bash\n" if is_gdc
+
+      its(:content) { should eql(expected_passwd) }
     end
 
     describe file("/etc/shadow") do
-      shadow_match = Regexp.new <<~'END_SHADOW', [Regexp::MULTILINE]
+      shadow_tail = if is_gdc
+        <<~'END_SHADOW_TAIL'
+          vcap:(.+):(\d{5}):1:99999:7:::
+          bosh-ssh-user:(.+):(\d{5}):0:99999:7:::
+        END_SHADOW_TAIL
+      else
+        "vcap:(.+):(\\d{5}):1:99999:7:::\n"
+      end
+
+      shadow_match = Regexp.new(<<~'END_SHADOW' + shadow_tail, [Regexp::MULTILINE])
         root:(.+):(\d{5}):0:99999:7:::
         daemon:\*:(\d{5}):0:99999:7:::
         bin:\*:(\d{5}):0:99999:7:::
@@ -404,14 +419,14 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         sshd:!:(\d{5})::::::
         tcpdump:!:(\d{5})::::::
         polkitd:!\*:(\d{5})::::::
-        vcap:(.+):(\d{5}):1:99999:7:::
       END_SHADOW
 
       its(:content) { should match(shadow_match) }
     end
 
     describe file("/etc/group") do
-      its(:content) { should eql(<<~HERE) }
+      bosh_sshers_group = is_gdc ? "bosh_sshers:x:1001:vcap,bosh-ssh-user" : "bosh_sshers:x:1001:vcap"
+      expected_group = <<~HERE
         root:x:0:
         daemon:x:1:
         bin:x:2:
@@ -471,13 +486,17 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         polkitd:x:989:
         admin:x:988:vcap
         vcap:x:1000:syslog
-        bosh_sshers:x:1001:vcap
+        #{bosh_sshers_group}
         bosh_sudoers:x:1002:
       HERE
+      expected_group += "bosh-ssh-user:x:1003:\n" if is_gdc
+
+      its(:content) { should eql(expected_group) }
     end
 
     describe file("/etc/gshadow") do
-      its(:content) { should eql(<<~HERE) }
+      bosh_sshers_gshadow = is_gdc ? "bosh_sshers:!::vcap,bosh-ssh-user" : "bosh_sshers:!::vcap"
+      expected_gshadow = <<~HERE
         root:*::
         daemon:*::
         bin:*::
@@ -537,9 +556,12 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         polkitd:!*::
         admin:!::vcap
         vcap:!::syslog
-        bosh_sshers:!::vcap
+        #{bosh_sshers_gshadow}
         bosh_sudoers:!::
       HERE
+      expected_gshadow += "bosh-ssh-user:!::\n" if is_gdc
+
+      its(:content) { should eql(expected_gshadow) }
     end
   end
 

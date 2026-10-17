@@ -1,5 +1,6 @@
 require "bosh/core/shell"
 require "bosh/stemcell/builder_options"
+require "bosh/stemcell/infrastructure"
 require "bosh/stemcell/stemcell"
 require "forwardable"
 
@@ -39,12 +40,17 @@ module Bosh::Stemcell
     end
 
     def os_image_rspec_command
-      [
+      os_image_exclusions = (infrastructure.name == Infrastructure::Gdc::NAME) ? " --tag ~exclude_on_gdc" : ""
+      cmd = [
         "cd #{STEMCELL_SPECS_DIR};",
-        "OS_IMAGE=#{os_image_tarball_path}",
-        "bundle exec rspec -fd",
+        "OS_IMAGE=#{os_image_tarball_path}"
+      ]
+      cmd << "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}" if infrastructure.name == Infrastructure::Gdc::NAME
+      cmd.concat([
+        "bundle exec rspec -fd#{os_image_exclusions}",
         "spec/os_image/#{operating_system_spec_name}_spec.rb"
-      ].join(" ")
+      ])
+      cmd.join(" ")
     end
 
     def stemcell_rspec_command
@@ -60,7 +66,7 @@ module Bosh::Stemcell
         "spec/os_image/#{operating_system_spec_name}_spec.rb",
         "spec/stemcells/#{operating_system_spec_name}_spec.rb",
         "spec/stemcells/go_agent_spec.rb",
-        "spec/stemcells/#{infrastructure.name}_spec.rb",
+        "spec/stemcells/#{infrastructure_spec_name}_spec.rb",
         "spec/stemcells/stig_spec.rb",
         "spec/stemcells/cis_spec.rb"
       ]
@@ -144,6 +150,11 @@ module Bosh::Stemcell
       operating_system.name.to_s
     end
 
+    # Returns the stemcell spec filename prefix for the target infrastructure.
+    def infrastructure_spec_name
+      (infrastructure.name == Infrastructure::Gdc::NAME) ? "gdc" : infrastructure.name
+    end
+
     def prepare_build_path
       FileUtils.rm_rf(build_path, verbose: true) if File.exist?(build_path)
       FileUtils.mkdir_p(build_path, verbose: true)
@@ -170,6 +181,7 @@ module Bosh::Stemcell
       end
     end
 
+    # Returns RSpec tag exclusion flags for the target infrastructure and OS variant.
     def exclude_exclusions
       [
         case infrastructure.name
@@ -189,6 +201,8 @@ module Bosh::Stemcell
           " --tag ~exclude_on_azure"
         when "google"
           " --tag ~exclude_on_google"
+        when Infrastructure::Gdc::NAME
+          " --tag ~exclude_on_gdc"
         end,
         if operating_system.variant?
           " --tag ~exclude_on_#{operating_system.variant}"
