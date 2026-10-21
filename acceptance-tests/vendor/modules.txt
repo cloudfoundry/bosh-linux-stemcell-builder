@@ -4,11 +4,13 @@ github.com/Masterminds/semver/v3
 # github.com/bmatcuk/doublestar v1.3.4
 ## explicit; go 1.12
 github.com/bmatcuk/doublestar
-# github.com/cloudfoundry/bosh-utils v0.0.659
+# github.com/cloudfoundry/bosh-utils v0.0.663
 ## explicit; go 1.26.0
 github.com/cloudfoundry/bosh-utils/errors
 github.com/cloudfoundry/bosh-utils/logger
 github.com/cloudfoundry/bosh-utils/system
+# github.com/gkampitakis/go-snaps v0.5.23
+## explicit; go 1.23
 # github.com/go-logr/logr v1.4.4
 ## explicit; go 1.18
 github.com/go-logr/logr
@@ -23,7 +25,7 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e
+# github.com/google/pprof v0.0.0-20261016150608-1facf8f91b50
 ## explicit; go 1.26.0
 github.com/google/pprof/profile
 # github.com/onsi/ginkgo/v2 v2.33.1
@@ -63,6 +65,14 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
+# github.com/rogpeppe/go-internal v1.16.0
+## explicit; go 1.25
+# github.com/tidwall/gjson v1.20.0
+## explicit; go 1.23
+# github.com/tidwall/match v1.2.0
+## explicit; go 1.15
+# github.com/tidwall/pretty v1.2.2
+## explicit; go 1.16
 # go.yaml.in/yaml/v3 v3.0.5
 ## explicit; go 1.16
 go.yaml.in/yaml/v3
@@ -100,7 +110,7 @@ golang.org/x/text/internal/utf8internal
 golang.org/x/text/language
 golang.org/x/text/runes
 golang.org/x/text/transform
-# golang.org/x/tools v0.51.0
+# golang.org/x/tools v0.52.0
 ## explicit; go 1.26.0
 golang.org/x/tools/cover
 golang.org/x/tools/go/ast/edge
@@ -120,6 +130,10 @@ golang.org/x/tools/internal/pkgbits
 golang.org/x/tools/internal/stdlib
 golang.org/x/tools/internal/typesinternal
 golang.org/x/tools/internal/versions
+# google.golang.org/protobuf v1.36.12
+## explicit; go 1.23
+# gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+## explicit; go 1.11
 # gopkg.in/yaml.v2 v2.4.0
 ## explicit; go 1.15
 gopkg.in/yaml.v2
