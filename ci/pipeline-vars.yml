@@ -17,6 +17,7 @@ stemcell_details:
     {iaas: alicloud, hypervisor: kvm},
     {iaas: aws, hypervisor: xen-hvm},
     {iaas: azure, hypervisor: hyperv},
+    {iaas: gdch, hypervisor: kvm},
     {iaas: google, hypervisor: kvm},
     {iaas: openstack, hypervisor: kvm},
     {iaas: vsphere, hypervisor: esxi},

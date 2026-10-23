@@ -1,4 +1,5 @@
 require "bosh/stemcell/arch"
+require "bosh/stemcell/infrastructure"
 require "spec_helper"
 require "shellout_types/file"
 
@@ -336,8 +337,10 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   describe "allowed user accounts" do
+    is_gdch = ENV["STEMCELL_INFRASTRUCTURE"] == Bosh::Stemcell::Infrastructure::Gdch::NAME
+
     describe file("/etc/passwd") do
-      its(:content) { should eql(<<~HERE) }
+      expected_passwd = <<~HERE
         root:x:0:0:root:/root:/bin/bash
         daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
         bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -370,48 +373,53 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         polkitd:x:989:989:User for polkitd:/:/usr/sbin/nologin
         vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
       HERE
+      expected_passwd += "bosh-ssh-user:x:1001:1003:GDC BOSH ssh user:/home/bosh-ssh-user:/bin/bash\n" if is_gdch
+
+      its(:content) { should eql(expected_passwd) }
     end
 
     describe file("/etc/shadow") do
-      shadow_match = Regexp.new <<~'END_SHADOW', [Regexp::MULTILINE]
-        root:(.+):(\d{5}):0:99999:7:::
-        daemon:\*:(\d{5}):0:99999:7:::
-        bin:\*:(\d{5}):0:99999:7:::
-        sys:\*:(\d{5}):0:99999:7:::
-        sync:\*:(\d{5}):0:99999:7:::
-        games:\*:(\d{5}):0:99999:7:::
-        man:\*:(\d{5}):0:99999:7:::
-        lp:\*:(\d{5}):0:99999:7:::
-        mail:\*:(\d{5}):0:99999:7:::
-        news:\*:(\d{5}):0:99999:7:::
-        uucp:\*:(\d{5}):0:99999:7:::
-        proxy:\*:(\d{5}):0:99999:7:::
-        www-data:\*:(\d{5}):0:99999:7:::
-        backup:\*:(\d{5}):0:99999:7:::
-        list:\*:(\d{5}):0:99999:7:::
-        irc:\*:(\d{5}):0:99999:7:::
-        _apt:\*:(\d{5}):0:99999:7:::
-        nobody:\*:(\d{5}):0:99999:7:::
-        systemd-network:!\*:(\d{5})::::::
-        systemd-timesync:!\*:(\d{5})::::::
-        dhcpcd:!:(\d{5})::::::
-        messagebus:!:(\d{5})::::::
-        syslog:!:(\d{5})::::::
-        systemd-resolve:!\*:(\d{5})::::::
-        uuidd:!:(\d{5})::::::
-        _chrony:!:(\d{5})::::::
-        _runit-log:!:(\d{5})::::::
-        sshd:!:(\d{5})::::::
-        tcpdump:!:(\d{5})::::::
-        polkitd:!\*:(\d{5})::::::
-        vcap:(.+):(\d{5}):1:99999:7:::
+      shadow_tail = is_gdch ? "\nbosh-ssh-user:(.+):(\\d{5}):[01]:99999:7:::" : ""
+      shadow_match = Regexp.new <<~END_SHADOW, [Regexp::MULTILINE]
+        root:(.+):(\\d{5}):0:99999:7:::
+        daemon:\\*:(\\d{5}):0:99999:7:::
+        bin:\\*:(\\d{5}):0:99999:7:::
+        sys:\\*:(\\d{5}):0:99999:7:::
+        sync:\\*:(\\d{5}):0:99999:7:::
+        games:\\*:(\\d{5}):0:99999:7:::
+        man:\\*:(\\d{5}):0:99999:7:::
+        lp:\\*:(\\d{5}):0:99999:7:::
+        mail:\\*:(\\d{5}):0:99999:7:::
+        news:\\*:(\\d{5}):0:99999:7:::
+        uucp:\\*:(\\d{5}):0:99999:7:::
+        proxy:\\*:(\\d{5}):0:99999:7:::
+        www-data:\\*:(\\d{5}):0:99999:7:::
+        backup:\\*:(\\d{5}):0:99999:7:::
+        list:\\*:(\\d{5}):0:99999:7:::
+        irc:\\*:(\\d{5}):0:99999:7:::
+        _apt:\\*:(\\d{5}):0:99999:7:::
+        nobody:\\*:(\\d{5}):0:99999:7:::
+        systemd-network:!\\*:(\\d{5})::::::
+        systemd-timesync:!\\*:(\\d{5})::::::
+        dhcpcd:!:(\\d{5})::::::
+        messagebus:!:(\\d{5})::::::
+        syslog:!:(\\d{5})::::::
+        systemd-resolve:!\\*:(\\d{5})::::::
+        uuidd:!:(\\d{5})::::::
+        _chrony:!:(\\d{5})::::::
+        _runit-log:!:(\\d{5})::::::
+        sshd:!:(\\d{5})::::::
+        tcpdump:!:(\\d{5})::::::
+        polkitd:!\\*:(\\d{5})::::::
+        vcap:(.+):(\\d{5}):1:99999:7:::#{shadow_tail}
       END_SHADOW
 
       its(:content) { should match(shadow_match) }
     end
 
     describe file("/etc/group") do
-      its(:content) { should eql(<<~HERE) }
+      bosh_sshers_group = is_gdch ? "bosh_sshers:x:1001:vcap,bosh-ssh-user" : "bosh_sshers:x:1001:vcap"
+      expected_group = <<~HERE
         root:x:0:
         daemon:x:1:
         bin:x:2:
@@ -471,13 +479,17 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         polkitd:x:989:
         admin:x:988:vcap
         vcap:x:1000:syslog
-        bosh_sshers:x:1001:vcap
+        #{bosh_sshers_group}
         bosh_sudoers:x:1002:
       HERE
+      expected_group += "bosh-ssh-user:x:1003:\n" if is_gdch
+
+      its(:content) { should eql(expected_group) }
     end
 
     describe file("/etc/gshadow") do
-      its(:content) { should eql(<<~HERE) }
+      bosh_sshers_gshadow = is_gdch ? "bosh_sshers:!::vcap,bosh-ssh-user" : "bosh_sshers:!::vcap"
+      expected_gshadow = <<~HERE
         root:*::
         daemon:*::
         bin:*::
@@ -537,9 +549,12 @@ describe "Ubuntu 24.04 OS image", os_image: true do
         polkitd:!*::
         admin:!::vcap
         vcap:!::syslog
-        bosh_sshers:!::vcap
+        #{bosh_sshers_gshadow}
         bosh_sudoers:!::
       HERE
+      expected_gshadow += "bosh-ssh-user:!::\n" if is_gdch
+
+      its(:content) { should eql(expected_gshadow) }
     end
   end
 

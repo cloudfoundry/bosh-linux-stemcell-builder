@@ -60,7 +60,8 @@ module Bosh::Stemcell
 
     let(:operating_system) do
       instance_double("Bosh::Stemcell::OperatingSystem::Base",
-        name: "fake-operating-system-name")
+        name: "fake-operating-system-name",
+        variant?: false)
     end
 
     let(:shell) { instance_double(Bosh::Core::Shell) }
@@ -221,6 +222,38 @@ module Bosh::Stemcell
         ].join(" ")
 
         expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
+      end
+
+      context "when infrastructure is gdch" do
+        let(:infrastructure) do
+          instance_double("Bosh::Stemcell::Infrastructure::Gdch",
+            name: Infrastructure::Gdch::NAME,
+            hypervisor: "kvm",
+            default_disk_size: 5120)
+        end
+
+        before { allow(operating_system).to receive(:variant?).and_return(false) }
+
+        it "excludes gdch tagged specs" do
+          expected_rspec_command = [
+            "cd #{stemcell_specs_dir};",
+            "STEMCELL_IMAGE=#{File.join(work_path, "fake-root-disk-image.raw")}",
+            "STEMCELL_WORKDIR=#{work_path}",
+            "STEMCELL_INFRASTRUCTURE=#{Infrastructure::Gdch::NAME}",
+            "OS_NAME=#{operating_system.name}",
+            "OS_VERSION=#{operating_system.version}",
+            "CANDIDATE_BUILD_NUMBER=#{version}",
+            "bundle exec rspec -fd --tag ~exclude_on_gdch",
+            "spec/os_image/#{operating_system.name}_spec.rb",
+            "spec/stemcells/#{operating_system.name}_spec.rb",
+            "spec/stemcells/go_agent_spec.rb",
+            "spec/stemcells/gdch_spec.rb",
+            "spec/stemcells/stig_spec.rb",
+            "spec/stemcells/cis_spec.rb"
+          ].join(" ")
+
+          expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
+        end
       end
     end
 

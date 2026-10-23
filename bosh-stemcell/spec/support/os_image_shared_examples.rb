@@ -1,3 +1,5 @@
+require "bosh/stemcell/infrastructure"
+
 shared_examples_for "every OS image" do
   let(:sshd_config) { file("/etc/ssh/sshd_config") }
   let(:etc_environment) { file("/etc/environment") }
@@ -203,8 +205,12 @@ shared_examples_for "every OS image" do
 
   context "auditd should be installed but not enabled (stig: V-38628) (stig: V-38631) (stig: V-38632)" do
     describe service("auditd") do
-      # Agent is responsible for starting auditd
-      it { should_not be_enabled }
+      if ENV["STEMCELL_INFRASTRUCTURE"] == Bosh::Stemcell::Infrastructure::Gdch::NAME
+        it { should be_enabled }
+      else
+        # Agent is responsible for starting auditd
+        it { should_not be_enabled }
+      end
     end
   end
 
