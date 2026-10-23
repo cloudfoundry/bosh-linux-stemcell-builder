@@ -76,8 +76,13 @@ echo "(hd0) ${device}" > ${image_mount_point}/boot/grub/device.map
 echo "(hd0) ${device}" > ${image_mount_point}/device.map # fallback for non-UEFI systems
 
 # install bootsector into disk image file
-run_in_chroot ${image_mount_point} "grub-install --target=x86_64-efi --efi-directory=/boot/efi --boot-directory=/boot/efi/EFI --removable -v --no-floppy ${device}"
-run_in_chroot ${image_mount_point} "grub-install -v --target=i386-pc  --grub-mkdevicemap=/device.map --no-floppy ${device}" # fallback for non-UEFI systems
+if [ "$(stemcell_target_arch ${image_mount_point})" == "arm64" ]; then
+  # ARM64 is UEFI-only; there is no i386-pc/BIOS fallback target.
+  run_in_chroot ${image_mount_point} "grub-install --target=arm64-efi --efi-directory=/boot/efi --boot-directory=/boot/efi/EFI --removable -v --no-floppy ${device}"
+else
+  run_in_chroot ${image_mount_point} "grub-install --target=x86_64-efi --efi-directory=/boot/efi --boot-directory=/boot/efi/EFI --removable -v --no-floppy ${device}"
+  run_in_chroot ${image_mount_point} "grub-install -v --target=i386-pc  --grub-mkdevicemap=/device.map --no-floppy ${device}" # fallback for non-UEFI systems
+fi
 
 mkdir -p ${image_mount_point}/boot/efi/boot/grub
 cp ${image_mount_point}/boot/efi/EFI/BOOT/grub.cfg ${image_mount_point}/boot/efi/boot/grub/grub.cfg

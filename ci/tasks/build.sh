@@ -77,6 +77,10 @@ chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
 
+# Architecture of the stemcell to build. Defaults to amd64 so existing pipelines
+# are unaffected; set STEMCELL_ARCH=arm64 to build an ARM64 stemcell.
+STEMCELL_ARCH="${STEMCELL_ARCH:-amd64}"
+
 # pass SHLVL or '~ubuntu/.bash_logout' will exit 1
 sudo --set-home --user ubuntu \
   --preserve-env=GEM_HOME,SHLVL,UBUNTU_ADVANTAGE_TOKEN,UBUNTU_FIPS_USE_IAAS_KERNEL \
@@ -86,15 +90,24 @@ set -e
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
-bundle exec rake "stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]"
+bundle exec rake "stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER},${STEMCELL_ARCH}]"
 SUDO
 
 #
 # Output and checksum the stemcell artifacts
 #
 
-stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}"
-meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}.meta4"
+# Non-default architectures carry an "-<arch>" suffix in the stemcell name
+# (see Bosh::Stemcell::Definition#stemcell_name) and get their own index entry,
+# so they never collide with the amd64 artifacts.
+if [ "${STEMCELL_ARCH}" == "amd64" ]; then
+  arch_suffix=""
+else
+  arch_suffix="-${STEMCELL_ARCH}"
+fi
+
+stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}${arch_suffix}"
+meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}${arch_suffix}.meta4"
 
 echo "${CANDIDATE_BUILD_NUMBER}" > "${REPO_PARENT}/candidate-build-number/number"
 mkdir -p "$( dirname "$meta4_path" )"
@@ -130,4 +143,4 @@ cd "${REPO_PARENT}/stemcells-index-output"
 git add -A
 git config --global user.email "${GIT_USER_EMAIL}"
 git config --global user.name "${GIT_USER_NAME}"
-git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR})"
+git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR}${arch_suffix})"

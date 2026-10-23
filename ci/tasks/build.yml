@@ -23,6 +23,7 @@ params:
   HYPERVISOR:      replace-me
   OS_NAME:         replace-me
   OS_VERSION:      replace-me
+  STEMCELL_ARCH:   amd64
   STEMCELL_BUCKET: replace-me
   S3_API_ENDPOINT: s3.amazonaws.com
   ESM_TOKEN:
