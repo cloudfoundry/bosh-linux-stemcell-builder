@@ -180,6 +180,79 @@ module Bosh::Stemcell
         end
       end
 
+      context "when using GDC" do
+        let(:infrastructure) { Infrastructure.for(Infrastructure::Gdch::NAME) }
+        let(:operating_system) { OperatingSystem.for("ubuntu") }
+
+        let(:gdch_package_stemcell_stages) {
+          [
+            :prepare_gdch_rawdisk_image_stemcell
+          ]
+        }
+
+        context "when USE_METADATA_SERVER is not set" do
+          before { allow(ENV).to receive(:[]).and_call_original }
+          before { allow(ENV).to receive(:[]).with("USE_METADATA_SERVER").and_return(nil) }
+
+          let(:gdch_build_stemcell_image_stages) {
+            [
+              :base_gdch_ubuntu_firstboot,
+              :base_ubuntu_packages_addons,
+              :gdch_ssh_users,
+              :bosh_gdch_audit_ubuntu,
+              :system_network,
+              :system_gdch_ntp,
+              :system_parameters,
+              :bosh_clean,
+              :bosh_harden,
+              :bosh_gdch_agent_settings,
+              :bosh_clean_ssh,
+              :restore_apt_sources,
+              :image_create_efi,
+              :image_install_grub,
+              :sbom_create,
+              :bosh_package_list
+            ]
+          }
+
+          it "returns the correct stages" do
+            expect(stage_collection.build_stemcell_image_stages).to eq(gdch_build_stemcell_image_stages)
+            expect(stage_collection.package_stemcell_stages("rawdisk")).to eq(gdch_package_stemcell_stages)
+          end
+        end
+
+        context "when USE_METADATA_SERVER is true" do
+          before { allow(ENV).to receive(:[]).and_call_original }
+          before { allow(ENV).to receive(:[]).with("USE_METADATA_SERVER").and_return("true") }
+
+          let(:gdch_build_stemcell_image_stages) {
+            [
+              :base_gdch_ubuntu_firstboot,
+              :base_ubuntu_packages_addons,
+              :gdch_ssh_users,
+              :bosh_gdch_audit_ubuntu,
+              :system_network,
+              :system_gdch_ntp,
+              :system_parameters,
+              :bosh_clean,
+              :bosh_harden,
+              :bosh_gdch_agent_settings_with_metadata_server,
+              :bosh_clean_ssh,
+              :restore_apt_sources,
+              :image_create_efi,
+              :image_install_grub,
+              :sbom_create,
+              :bosh_package_list
+            ]
+          }
+
+          it "returns the correct stages with metadata server" do
+            expect(stage_collection.build_stemcell_image_stages).to eq(gdch_build_stemcell_image_stages)
+            expect(stage_collection.package_stemcell_stages("rawdisk")).to eq(gdch_package_stemcell_stages)
+          end
+        end
+      end
+
       context "when using OpenStack" do
         let(:infrastructure) { Infrastructure.for("openstack") }
         let(:operating_system) { OperatingSystem.for("ubuntu") }
