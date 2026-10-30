@@ -106,7 +106,8 @@ else
   arch_suffix="-${STEMCELL_ARCH}"
 fi
 
-stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}${arch_suffix}"
+stemcell_name_base="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}"
+stemcell_name="${stemcell_name_base}${arch_suffix}"
 meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}${arch_suffix}.meta4"
 
 echo "${CANDIDATE_BUILD_NUMBER}" > "${REPO_PARENT}/candidate-build-number/number"
@@ -114,7 +115,7 @@ mkdir -p "$( dirname "$meta4_path" )"
 rm -f "$meta4_path"
 meta4 create --metalink="$meta4_path"
 
-raw_images=( "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw.tgz )
+raw_images=( "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw${arch_suffix}.tgz )
 if [ "${#raw_images[@]}" -ge 2 ]; then
   echo "Found more than one raw image: '${raw_images[*]}'" >&2
   exit 1
@@ -122,8 +123,8 @@ fi
 
 if [ -e "${raw_images[0]}" ] ; then
   # openstack currently publishes raw files
-  raw_stemcell_filename="${stemcell_name}-raw.tgz"
-  mv "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw.tgz "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
+  raw_stemcell_filename="${stemcell_name_base}-raw${arch_suffix}.tgz"
+  mv "${raw_images[0]}" "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
 
   meta4 import-file --metalink="$meta4_path" --version="${CANDIDATE_BUILD_NUMBER}" "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
   meta4 file-set-url --metalink="$meta4_path" --file="${raw_stemcell_filename}" "https://${S3_API_ENDPOINT}/${STEMCELL_BUCKET}/${IAAS}/${raw_stemcell_filename}"
