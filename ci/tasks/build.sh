@@ -23,6 +23,7 @@ check_param IAAS
 check_param HYPERVISOR
 check_param OS_NAME
 check_param OS_VERSION
+check_param STEMCELL_ARCH
 
 OS_IMAGE="$(readlink -f "${REPO_PARENT}/os-image-tarball"/*.tgz)"
 
@@ -76,10 +77,6 @@ chown -R ubuntu:ubuntu "${REPO_ROOT}" # ci resource
 chown -R ubuntu:ubuntu "${REPO_PARENT}/bosh-linux-stemcell-builder"
 chown -R ubuntu:ubuntu /mnt
 sudo chmod u+s "$(which sudo)"
-
-# Architecture of the stemcell to build. Defaults to amd64 so existing pipelines
-# are unaffected; set STEMCELL_ARCH=arm64 to build an ARM64 stemcell.
-STEMCELL_ARCH="${STEMCELL_ARCH:-amd64}"
 
 # pass SHLVL or '~ubuntu/.bash_logout' will exit 1
 sudo --set-home --user ubuntu \

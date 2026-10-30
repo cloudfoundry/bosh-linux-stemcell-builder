@@ -59,6 +59,7 @@ plan:
       OS_NAME: ubuntu
       S3_API_ENDPOINT: storage.googleapis.com
       OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)
+      STEMCELL_ARCH: amd64
       STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
       GIT_USER_EMAIL: (@= data.values.stemcell_details.bot_email @)
       GIT_USER_NAME: (@= data.values.stemcell_details.bot_name @)
@@ -473,6 +474,7 @@ jobs:
     params:
       OPERATING_SYSTEM_NAME: ubuntu
       OPERATING_SYSTEM_VERSION: (@= data.values.stemcell_details.os_short_name @)
+      STEMCELL_ARCH: amd64
       UBUNTU_DEBOOTSTRAP_MIRROR: http://mirrors.edge.kernel.org/ubuntu
     privileged: true
     vars:
