@@ -14,6 +14,8 @@
     #@data/values
     stemcell_details:
       branch: ubuntu-jammy
+      #! GCP cost-attribution label value, conventionally stemcell-builder-<branch>
+      pipeline_label: stemcell-builder-ubuntu-jammy
     # ...
     blobstore_types:
       - dav

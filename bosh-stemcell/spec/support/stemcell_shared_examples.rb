@@ -86,8 +86,8 @@ shared_examples_for "All Stemcells" do
     describe command("ls -A /etc/rsyslog.d") do
       its(:stdout) do
         should eq(<<~FILELIST)
+          34-bosh-agent.conf
           50-default.conf
-          90-bosh-agent.conf
         FILELIST
       end
     end
@@ -112,6 +112,7 @@ shared_examples_for "All Stemcells" do
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_cloudstack: true,
       exclude_on_azure: true,

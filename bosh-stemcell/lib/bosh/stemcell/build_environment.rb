@@ -1,5 +1,6 @@
 require "bosh/core/shell"
 require "bosh/stemcell/builder_options"
+require "bosh/stemcell/infrastructure"
 require "bosh/stemcell/stemcell"
 require "forwardable"
 
@@ -189,6 +190,8 @@ module Bosh::Stemcell
           " --tag ~exclude_on_azure"
         when "google"
           " --tag ~exclude_on_google"
+        when Infrastructure::Gdch::NAME
+          " --tag ~exclude_on_gdch"
         end,
         if operating_system.variant?
           " --tag ~exclude_on_#{operating_system.variant}"

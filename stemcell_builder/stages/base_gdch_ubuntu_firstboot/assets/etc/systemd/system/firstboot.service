@@ -1,0 +1,12 @@
+[Unit]
+Description=Run first boot tasks
+ConditionPathExists=!/root/firstboot_done
+Before=ssh.service
+
+[Service]
+Type=oneshot
+ExecStart=/root/firstboot.sh
+ExecStartPost=/usr/bin/touch /root/firstboot_done
+
+[Install]
+WantedBy=multi-user.target

@@ -1,3 +1,8 @@
+# @AI-Generated
+# Modified with AI assistance
+# Description:
+# 2026-09-15: Add spec for masked Ubuntu Pro client units - Claude Code: Claude Opus 5
+
 require "spec_helper"
 
 describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
@@ -11,6 +16,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
   context "installed by image_install_grub", {
     exclude_on_vsphere: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_aws: true,
     exclude_on_azure: true,
     exclude_on_openstack: true,
@@ -21,7 +27,8 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       exclude_on_alicloud: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
-      exclude_on_openstack: true
+      exclude_on_openstack: true,
+      exclude_on_gdch: true
     } do
       describe file(grub_cfg_path) do
         its(:content) { should match " console=hvc0" }
@@ -135,6 +142,47 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     end
   end
 
+  # The Ubuntu Pro client ships installed on jammy (ubuntu-minimal depends on
+  # ubuntu-advantage-tools, so it cannot be purged) with its units enabled. An unattached
+  # client still calls contracts.canonical.com every 6h, so bosh_harden disables and masks
+  # those units and removes the apt and MOTD entry points.
+  context "installed by bosh_harden" do
+    %w[
+      ua-timer.timer
+      ua-timer.service
+      esm-cache.service
+      apt-news.service
+      ubuntu-advantage.service
+      ua-reboot-cmds.service
+    ].each do |unit|
+      describe file("/etc/systemd/system/#{unit}") do
+        it("is masked") { should be_linked_to(File::NULL) }
+      end
+    end
+
+    # These paths must be gone, not merely "not a regular file". `should_not be_file`
+    # is too weak here: File#file? canonicalizes with `readlink -m` before `stat`, so a
+    # symlink left behind pointing at a missing target reports false and the assertion
+    # would pass with the link still in place. Three of these are symlinks to begin
+    # with, so check for absence exactly.
+    {
+      "/etc/systemd/system/multi-user.target.wants/ubuntu-advantage.service" =>
+        "is not enabled in any systemd target",
+      "/etc/systemd/system/multi-user.target.wants/ua-reboot-cmds.service" =>
+        "is not enabled in any systemd target",
+      "/etc/systemd/system/timers.target.wants/ua-timer.timer" =>
+        "is not enabled in any systemd target",
+      "/etc/apt/apt.conf.d/20apt-esm-hook.conf" =>
+        "does not let apt trigger esm-cache or apt-news",
+      "/etc/update-motd.d/91-contract-ua-esm-status" =>
+        "does not render ESM status at login"
+    }.each do |path, description|
+      describe command("test ! -e #{path} && test ! -L #{path}") do
+        it(description) { expect(subject.exit_status).to eq(0) }
+      end
+    end
+  end
+
   context "installed by system-network", {
     exclude_on_warden: true
   } do
@@ -161,6 +209,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
     exclude_on_azure: true
@@ -180,6 +229,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
     exclude_on_azure: true
@@ -227,6 +277,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -242,6 +293,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_alicloud: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -257,6 +309,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -273,6 +326,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
     exclude_on_azure: true
@@ -290,6 +344,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_warden: true,
     exclude_on_azure: true
@@ -306,7 +361,8 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     exclude_on_warden: true,
     exclude_on_azure: true,
     exclude_on_openstack: true,
-    exclude_on_google: true
+    exclude_on_google: true,
+    exclude_on_gdch: true
   } do
     describe file("/var/vcap/bosh/agent.json") do
       it { should be_valid_json_file }
@@ -407,6 +463,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       exclude_on_fips: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_azure: true
     } do
@@ -420,6 +477,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
@@ -436,6 +494,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true
@@ -452,6 +511,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       exclude_on_cloudstack: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_openstack: true
     } do
@@ -466,6 +526,7 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
       exclude_on_aws: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true

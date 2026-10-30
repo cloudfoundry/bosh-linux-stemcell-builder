@@ -22,14 +22,20 @@ function process_packages {
   for package_version in "${package_version_for_usn[@]}"
   do
     # single package
-    package=$(echo "$package_version" | cut -d ':' -f1)
-    version=$(echo "$package_version" | cut -d ':' -f2)
+    package=${package_version%%:*}
+    version=${package_version#*:}
 
     if is_package_installed "$package";
     then
       PACKAGE_INCLUDED_IN_STEMCELL=true
-      echo "checking: $package"
-      check_package "$package" "$version"
+      if is_fips_only_package "$package";
+      then
+        # FIPS packages are only available from the Ubuntu Pro FIPS repo, which this task cannot access
+        echo "skip availability check (FIPS only): $package"
+      else
+        echo "checking: $package"
+        check_package "$package" "$version"
+      fi
     else
       echo "skip: $package"
     fi
@@ -89,8 +95,13 @@ function process_usns {
 
 function is_package_installed {
   local package=$1
-  echo "$INSTALLED_PACKAGES" | grep -q "$package$"
+  echo "$INSTALLED_PACKAGES" | grep -Fxq "$package"
   return $?
+}
+
+function is_fips_only_package {
+  local package=$1
+  ! echo "$STANDARD_PACKAGES" | grep -Fxq "$package"
 }
 
 if [[ -n "$ESM_TOKEN" ]]; then
@@ -104,6 +115,9 @@ fi
 
 # Depends on apt package list being up-to-date, make sure apt-get update is run before this is executed
 sudo apt-get update
-INSTALLED_PACKAGES=$(cat "${REPO_PARENT}"/bosh-linux-stemcell-builder/bosh-stemcell/spec/assets/dpkg-list-ubuntu*.txt | sort | uniq | sed -e 's/:amd64//g')
+ASSETS_DIR="${REPO_PARENT}/bosh-linux-stemcell-builder/bosh-stemcell/spec/assets"
+STANDARD_PACKAGES=$(cat "${ASSETS_DIR}"/dpkg-list-ubuntu.txt "${ASSETS_DIR}"/dpkg-list-ubuntu-kernel.txt "${ASSETS_DIR}"/dpkg-list-ubuntu-*-additions.txt | sed -e 's/:amd64//g' | sort | uniq)
+FIPS_PACKAGES=$(cat "${ASSETS_DIR}"/dpkg-list-ubuntu-*fips.txt | sed -e 's/:amd64//g' | sort | uniq)
+INSTALLED_PACKAGES=$(printf '%s\n%s\n' "$STANDARD_PACKAGES" "$FIPS_PACKAGES" | sort | uniq)
 ALL_PACKAGE_VERSIONS_AVAILABLE=true
 PACKAGE_INCLUDED_IN_STEMCELL=false

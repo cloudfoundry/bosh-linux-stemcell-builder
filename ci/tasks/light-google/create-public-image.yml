@@ -18,3 +18,4 @@ params:
   GCP_SERVICE_ACCOUNT_KEY:
   EFI: false
   GVNIC: true
+  PIPELINE_LABEL: # required - GCP label (pipeline=<value>) for the created image

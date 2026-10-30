@@ -55,6 +55,8 @@ module Bosh::Stemcell
         cloudstack_stages
       when Infrastructure::Google
         google_stages
+      when Infrastructure::Gdch
+        gdch_stages
       when Infrastructure::OpenStack
         openstack_stages
       when Infrastructure::Vsphere
@@ -203,6 +205,34 @@ module Bosh::Stemcell
       ]
     end
 
+    def gdch_stages
+      agent_settings_stage = if ENV["USE_METADATA_SERVER"] == "true"
+        :bosh_gdch_agent_settings_with_metadata_server
+      else
+        :bosh_gdch_agent_settings
+      end
+      [
+        :base_gdch_ubuntu_firstboot,
+        :base_ubuntu_packages_addons,
+        :gdch_ssh_users,
+        :bosh_gdch_audit_ubuntu,
+        :system_network,
+        :system_gdch_ntp,
+        :system_parameters,
+        :bosh_clean,
+        :bosh_harden,
+        agent_settings_stage,
+        :bosh_clean_ssh,
+        :restore_apt_sources,
+        # when adding a stage that changes files in the image, do so before
+        # this line.  Image create will make the image so any changes to the
+        # filesystem after it won't apply.
+        :image_create_efi,
+        :image_install_grub,
+        :sbom_create
+      ]
+    end
+
     def warden_stages
       [
         :system_parameters,
@@ -293,9 +323,12 @@ module Bosh::Stemcell
     end
 
     def rawdisk_package_stages
-      [
-        :prepare_rawdisk_image_stemcell
-      ]
+      case infrastructure
+      when Infrastructure::Gdch
+        [:prepare_gdch_rawdisk_image_stemcell]
+      else
+        [:prepare_rawdisk_image_stemcell]
+      end
     end
 
     def qcow2_package_stages

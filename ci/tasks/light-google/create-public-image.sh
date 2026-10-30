@@ -12,6 +12,9 @@ fi
 
 : "${PROJECT_NAME:?}"
 : "${GCP_SERVICE_ACCOUNT_KEY:?}"
+: "${PIPELINE_LABEL:?}"
+[[ "${PIPELINE_LABEL}" =~ ^[a-z]([-_a-z0-9]{0,61}[a-z0-9])?$ ]] ||
+  { echo "invalid GCP label value in PIPELINE_LABEL: '${PIPELINE_LABEL}'" >&2; exit 1; }
 
 echo "Creating light stemcell..."
 
@@ -52,7 +55,8 @@ gcloud compute images create "${image_name}" \
  --project="${PROJECT_NAME}" \
  --source-uri="${raw_stemcell_uri}" \
  ${guest_os_features_flag} \
- --storage-location=eu
+ --storage-location=eu \
+ --labels="pipeline=${PIPELINE_LABEL}"
 
 gcloud compute images add-iam-policy-binding "${image_name}" \
     --member='allAuthenticatedUsers' \

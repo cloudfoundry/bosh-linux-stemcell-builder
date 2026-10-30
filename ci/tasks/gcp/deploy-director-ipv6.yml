@@ -11,6 +11,7 @@ outputs:
   - name: director-state
 
 params:
+  PIPELINE_LABEL: # required - GCP label (pipeline=<value>) for the resources this task creates
 
 
 run:

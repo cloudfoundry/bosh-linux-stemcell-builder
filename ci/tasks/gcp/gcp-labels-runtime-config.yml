@@ -1,0 +1,9 @@
+---
+#! Runtime config applied to the directors created by ci/tasks/gcp/deploy-director*.sh,
+#! so every deployment on them (BATS test VMs, compilation VMs, anything deployed
+#! later) carries the pipeline's GCP cost-attribution label. The director merges
+#! runtime config tags into each deployment's tags, and the Google CPI writes the
+#! resulting VM metadata as GCP resource labels. `pipeline_label` comes from the
+#! director-vars.yml written by the task.
+tags:
+  pipeline: ((pipeline_label))

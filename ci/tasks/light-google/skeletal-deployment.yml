@@ -24,6 +24,8 @@ resource_pools:
     zone: ((gce_zone))
     tags:
     - ((skeletal_firewall_tag))
+    labels:
+      pipeline: ((pipeline_label))
 
 disk_pools:
 - name: disks

@@ -13,6 +13,9 @@ fi
 # env
 : "${SSH_PRIVATE_KEY:?}"
 : "${GCE_CREDENTIALS_JSON:?}"
+: "${PIPELINE_LABEL:?}"
+[[ "${PIPELINE_LABEL}" =~ ^[a-z]([-_a-z0-9]{0,61}[a-z0-9])?$ ]] ||
+  { echo "invalid GCP label value in PIPELINE_LABEL: '${PIPELINE_LABEL}'" >&2; exit 1; }
 
 
 mkdir -p "${REPO_PARENT}/deployment-state/assets/"
@@ -33,6 +36,7 @@ pushd "${REPO_PARENT}/deployment-state" > /dev/null
     -v gce_cloud_provider_agent_mbus="${gce_cloud_provider_agent_mbus}" \
     -v gce_credentials_json="'${GCE_CREDENTIALS_JSON}'" \
     -v ssh_private_key="bosh.pem" \
+    -v pipeline_label="${PIPELINE_LABEL}" \
     -l "${REPO_PARENT}/terraform/metadata" \
     --vars-store=./skeletal-deployment-vars.yml \
     "${REPO_ROOT}/ci/tasks/light-google/skeletal-deployment.yml" > ./skeletal-deployment.yml

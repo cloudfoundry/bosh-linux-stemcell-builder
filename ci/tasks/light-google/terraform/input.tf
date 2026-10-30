@@ -20,3 +20,7 @@ variable "env_name" {
   type = string
 }
 
+variable "pipeline_label" {
+  type = string
+}
+

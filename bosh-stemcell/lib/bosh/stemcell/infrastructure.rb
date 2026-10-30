@@ -10,6 +10,8 @@ module Bosh::Stemcell
         Alicloud.new
       when "google"
         Google.new
+      when Gdch::NAME
+        Gdch.new
       when "vsphere"
         Vsphere.new
       when "warden"
@@ -160,6 +162,29 @@ module Bosh::Stemcell
 
       def additional_cloud_properties
         {"root_device_name" => "/dev/sda1"}
+      end
+    end
+
+    class Gdch < Base
+      NAME = "gdch"
+      STEMCELL_FORMAT = "#{NAME}-rawdisk"
+
+      def initialize
+        super(
+          name: NAME,
+          hypervisor: "kvm",
+          default_disk_size: 5120,
+          disk_formats: ["rawdisk"],
+          stemcell_formats: [STEMCELL_FORMAT]
+        )
+      end
+
+      def additional_cloud_properties
+        {
+          "root_device_name" => "/dev/sda1",
+          "os_version" => "noble",
+          "boot_mode" => "uefi-preferred"
+        }
       end
     end
 
