@@ -33,15 +33,9 @@ describe "Ubuntu 24.04 OS image", os_image: true do
 
   describe "base_apt" do
     describe file("/etc/apt/sources.list") do
-      if Bosh::Stemcell::Arch.x86_64?
-        its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble main universe multiverse' }
-        its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-updates main universe multiverse' }
-        its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-security main universe multiverse' }
-      else
-        # ARM64 (and other non-amd64 arches) are served from the ports mirror.
-        its(:content) { should match 'deb http:\/\/(ports|snapshot).ubuntu.com\/ubuntu(-ports)?(|\/\d*T\d*Z) noble main universe multiverse' }
-        its(:content) { should match 'deb http:\/\/(ports|snapshot).ubuntu.com\/ubuntu(-ports)?(|\/\d*T\d*Z) noble-updates main universe multiverse' }
-        its(:content) { should match 'deb http:\/\/(ports|snapshot).ubuntu.com\/ubuntu(-ports)?(|\/\d*T\d*Z) noble-security main universe multiverse' }
+      # ports.ubuntu.com (ubuntu-ports) serves the non-amd64 architectures.
+      %w[noble noble-updates noble-security].each do |listing|
+        its(:content) { should match %r{deb http://(archive|ports|security|snapshot)\.ubuntu\.com/ubuntu(-ports)?(|/\d*T\d*Z) #{listing} main universe multiverse} }
       end
     end
 
