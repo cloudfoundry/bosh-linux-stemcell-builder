@@ -134,6 +134,17 @@ describe Bosh::Stemcell::StemcellPackager do
         actual_manifest = YAML.load_file(File.join(work_dir, "stemcell/stemcell.MF"))
         expect(actual_manifest["cloud_properties"]["architecture"]).to eq("aarch64")
       end
+
+      context "on AWS" do
+        let(:infrastructure) { Bosh::Stemcell::Infrastructure.for("aws") }
+
+        # The AWS CPI forwards this value to EC2 RegisterImage, which rejects "aarch64".
+        it "records arm64 as the manifest architecture" do
+          packager.package("raw")
+          actual_manifest = YAML.load_file(File.join(work_dir, "stemcell/stemcell.MF"))
+          expect(actual_manifest["cloud_properties"]["architecture"]).to eq("arm64")
+        end
+      end
     end
 
     context "when the definition has an unsupported architecture" do

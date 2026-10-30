@@ -49,13 +49,7 @@ module Bosh
       end
 
       def manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
-        # Map the BOSH/Debian architecture to the kernel architecture string
-        # recorded in the manifest. Fail on an unmapped architecture rather than
-        # mislabeling the image (e.g. defaulting a non-x86 image to x86_64),
-        # which could lead a CPI to boot it on the wrong instance type.
-        architecture = {"amd64" => "x86_64", "arm64" => "aarch64"}.fetch(definition.architecture) do
-          raise ArgumentError, "Unsupported stemcell architecture: #{definition.architecture}"
-        end
+        architecture = infrastructure.architecture_name(definition.architecture)
 
         {
           "name" => stemcell_name,
