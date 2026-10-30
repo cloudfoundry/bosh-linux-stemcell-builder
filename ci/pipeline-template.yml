@@ -529,10 +529,8 @@ jobs:
       bump: "major"
     tags: [ arm64 ]
   - get: usn-log
-    tags: [ arm64 ]
   - get: stemcell-trigger
     trigger: true
-    tags: [ arm64 ]
   - task: build
     file: bosh-stemcells-ci/ci/tasks/os-images/build.yml
     image: os-image-stemcell-builder-registry-image-arm64
@@ -546,7 +544,6 @@ jobs:
     vars:
       image_os_tag: (@= data.values.stemcell_details.os_short_name @)
   - put: os-image-tarball-arm64
-    tags: [ arm64 ]
     params:
       files:
       - os-image/(@= data.values.stemcell_details.os_name @).tgz
@@ -793,7 +790,6 @@ jobs:
       resource: os-image-tarball-arm64
       passed:
       - build-os-image-arm64
-      tags: [ arm64 ]
   - task: create-stemcell
     file: bosh-stemcells-ci/ci/tasks/build.yml
     image: os-image-stemcell-builder-registry-image-arm64
@@ -814,7 +810,6 @@ jobs:
       image_os_tag: (@= data.values.stemcell_details.os_short_name @)
   - put: aws-xen-hvm-arm64
     attempts: 3
-    tags: [ arm64 ]
     params:
       files:
       - stemcell/*.tgz
