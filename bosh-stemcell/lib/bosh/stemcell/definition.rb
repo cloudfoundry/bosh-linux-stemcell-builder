@@ -3,7 +3,6 @@ require "bosh/stemcell/operating_system"
 
 module Bosh::Stemcell
   class Definition
-    # Architecture defaults to amd64 so existing stemcell builds are unaffected.
     DEFAULT_ARCHITECTURE = "amd64".freeze
 
     attr_reader :infrastructure, :hypervisor_name, :operating_system, :architecture
@@ -33,8 +32,7 @@ module Bosh::Stemcell
       stemcell_name_parts << operating_system.version if operating_system.version
       stemcell_name_parts << operating_system.variant if operating_system.variant
       stemcell_name_parts << disk_format unless disk_format == infrastructure.default_disk_format
-      # Only embed the architecture in the name for non-default (arm64) builds so
-      # existing amd64 stemcell names remain byte-identical.
+      # amd64 stemcell names carry no architecture suffix; other architectures do.
       stemcell_name_parts << architecture unless architecture == DEFAULT_ARCHITECTURE
 
       stemcell_name_parts.join("-")

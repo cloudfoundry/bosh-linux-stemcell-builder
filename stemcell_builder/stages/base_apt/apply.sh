@@ -10,9 +10,6 @@ add_on_exit "umount $chroot/sys"
 
 # Ubuntu serves non-amd64 architectures (e.g. arm64) from the ports mirror
 # (ports.ubuntu.com/ubuntu-ports) rather than archive/security.ubuntu.com.
-# stemcell_target_arch derives the arch from the bootstrapped chroot, so this
-# works regardless of how build settings are propagated. Defaults to the amd64
-# mirrors for amd64/unknown so existing builds are unchanged.
 if [ "$(stemcell_target_arch)" == "arm64" ]; then
   apt_archive_mirror="http://ports.ubuntu.com/ubuntu-ports"
   apt_security_mirror="http://ports.ubuntu.com/ubuntu-ports"

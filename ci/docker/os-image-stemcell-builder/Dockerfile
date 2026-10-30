@@ -76,11 +76,7 @@ RUN mkdir -p /mnt/stemcells \
     && chown -R ubuntu:ubuntu /mnt/stemcells
 
 # VMware's ovftool is used to create vSphere stemcells. VMware ships no arm64
-# Linux ovftool, and vSphere is not an arm64 (Graviton) target, so the ovftool
-# bundle is only added and installed on amd64. On arm64 the ADD is skipped
-# entirely (a conditional build stage), which keeps the arm64 image buildable
-# without an ovftool bundle in the build context.
-# RFC: cloudfoundry/community#1530.
+# Linux ovftool and vSphere is not an arm64 target, so it is only installed on amd64.
 #
 # TARGETARCH is provided automatically by BuildKit ("amd64" / "arm64").
 ARG TARGETARCH
@@ -111,10 +107,8 @@ ARG RUBY_INSTALL_URL
 ARG RUBY_VERSION
 ARG GEM_HOME
 
-# Use the prebuilt meta4 release binary when one exists for this architecture
-# (amd64). dpb587/metalink publishes no arm64 binary, so on arm64
-# build-docker-args.sh leaves META4_CLI_URL empty and meta4 is built from source
-# with the image's Go toolchain instead.
+# dpb587/metalink publishes no arm64 binary, so on arm64 build-docker-args.sh
+# leaves META4_CLI_URL empty and meta4 is built from source with the image's Go toolchain.
 RUN meta4_cli_path="/usr/local/bin/meta4" \
     && if [ -n "${META4_CLI_URL}" ]; then \
          curl --show-error -sL "${META4_CLI_URL}" > "${meta4_cli_path}"; \

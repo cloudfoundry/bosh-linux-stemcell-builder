@@ -96,9 +96,8 @@ function is_x86_64() {
 
 # Prints the Debian architecture (e.g. amd64, arm64) of the stemcell being built.
 # Prefers the architecture of the bootstrapped root filesystem (set by
-# debootstrap), which is reliably available to every stage regardless of how
-# build settings are propagated. Falls back to the stemcell_arch build setting,
-# then to amd64 so existing builds are unaffected.
+# debootstrap), which is available to every stage regardless of how build
+# settings are propagated. Falls back to the stemcell_arch build setting, then amd64.
 #
 # Usage: stemcell_target_arch [rootfs_path]
 #   rootfs_path defaults to $chroot; image stages that mount the rootfs

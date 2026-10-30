@@ -250,13 +250,6 @@ jobs:
       params:
         image: image/image.tar
 
-#! arm64 (Graviton) builder image. RFC: cloudfoundry/community#1530.
-#! Mirrors build-os-image-stemcell-builder on an arm64 worker so build-os-image-arm64
-#! runs in a native arm64 image. The Dockerfile skips VMware ovftool on arm64 (no
-#! arm64 ovftool exists; vSphere is not an arm64 target), and build-docker-args.sh
-#! selects arm64 CLI assets from the worker's architecture. Pushes to a separate
-#! "<os>-arm64" tag so the amd64 image is never overwritten. Dormant until an
-#! `arm64`-tagged worker is registered (RFC D3 / Open Question 2).
 - name: build-os-image-stemcell-builder-arm64
   public: true
   serial: true
@@ -499,19 +492,6 @@ jobs:
     params:
       file: os-image-version/number
 
-#! arm64 (Graviton) OS image build. RFC: cloudfoundry/community#1530.
-#! Mirrors build-os-image but runs the same ci/tasks/os-images/build.yml task on
-#! an arm64 worker, inside the arm64 builder image. STEMCELL_ARCH=arm64 selects
-#! the target architecture (passed to the rake task -> debootstrap --arch), and
-#! this job supplies the ports.ubuntu.com mirror that hosts arm64 Ubuntu
-#! packages. Later stages read the arch back from the rootfs
-#! (stemcell_target_arch). It publishes to its own os-image-tarball-arm64
-#! resource and version series so it never perturbs the amd64 os-image artifacts.
-#! Dormant until the platform team registers an `arm64`-tagged Concourse worker
-#! (RFC D3 / Open Question 2). Heavy/light stemcell packaging + arm64 AMI/GCE
-#! publishing for downstream IaaSes is platform-owned (RFC D5) and tracked
-#! separately; this job covers the os-image stage whose arch-correctness lives
-#! in this repo (validated 376/0 on a Graviton instance).
 - name: build-os-image-arm64
   serial: true
   plan:
@@ -750,16 +730,6 @@ jobs:
 - #@ build_stemcell(iaas.iaas, iaas.hypervisor, "-fips")
 #@ end
 
-#! arm64 (Graviton) AWS stemcell. RFC: cloudfoundry/community#1530.
-#! Mirrors build-aws-xen-hvm on an arm64 worker: it builds the stemcell from the
-#! arm64 os-image (build-os-image-arm64) inside the arm64 builder image with
-#! STEMCELL_ARCH=arm64. The stemcell is named ...-ubuntu-<os>-arm64 and indexed
-#! under aws-xen-hvm-arm64.meta4, so it never collides with the amd64 stemcell.
-#! It is not an input to test-stemcells-*, bats or aggregate-candidate-stemcells.
-#! Dormant until an `arm64`-tagged worker is registered (RFC D3 / Open Question
-#! 2). It also needs linux-arm64 builds of the bosh-agent (listed in the agent
-#! metalink) and of the four blobstore CLIs (bosh-blobstore-*.linux-arm64.url /
-#! .sha256sum assets in stemcell_builder/stages/blobstore_clis).
 - name: build-aws-xen-hvm-arm64
   serial: true
   plan:
@@ -1827,8 +1797,6 @@ resources:
 - #@ metalink_resource(iaas.iaas, iaas.hypervisor, "-fips")
 #@ end
 
-#! arm64 (Graviton) AWS stemcell dev index entry (aws-xen-hvm-arm64.meta4),
-#! published by build-aws-xen-hvm-arm64. RFC: cloudfoundry/community#1530.
 - name: aws-xen-hvm-arm64
   type: metalink-repository
   source:
@@ -1865,9 +1833,6 @@ resources:
         secret_key: ((hmac_secret))
       type: s3
 
-#! arm64 (Graviton) OS image tarball. RFC: cloudfoundry/community#1530.
-#! Mirrors os-image-tarball but under a distinct -arm64 meta4 name and S3 prefix
-#! so the arm64 os-image never overwrites the amd64 one.
 - name: os-image-tarball-arm64
   type: metalink-repository
   source:
@@ -1904,8 +1869,6 @@ resources:
     file: (@= data.values.stemcell_details.branch @)/os-image-version
     private_key: ((github_deploy_key_bosh-linux-stemcell-builder.private_key))
 
-#! arm64 (Graviton) os-image version series, independent of the amd64 series.
-#! RFC: cloudfoundry/community#1530.
 - name: os-image-version-arm64
   type: semver
   source:
@@ -2106,8 +2069,6 @@ resources:
     username: ((dockerhub_username))
     password: ((dockerhub_password))
 
-#! arm64 (Graviton) builder image, published under its own tag so the amd64
-#! image is never overwritten. RFC: cloudfoundry/community#1530.
 - name: os-image-stemcell-builder-registry-image-arm64
   type: registry-image
   source:

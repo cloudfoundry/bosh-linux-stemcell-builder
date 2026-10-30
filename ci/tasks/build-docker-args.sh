@@ -19,8 +19,7 @@ apt-get update -y
 apt-get install -y --no-install-recommends ca-certificates curl jq
 
 # Select CLI assets for the architecture this task runs on, so the builder image
-# can be built for both amd64 and arm64 (Graviton) workers.
-# RFC: https://github.com/cloudfoundry/community/pull/1530
+# can be built for both amd64 and arm64 workers.
 case "$(uname -m)" in
   aarch64|arm64) arch="arm64" ;;
   *)             arch="amd64" ;;

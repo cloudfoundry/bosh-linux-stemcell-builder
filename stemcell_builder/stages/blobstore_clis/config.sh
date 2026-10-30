@@ -14,8 +14,7 @@ mkdir -p "${downloaded_cli_dir}"
 blobstore_clis=(bosh-blobstore-dav bosh-blobstore-gcs bosh-blobstore-s3 bosh-blobstore-azure-storage)
 
 # The <cli>.url/.sha256sum assets point at linux-amd64 builds. Other
-# architectures (e.g. arm64 / Graviton) read <cli>.linux-<arch>.url/.sha256sum.
-# RFC: cloudfoundry/community#1530
+# architectures (e.g. arm64) read <cli>.linux-<arch>.url/.sha256sum.
 # shellcheck disable=SC2154
 cli_arch="${stemcell_arch:-amd64}"
 if [ "${cli_arch}" == "amd64" ]; then

@@ -76,10 +76,8 @@ cleanup_debootstrap() {
 }
 trap cleanup_debootstrap EXIT
 
-# archive.ubuntu.com only serves amd64/i386; non-amd64 arches (e.g. arm64) are
-# served from the ports mirror. Default arm64 to ports.ubuntu.com when no
-# explicit mirror was provided, so ARM64 builds work without extra config.
-# An explicit UBUNTU_DEBOOTSTRAP_MIRROR always takes precedence.
+# archive.ubuntu.com only serves amd64/i386; other architectures (e.g. arm64) are
+# served from the ports mirror. An explicit UBUNTU_DEBOOTSTRAP_MIRROR takes precedence.
 debootstrap_mirror="${UBUNTU_DEBOOTSTRAP_MIRROR:-}"
 if [ -z "$debootstrap_mirror" ] && [ "$base_debootstrap_arch" == "arm64" ]; then
   debootstrap_mirror="http://ports.ubuntu.com/ubuntu-ports"

@@ -47,9 +47,8 @@ module Bosh::Stemcell
       end
 
       # Maps the BOSH/Debian architecture to the value recorded as
-      # cloud_properties.architecture in stemcell.MF, which CPIs consume
-      # unchanged. Raises for an unmapped architecture rather than mislabeling
-      # the image. Infrastructures whose CPI expects another spelling override it.
+      # cloud_properties.architecture in stemcell.MF, which CPIs consume unchanged.
+      # Raises for an unmapped architecture; override where a CPI expects another spelling.
       def architecture_name(architecture)
         {"amd64" => "x86_64", "arm64" => "aarch64"}.fetch(architecture) do
           raise ArgumentError, "Unsupported stemcell architecture: #{architecture}"

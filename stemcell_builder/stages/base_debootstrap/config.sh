@@ -18,9 +18,7 @@ then
   persist UBUNTU_DEBOOTSTRAP_MIRROR
 fi
 
-# Architecture of the stemcell being built. Defaults to amd64 so existing
-# builds are unaffected; set stemcell_arch=arm64 (via settings.bash) to build
-# an ARM64 stemcell.
+# Architecture of the stemcell being built, from the stemcell_arch build setting.
 base_debootstrap_arch="${stemcell_arch:-amd64}"
 
 if [ -z "${base_debootstrap_suite:-}" ]
