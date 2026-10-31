@@ -1,12 +1,12 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-resolute.tgz">
-    <hash type="sha-512">84ddbbd38a7f85078e506deea89b3cc4633fc97988aa5fa3f55e55f9012a3444b38426b1cd9b8ba6644fe79242578388ffcdf2c0716224c28bf6e8b0c709419c</hash>
-    <hash type="sha-256">c98418991ee4db52c2b60f3187abc01c861211effcc6a4192dfacfb9f482e91a</hash>
-    <hash type="sha-1">e47c801800192fbfa377b3a631a9b0fedcfc5201</hash>
-    <hash type="md5">d43d221c3dbe0d9bd687c3f4351df47e</hash>
-    <size>418294719</size>
+    <hash type="sha-512">dc315f354023a1cfe9c436292f49ffb31046fb0d276a163309ad3d1ac3343c2c91bfdcb55e8aced21a83d476661beb2b5295d04c61517a54ff447a60f101ade8</hash>
+    <hash type="sha-256">7cf38024934f83cb7fabbb4aa1b49e3c005b0623bee4c209742bfcea8fa17463</hash>
+    <hash type="sha-1">b28ec28c4ca3063e6d147f9ed284c50a1cd80b95</hash>
+    <hash type="md5">68ceac7fb4121c9f8c70534408bb28d2</hash>
+    <size>418364521</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-resolute/ubuntu-resolute.tgz</url>
-    <version>238.0.0</version>
+    <version>239.0.0</version>
   </file>
   <file name="usn-log.json">
     <hash type="sha-512">c7ca16a106338f3fbaa1356be2b25441d928092a2e85198fd9f5aa574593f0220da41ca847e5d7191a149b66cdb0b64b4f34d9cf63fae34cdd92fc33dde7f4dd</hash>
@@ -15,8 +15,8 @@
     <hash type="md5">1ae5ed19d620086979ca5480e0f5461b</hash>
     <size>5567</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-resolute/usn-log.json</url>
-    <version>238.0.0</version>
+    <version>239.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2026-10-31T11:17:22.09649407Z</published>
+  <published>2026-10-31T11:58:41.903656186Z</published>
 </metalink>
