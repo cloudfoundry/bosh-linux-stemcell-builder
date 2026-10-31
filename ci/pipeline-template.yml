@@ -1845,7 +1845,6 @@ resources:
 - name: bats
   type: git
   source:
-    branch: master
     uri: https://github.com/cloudfoundry/bosh-acceptance-tests.git
 
 - name: bosh-integration-registry-image
