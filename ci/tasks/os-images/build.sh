@@ -21,6 +21,7 @@ function check_param() {
 
 check_param OPERATING_SYSTEM_NAME
 check_param OPERATING_SYSTEM_VERSION
+check_param STEMCELL_ARCH
 
 OS_IMAGE_NAME=${OPERATING_SYSTEM_NAME}-${OPERATING_SYSTEM_VERSION}
 OS_IMAGE=${REPO_PARENT}/os-image/${OS_IMAGE_NAME}.tgz
@@ -44,5 +45,5 @@ set -e
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
-bundle exec rake "stemcell:build_os_image[${OPERATING_SYSTEM_NAME},${OPERATING_SYSTEM_VERSION},${OS_IMAGE}]"
+bundle exec rake "stemcell:build_os_image[${OPERATING_SYSTEM_NAME},${OPERATING_SYSTEM_VERSION},${OS_IMAGE},${STEMCELL_ARCH}]"
 SUDO

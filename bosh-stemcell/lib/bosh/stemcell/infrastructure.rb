@@ -46,6 +46,15 @@ module Bosh::Stemcell
         {}
       end
 
+      # Maps the BOSH/Debian architecture to the value recorded as
+      # cloud_properties.architecture in stemcell.MF, which CPIs consume unchanged.
+      # Raises for an unmapped architecture; override where a CPI expects another spelling.
+      def architecture_name(architecture)
+        {"amd64" => "x86_64", "arm64" => "aarch64"}.fetch(architecture) do
+          raise ArgumentError, "Unsupported stemcell architecture: #{architecture}"
+        end
+      end
+
       def ==(other)
         name == other.name &&
           hypervisor == other.hypervisor &&
@@ -128,6 +137,12 @@ module Bosh::Stemcell
           "root_device_name" => "/dev/sda1",
           "boot_mode" => "uefi-preferred"
         }
+      end
+
+      # The AWS CPI passes the architecture to EC2 RegisterImage unchanged, which
+      # accepts "arm64" but not "aarch64".
+      def architecture_name(architecture)
+        (architecture == "arm64") ? "arm64" : super
       end
     end
 

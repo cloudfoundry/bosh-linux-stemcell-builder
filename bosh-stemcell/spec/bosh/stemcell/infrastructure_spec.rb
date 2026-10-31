@@ -41,6 +41,31 @@ module Bosh::Stemcell
       )
       expect(infrastructure.additional_cloud_properties).to eq({})
     end
+
+    describe "#architecture_name" do
+      subject(:infrastructure) do
+        Infrastructure::Base.new(
+          name: "foo",
+          hypervisor: "xen",
+          default_disk_size: 1024,
+          disk_formats: [],
+          stemcell_formats: []
+        )
+      end
+
+      it "maps amd64 to x86_64" do
+        expect(infrastructure.architecture_name("amd64")).to eq("x86_64")
+      end
+
+      it "maps arm64 to aarch64" do
+        expect(infrastructure.architecture_name("arm64")).to eq("aarch64")
+      end
+
+      it "raises for an unsupported architecture rather than mislabeling it" do
+        expect { infrastructure.architecture_name("riscv64") }
+          .to raise_error(ArgumentError, /Unsupported stemcell architecture: riscv64/)
+      end
+    end
   end
 
   describe Infrastructure::NullInfrastructure do
@@ -90,6 +115,22 @@ module Bosh::Stemcell
 
     it "has aws specific additional cloud properties" do
       expect(subject.additional_cloud_properties).to eq({"root_device_name" => "/dev/sda1", "boot_mode" => "uefi-preferred"})
+    end
+
+    describe "#architecture_name" do
+      it "maps amd64 to x86_64" do
+        expect(subject.architecture_name("amd64")).to eq("x86_64")
+      end
+
+      # EC2 RegisterImage accepts "arm64" but not "aarch64".
+      it "maps arm64 to arm64" do
+        expect(subject.architecture_name("arm64")).to eq("arm64")
+      end
+
+      it "raises for an unsupported architecture" do
+        expect { subject.architecture_name("riscv64") }
+          .to raise_error(ArgumentError, /Unsupported stemcell architecture: riscv64/)
+      end
     end
   end
 

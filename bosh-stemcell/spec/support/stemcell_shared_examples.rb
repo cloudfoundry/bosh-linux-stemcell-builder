@@ -34,7 +34,8 @@ shared_examples_for "All Stemcells" do
       it("should be owned by root user (stig: V-38466)") { should be_owned_by("root") }
     end
 
-    describe file("/lib64") do
+    # /lib64 holds the x86_64 dynamic linker; arm64 uses /lib/ld-linux-aarch64.so.1.
+    describe file("/lib64"), exclude_on_arm64: true do
       it("should be owned by root user (stig: V-38466)") { should be_owned_by("root") }
     end
 

@@ -49,7 +49,7 @@ module Bosh
       end
 
       def manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
-        architecture = "x86_64"
+        architecture = infrastructure.architecture_name(definition.architecture)
 
         {
           "name" => stemcell_name,

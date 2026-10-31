@@ -3,20 +3,24 @@ require "bosh/stemcell/operating_system"
 
 module Bosh::Stemcell
   class Definition
-    attr_reader :infrastructure, :hypervisor_name, :operating_system
+    DEFAULT_ARCHITECTURE = "amd64".freeze
 
-    def self.for(infrastructure_name, hypervisor_name, operating_system_name, operating_system_version)
+    attr_reader :infrastructure, :hypervisor_name, :operating_system, :architecture
+
+    def self.for(infrastructure_name, hypervisor_name, operating_system_name, operating_system_version, architecture = DEFAULT_ARCHITECTURE)
       new(
         Bosh::Stemcell::Infrastructure.for(infrastructure_name),
         hypervisor_name,
-        Bosh::Stemcell::OperatingSystem.for(operating_system_name, operating_system_version)
+        Bosh::Stemcell::OperatingSystem.for(operating_system_name, operating_system_version),
+        architecture
       )
     end
 
-    def initialize(infrastructure, hypervisor_name, operating_system)
+    def initialize(infrastructure, hypervisor_name, operating_system, architecture = DEFAULT_ARCHITECTURE)
       @infrastructure = infrastructure
       @hypervisor_name = hypervisor_name
       @operating_system = operating_system
+      @architecture = architecture || DEFAULT_ARCHITECTURE
     end
 
     def stemcell_name(disk_format)
@@ -28,6 +32,8 @@ module Bosh::Stemcell
       stemcell_name_parts << operating_system.version if operating_system.version
       stemcell_name_parts << operating_system.variant if operating_system.variant
       stemcell_name_parts << disk_format unless disk_format == infrastructure.default_disk_format
+      # amd64 stemcell names carry no architecture suffix; other architectures do.
+      stemcell_name_parts << architecture unless architecture == DEFAULT_ARCHITECTURE
 
       stemcell_name_parts.join("-")
     end
@@ -38,7 +44,8 @@ module Bosh::Stemcell
 
     def ==(other)
       infrastructure == other.infrastructure &&
-        operating_system == other.operating_system
+        operating_system == other.operating_system &&
+        architecture == other.architecture
     end
   end
 end

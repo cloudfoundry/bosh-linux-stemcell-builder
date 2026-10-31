@@ -18,7 +18,8 @@ then
   persist UBUNTU_DEBOOTSTRAP_MIRROR
 fi
 
-base_debootstrap_arch=amd64
+# Architecture of the stemcell being built, from the stemcell_arch build setting.
+base_debootstrap_arch="${stemcell_arch:-amd64}"
 
 if [ -z "${base_debootstrap_suite:-}" ]
 then

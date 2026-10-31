@@ -33,9 +33,10 @@ describe "Ubuntu 24.04 OS image", os_image: true do
 
   describe "base_apt" do
     describe file("/etc/apt/sources.list") do
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-updates main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) noble-security main universe multiverse' }
+      # ports.ubuntu.com (ubuntu-ports) serves the non-amd64 architectures.
+      %w[noble noble-updates noble-security].each do |listing|
+        its(:content) { should match %r{deb http://(archive|ports|security|snapshot)\.ubuntu\.com/ubuntu(-ports)?(|/\d*T\d*Z) #{listing} main universe multiverse} }
+      end
     end
 
     describe file("/lib/systemd/system/monit.service") do
@@ -86,14 +87,18 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   context "installed by system_grub" do
-    %w[
-      grub2
-    ].each do |pkg|
+    # ARM64 has no "grub2" metapackage; grub-efi-arm64 is the equivalent.
+    grub_packages = Bosh::Stemcell::Arch.x86_64? ? %w[grub2] : %w[grub-efi-arm64]
+    grub_packages.each do |pkg|
       describe package(pkg) do
         it { should be_installed }
       end
     end
-    %w[unicode.pf2 menu.lst gfxblacklist.txt].each do |grub_stage|
+    # gfxblacklist.txt ships with the amd64 grub2 metapackage and is not present
+    # in the arm64 grub-efi-arm64 package set.
+    grub_files = %w[unicode.pf2 menu.lst]
+    grub_files << "gfxblacklist.txt" if Bosh::Stemcell::Arch.x86_64?
+    grub_files.each do |grub_stage|
       describe file("/boot/grub/#{grub_stage}") do
         it { should be_file }
       end
@@ -163,7 +168,8 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   context "PAM configuration" do
-    describe file("/lib/x86_64-linux-gnu/security/pam_pwquality.so") do
+    pam_multiarch_triplet = Bosh::Stemcell::Arch.x86_64? ? "x86_64-linux-gnu" : "aarch64-linux-gnu"
+    describe file("/lib/#{pam_multiarch_triplet}/security/pam_pwquality.so") do
       it { should be_file }
     end
 
