@@ -224,6 +224,7 @@ module Bosh::Stemcell
         agent_settings_stage,
         :bosh_clean_ssh,
         :restore_apt_sources,
+        :gdch_remove_apt_sources,
         # when adding a stage that changes files in the image, do so before
         # this line.  Image create will make the image so any changes to the
         # filesystem after it won't apply.
