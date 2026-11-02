@@ -168,7 +168,7 @@ describe "Ubuntu 24.04 OS image", os_image: true do
   end
 
   context "PAM configuration" do
-    pam_multiarch_triplet = Bosh::Stemcell::Arch.x86_64? ? "x86_64-linux-gnu" : "aarch64-linux-gnu"
+    pam_multiarch_triplet = "#{Bosh::Stemcell::Arch.gnu_arch}-linux-gnu"
     describe file("/lib/#{pam_multiarch_triplet}/security/pam_pwquality.so") do
       it { should be_file }
     end

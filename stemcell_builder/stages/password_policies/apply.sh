@@ -37,11 +37,7 @@ patch -p1 $chroot/etc/pam.d/common-password < $assets_dir/ubuntu/common-password
 # (/usr/lib/<triplet>/security/) but PAM's securedir is /usr/lib/security/.
 # Bridge the gap so PAM can load the module referenced above. The multiarch
 # triplet depends on the target architecture.
-if [ "$(stemcell_target_arch)" == "arm64" ]; then
-  multiarch_triplet="aarch64-linux-gnu"
-else
-  multiarch_triplet="x86_64-linux-gnu"
-fi
+multiarch_triplet="$(stemcell_gnu_arch)-linux-gnu"
 if [ -f "$chroot/usr/lib/${multiarch_triplet}/security/pam_lastlog2.so" ] && \
    [ ! -e "$chroot/usr/lib/security/pam_lastlog2.so" ]; then
   mkdir -p "$chroot/usr/lib/security"

@@ -114,3 +114,14 @@ function stemcell_target_arch() {
   echo "$arch"
 }
 
+
+# GNU triplet prefix used for multiarch library paths (e.g. x86_64-linux-gnu)
+function stemcell_gnu_arch() {
+  local arch
+  arch="$(stemcell_target_arch "$@")"
+  case "$arch" in
+    amd64) echo "x86_64" ;;
+    arm64) echo "aarch64" ;;
+    *) echo "Unsupported stemcell architecture: $arch" >&2; return 1 ;;
+  esac
+}
