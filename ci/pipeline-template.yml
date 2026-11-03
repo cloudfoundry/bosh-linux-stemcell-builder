@@ -1474,13 +1474,11 @@ resources:
 - name: bosh-cpi-certification-concourse-tasks
   type: git
   source:
-    branch: master
     uri: https://github.com/cloudfoundry/bosh-cpi-certification
 
 - name: bosh-aws-cpi-release
   type: git
   source:
-    branch: master
     ignore_paths:
       - .final_builds/**/*.yml
       - releases/**/*.yml
