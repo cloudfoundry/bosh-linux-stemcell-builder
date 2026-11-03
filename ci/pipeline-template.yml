@@ -1890,7 +1890,6 @@ resources:
 - name: bosh-deployment
   type: git
   source:
-    branch: master
     uri: https://github.com/cloudfoundry/bosh-deployment
 
 - name: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
