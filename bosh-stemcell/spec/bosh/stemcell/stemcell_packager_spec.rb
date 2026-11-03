@@ -37,7 +37,7 @@ describe Bosh::Stemcell::StemcellPackager do
       stemcell_formats: ["stemcell-format-a", "stemcell-format-b"]
     )
   end
-  let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "noble") }
+  let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "resolute") }
 
   let(:definition) do
     Bosh::Stemcell::Definition.new(
@@ -101,15 +101,16 @@ describe Bosh::Stemcell::StemcellPackager do
       architecture = "x86_64"
 
       expect(actual_manifest).to eq({
-        "name" => "bosh-fake_infra-fake_hypervisor-ubuntu-noble-raw",
+        "name" => "bosh-fake_infra-fake_hypervisor-ubuntu-resolute-raw",
         "version" => "1234",
         "bosh_protocol" => 1,
         "api_version" => 3,
+        "agent_features" => [],
         "sha1" => "c1ebdefc3f8282a9d7d47803fb5030b61ffc793d", # SHA-1 of image above
-        "operating_system" => "ubuntu-noble",
+        "operating_system" => "ubuntu-resolute",
         "stemcell_formats" => ["stemcell-format-a", "stemcell-format-b"],
         "cloud_properties" => {
-          "name" => "bosh-fake_infra-fake_hypervisor-ubuntu-noble-raw",
+          "name" => "bosh-fake_infra-fake_hypervisor-ubuntu-resolute-raw",
           "version" => "1234",
           "infrastructure" => "fake_infra",
           "hypervisor" => "fake_hypervisor",
@@ -124,9 +125,19 @@ describe Bosh::Stemcell::StemcellPackager do
       })
     end
 
+    it "includes the agent feature list in the packaged manifest" do
+      packager.package(disk_format)
+
+      manifest = YAML.load_file(File.join(work_dir, "stemcell/stemcell.MF"))
+      expect(manifest["agent_features"]).to eq([])
+      contents, _, status = Open3.capture3("tar", "xOf", File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-resolute.tgz"), "stemcell.MF")
+      expect(status.success?).to be(true)
+      expect(YAML.safe_load(contents)["agent_features"]).to eq(manifest["agent_features"])
+    end
+
     it "returns the path of the created tarball" do
       expect(packager.package(disk_format)).to eq(
-        File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-noble.tgz")
+        File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-resolute.tgz")
       )
     end
 
@@ -144,7 +155,7 @@ describe Bosh::Stemcell::StemcellPackager do
     it "archives the working dir" do
       packager.package(disk_format)
 
-      tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-noble.tgz")
+      tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-resolute.tgz")
       expect(File.exist?(tarball_path)).to eq(true)
 
       stemcell_contents_path = File.join(tmp_dir, "stemcell-contents")
@@ -166,7 +177,7 @@ describe Bosh::Stemcell::StemcellPackager do
     it "stemcell tarball contains files in proper order" do
       packager.package(disk_format)
 
-      tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-noble.tgz")
+      tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-resolute.tgz")
       expect(File.exist?(tarball_path)).to eq(true)
 
       stdout, _, _ = Open3.capture3("tar tf #{tarball_path}")
@@ -200,7 +211,7 @@ sbom.cdx.json
       it "archives the working dir with a different tarball name" do
         packager.package(disk_format)
 
-        tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-noble-raw.tgz")
+        tarball_path = File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-resolute-raw.tgz")
         expect(File.exist?(tarball_path)).to eq(true)
       end
     end

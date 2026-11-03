@@ -15,6 +15,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
   context "installed by image_install_grub", {
     exclude_on_vsphere: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_aws: true,
     exclude_on_azure: true,
     exclude_on_openstack: true,
@@ -25,7 +26,8 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       exclude_on_alicloud: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
-      exclude_on_openstack: true
+      exclude_on_openstack: true,
+      exclude_on_gdch: true
     } do
       describe file(grub_cfg_path) do
         its(:content) { should match " console=hvc0" }
@@ -218,6 +220,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
     exclude_on_azure: true
@@ -237,6 +240,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_warden: true,
     exclude_on_openstack: true,
     exclude_on_azure: true
@@ -284,6 +288,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -299,6 +304,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_alicloud: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -314,6 +320,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_alicloud: true,
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
@@ -330,6 +337,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_vsphere: true,
     exclude_on_warden: true,
     exclude_on_azure: true
@@ -347,6 +355,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_aws: true,
     exclude_on_cloudstack: true,
     exclude_on_google: true,
+    exclude_on_gdch: true,
     exclude_on_openstack: true,
     exclude_on_warden: true,
     exclude_on_azure: true
@@ -363,7 +372,8 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
     exclude_on_warden: true,
     exclude_on_azure: true,
     exclude_on_openstack: true,
-    exclude_on_google: true
+    exclude_on_google: true,
+    exclude_on_gdch: true
   } do
     describe file("/var/vcap/bosh/agent.json") do
       it { should be_valid_json_file }
@@ -471,6 +481,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       exclude_on_fips: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_azure: true,
       exclude_on_rosetta: true
@@ -485,6 +496,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       exclude_on_alicloud: true,
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
+      exclude_on_gdch: true,
       exclude_on_vsphere: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
@@ -501,6 +513,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       exclude_on_aws: true,
       exclude_on_cloudstack: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true
@@ -517,6 +530,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       exclude_on_cloudstack: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_openstack: true
     } do
@@ -531,6 +545,7 @@ describe "Ubuntu 26.04 stemcell image", stemcell_image: true do
       exclude_on_aws: true,
       exclude_on_vsphere: true,
       exclude_on_google: true,
+      exclude_on_gdch: true,
       exclude_on_warden: true,
       exclude_on_azure: true,
       exclude_on_openstack: true
