@@ -130,7 +130,7 @@ describe Bosh::Stemcell::StemcellPackager do
 
       manifest = YAML.load_file(File.join(work_dir, "stemcell/stemcell.MF"))
       expect(manifest["agent_features"]).to eq([])
-      contents, _, status = Open3.capture3("tar", "xOf", File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-jammy-go_agent.tgz"), "stemcell.MF")
+      contents, _, status = Open3.capture3("tar", "xOf", File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-noble.tgz"), "stemcell.MF")
       expect(status.success?).to be(true)
       expect(YAML.safe_load(contents)["agent_features"]).to eq(manifest["agent_features"])
     end
