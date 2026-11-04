@@ -118,7 +118,7 @@ disk_size_gb=$(mb_to_gb "${BASH_REMATCH[1]}")
 disk_format="${BASH_REMATCH[1]}"
 
 # Make sure we've closed the manifest file before writing to it
-# see https://github.com/cloudfoundry/bosh-aws-light-stemcell-builder/blob/master/ci/docker/Dockerfile#L30
+# see https://github.com/cloudfoundry/bosh-aws-light-stemcell-builder/blob/main/ci/docker/Dockerfile#L30
 light-stemcell-builder \
   -c "${CONFIG_PATH}" \
   --image "${stemcell_image}" \

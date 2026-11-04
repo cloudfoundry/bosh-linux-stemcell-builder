@@ -1562,13 +1562,11 @@ resources:
 - name: bosh-cpi-certification-concourse-tasks
   type: git
   source:
-    branch: master
     uri: https://github.com/cloudfoundry/bosh-cpi-certification
 
 - name: bosh-aws-cpi-release
   type: git
   source:
-    branch: master
     ignore_paths:
       - .final_builds/**/*.yml
       - releases/**/*.yml
@@ -1972,7 +1970,6 @@ resources:
 - name: bats
   type: git
   source:
-    branch: master
     uri: https://github.com/cloudfoundry/bosh-acceptance-tests.git
 
 - name: bosh-integration-registry-image
@@ -2013,7 +2010,6 @@ resources:
 - name: bosh-deployment
   type: git
   source:
-    branch: master
     uri: https://github.com/cloudfoundry/bosh-deployment
 
 - name: (@= data.values.stemcell_details.os_short_name @)-usn-low-medium
