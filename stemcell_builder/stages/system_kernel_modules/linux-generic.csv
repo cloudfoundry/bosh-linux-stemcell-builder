@@ -2917,6 +2917,7 @@ v4l2-flash-led-class,kernel/drivers/media/v4l2-core/v4l2-flash-led-class.ko.zst,
 v4l2-fwnode,kernel/drivers/media/v4l2-core/v4l2-fwnode.ko.zst,Yes,Media / V4L2 / DVB,"Media capture, TV tuners, DVB, and webcams are unneeded in virtual machines; frequent source of memory corruption CVEs."
 v4l2-mem2mem,kernel/drivers/media/v4l2-core/v4l2-mem2mem.ko.zst,Yes,Media / V4L2 / DVB,"Media capture, TV tuners, DVB, and webcams are unneeded in virtual machines; frequent source of memory corruption CVEs."
 v4l2-tpg,kernel/drivers/media/common/v4l2-tpg/v4l2-tpg.ko.zst,Yes,Media / V4L2 / DVB,"Media capture, TV tuners, DVB, and webcams are unneeded in virtual machines; frequent source of memory corruption CVEs."
+v4l2loopback,ubuntu/dkms/v4l2loopback/v4l2loopback.ko.zst,Yes,Media / V4L2 / DVB,"Media capture, TV tuners, DVB, and webcams are unneeded in virtual machines; frequent source of memory corruption CVEs."
 vd55g1,kernel/drivers/media/i2c/vd55g1.ko.zst,Yes,Media / V4L2 / DVB,"Media capture, TV tuners, DVB, and webcams are unneeded in virtual machines; frequent source of memory corruption CVEs."
 vd56g3,kernel/drivers/media/i2c/vd56g3.ko.zst,Yes,Media / V4L2 / DVB,"Media capture, TV tuners, DVB, and webcams are unneeded in virtual machines; frequent source of memory corruption CVEs."
 ves1820,kernel/drivers/media/dvb-frontends/ves1820.ko.zst,Yes,Media / V4L2 / DVB,"Media capture, TV tuners, DVB, and webcams are unneeded in virtual machines; frequent source of memory corruption CVEs."
@@ -5486,6 +5487,7 @@ hid-zpff,kernel/drivers/hid/hid-zpff.ko.zst,Yes,Specialized HID Devices,Consumer
 hid-zydacron,kernel/drivers/hid/hid-zydacron.ko.zst,Yes,Specialized HID Devices,Consumer HID hardware driver (hid-zydacron) for gamepads/specialty keyboards unneeded on headless server stemcells.
 i2c-hid,kernel/drivers/hid/i2c-hid/i2c-hid.ko.zst,Yes,Specialized HID Devices,Consumer HID hardware driver (i2c-hid) for gamepads/specialty keyboards unneeded on headless server stemcells.
 i2c-hid-acpi,kernel/drivers/hid/i2c-hid/i2c-hid-acpi.ko.zst,Yes,Specialized HID Devices,Consumer HID hardware driver (i2c-hid-acpi) for gamepads/specialty keyboards unneeded on headless server stemcells.
+i2c-hid-acpi-prp0001,kernel/drivers/hid/i2c-hid/i2c-hid-acpi-prp0001.ko.zst,Yes,Specialized HID Devices,Consumer HID hardware driver (i2c-hid-acpi-prp0001) for gamepads/specialty keyboards unneeded on headless server stemcells.
 i2c-hid-of,kernel/drivers/hid/i2c-hid/i2c-hid-of.ko.zst,Yes,Specialized HID Devices,Consumer HID hardware driver (i2c-hid-of) for gamepads/specialty keyboards unneeded on headless server stemcells.
 intel-ish-ipc,kernel/drivers/hid/intel-ish-hid/intel-ish-ipc.ko.zst,Yes,Specialized HID Devices,Consumer HID hardware driver (intel-ish-ipc) for gamepads/specialty keyboards unneeded on headless server stemcells.
 intel-ishtp,kernel/drivers/hid/intel-ish-hid/intel-ishtp.ko.zst,Yes,Specialized HID Devices,Consumer HID hardware driver (intel-ishtp) for gamepads/specialty keyboards unneeded on headless server stemcells.
