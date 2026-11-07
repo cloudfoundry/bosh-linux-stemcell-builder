@@ -41,7 +41,7 @@ module Bosh::Stemcell
         definition = instance_double("Bosh::Stemcell::Definition")
         expect(Bosh::Stemcell::Definition)
           .to receive(:new)
-          .with(infrastructure, hypervisor, operating_system)
+          .with(infrastructure, hypervisor, operating_system, "amd64")
           .and_return(definition)
 
         Bosh::Stemcell::Definition.for(
@@ -51,12 +51,52 @@ module Bosh::Stemcell
           "operating-system-version"
         )
       end
+
+      it "passes an explicit architecture through to the new definition" do
+        expect(Bosh::Stemcell::Infrastructure)
+          .to receive(:for)
+          .with("infrastructure-name")
+          .and_return(infrastructure)
+
+        expect(Bosh::Stemcell::OperatingSystem)
+          .to receive(:for)
+          .with("operating-system-name", "operating-system-version")
+          .and_return(operating_system)
+
+        definition = instance_double("Bosh::Stemcell::Definition")
+        expect(Bosh::Stemcell::Definition)
+          .to receive(:new)
+          .with(infrastructure, hypervisor, operating_system, "arm64")
+          .and_return(definition)
+
+        Bosh::Stemcell::Definition.for(
+          "infrastructure-name",
+          hypervisor,
+          "operating-system-name",
+          "operating-system-version",
+          "arm64"
+        )
+      end
     end
 
     describe "#initialize" do
       its(:infrastructure) { should == infrastructure }
       its(:operating_system) { should == operating_system }
       its(:hypervisor_name) { should == hypervisor }
+
+      it "defaults the architecture to amd64" do
+        expect(definition.architecture).to eq("amd64")
+      end
+
+      context "when an architecture is provided" do
+        subject(:definition) do
+          Bosh::Stemcell::Definition.new(infrastructure, hypervisor, operating_system, "arm64")
+        end
+
+        it "uses the provided architecture" do
+          expect(definition.architecture).to eq("arm64")
+        end
+      end
     end
 
     describe "#==" do
@@ -110,6 +150,26 @@ module Bosh::Stemcell
         it "leaves it off" do
           expect(definition.stemcell_name("default-disk-format")).to eq(
             "infrastructure-name-hypervisor-operating-system-name-operating_system_version"
+          )
+        end
+      end
+
+      context "the architecture is the default (amd64)" do
+        it "leaves the architecture off the name" do
+          expect(definition.stemcell_name("disk-format")).to eq(
+            "infrastructure-name-hypervisor-operating-system-name-operating_system_version-disk-format"
+          )
+        end
+      end
+
+      context "the architecture is non-default (arm64)" do
+        subject(:definition) do
+          Bosh::Stemcell::Definition.new(infrastructure, hypervisor, operating_system, "arm64")
+        end
+
+        it "appends the architecture to the name" do
+          expect(definition.stemcell_name("disk-format")).to eq(
+            "infrastructure-name-hypervisor-operating-system-name-operating_system_version-disk-format-arm64"
           )
         end
       end
