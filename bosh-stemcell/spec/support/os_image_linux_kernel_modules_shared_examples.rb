@@ -108,6 +108,11 @@ shared_examples_for "a Linux kernel module configured OS image" do
       end
     end
 
+    describe command("find /usr/lib/modules -name 'v4l2loopback.ko*'") do
+      its(:exit_status) { should eq(0) }
+      its(:stdout) { should eq("") }
+    end
+
     describe command("find /lib/modules -path '*/kernel/sound/*'") do
       its(:stdout) { should eq("") }
     end
