@@ -19,25 +19,31 @@ echo -n "${OS_NAME}-${OS_VERSION}/v$version" > "${REPO_PARENT}/release-metadata/
 body_file="${REPO_PARENT}/release-metadata/body"
 usn_log_json_file="${REPO_PARENT}/bosh-linux-stemcell-builder/usn-log.json"
 
+# detail is one of:
+#   full            - title, URL, priorities, description, CVE list
+#   no-descriptions - full, minus descriptions
+#   summary         - full, minus descriptions, CVE list replaced by a count
 format_usn_log() {
   local usn_data=${1}
-  local include_description=${2}
+  local detail=${2}
 
-  jq -r --slurp --argjson desc "${include_description}" < "${usn_data}" '.[] |
+  jq -r --slurp --arg detail "${detail}" < "${usn_data}" '.[] |
   "
   **Title**: " + .title +"
   **URL**: " + .url +"
   **Priorities**: " + (.priorities | join(",")) +
-  (if $desc then "
+  (if $detail == "full" then "
   **Description**:
-    " + .description else "" end) +"
+    " + .description else "" end) +
+  (if $detail == "summary" then "
+  **CVEs**: " + (.cves | length | tostring) else "
   **CVEs**:
-  " + (.cves | map(" - " + .) | join("\n"))
+  " + (.cves | map(" - " + .) | join("\n")) end)
   '
 }
 
 write_body() {
-  local include_description=${1}
+  local detail=${1}
 
   {
     echo "## Metadata:"
@@ -47,10 +53,12 @@ write_body() {
     if [[ "${OS_NAME}" == "ubuntu" ]]; then
       echo ""
       echo "## USNs:"
-      if [[ "${include_description}" != "true" ]]; then
+      if [[ "${detail}" == "no-descriptions" ]]; then
         echo "_USN descriptions omitted, see the USN URLs below for details._"
+      elif [[ "${detail}" == "summary" ]]; then
+        echo "_USN descriptions and CVE lists omitted, see the USN URLs below for details._"
       fi
-      format_usn_log "${usn_log_json_file}" "${include_description}"
+      format_usn_log "${usn_log_json_file}" "${detail}"
     fi
   } > "${body_file}"
 }
@@ -76,13 +84,14 @@ if [[ "${OS_NAME}" == "ubuntu" ]]; then
   fi
 fi
 
-write_body true
-
 # GitHub rejects release bodies over 125,000 characters. wc -c counts bytes, which
 # is >= the character count for UTF-8, so this guard fires early, never late.
 MAX_BODY_LEN=120000
-if [[ $(wc -c < "${body_file}") -gt ${MAX_BODY_LEN} ]]; then
-  write_body false
-fi
+for detail in full no-descriptions summary; do
+  write_body "${detail}"
+  if [[ $(wc -c < "${body_file}") -le ${MAX_BODY_LEN} ]]; then
+    break
+  fi
+done
 
 echo "" > "${REPO_PARENT}/usn-log/usn-log.json"
