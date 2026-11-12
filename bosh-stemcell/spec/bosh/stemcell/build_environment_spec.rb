@@ -3,12 +3,9 @@ require "bosh/stemcell/build_environment"
 require "bosh/stemcell/infrastructure"
 require "bosh/stemcell/operating_system"
 require "bosh/stemcell/definition"
-require "fakefs/spec_helpers"
 
 module Bosh::Stemcell
   describe BuildEnvironment do
-    include FakeFS::SpecHelpers
-
     subject { described_class.new(env, definition, version, os_image_tarball_path) }
 
     let(:env) { {} }
@@ -24,14 +21,16 @@ module Bosh::Stemcell
     let(:version) { "1234" }
     let(:os_image_tarball_path) { "/some/os_image.tgz" }
 
-    let(:build_time_marker_file) { "/fake/path/to/build/time/marker/file" }
-    let(:stemcell_builder_source_dir) { "/fake/path/to/stemcell_builder" }
-    let(:stemcell_specs_dir) { "/fake/path/to/stemcell/specs/dir" }
+    let(:tmpdir) { Dir.mktmpdir("build-environment") }
+    let(:build_time_marker_file) { File.join(tmpdir, "build/time/marker/file") }
+    let(:stemcell_builder_source_dir) { File.join(tmpdir, "stemcell_builder") }
+    let(:stemcell_specs_dir) { File.join(tmpdir, "stemcell/specs/dir") }
 
     let(:version) { "007" }
 
+    let(:fake_mount) { Dir.mktmpdir("build-environment") }
     let(:root_dir) do
-      File.join("/mnt/stemcells", infrastructure.name, infrastructure.hypervisor, operating_system.name)
+      File.join(fake_mount, "stemcells", infrastructure.name, infrastructure.hypervisor, operating_system.name)
     end
 
     let(:build_path) { File.join(root_dir, "build", "build") }
@@ -66,9 +65,16 @@ module Bosh::Stemcell
     let(:shell) { instance_double(Bosh::Core::Shell) }
     let(:run_options) { {ignore_failures: true} }
 
+    around do |example|
+      Dir.chdir(tmpdir) { example.run }
+    ensure
+      FileUtils.rm_rf([tmpdir, fake_mount])
+    end
+
     before do
       allow(Bosh::Core::Shell).to receive(:new).and_return(shell)
       allow(BuilderOptions).to receive(:new).and_return(stemcell_builder_options)
+      stub_const("Bosh::Stemcell::BuildEnvironment::MOUNT_ROOT", fake_mount)
       stub_const("Bosh::Stemcell::BuildEnvironment::BUILD_TIME_MARKER_FILE", build_time_marker_file)
       stub_const("Bosh::Stemcell::BuildEnvironment::STEMCELL_BUILDER_SOURCE_DIR", stemcell_builder_source_dir)
       stub_const("Bosh::Stemcell::BuildEnvironment::STEMCELL_SPECS_DIR", stemcell_specs_dir)
