@@ -33,9 +33,10 @@ describe "Ubuntu 26.04 OS image", os_image: true do
 
   describe "base_apt" do
     describe file("/etc/apt/sources.list") do
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) resolute main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(archive|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) resolute-updates main universe multiverse' }
-      its(:content) { should match 'deb http:\/\/(security|snapshot).ubuntu.com\/ubuntu(|\/\d*T\d*Z) resolute-security main universe multiverse' }
+      # ports.ubuntu.com (ubuntu-ports) serves the non-amd64 architectures.
+      %w[resolute resolute-updates resolute-security].each do |listing|
+        its(:content) { should match %r{deb http://(archive|ports|security|snapshot)\.ubuntu\.com/ubuntu(-ports)?(|/\d*T\d*Z) #{listing} main universe multiverse} }
+      end
     end
 
     describe file("/lib/systemd/system/monit.service") do
@@ -86,10 +87,9 @@ describe "Ubuntu 26.04 OS image", os_image: true do
   end
 
   context "installed by system_grub" do
-    %w[
-      grub-pc-bin
-      grub-efi-amd64-bin
-    ].each do |pkg|
+    # ARM64 has no "grub2" metapackage; grub-efi-arm64 is the equivalent.
+    grub_packages = Bosh::Stemcell::Arch.x86_64? ? %w[grub-pc-bin grub-efi-amd64-bin] : %w[grub-efi-arm64]
+    grub_packages.each do |pkg|
       describe package(pkg) do
         it { should be_installed }
       end
@@ -97,8 +97,10 @@ describe "Ubuntu 26.04 OS image", os_image: true do
     # ubuntu-noble also asserts /boot/grub/unicode.pf2 and gfxblacklist.txt here.
     # Resolute only asserts menu.lst, which system_grub creates itself; the other
     # two are not checked in the OS-image phase.
-    describe file("/boot/grub/menu.lst") do
-      it { should be_file }
+    %w[unicode.pf2 menu.lst].each do |grub_stage|
+      describe file("/boot/grub/#{grub_stage}") do
+        it { should be_file }
+      end
     end
   end
 
@@ -165,7 +167,8 @@ describe "Ubuntu 26.04 OS image", os_image: true do
   end
 
   context "PAM configuration" do
-    describe file("/lib/x86_64-linux-gnu/security/pam_pwquality.so") do
+    pam_multiarch_triplet = "#{Bosh::Stemcell::Arch.gnu_arch}-linux-gnu"
+    describe file("/lib/#{pam_multiarch_triplet}/security/pam_pwquality.so") do
       it { should be_file }
     end
 

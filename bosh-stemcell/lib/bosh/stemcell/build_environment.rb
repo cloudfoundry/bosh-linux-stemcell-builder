@@ -8,6 +8,8 @@ module Bosh::Stemcell
   class BuildEnvironment
     extend Forwardable
 
+    MOUNT_ROOT = "/mnt"
+
     BUILD_TIME_MARKER_FILE = File.join(File.expand_path("../../../../..", __FILE__), "build_time.txt")
     STEMCELL_BUILDER_SOURCE_DIR = File.join(File.expand_path("../../../../..", __FILE__), "stemcell_builder")
     STEMCELL_SPECS_DIR = File.expand_path("../../..", File.dirname(__FILE__))
@@ -202,10 +204,11 @@ module Bosh::Stemcell
         when Infrastructure::Gdch::NAME
           " --tag ~exclude_on_gdch"
         end,
+        " --tag ~exclude_on_#{definition.architecture}",
         if operating_system.variant?
           " --tag ~exclude_on_#{operating_system.variant}"
         end
-      ].compact.join(" ").rstrip
+      ].compact.join(" ").squeeze(" ").rstrip
     end
 
     def image_file_path
@@ -221,7 +224,7 @@ module Bosh::Stemcell
     end
 
     def base_directory
-      File.join("/mnt", "stemcells", infrastructure.name, infrastructure.hypervisor, operating_system.name)
+      File.join(MOUNT_ROOT, "stemcells", infrastructure.name, infrastructure.hypervisor, operating_system.name)
     end
 
     def build_root
