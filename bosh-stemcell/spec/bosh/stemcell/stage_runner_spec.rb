@@ -1,19 +1,17 @@
 require "spec_helper"
 require "bosh/stemcell/stage_runner"
 require "timecop"
-require "fakefs/spec_helpers"
 
 module Bosh::Stemcell
   describe StageRunner do
-    include FakeFS::SpecHelpers
-
     let(:shell) { instance_double("Bosh::Core::Shell", run: nil) }
 
     let(:stages) { [:stage_0, :stage_1] }
-    let(:build_path) { "/fake/path/to/build_dir" }
+    let(:tmpdir) { Dir.mktmpdir("stage-runner") }
+    let(:build_path) { File.join(tmpdir, "build_dir") }
     let(:command_env) { "env FOO=bar" }
-    let(:settings_file) { "/fake/path/to/settings.bash" }
-    let(:work_path) { "/fake/path/to/work_dir/work" }
+    let(:settings_file) { File.join(tmpdir, "settings.bash") }
+    let(:work_path) { File.join(tmpdir, "work_dir/work") }
 
     subject(:stage_runner) do
       described_class.new(build_path: build_path,
@@ -70,10 +68,10 @@ module Bosh::Stemcell
 
       it "runs the configure script for each stage in order" do
         expect(shell).to receive(:run)
-          .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/config.sh /fake/path/to/settings.bash 2>&1",
+          .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_0/config.sh #{tmpdir}/settings.bash 2>&1",
             {output_command: true})
         expect(shell).to receive(:run)
-          .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/config.sh /fake/path/to/settings.bash 2>&1",
+          .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_1/config.sh #{tmpdir}/settings.bash 2>&1",
             {output_command: true})
 
         stage_runner.configure(stages)
@@ -81,15 +79,15 @@ module Bosh::Stemcell
 
       context "when a stage does not have a config.sh file" do
         before do
-          FileUtils.rm("/fake/path/to/build_dir/stages/stage_0/config.sh")
+          FileUtils.rm("#{tmpdir}/build_dir/stages/stage_0/config.sh")
         end
 
         it "does not attempt to run the configure step which is missing a config.sh" do
           expect(shell).not_to receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/config.sh /fake/path/to/settings.bash 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_0/config.sh #{tmpdir}/settings.bash 2>&1",
               {output_command: true})
           expect(shell).to receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/config.sh /fake/path/to/settings.bash 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_1/config.sh #{tmpdir}/settings.bash 2>&1",
               {output_command: true})
 
           stage_runner.configure(stages)
@@ -99,15 +97,15 @@ module Bosh::Stemcell
       context "when a stage has config.sh file which is not executable" do
         before do
           allow(File).to receive(:executable?)
-            .with("/fake/path/to/build_dir/stages/stage_1/config.sh").and_return(false)
+            .with("#{tmpdir}/build_dir/stages/stage_1/config.sh").and_return(false)
         end
 
         it "does not attempt to run the configure step which has a non-executable config.sh" do
           expect(shell).to receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/config.sh /fake/path/to/settings.bash 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_0/config.sh #{tmpdir}/settings.bash 2>&1",
               {output_command: true})
           expect(shell).not_to receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/config.sh /fake/path/to/settings.bash 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_1/config.sh #{tmpdir}/settings.bash 2>&1",
               {output_command: true})
 
           stage_runner.configure(stages)
@@ -120,10 +118,10 @@ module Bosh::Stemcell
         expect(FileUtils).to receive(:mkdir_p).with(work_path).exactly(2).times
 
         expect(shell).to receive(:run)
-          .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/apply.sh /fake/path/to/work_dir/work 2>&1",
+          .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_0/apply.sh #{tmpdir}/work_dir/work 2>&1",
             {output_command: true})
         expect(shell).to receive(:run)
-          .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/apply.sh /fake/path/to/work_dir/work 2>&1",
+          .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_1/apply.sh #{tmpdir}/work_dir/work 2>&1",
             {output_command: true})
 
         stage_runner.apply(stages)
@@ -152,17 +150,17 @@ module Bosh::Stemcell
           expect(FileUtils).to receive(:mkdir_p).with(work_path).exactly(1).times
 
           expect(shell).to_not receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/config.sh /fake/path/to/settings.bash 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_0/config.sh #{tmpdir}/settings.bash 2>&1",
               {output_command: true})
           expect(shell).to receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/config.sh /fake/path/to/settings.bash 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_1/config.sh #{tmpdir}/settings.bash 2>&1",
               {output_command: true})
 
           expect(shell).to_not receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_0/apply.sh /fake/path/to/work_dir/work 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_0/apply.sh #{tmpdir}/work_dir/work 2>&1",
               {output_command: true})
           expect(shell).to receive(:run)
-            .with("sudo env FOO=bar /fake/path/to/build_dir/stages/stage_1/apply.sh /fake/path/to/work_dir/work 2>&1",
+            .with("sudo env FOO=bar #{tmpdir}/build_dir/stages/stage_1/apply.sh #{tmpdir}/work_dir/work 2>&1",
               {output_command: true})
 
           stage_runner.configure_and_apply(stages, "stage_1")
