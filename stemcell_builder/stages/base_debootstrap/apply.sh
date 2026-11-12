@@ -76,7 +76,13 @@ cleanup_debootstrap() {
 }
 trap cleanup_debootstrap EXIT
 
-debootstrap --arch="$base_debootstrap_arch" "$base_debootstrap_suite" "$chroot" "${UBUNTU_DEBOOTSTRAP_MIRROR:-}"
+# archive.ubuntu.com only serves amd64/i386; other architectures (e.g. arm64) are
+# served from the ports mirror. An explicit UBUNTU_DEBOOTSTRAP_MIRROR takes precedence.
+debootstrap_mirror="${UBUNTU_DEBOOTSTRAP_MIRROR:-}"
+if [ -z "$debootstrap_mirror" ] && [ "$base_debootstrap_arch" == "arm64" ]; then
+  debootstrap_mirror="http://ports.ubuntu.com/ubuntu-ports"
+fi
+debootstrap --arch="$base_debootstrap_arch" "$base_debootstrap_suite" "$chroot" "$debootstrap_mirror"
 
 cleanup_debootstrap
 trap - EXIT

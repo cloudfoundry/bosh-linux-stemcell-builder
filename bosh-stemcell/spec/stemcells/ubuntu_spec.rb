@@ -452,7 +452,9 @@ describe "Ubuntu 24.04 stemcell image", stemcell_image: true do
     dpkg_list_packages = "dpkg --get-selections | cut -f1 | sed -E '#{linux_version_regex}'"
     # TODO: maby we can use awk "dpkg --get-selections | awk '!/linux-(.+)-([0-9]+.+)/&&/linux/{print $1}'"
 
-    let(:dpkg_list_ubuntu) { File.readlines(spec_asset("dpkg-list-ubuntu.txt")).map(&:chop) }
+    # Package names carry the architecture (e.g. libc6:amd64), so arm64 has its own list.
+    dpkg_list_ubuntu_file = Bosh::Stemcell::Arch.x86_64? ? "dpkg-list-ubuntu.txt" : "dpkg-list-ubuntu-arm64.txt"
+    let(:dpkg_list_ubuntu) { File.readlines(spec_asset(dpkg_list_ubuntu_file)).map(&:chop) }
     let(:dpkg_list_kernel_ubuntu) { File.readlines(spec_asset("dpkg-list-ubuntu-kernel.txt")).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset("dpkg-list-ubuntu-google-additions.txt")).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset("dpkg-list-ubuntu-vsphere-additions.txt")).map(&:chop) }

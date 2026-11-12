@@ -17,7 +17,8 @@ module Bosh::Stemcell
       instance_double(
         "Bosh::Stemcell::Definition",
         infrastructure: infrastructure,
-        operating_system: operating_system
+        operating_system: operating_system,
+        architecture: "amd64"
       )
     end
 
@@ -211,7 +212,7 @@ module Bosh::Stemcell
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
           "CANDIDATE_BUILD_NUMBER=#{version}",
-          "bundle exec rspec -fd --tag ~exclude_on_fips",
+          "bundle exec rspec -fd --tag ~exclude_on_amd64 --tag ~exclude_on_fips",
           "spec/os_image/#{operating_system.name}_spec.rb",
           "spec/stemcells/#{operating_system.name}_spec.rb",
           "spec/stemcells/go_agent_spec.rb",
@@ -243,11 +244,45 @@ module Bosh::Stemcell
             "OS_NAME=#{operating_system.name}",
             "OS_VERSION=#{operating_system.version}",
             "CANDIDATE_BUILD_NUMBER=#{version}",
-            "bundle exec rspec -fd --tag ~exclude_on_gdch",
+            "bundle exec rspec -fd --tag ~exclude_on_gdch --tag ~exclude_on_amd64",
             "spec/os_image/#{operating_system.name}_spec.rb",
             "spec/stemcells/#{operating_system.name}_spec.rb",
             "spec/stemcells/go_agent_spec.rb",
             "spec/stemcells/gdch_spec.rb",
+            "spec/stemcells/stig_spec.rb",
+            "spec/stemcells/cis_spec.rb"
+          ].join(" ")
+
+          expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
+        end
+      end
+
+      context "when the architecture is arm64" do
+        let(:definition) do
+          instance_double(
+            "Bosh::Stemcell::Definition",
+            infrastructure: infrastructure,
+            operating_system: operating_system,
+            architecture: "arm64"
+          )
+        end
+
+        before { allow(operating_system).to receive(:variant?).and_return(false) }
+
+        it "excludes arm64 tagged specs instead of amd64 tagged specs" do
+          expected_rspec_command = [
+            "cd #{stemcell_specs_dir};",
+            "STEMCELL_IMAGE=#{File.join(work_path, "fake-root-disk-image.raw")}",
+            "STEMCELL_WORKDIR=#{work_path}",
+            "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}",
+            "OS_NAME=#{operating_system.name}",
+            "OS_VERSION=#{operating_system.version}",
+            "CANDIDATE_BUILD_NUMBER=#{version}",
+            "bundle exec rspec -fd --tag ~exclude_on_arm64",
+            "spec/os_image/#{operating_system.name}_spec.rb",
+            "spec/stemcells/#{operating_system.name}_spec.rb",
+            "spec/stemcells/go_agent_spec.rb",
+            "spec/stemcells/#{infrastructure.name}_spec.rb",
             "spec/stemcells/stig_spec.rb",
             "spec/stemcells/cis_spec.rb"
           ].join(" ")

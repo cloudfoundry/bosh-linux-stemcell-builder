@@ -23,6 +23,7 @@ check_param IAAS
 check_param HYPERVISOR
 check_param OS_NAME
 check_param OS_VERSION
+check_param STEMCELL_ARCH
 
 OS_IMAGE="$(readlink -f "${REPO_PARENT}/os-image-tarball"/*.tgz)"
 
@@ -86,22 +87,32 @@ set -e
 cd "${REPO_PARENT}/bosh-linux-stemcell-builder"
 bundle install
 
-bundle exec rake "stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER}]"
+bundle exec rake "stemcell:build[${IAAS},${HYPERVISOR},${OS_NAME},${OS_VERSION},${OS_IMAGE},${CANDIDATE_BUILD_NUMBER},${STEMCELL_ARCH}]"
 SUDO
 
 #
 # Output and checksum the stemcell artifacts
 #
 
-stemcell_name="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}"
-meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}.meta4"
+# Non-default architectures carry an "-<arch>" suffix in the stemcell name
+# (see Bosh::Stemcell::Definition#stemcell_name) and get their own index entry,
+# so they never collide with the amd64 artifacts.
+if [ "${STEMCELL_ARCH}" == "amd64" ]; then
+  arch_suffix=""
+else
+  arch_suffix="-${STEMCELL_ARCH}"
+fi
+
+stemcell_name_base="bosh-stemcell-${CANDIDATE_BUILD_NUMBER}-${IAAS}-${HYPERVISOR}-${OS_NAME}-${OS_VERSION}${AGENT_SUFFIX}"
+stemcell_name="${stemcell_name_base}${arch_suffix}"
+meta4_path="${REPO_PARENT}/stemcells-index-output/dev/${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER}/${IAAS}-${HYPERVISOR}${AGENT_SUFFIX}${arch_suffix}.meta4"
 
 echo "${CANDIDATE_BUILD_NUMBER}" > "${REPO_PARENT}/candidate-build-number/number"
 mkdir -p "$( dirname "$meta4_path" )"
 rm -f "$meta4_path"
 meta4 create --metalink="$meta4_path"
 
-raw_images=( "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw.tgz )
+raw_images=( "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw${arch_suffix}.tgz )
 if [ "${#raw_images[@]}" -ge 2 ]; then
   echo "Found more than one raw image: '${raw_images[*]}'" >&2
   exit 1
@@ -109,8 +120,8 @@ fi
 
 if [ -e "${raw_images[0]}" ] ; then
   # openstack currently publishes raw files
-  raw_stemcell_filename="${stemcell_name}-raw.tgz"
-  mv "${REPO_PARENT}/bosh-linux-stemcell-builder/tmp"/*-raw.tgz "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
+  raw_stemcell_filename="${stemcell_name_base}-raw${arch_suffix}.tgz"
+  mv "${raw_images[0]}" "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
 
   meta4 import-file --metalink="$meta4_path" --version="${CANDIDATE_BUILD_NUMBER}" "${REPO_PARENT}/stemcell/${raw_stemcell_filename}"
   meta4 file-set-url --metalink="$meta4_path" --file="${raw_stemcell_filename}" "https://${S3_API_ENDPOINT}/${STEMCELL_BUCKET}/${IAAS}/${raw_stemcell_filename}"
@@ -130,4 +141,4 @@ cd "${REPO_PARENT}/stemcells-index-output"
 git add -A
 git config --global user.email "${GIT_USER_EMAIL}"
 git config --global user.name "${GIT_USER_NAME}"
-git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR})"
+git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR}${arch_suffix})"
