@@ -268,14 +268,10 @@ jobs:
   plan:
     - get: daily
       trigger: true
-      tags: [ arm64 ]
     - get: ubuntu_base
-      tags: [ arm64 ]
     - get: os-image-stemcell-builder-dockerfile
       trigger: true
-      tags: [ arm64 ]
     - get: bosh-stemcells-ci
-      tags: [ arm64 ]
     - task: build-docker-args
       file: bosh-stemcells-ci/ci/tasks/build-docker-args.yml
       image: ubuntu_base
@@ -302,7 +298,6 @@ jobs:
           path: build
     - put: os-image-stemcell-builder-registry-image-arm64
       no_get: true
-      tags: [ arm64 ]
       params:
         image: image/image.tar
 
@@ -509,18 +504,13 @@ jobs:
   serial: true
   plan:
   - put: build-time
-    tags: [ arm64 ]
   - get: bosh-stemcells-ci
-    tags: [ arm64 ]
   - get: os-image-stemcell-builder-registry-image-arm64
-    tags: [ arm64 ]
   - get: bosh-linux-stemcell-builder
     trigger: true
-    tags: [ arm64 ]
   - get: os-image-version-arm64
     params:
       bump: "major"
-    tags: [ arm64 ]
   - get: usn-log
   - get: stemcell-trigger
     trigger: true
@@ -548,7 +538,6 @@ jobs:
         message: 'Bump os-image tgz (arm64)'
       version: os-image-version-arm64/version
   - put: os-image-version-arm64
-    tags: [ arm64 ]
     params:
       file: os-image-version-arm64/number
 
@@ -767,23 +756,17 @@ jobs:
       - build-stemcell
       resource: version
       trigger: true
-      tags: [ arm64 ]
     - get: bosh-stemcells-ci
-      tags: [ arm64 ]
     - get: os-image-stemcell-builder-registry-image-arm64
-      tags: [ arm64 ]
     - get: build-time
       passed:
       - build-stemcell
       trigger: true
-      tags: [ arm64 ]
     - get: bosh-linux-stemcell-builder
       passed:
       - build-stemcell
       resource: bosh-linux-stemcell-builder
-      tags: [ arm64 ]
     - get: stemcells-index
-      tags: [ arm64 ]
     - get: os-image-tarball
       resource: os-image-tarball-arm64
       passed:
