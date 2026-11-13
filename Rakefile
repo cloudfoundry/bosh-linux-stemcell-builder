@@ -13,6 +13,12 @@ namespace :stemcell do
 
     args.with_defaults(architecture: Bosh::Stemcell::Definition::DEFAULT_ARCHITECTURE)
 
+    os_image_path = File.expand_path(args.os_image_path)
+    if args.operating_system_version.to_s.strip.empty?
+      raise "stemcell:build_os_image: operating_system_version (2nd argument) is empty. " \
+            "Set it to the Ubuntu release codename (for example export short_name=resolute per README), " \
+            "or pass it literally: rake stemcell:build_os_image[ubuntu,resolute,tmp/os.tgz]"
+    end
     definition = Bosh::Stemcell::Definition.for("null", "null", args.operating_system_name, args.operating_system_version, args.architecture)
     environment = Bosh::Stemcell::BuildEnvironment.new(
       ENV.to_hash,
