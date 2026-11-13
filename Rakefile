@@ -3,7 +3,7 @@ require "standard/rake"
 
 namespace :stemcell do
   desc "Build a base OS image for use in stemcells"
-  task :build_os_image, [:operating_system_name, :operating_system_version, :os_image_path] do |_, args|
+  task :build_os_image, [:operating_system_name, :operating_system_version, :os_image_path, :architecture] do |_, args|
     require "bosh/stemcell/archive_handler"
     require "bosh/stemcell/build_environment"
     require "bosh/stemcell/definition"
@@ -11,13 +11,15 @@ namespace :stemcell do
     require "bosh/stemcell/stage_collection"
     require "bosh/stemcell/stage_runner"
 
+    args.with_defaults(architecture: Bosh::Stemcell::Definition::DEFAULT_ARCHITECTURE)
+
     os_image_path = File.expand_path(args.os_image_path)
     if args.operating_system_version.to_s.strip.empty?
       raise "stemcell:build_os_image: operating_system_version (2nd argument) is empty. " \
             "Set it to the Ubuntu release codename (for example export short_name=resolute per README), " \
             "or pass it literally: rake stemcell:build_os_image[ubuntu,resolute,tmp/os.tgz]"
     end
-    definition = Bosh::Stemcell::Definition.for("null", "null", args.operating_system_name, args.operating_system_version)
+    definition = Bosh::Stemcell::Definition.for("null", "null", args.operating_system_name, args.operating_system_version, args.architecture)
     environment = Bosh::Stemcell::BuildEnvironment.new(
       ENV.to_hash,
       definition,
@@ -48,7 +50,7 @@ namespace :stemcell do
   end
 
   desc "Build a stemcell, requires `os_image_path` pointing at an image created via `stemcell:build_os_image`"
-  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_path, :build_number] do |_, args|
+  task :build, [:infrastructure_name, :hypervisor_name, :operating_system_name, :operating_system_version, :os_image_path, :build_number, :architecture] do |_, args|
     require "bosh/stemcell/build_environment"
     require "bosh/stemcell/definition"
     require "bosh/stemcell/stage_collection"
@@ -56,10 +58,10 @@ namespace :stemcell do
     require "bosh/stemcell/stemcell_packager"
     require "bosh/stemcell/stemcell_builder"
 
-    args.with_defaults(build_number: "0000")
+    args.with_defaults(build_number: "0000", architecture: Bosh::Stemcell::Definition::DEFAULT_ARCHITECTURE)
 
     os_image_path = File.expand_path(args.os_image_path)
-    definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version)
+    definition = Bosh::Stemcell::Definition.for(args.infrastructure_name, args.hypervisor_name, args.operating_system_name, args.operating_system_version, args.architecture)
     environment = Bosh::Stemcell::BuildEnvironment.new(
       ENV.to_hash,
       definition,

@@ -3,12 +3,9 @@ require "bosh/stemcell/build_environment"
 require "bosh/stemcell/infrastructure"
 require "bosh/stemcell/operating_system"
 require "bosh/stemcell/definition"
-require "fakefs/spec_helpers"
 
 module Bosh::Stemcell
   describe BuildEnvironment do
-    include FakeFS::SpecHelpers
-
     subject { described_class.new(env, definition, version, os_image_tarball_path) }
 
     let(:env) { {} }
@@ -17,21 +14,24 @@ module Bosh::Stemcell
       instance_double(
         "Bosh::Stemcell::Definition",
         infrastructure: infrastructure,
-        operating_system: operating_system
+        operating_system: operating_system,
+        architecture: "amd64"
       )
     end
 
     let(:version) { "1234" }
     let(:os_image_tarball_path) { "/some/os_image.tgz" }
 
-    let(:build_time_marker_file) { "/fake/path/to/build/time/marker/file" }
-    let(:stemcell_builder_source_dir) { "/fake/path/to/stemcell_builder" }
-    let(:stemcell_specs_dir) { "/fake/path/to/stemcell/specs/dir" }
+    let(:tmpdir) { Dir.mktmpdir("build-environment") }
+    let(:build_time_marker_file) { File.join(tmpdir, "build/time/marker/file") }
+    let(:stemcell_builder_source_dir) { File.join(tmpdir, "stemcell_builder") }
+    let(:stemcell_specs_dir) { File.join(tmpdir, "stemcell/specs/dir") }
 
     let(:version) { "007" }
 
+    let(:fake_mount) { Dir.mktmpdir("build-environment") }
     let(:root_dir) do
-      File.join("/mnt/stemcells", infrastructure.name, infrastructure.hypervisor, operating_system.name)
+      File.join(fake_mount, "stemcells", infrastructure.name, infrastructure.hypervisor, operating_system.name)
     end
 
     let(:build_path) { File.join(root_dir, "build", "build") }
@@ -67,9 +67,16 @@ module Bosh::Stemcell
     let(:shell) { instance_double(Bosh::Core::Shell) }
     let(:run_options) { {ignore_failures: true} }
 
+    around do |example|
+      Dir.chdir(tmpdir) { example.run }
+    ensure
+      FileUtils.rm_rf([tmpdir, fake_mount])
+    end
+
     before do
       allow(Bosh::Core::Shell).to receive(:new).and_return(shell)
       allow(BuilderOptions).to receive(:new).and_return(stemcell_builder_options)
+      stub_const("Bosh::Stemcell::BuildEnvironment::MOUNT_ROOT", fake_mount)
       stub_const("Bosh::Stemcell::BuildEnvironment::BUILD_TIME_MARKER_FILE", build_time_marker_file)
       stub_const("Bosh::Stemcell::BuildEnvironment::STEMCELL_BUILDER_SOURCE_DIR", stemcell_builder_source_dir)
       stub_const("Bosh::Stemcell::BuildEnvironment::STEMCELL_SPECS_DIR", stemcell_specs_dir)
@@ -211,7 +218,7 @@ module Bosh::Stemcell
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
           "CANDIDATE_BUILD_NUMBER=#{version}",
-          "bundle exec rspec -fd --tag ~exclude_on_fips",
+          "bundle exec rspec -fd --tag ~exclude_on_amd64 --tag ~exclude_on_fips",
           "spec/os_image/#{operating_system.name}_spec.rb",
           "spec/stemcells/#{operating_system.name}_spec.rb",
           "spec/stemcells/go_agent_spec.rb",
@@ -244,11 +251,46 @@ module Bosh::Stemcell
             "OS_NAME=#{operating_system.name}",
             "OS_VERSION=#{operating_system.version}",
             "CANDIDATE_BUILD_NUMBER=#{version}",
-            "bundle exec rspec -fd --tag ~exclude_on_gdch",
+            "bundle exec rspec -fd --tag ~exclude_on_gdch --tag ~exclude_on_amd64",
             "spec/os_image/#{operating_system.name}_spec.rb",
             "spec/stemcells/#{operating_system.name}_spec.rb",
             "spec/stemcells/go_agent_spec.rb",
             "spec/stemcells/gdch_spec.rb",
+            "spec/stemcells/stig_spec.rb",
+            "spec/stemcells/cis_spec.rb",
+            "spec/stemcells/bpm_spec.rb"
+          ].join(" ")
+
+          expect(subject.stemcell_rspec_command).to eq(expected_rspec_command)
+        end
+      end
+
+      context "when the architecture is arm64" do
+        let(:definition) do
+          instance_double(
+            "Bosh::Stemcell::Definition",
+            infrastructure: infrastructure,
+            operating_system: operating_system,
+            architecture: "arm64"
+          )
+        end
+
+        before { allow(operating_system).to receive(:variant?).and_return(false) }
+
+        it "excludes arm64 tagged specs instead of amd64 tagged specs" do
+          expected_rspec_command = [
+            "cd #{stemcell_specs_dir};",
+            "STEMCELL_IMAGE=#{File.join(work_path, "fake-root-disk-image.raw")}",
+            "STEMCELL_WORKDIR=#{work_path}",
+            "STEMCELL_INFRASTRUCTURE=#{infrastructure.name}",
+            "OS_NAME=#{operating_system.name}",
+            "OS_VERSION=#{operating_system.version}",
+            "CANDIDATE_BUILD_NUMBER=#{version}",
+            "bundle exec rspec -fd --tag ~exclude_on_arm64",
+            "spec/os_image/#{operating_system.name}_spec.rb",
+            "spec/stemcells/#{operating_system.name}_spec.rb",
+            "spec/stemcells/go_agent_spec.rb",
+            "spec/stemcells/#{infrastructure.name}_spec.rb",
             "spec/stemcells/stig_spec.rb",
             "spec/stemcells/cis_spec.rb",
             "spec/stemcells/bpm_spec.rb"
@@ -265,7 +307,7 @@ module Bosh::Stemcell
         it "runs the warden specs, excluding exclude_on_warden" do
           command = subject.stemcell_rspec_command
           expect(command).to include("STEMCELL_INFRASTRUCTURE=oci")
-          expect(command).to include("bundle exec rspec -fd --tag ~exclude_on_warden spec/")
+          expect(command).to include("bundle exec rspec -fd --tag ~exclude_on_warden --tag ~exclude_on_amd64 spec/")
           expect(command).to include("spec/stemcells/warden_spec.rb")
           expect(command).to_not include("spec/stemcells/oci_spec.rb")
         end
@@ -278,7 +320,7 @@ module Bosh::Stemcell
         it "runs the warden specs, excluding exclude_on_warden" do
           command = subject.stemcell_rspec_command
           expect(command).to include("STEMCELL_INFRASTRUCTURE=warden")
-          expect(command).to include("bundle exec rspec -fd --tag ~exclude_on_warden spec/")
+          expect(command).to include("bundle exec rspec -fd --tag ~exclude_on_warden --tag ~exclude_on_amd64 spec/")
           expect(command).to include("spec/stemcells/warden_spec.rb")
         end
       end

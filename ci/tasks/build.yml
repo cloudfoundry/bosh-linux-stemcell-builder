@@ -24,6 +24,7 @@ params:
   OS_NAME:         replace-me
   OS_VERSION:      replace-me
   VARIANT:
+  STEMCELL_ARCH:   replace-me
   STEMCELL_BUCKET: replace-me
   S3_API_ENDPOINT: s3.amazonaws.com
   ESM_TOKEN:

@@ -112,3 +112,35 @@ function is_x86_64() {
     return 1
   fi
 }
+
+# Prints the Debian architecture (e.g. amd64, arm64) of the stemcell being built.
+# Prefers the architecture of the bootstrapped root filesystem (set by
+# debootstrap), which is available to every stage regardless of how build
+# settings are propagated. Falls back to the stemcell_arch build setting, then amd64.
+#
+# Usage: stemcell_target_arch [rootfs_path]
+#   rootfs_path defaults to $chroot; image stages that mount the rootfs
+#   elsewhere (e.g. $image_mount_point) should pass their path explicitly.
+function stemcell_target_arch() {
+  local rootfs="${1:-${chroot:-}}"
+  local arch=""
+  if [ -n "$rootfs" ] && [ -x "$rootfs/usr/bin/dpkg" ]; then
+    arch="$(run_in_chroot "$rootfs" "dpkg --print-architecture" 2>/dev/null | tr -d '[:space:]')"
+  fi
+  if [ -z "$arch" ]; then
+    arch="${stemcell_arch:-amd64}"
+  fi
+  echo "$arch"
+}
+
+
+# GNU triplet prefix used for multiarch library paths (e.g. x86_64-linux-gnu)
+function stemcell_gnu_arch() {
+  local arch
+  arch="$(stemcell_target_arch "$@")"
+  case "$arch" in
+    amd64) echo "x86_64" ;;
+    arm64) echo "aarch64" ;;
+    *) echo "Unsupported stemcell architecture: $arch" >&2; return 1 ;;
+  esac
+}

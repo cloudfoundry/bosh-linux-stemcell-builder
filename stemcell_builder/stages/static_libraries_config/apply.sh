@@ -7,7 +7,17 @@ source $base_dir/lib/prelude_apply.bash
 source $base_dir/lib/prelude_bosh.bash
 source $base_dir/etc/settings.bash
 
-cp -p "${assets_dir}/static_libraries_list.txt" $chroot/var/vcap/bosh/etc/static_libraries_list
+# amd64 keeps the original list file; other architectures use a suffixed list
+# because the library paths contain the multiarch triplet.
+list_file="${assets_dir}/static_libraries_list.txt"
+if [ "$(stemcell_target_arch)" != "amd64" ]; then
+  list_file="${assets_dir}/static_libraries_list_$(stemcell_target_arch).txt"
+fi
+if [ ! -f "${list_file}" ]; then
+  echo "No static libraries list for architecture $(stemcell_target_arch): ${list_file}" >&2
+  exit 1
+fi
+cp -p "${list_file}" $chroot/var/vcap/bosh/etc/static_libraries_list
 
 kernel_suffix="-generic"
 major_kernel_version="7.0"
