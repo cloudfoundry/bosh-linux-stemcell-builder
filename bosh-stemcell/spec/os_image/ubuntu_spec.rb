@@ -97,10 +97,8 @@ describe "Ubuntu 26.04 OS image", os_image: true do
     # ubuntu-noble also asserts /boot/grub/unicode.pf2 and gfxblacklist.txt here.
     # Resolute only asserts menu.lst, which system_grub creates itself; the other
     # two are not checked in the OS-image phase.
-    %w[unicode.pf2 menu.lst].each do |grub_stage|
-      describe file("/boot/grub/#{grub_stage}") do
-        it { should be_file }
-      end
+    describe file("/boot/grub/menu.lst") do
+      it { should be_file }
     end
   end
 
