@@ -67,6 +67,8 @@ plan:
       OS_NAME: ubuntu
       S3_API_ENDPOINT: storage.googleapis.com
       OS_VERSION: (@= data.values.stemcell_details.os_short_name @)(@= FIPS @)
+      #@ if/end VARIANT:
+      VARIANT: #@ VARIANT
       STEMCELL_ARCH: amd64
       STEMCELL_BUCKET: bosh-core-stemcells-candidate(@= FIPS @)
       GIT_USER_EMAIL: (@= data.values.stemcell_details.bot_email @)

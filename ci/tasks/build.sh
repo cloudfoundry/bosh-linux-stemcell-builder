@@ -141,4 +141,4 @@ cd "${REPO_PARENT}/stemcells-index-output"
 git add -A
 git config --global user.email "${GIT_USER_EMAIL}"
 git config --global user.name "${GIT_USER_NAME}"
-git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR}${arch_suffix})"
+git commit -m "dev: ${OS_NAME}-${OS_VERSION}/${CANDIDATE_BUILD_NUMBER} (${IAAS}-${HYPERVISOR}${VARIANT:+-$VARIANT}${arch_suffix})"
