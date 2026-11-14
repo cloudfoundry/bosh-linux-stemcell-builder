@@ -48,3 +48,6 @@ cat >"$chroot/var/vcap/bosh/agent.json" <<JSON
   }
 }
 JSON
+
+# Restore Ubuntu's standard systemd-resolved stub symlink after bosh_clean
+ln -sf /run/systemd/resolve/stub-resolv.conf "$chroot/etc/resolv.conf"
