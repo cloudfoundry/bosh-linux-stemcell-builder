@@ -69,6 +69,10 @@ describe "GDC Stemcell", stemcell_image: true do
   end
 
   context "installed by bosh_gdch_agent_settings" do
+    describe file("/etc/resolv.conf") do
+      it { should be_linked_to("/run/systemd/resolve/stub-resolv.conf") }
+    end
+
     describe file("/usr/lib/systemd/system/bosh-agent.service") do
       it { should be_file }
       its(:content) { should match("StartLimitInterval=660") }
