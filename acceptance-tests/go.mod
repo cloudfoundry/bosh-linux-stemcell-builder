@@ -3,7 +3,7 @@ module github.com/cloudfoundry/bosh-linux-stemcell-builder/acceptance-tests
 go 1.26.11
 
 require (
-	github.com/cloudfoundry/bosh-utils v0.0.673
+	github.com/cloudfoundry/bosh-utils v0.0.675
 	github.com/onsi/ginkgo/v2 v2.34.0
 	github.com/onsi/gomega v1.44.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -12,14 +12,13 @@ require (
 require (
 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
-	github.com/gkampitakis/ciinfo v0.3.5 // indirect
 	github.com/gkampitakis/go-snaps v0.5.25 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/pprof v0.0.0-20261111200114-fac431ef4d26 // indirect
 	github.com/rogpeppe/go-internal v1.16.0 // indirect
-	github.com/tidwall/gjson v1.20.2 // indirect
+	github.com/tidwall/gjson v1.20.3 // indirect
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.3.0 // indirect
 	github.com/tidwall/sjson v1.2.9 // indirect
