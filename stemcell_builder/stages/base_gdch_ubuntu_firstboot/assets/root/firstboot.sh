@@ -8,7 +8,8 @@ set -euo pipefail
 run_firstboot_tasks() {
   rm -f /etc/ssh/ssh_host*key* &&
     dpkg-reconfigure -fnoninteractive -pcritical openssh-server &&
-    dpkg-reconfigure -fnoninteractive sysstat
+    dpkg-reconfigure -fnoninteractive sysstat &&
+    ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 }
 
 # retry on failures with max 5 times

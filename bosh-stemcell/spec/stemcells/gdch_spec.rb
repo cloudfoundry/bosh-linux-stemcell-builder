@@ -68,7 +68,19 @@ describe "GDC Stemcell", stemcell_image: true do
     end
   end
 
+  context "installed by base_gdch_ubuntu_firstboot" do
+    describe file("/root/firstboot.sh") do
+      it { should be_file }
+      it { should be_executable }
+      its(:content) { should include("ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf") }
+    end
+  end
+
   context "installed by bosh_gdch_agent_settings" do
+    describe file("/etc/resolv.conf") do
+      it { should be_linked_to("/run/systemd/resolve/stub-resolv.conf") }
+    end
+
     describe file("/usr/lib/systemd/system/bosh-agent.service") do
       it { should be_file }
       its(:content) { should match("StartLimitInterval=660") }
