@@ -85,3 +85,33 @@ JSON
 
 # Mask systemd-binfmt.service which fails under Rosetta emulation
 run_in_chroot "$chroot" "systemctl mask systemd-binfmt.service"
+
+# Trim non-essential systemd units from the boot sequence.
+#
+# When the Docker CPI runs a warden stemcell with `exec /sbin/init`, full stock
+# systemd comes up and its units contend with the monit-managed bpm jobs in the
+# BOSH director container (symptom: the postgres role is never created and
+# bosh/0 never converges). The Docker CPI used to strip these units at
+# container-create time, but that allow-list prune was removed in
+# cloudfoundry/bosh-docker-cpi-release#60 on the assumption the stemcell would
+# take it over. The jammy stemcell only ever picked up the systemd-binfmt mask
+# above, so we reproduce the CPI's full allow-list here.
+#
+# This removes the `.wants` symlinks (equivalent to `systemctl disable`): units
+# are dropped from the boot sequence but can still start as dependencies of a
+# kept unit. The keep patterns mirror the historical CPI list exactly. Deriving
+# the set at build time keeps it correct as the stemcell's package set changes.
+run_in_chroot "$chroot" "
+find /etc/systemd/system /lib/systemd/system \
+  -type l \
+  -path '*.wants/*' \
+  -not -name '*bosh-agent*' \
+  -not -name '*dbus*' \
+  -not -name '*journald*' \
+  -not -name '*logrotate*' \
+  -not -name '*runit*' \
+  -not -name '*ssh*' \
+  -not -name '*systemd-user-sessions*' \
+  -not -name '*systemd-tmpfiles*' \
+  -delete
+"
