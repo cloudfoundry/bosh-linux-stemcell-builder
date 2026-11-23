@@ -135,6 +135,42 @@ describe Bosh::Stemcell::StemcellPackager do
       expect(YAML.safe_load(contents)["agent_features"]).to eq(manifest["agent_features"])
     end
 
+    %w[azure vsphere].each do |iaas|
+      context "on #{iaas}" do
+        let(:infrastructure) { Bosh::Stemcell::Infrastructure.for(iaas) }
+
+        it "advertises Secure Boot in the packaged Resolute manifest" do
+          tarball = packager.package(infrastructure.default_disk_format)
+
+          contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+          expect(status).to be_success
+          expect(YAML.safe_load(contents)["features"]).to eq(["secure_boot"])
+        end
+
+        context "with a FIPS stemcell" do
+          let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "resolute-fips") }
+
+          it "omits the feature list" do
+            packager.package(infrastructure.default_disk_format)
+
+            manifest = YAML.safe_load_file(File.join(work_dir, "stemcell/stemcell.MF"))
+            expect(manifest).not_to have_key("features")
+          end
+        end
+
+        context "with an arm64 stemcell" do
+          let(:definition) { Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "arm64") }
+
+          it "omits the feature list" do
+            packager.package(infrastructure.default_disk_format)
+
+            manifest = YAML.safe_load_file(File.join(work_dir, "stemcell/stemcell.MF"))
+            expect(manifest).not_to have_key("features")
+          end
+        end
+      end
+    end
+
     context "when the definition is arm64" do
       let(:definition) do
         Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "arm64")
