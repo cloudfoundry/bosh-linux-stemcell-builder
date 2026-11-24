@@ -106,6 +106,7 @@ describe Bosh::Stemcell::StemcellPackager do
         "bosh_protocol" => 1,
         "api_version" => 3,
         "agent_features" => [],
+        "features" => [],
         "sha1" => "c1ebdefc3f8282a9d7d47803fb5030b61ffc793d", # SHA-1 of image above
         "operating_system" => "ubuntu-resolute",
         "stemcell_formats" => ["stemcell-format-a", "stemcell-format-b"],
@@ -150,22 +151,22 @@ describe Bosh::Stemcell::StemcellPackager do
         context "with a FIPS stemcell" do
           let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "resolute-fips") }
 
-          it "omits the feature list" do
+          it "writes an empty feature list" do
             packager.package(infrastructure.default_disk_format)
 
             manifest = YAML.safe_load_file(File.join(work_dir, "stemcell/stemcell.MF"))
-            expect(manifest).not_to have_key("features")
+            expect(manifest["features"]).to eq([])
           end
         end
 
         context "with an arm64 stemcell" do
           let(:definition) { Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "arm64") }
 
-          it "omits the feature list" do
+          it "writes an empty feature list" do
             packager.package(infrastructure.default_disk_format)
 
             manifest = YAML.safe_load_file(File.join(work_dir, "stemcell/stemcell.MF"))
-            expect(manifest).not_to have_key("features")
+            expect(manifest["features"]).to eq([])
           end
         end
       end

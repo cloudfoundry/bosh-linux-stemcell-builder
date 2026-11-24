@@ -36,7 +36,7 @@ module Bosh
         infrastructure = definition.infrastructure
 
         stemcell_name = "bosh-#{definition.stemcell_name(disk_format)}"
-        manifest = {
+        {
           "name" => stemcell_name,
           "version" => version.to_s,
           "bosh_protocol" => 1,
@@ -45,11 +45,9 @@ module Bosh
           "operating_system" => "#{definition.operating_system.name}-#{definition.operating_system.version}",
           "stemcell_formats" => infrastructure.stemcell_formats,
           "agent_features" => [],
+          "features" => secure_boot_supported? ? ["secure_boot"] : [],
           "cloud_properties" => manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
         }
-
-        manifest["features"] = ["secure_boot"] if secure_boot_supported?
-        manifest
       end
 
       def secure_boot_supported?
