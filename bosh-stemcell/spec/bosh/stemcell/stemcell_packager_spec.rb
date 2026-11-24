@@ -106,7 +106,6 @@ describe Bosh::Stemcell::StemcellPackager do
         "bosh_protocol" => 1,
         "api_version" => 3,
         "agent_features" => [],
-        "features" => [],
         "sha1" => "c1ebdefc3f8282a9d7d47803fb5030b61ffc793d", # SHA-1 of image above
         "operating_system" => "ubuntu-jammy",
         "stemcell_formats" => ["stemcell-format-a", "stemcell-format-b"],
@@ -114,6 +113,7 @@ describe Bosh::Stemcell::StemcellPackager do
           "name" => "bosh-fake_infra-fake_hypervisor-ubuntu-jammy-go_agent-raw",
           "version" => "1234",
           "infrastructure" => "fake_infra",
+          "features" => [],
           "hypervisor" => "fake_hypervisor",
           "disk" => 4096,
           "disk_format" => "raw",
