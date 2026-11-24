@@ -45,11 +45,10 @@ module Bosh
           "operating_system" => "#{definition.operating_system.name}-#{definition.operating_system.version}",
           "stemcell_formats" => infrastructure.stemcell_formats,
           "agent_features" => [],
-          "features" => [],
           "cloud_properties" => manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
         }
 
-        manifest["features"] << "secure_boot" if secure_boot_supported?
+        manifest["cloud_properties"]["features"] << "secure_boot" if secure_boot_supported?
         manifest
       end
 
@@ -65,6 +64,7 @@ module Bosh
           "name" => stemcell_name,
           "version" => version.to_s,
           "infrastructure" => infrastructure.name,
+          "features" => [],
           "hypervisor" => infrastructure.hypervisor,
           "disk" => disk_size,
           "disk_format" => disk_format,
