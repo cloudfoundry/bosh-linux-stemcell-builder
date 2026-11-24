@@ -140,33 +140,18 @@ describe Bosh::Stemcell::StemcellPackager do
       context "on #{iaas}" do
         let(:infrastructure) { Bosh::Stemcell::Infrastructure.for(iaas) }
 
-        it "advertises Secure Boot in the packaged Resolute manifest" do
-          tarball = packager.package(infrastructure.default_disk_format)
+        [["resolute", "amd64"], ["resolute", "arm64"], ["resolute-fips", "amd64"]].each do |os_version, architecture|
+          context "with a #{os_version} #{architecture} stemcell" do
+            let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", os_version) }
+            let(:definition) { Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, architecture) }
 
-          contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
-          expect(status).to be_success
-          expect(YAML.safe_load(contents)["features"]).to eq(["secure_boot"])
-        end
+            it "advertises Secure Boot in the packaged manifest" do
+              tarball = packager.package(infrastructure.default_disk_format)
 
-        context "with a FIPS stemcell" do
-          let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "resolute-fips") }
-
-          it "writes an empty feature list" do
-            packager.package(infrastructure.default_disk_format)
-
-            manifest = YAML.safe_load_file(File.join(work_dir, "stemcell/stemcell.MF"))
-            expect(manifest["features"]).to eq([])
-          end
-        end
-
-        context "with an arm64 stemcell" do
-          let(:definition) { Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "arm64") }
-
-          it "writes an empty feature list" do
-            packager.package(infrastructure.default_disk_format)
-
-            manifest = YAML.safe_load_file(File.join(work_dir, "stemcell/stemcell.MF"))
-            expect(manifest["features"]).to eq([])
+              contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+              expect(status).to be_success
+              expect(YAML.safe_load(contents)["features"]).to eq(["secure_boot"])
+            end
           end
         end
       end

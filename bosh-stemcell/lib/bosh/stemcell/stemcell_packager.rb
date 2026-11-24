@@ -51,8 +51,7 @@ module Bosh
       end
 
       def secure_boot_supported?
-        os = definition.operating_system
-        os.version == "resolute" && os.variant.nil? && definition.architecture == "amd64" &&
+        definition.operating_system.version == "resolute" &&
           %w[azure vsphere].include?(definition.infrastructure.name)
       end
 
