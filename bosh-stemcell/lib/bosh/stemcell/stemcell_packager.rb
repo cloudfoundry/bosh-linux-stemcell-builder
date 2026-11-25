@@ -36,7 +36,7 @@ module Bosh
         infrastructure = definition.infrastructure
 
         stemcell_name = "bosh-#{definition.stemcell_name(disk_format)}"
-        {
+        manifest = {
           "name" => stemcell_name,
           "version" => version.to_s,
           "bosh_protocol" => 1,
@@ -47,6 +47,14 @@ module Bosh
           "agent_features" => [],
           "cloud_properties" => manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
         }
+
+        manifest["cloud_properties"]["features"] << "secure_boot" if secure_boot_supported?
+        manifest
+      end
+
+      def secure_boot_supported?
+        definition.operating_system.version == "resolute" &&
+          %w[azure vsphere].include?(definition.infrastructure.name)
       end
 
       def manifest_cloud_properties(disk_format, infrastructure, stemcell_name)
@@ -56,6 +64,7 @@ module Bosh
           "name" => stemcell_name,
           "version" => version.to_s,
           "infrastructure" => infrastructure.name,
+          "features" => [],
           "hypervisor" => infrastructure.hypervisor,
           "disk" => disk_size,
           "disk_format" => disk_format,

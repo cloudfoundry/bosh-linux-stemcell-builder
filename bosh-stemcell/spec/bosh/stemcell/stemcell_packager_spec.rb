@@ -113,6 +113,7 @@ describe Bosh::Stemcell::StemcellPackager do
           "name" => "bosh-fake_infra-fake_hypervisor-ubuntu-resolute-raw",
           "version" => "1234",
           "infrastructure" => "fake_infra",
+          "features" => [],
           "hypervisor" => "fake_hypervisor",
           "disk" => 4096,
           "disk_format" => "raw",
@@ -133,6 +134,30 @@ describe Bosh::Stemcell::StemcellPackager do
       contents, _, status = Open3.capture3("tar", "xOf", File.join(tarball_dir, "bosh-stemcell-1234-fake_infra-fake_hypervisor-ubuntu-resolute.tgz"), "stemcell.MF")
       expect(status.success?).to be(true)
       expect(YAML.safe_load(contents)["agent_features"]).to eq(manifest["agent_features"])
+    end
+
+    context "on Azure" do
+      let(:infrastructure) { Bosh::Stemcell::Infrastructure.for("azure") }
+
+      it "advertises Secure Boot in the packaged manifest" do
+        tarball = packager.package(infrastructure.default_disk_format)
+
+        contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+        expect(status).to be_success
+        expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
+      end
+    end
+
+    context "on vSphere" do
+      let(:infrastructure) { Bosh::Stemcell::Infrastructure.for("vsphere") }
+
+      it "advertises Secure Boot in the packaged manifest" do
+        tarball = packager.package(infrastructure.default_disk_format)
+
+        contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+        expect(status).to be_success
+        expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
+      end
     end
 
     context "when the definition is arm64" do
