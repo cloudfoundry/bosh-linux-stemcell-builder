@@ -56,6 +56,7 @@ module Bosh
           "name" => stemcell_name,
           "version" => version.to_s,
           "infrastructure" => infrastructure.name,
+          "features" => [],
           "hypervisor" => infrastructure.hypervisor,
           "disk" => disk_size,
           "disk_format" => disk_format,

@@ -113,6 +113,7 @@ describe Bosh::Stemcell::StemcellPackager do
           "name" => "bosh-fake_infra-fake_hypervisor-ubuntu-jammy-go_agent-raw",
           "version" => "1234",
           "infrastructure" => "fake_infra",
+          "features" => [],
           "hypervisor" => "fake_hypervisor",
           "disk" => 4096,
           "disk_format" => "raw",
