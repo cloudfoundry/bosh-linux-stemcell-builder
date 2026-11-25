@@ -136,23 +136,74 @@ describe Bosh::Stemcell::StemcellPackager do
       expect(YAML.safe_load(contents)["agent_features"]).to eq(manifest["agent_features"])
     end
 
-    %w[azure vsphere].each do |iaas|
-      context "on #{iaas}" do
-        let(:infrastructure) { Bosh::Stemcell::Infrastructure.for(iaas) }
+    context "on Azure" do
+      let(:infrastructure) { Bosh::Stemcell::Infrastructure.for("azure") }
 
-        [["resolute", "amd64"], ["resolute", "arm64"], ["resolute-fips", "amd64"]].each do |os_version, architecture|
-          context "with a #{os_version} #{architecture} stemcell" do
-            let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", os_version) }
-            let(:definition) { Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, architecture) }
+      it "advertises Secure Boot for Resolute amd64 in the packaged manifest" do
+        tarball = packager.package(infrastructure.default_disk_format)
 
-            it "advertises Secure Boot in the packaged manifest" do
-              tarball = packager.package(infrastructure.default_disk_format)
+        contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+        expect(status).to be_success
+        expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
+      end
 
-              contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
-              expect(status).to be_success
-              expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
-            end
-          end
+      context "with a Resolute arm64 stemcell" do
+        let(:definition) { Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "arm64") }
+
+        it "advertises Secure Boot in the packaged manifest" do
+          tarball = packager.package(infrastructure.default_disk_format)
+
+          contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+          expect(status).to be_success
+          expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
+        end
+      end
+
+      context "with a Resolute FIPS amd64 stemcell" do
+        let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "resolute-fips") }
+
+        it "advertises Secure Boot in the packaged manifest" do
+          tarball = packager.package(infrastructure.default_disk_format)
+
+          contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+          expect(status).to be_success
+          expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
+        end
+      end
+    end
+
+    context "on vSphere" do
+      let(:infrastructure) { Bosh::Stemcell::Infrastructure.for("vsphere") }
+
+      it "advertises Secure Boot for Resolute amd64 in the packaged manifest" do
+        tarball = packager.package(infrastructure.default_disk_format)
+
+        contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+        expect(status).to be_success
+        expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
+      end
+
+      context "with a Resolute arm64 stemcell" do
+        let(:definition) { Bosh::Stemcell::Definition.new(infrastructure, "fake_hypervisor", operating_system, "arm64") }
+
+        it "advertises Secure Boot in the packaged manifest" do
+          tarball = packager.package(infrastructure.default_disk_format)
+
+          contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+          expect(status).to be_success
+          expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
+        end
+      end
+
+      context "with a Resolute FIPS amd64 stemcell" do
+        let(:operating_system) { Bosh::Stemcell::OperatingSystem.for("ubuntu", "resolute-fips") }
+
+        it "advertises Secure Boot in the packaged manifest" do
+          tarball = packager.package(infrastructure.default_disk_format)
+
+          contents, _, status = Open3.capture3("tar", "xOf", tarball, "stemcell.MF")
+          expect(status).to be_success
+          expect(YAML.safe_load(contents).dig("cloud_properties", "features")).to eq(["secure_boot"])
         end
       end
     end
