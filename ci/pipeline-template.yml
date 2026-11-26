@@ -683,7 +683,7 @@ jobs:
       - task: cleanup-bats-vms
         file: bosh-stemcells-ci/ci/tasks/gcp/cleanup-bats-vms.yml
         image: bosh-integration-registry-image
-        params:
+        params: &cleanup-bats-vms-params
           GCP_JSON_KEY: ((gcp_json_key))
           GCP_PROJECT_ID: ((gcp_project_id))
           GCP_ZONE: europe-north2-a
@@ -722,6 +722,7 @@ jobs:
           VARS_STATIC_IP_DEFAULT: 10.100.(@= data.values.stemcell_details.subnet_int @).130
           VARS_STATIC_IP_DEFAULT-2: 10.100.(@= data.values.stemcell_details.subnet_int @).132
           VARS_GATEWAY_DEFAULT: 10.100.(@= data.values.stemcell_details.subnet_int @).1
+          VARS_TAG: *bats-director-tag
       - task: run-bats
         file: bats/ci/tasks/run-bats.yml
         image: bosh-integration-registry-image
@@ -732,6 +733,11 @@ jobs:
         image: bosh-integration-registry-image
         attempts: 3
         timeout: 15m
+      ensure:
+        task: cleanup-bats-vms
+        file: bosh-stemcells-ci/ci/tasks/gcp/cleanup-bats-vms.yml
+        image: bosh-integration-registry-image
+        params: *cleanup-bats-vms-params
 
 - name: aggregate-candidate-stemcells
   serial: true

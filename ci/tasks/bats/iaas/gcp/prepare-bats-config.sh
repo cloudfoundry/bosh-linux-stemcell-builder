@@ -65,6 +65,7 @@ properties:
           network_name: ((NETWORK_DEFAULT))
           subnetwork_name: ((SUBNETWORK_DEFAULT))
           ephemeral_external_ip: false
+          tags: [((TAG))]
         dns: [8.8.8.8]
 EOF
 
