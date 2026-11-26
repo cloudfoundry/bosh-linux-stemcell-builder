@@ -1,22 +1,22 @@
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <file name="ubuntu-noble.tgz">
-    <hash type="sha-512">52d75b4109681668dc107c6b340c55ba2800fa9bc935d04c12751751a4a70946d663b367187638e12ea26ba5ff13f301ac283308f880815d93db10a0f706ee8b</hash>
-    <hash type="sha-256">673f4f80f7392e0c3272cc7cf43603ce5a3e523609dcdeaf4e86876506d21685</hash>
-    <hash type="sha-1">c9c02cd9868b53fb71947962eca59468cd35208a</hash>
-    <hash type="md5">f0a4931acb2ac0b9595d6c07df703517</hash>
-    <size>384847471</size>
+    <hash type="sha-512">29e418523d9cab18e55d001f8db60b4b0290064dd26343947d81617256b933514b379e10fc68303fc0421d22da3b4ed3b48d4b6ad1f210456cd5ce6291fe0cce</hash>
+    <hash type="sha-256">1d019364cb0a4cb46111ece0525d4d666d1ceb76aa784db7bc974736f9161278</hash>
+    <hash type="sha-1">88193f4d18a7c85d213b72f464b0e9555ad156e1</hash>
+    <hash type="md5">c4b85eb94f220517a59fc7f973121f30</hash>
+    <size>384875813</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-noble/ubuntu-noble.tgz</url>
-    <version>416.0.0</version>
+    <version>417.0.0</version>
   </file>
   <file name="usn-log.json">
-    <hash type="sha-512">a7a450be4468e5f7d5acd81652979a4bc5aefc040d2bf027d2a7aeeea74b9f3260342a2d905a13117a53ea5a1ffa47756d28fbc25a009949e15f65bc732b128b</hash>
-    <hash type="sha-256">c9b83a682e63d937889bdfedf9e3b616760a3534875e23d03c2fec5c6af6efe8</hash>
-    <hash type="sha-1">59f203d64bb44c8290192943b84b004c4f018678</hash>
-    <hash type="md5">a0fcbd8b4c446ee91fe8145742c19f55</hash>
-    <size>369749</size>
+    <hash type="sha-512">398aca7cbfdcfb8045375eb0995f1c7fec9cde0d04b29a17317baf6454fc7958b4950c8c3b2936704a41745381cc936073f1436dbf8eff83d7676296d53696f5</hash>
+    <hash type="sha-256">975d1c3755776f500c9ae8959fda0d326d4d5cb8245442dab85c27d9de7a6f63</hash>
+    <hash type="sha-1">db99770a15aff33ac97f1bb432aebb78434d4f68</hash>
+    <hash type="md5">048b06cc97d2172e767d7ccde1231b42</hash>
+    <size>375138</size>
     <url>https://storage.googleapis.com/bosh-os-images/ubuntu-noble/usn-log.json</url>
-    <version>416.0.0</version>
+    <version>417.0.0</version>
   </file>
   <generator>metalink-repository-resource/0.0.0</generator>
-  <published>2026-11-24T23:22:56.587367138Z</published>
+  <published>2026-11-26T19:48:19.043040065Z</published>
 </metalink>
